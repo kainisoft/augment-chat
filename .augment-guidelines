@@ -1,0 +1,107 @@
+project:
+  name: "Real-time Chat App"
+  description: "A modern chat application with real-time messaging capabilities"
+  package_manager:
+    type: "pnpm"
+    version: "8.x"
+    workspace: true
+    settings:
+      node_version: "20.x"
+      strict_peer_dependencies: true
+      auto_install_peers: true
+      save_exact: true
+
+  tech_stack:
+    frontend: "Next.js + React"
+    backend: "Nest.js + Fastify"
+    database: "PostgreSQL"
+    real_time: "GraphQL Subscriptions"
+    graphql:
+      server: "Apollo Server"
+      client: "Apollo Client"
+      schema_path: "./server/src/graphql/schema"
+      codegen: true
+      subscriptions:
+        transport: "ws"
+        path: "/graphql/subscriptions"
+        keepAlive: 30000
+
+  deployment:
+    provider: "AWS"
+    infrastructure:
+      compute: "EC2"
+      load_balancer: "ALB"
+      database: "RDS PostgreSQL"
+      cache: "ElastiCache Redis"
+      cdn: "CloudFront"
+
+  development:
+    docker:
+      enabled: true
+      services:
+        - client
+        - server
+        - postgres
+        - redis
+      volumes:
+        persist:
+          - postgres_data
+          - redis_data
+      ports:
+        client: 3000
+        server: 4000
+        postgres: 5432
+        redis: 6379
+      hot_reload: true
+
+conventions:
+  code_style:
+    indent: 2
+    quotes: 'single'
+    max_line_length: 80
+  
+  naming:
+    components: "PascalCase"
+    functions: "camelCase"
+    constants: "UPPER_SNAKE_CASE"
+    files: "kebab-case"
+    graphql:
+      types: "PascalCase"
+      queries: "camelCase"
+      mutations: "camelCase"
+
+architecture:
+  frontend:
+    path: "./client"
+    structure:
+      - components/
+      - hooks/
+      - utils/
+      - contexts/
+      - graphql:
+          queries: {}
+          mutations: {}
+          subscriptions: {}
+          generated: {}
+  
+  backend:
+    path: "./server"
+    structure:
+      - controllers/
+      - models/
+      - routes/
+      - middleware/
+      - graphql:
+          resolvers: {}
+          typeDefs: {}
+          directives: {}
+          scalars: {}
+          subscriptions: {}
+
+testing:
+  frontend: "Jest + React Testing Library"
+  backend: "Jest"
+  coverage_threshold: 80
+  graphql:
+    schema_testing: true
+    mock_resolvers: true
