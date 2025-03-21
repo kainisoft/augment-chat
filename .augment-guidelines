@@ -3,7 +3,7 @@ project:
   description: "A modern chat application with real-time messaging capabilities"
   package_manager:
     type: "pnpm"
-    version: "8.x"
+    version: "10.x"
     workspace: true
     settings:
       node_version: "20.x"
@@ -14,7 +14,33 @@ project:
   tech_stack:
     frontend: "Next.js + React"
     backend: "Nest.js + Fastify"
-    database: "PostgreSQL"
+    database:
+      provider: "Neon PostgreSQL"
+      type: "PostgreSQL"
+      version: "17.x"
+      features:
+        branching: true
+        pooling: true
+        serverless: true
+      connection:
+        ssl_mode: "require"
+        pooling_url: "postgres://[user]:[password]@[pooler-hostname]/[database]"
+        direct_url: "postgres://[user]:[password]@[hostname]/[database]"
+      environments:
+        development:
+          branch: "development"
+          pool_size: 5
+        staging:
+          branch: "staging"
+          pool_size: 10
+        production:
+          branch: "main"
+          pool_size: 20
+      settings:
+        auto_scaling: true
+        point_in_time_recovery: true
+        backup_retention: "7d"
+        monitoring: true
     real_time: "GraphQL Subscriptions"
     graphql:
       server: "Apollo Server"
@@ -31,7 +57,18 @@ project:
     infrastructure:
       compute: "EC2"
       load_balancer: "ALB"
-      database: "RDS PostgreSQL"
+      database:
+        type: "Neon PostgreSQL"
+        tier: "Pro"
+        settings:
+          compute_units:
+            min: 0.25
+            max: 1
+          storage: "10GB"
+          branching: true
+          regions:
+            primary: "us-east-1"
+            replicas: []
       cache: "ElastiCache Redis"
       cdn: "CloudFront"
 
@@ -41,18 +78,48 @@ project:
       services:
         - client
         - server
-        - postgres
         - redis
       volumes:
         persist:
-          - postgres_data
           - redis_data
       ports:
         client: 3000
         server: 4000
-        postgres: 5432
         redis: 6379
       hot_reload: true
+    
+    database:
+      local_development:
+        enabled: false
+        fallback_docker_service:
+          name: "postgres"
+          image: "postgres:15-alpine"
+          ports: 5432
+          credentials:
+            user: "user"
+            password: "password"
+            database: "chatapp"
+      
+      neon:
+        enabled: true
+        project_name: "chat-app"
+        branches:
+          - name: "main"
+            purpose: "production"
+          - name: "staging"
+            purpose: "staging"
+          - name: "development"
+            purpose: "development"
+        cli_tools:
+          - name: "neonctl"
+            commands:
+              create_branch: "neonctl branch create --name"
+              get_connection: "neonctl connection-string --branch"
+        migration:
+          tool: "prisma"
+          settings:
+            ssl_required: true
+            shadow_database: false
 
 conventions:
   code_style:
@@ -69,6 +136,11 @@ conventions:
       types: "PascalCase"
       queries: "camelCase"
       mutations: "camelCase"
+    database:
+      tables: "snake_case"
+      columns: "snake_case"
+      indexes: "idx_table_column"
+      constraints: "fk_table_column"
 
 architecture:
   frontend:
@@ -97,6 +169,10 @@ architecture:
           directives: {}
           scalars: {}
           subscriptions: {}
+      - database:
+          migrations: {}
+          seeds: {}
+          models: {}
 
 testing:
   frontend: "Jest + React Testing Library"
@@ -105,3 +181,7 @@ testing:
   graphql:
     schema_testing: true
     mock_resolvers: true
+  database:
+    use_test_branches: true
+    cleanup_after_test: true
+    seed_test_data: true

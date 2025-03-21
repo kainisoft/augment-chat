@@ -26,25 +26,10 @@ services:
       - /app/node_modules
     ports:
       - "4000:4000"
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://user:password@postgres:5432/chatapp
-      - REDIS_URL=redis://redis:6379
-      - CORS_ORIGIN=http://localhost:3000
-    depends_on:
-      - postgres
-      - redis
-
-  postgres:
-    image: postgres:15-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=chatapp
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - server/.env
+    # depends_on:
+    #   - redis
 
   redis:
     image: redis:7-alpine
@@ -54,5 +39,4 @@ services:
       - redis_data:/data
 
 volumes:
-  postgres_data:
   redis_data:

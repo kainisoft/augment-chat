@@ -183,6 +183,99 @@ pnpm test:cov      # Coverage report
   - Types: PascalCase
   - Queries/Mutations: camelCase
 
+## Database Setup
+
+### Neon PostgreSQL Setup
+
+1. Sign up for a free account at [Neon](https://neon.tech)
+
+2. Create a new project in Neon dashboard
+
+3. Get your connection string from the dashboard:
+   - Click on your project
+   - Go to "Connection Details"
+   - Copy the connection string
+
+4. Set up your environment variables:
+   ```bash
+   # server/.env
+   DATABASE_URL=postgres://[user]:[password]@[hostname]/[database]?sslmode=require
+   ```
+
+### Benefits of using Neon:
+
+- Serverless: Pay only for what you use
+- Auto-scaling: Handles traffic spikes automatically
+- Database branching: Create instant database copies for testing
+- Modern dashboard: Easy monitoring and management
+- Generous free tier:
+  - 3 projects
+  - 10GB storage per project
+  - Unlimited database branches
+  - Serverless compute
+
+### Development Workflow with Neon
+
+1. Create branches for different environments:
+   ```bash
+   # Using Neon CLI
+   neonctl branch create --name staging
+   neonctl branch create --name development
+   ```
+
+2. Get connection strings for different branches:
+   ```bash
+   neonctl connection-string --branch staging
+   neonctl connection-string --branch development
+   ```
+
+3. Use different branches for:
+   - Development
+   - Staging
+   - Testing
+   - Production
+
+### Local Development Options
+
+1. **Using Neon (Recommended)**:
+   - Use a development branch
+   - Real cloud environment
+   - No local PostgreSQL needed
+
+2. **Using Local PostgreSQL**:
+   - Uncomment PostgreSQL service in docker-compose.yml
+   - Update DATABASE_URL to use local instance
+   ```env
+   DATABASE_URL=postgresql://user:password@localhost:5432/chatapp
+   ```
+
+## Database Migrations
+
+When using Neon, ensure your migration scripts handle SSL connections:
+
+```typescript
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Neon direct connection
+}
+```
+
+## Production Deployment
+
+When deploying to production:
+
+1. Use connection pooling for better performance:
+   ```env
+   DATABASE_URL=postgres://[user]:[password]@[pooler-hostname]/[database]?sslmode=require
+   ```
+
+2. Configure your application for serverless environments:
+   - Use connection pooling
+   - Handle connection limits
+   - Implement retry logic
+
 ## Deployment
 
 The application is configured for AWS deployment with:
