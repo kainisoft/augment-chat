@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { DATABASE_CONNECTION } from './database.token';
+import * as schema from './schema';
 
 @Global()
 @Module({
@@ -14,7 +15,7 @@ import { DATABASE_CONNECTION } from './database.token';
       useFactory: (configService: ConfigService) => {
         const client = neon(configService.getOrThrow('DATABASE_URL'));
 
-        return drizzle({ client });
+        return drizzle({ client, schema });
       },
     },
   ],

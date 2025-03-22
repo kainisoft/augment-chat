@@ -1,12 +1,12 @@
 {
-  "id": "e7602010-d7ea-4c93-8a07-47e54d3bf926",
+  "id": "7cf6e406-0507-44ad-b2a5-efd1ec397ec9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.chat_members": {
+    "chat.chat_members": {
       "name": "chat_members",
-      "schema": "",
+      "schema": "chat",
       "columns": {
         "chat_id": {
           "name": "chat_id",
@@ -47,6 +47,7 @@
           "name": "chat_members_chat_id_chats_id_fk",
           "tableFrom": "chat_members",
           "tableTo": "chats",
+          "schemaTo": "chat",
           "columnsFrom": [
             "chat_id"
           ],
@@ -60,6 +61,7 @@
           "name": "chat_members_user_id_users_id_fk",
           "tableFrom": "chat_members",
           "tableTo": "users",
+          "schemaTo": "chat",
           "columnsFrom": [
             "user_id"
           ],
@@ -84,9 +86,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.chats": {
+    "chat.chats": {
       "name": "chats",
-      "schema": "",
+      "schema": "chat",
       "columns": {
         "id": {
           "name": "id",
@@ -135,6 +137,7 @@
           "name": "chats_created_by_users_id_fk",
           "tableFrom": "chats",
           "tableTo": "users",
+          "schemaTo": "chat",
           "columnsFrom": [
             "created_by"
           ],
@@ -151,9 +154,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.messages": {
+    "chat.messages": {
       "name": "messages",
-      "schema": "",
+      "schema": "chat",
       "columns": {
         "id": {
           "name": "id",
@@ -177,7 +180,7 @@
         "type": {
           "name": "type",
           "type": "message_type",
-          "typeSchema": "public",
+          "typeSchema": "chat",
           "primaryKey": false,
           "notNull": false,
           "default": "'text'"
@@ -221,6 +224,7 @@
           "name": "messages_chat_id_chats_id_fk",
           "tableFrom": "messages",
           "tableTo": "chats",
+          "schemaTo": "chat",
           "columnsFrom": [
             "chat_id"
           ],
@@ -234,6 +238,7 @@
           "name": "messages_user_id_users_id_fk",
           "tableFrom": "messages",
           "tableTo": "users",
+          "schemaTo": "chat",
           "columnsFrom": [
             "user_id"
           ],
@@ -250,9 +255,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.users": {
+    "chat.users": {
       "name": "users",
-      "schema": "",
+      "schema": "chat",
       "columns": {
         "id": {
           "name": "id",
@@ -282,7 +287,7 @@
         "status": {
           "name": "status",
           "type": "user_status",
-          "typeSchema": "public",
+          "typeSchema": "chat",
           "primaryKey": false,
           "notNull": false,
           "default": "'offline'"
@@ -346,18 +351,18 @@
     }
   },
   "enums": {
-    "public.message_type": {
+    "chat.message_type": {
       "name": "message_type",
-      "schema": "public",
+      "schema": "chat",
       "values": [
         "text",
         "image",
         "file"
       ]
     },
-    "public.user_status": {
+    "chat.user_status": {
       "name": "user_status",
-      "schema": "public",
+      "schema": "chat",
       "values": [
         "online",
         "offline",
@@ -365,7 +370,9 @@
       ]
     }
   },
-  "schemas": {},
+  "schemas": {
+    "chat": "chat"
+  },
   "sequences": {},
   "roles": {},
   "policies": {},
