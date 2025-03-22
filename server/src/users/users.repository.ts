@@ -1,26 +1,26 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { eq, InferModel } from 'drizzle-orm';
+import { Inject, Injectable } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import { BaseRepository } from '../common/base.repository';
+import { DATABASE_CONNECTION } from '../database/database.token';
 import type { DrizzleDatabase } from '../database/database.types';
 import * as schema from '../database/schema';
-import { DATABASE_CONNECTION } from 'src/database/database.token';
 
 export type User = typeof schema.users.$inferSelect;
+type UserInsert = typeof schema.users.$inferInsert;
 
 @Injectable()
-export class UsersRepository {
-  constructor(@Inject(DATABASE_CONNECTION) private db: DrizzleDatabase) {}
-
-  async findById(id: string) {
-    const [user] = await this.db
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.id, id))
-      .limit(1);
-
-    return user;
+export class UsersRepository extends BaseRepository<
+  typeof schema.users,
+  User,
+  UserInsert,
+  Partial<User>
+> {
+  constructor(@Inject(DATABASE_CONNECTION) db: DrizzleDatabase) {
+    super(db, schema.users);
   }
 
-  async findByEmail(email: string) {
+  // Custom method specific to users
+  async findByEmail(email: string): Promise<User | undefined> {
     const [user] = await this.db
       .select()
       .from(schema.users)
@@ -30,18 +30,11 @@ export class UsersRepository {
     return user;
   }
 
-  async create(data: {
-    email: string;
-    username: string;
-    password: string;
-    avatarUrl?: string;
-  }) {
-    const [user] = await this.db.insert(schema.users).values(data).returning();
-
-    return user;
-  }
-
-  async updateStatus(userId: string, status: 'online' | 'offline' | 'away') {
+  // Custom method specific to users
+  async updateStatus(
+    userId: string,
+    status: 'online' | 'offline' | 'away',
+  ): Promise<User> {
     const [user] = await this.db
       .update(schema.users)
       .set({

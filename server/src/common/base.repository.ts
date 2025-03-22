@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { BasePgTable } from 'drizzle-orm/pg-core';
+import { PgTable } from 'drizzle-orm/pg-core';
 import { DrizzleDatabase } from '../database/database.types';
 
 export interface BaseModel {
@@ -7,7 +7,7 @@ export interface BaseModel {
 }
 
 export abstract class BaseRepository<
-  TTable extends BasePgTable,
+  TTable extends PgTable,
   TSelect extends BaseModel,
   TInsert extends Omit<Partial<TSelect>, 'id'>,
   TUpdate extends Partial<TSelect>,
