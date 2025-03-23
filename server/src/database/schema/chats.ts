@@ -1,24 +1,24 @@
 import { relations } from 'drizzle-orm';
 import { boolean, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { chatMembers } from './chat_members';
-import { messages } from './messages';
+import { chatMemberTable } from './chat_members';
+import { messageTable } from './messages';
 import { schema } from './root';
-import { users } from './users';
+import { userTable } from './users';
 
-export const chats = schema.table('chats', {
+export const chatTable = schema.table('chat', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name'),
   isGroup: boolean('is_group').default(false),
   lastMessageAt: timestamp('last_message_at').defaultNow(),
   createdAt: timestamp('created_at').defaultNow(),
-  createdBy: uuid('created_by').references(() => users.id),
+  createdBy: uuid('created_by').references(() => userTable.id),
 });
 
-export const chatsRelations = relations(chats, ({ one, many }) => ({
-  createdByUser: one(users, {
-    fields: [chats.createdBy],
-    references: [users.id],
+export const chatsRelations = relations(chatTable, ({ one, many }) => ({
+  createdByUser: one(userTable, {
+    fields: [chatTable.createdBy],
+    references: [userTable.id],
   }),
-  messages: many(messages),
-  members: many(chatMembers),
+  messages: many(messageTable),
+  members: many(chatMemberTable),
 }));

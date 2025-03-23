@@ -1,14 +1,14 @@
 import { relations } from 'drizzle-orm';
 import { primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { chats } from './chats';
+import { chatTable } from './chats';
 import { schema } from './root';
-import { users } from './users';
+import { userTable } from './users';
 
-export const chatMembers = schema.table(
-  'chat_members',
+export const chatMemberTable = schema.table(
+  'chat_member',
   {
-    chatId: uuid('chat_id').references(() => chats.id),
-    userId: uuid('user_id').references(() => users.id),
+    chatId: uuid('chat_id').references(() => chatTable.id),
+    userId: uuid('user_id').references(() => userTable.id),
     role: text('role').default('member'),
     joinedAt: timestamp('joined_at').defaultNow(),
     lastRead: timestamp('last_read'),
@@ -16,13 +16,13 @@ export const chatMembers = schema.table(
   (table) => [primaryKey({ columns: [table.chatId, table.userId] })],
 );
 
-export const chatMembersRelations = relations(chatMembers, ({ one }) => ({
-  chat: one(chats, {
-    fields: [chatMembers.chatId],
-    references: [chats.id],
+export const chatMembersRelations = relations(chatMemberTable, ({ one }) => ({
+  chat: one(chatTable, {
+    fields: [chatMemberTable.chatId],
+    references: [chatTable.id],
   }),
-  user: one(users, {
-    fields: [chatMembers.userId],
-    references: [users.id],
+  user: one(userTable, {
+    fields: [chatMemberTable.userId],
+    references: [userTable.id],
   }),
 }));

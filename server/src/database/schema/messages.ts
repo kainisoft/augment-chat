@@ -1,8 +1,8 @@
 import { relations } from 'drizzle-orm';
 import { jsonb, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { chats } from './chats';
+import { chatTable } from './chats';
 import { schema } from './root';
-import { users } from './users';
+import { userTable } from './users';
 
 export const messageTypeEnum = schema.enum('message_type', [
   'text',
@@ -10,10 +10,10 @@ export const messageTypeEnum = schema.enum('message_type', [
   'file',
 ]);
 
-export const messages = schema.table('messages', {
+export const messageTable = schema.table('message', {
   id: uuid('id').primaryKey().defaultRandom(),
-  chatId: uuid('chat_id').references(() => chats.id),
-  userId: uuid('user_id').references(() => users.id),
+  chatId: uuid('chat_id').references(() => chatTable.id),
+  userId: uuid('user_id').references(() => userTable.id),
   type: messageTypeEnum('type').default('text'),
   content: text('content').notNull(),
   metadata: jsonb('metadata'),
@@ -22,13 +22,13 @@ export const messages = schema.table('messages', {
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
-export const messagesRelations = relations(messages, ({ one }) => ({
-  chat: one(chats, {
-    fields: [messages.chatId],
-    references: [chats.id],
+export const messagesRelations = relations(messageTable, ({ one }) => ({
+  chat: one(chatTable, {
+    fields: [messageTable.chatId],
+    references: [chatTable.id],
   }),
-  user: one(users, {
-    fields: [messages.userId],
-    references: [users.id],
+  user: one(userTable, {
+    fields: [messageTable.userId],
+    references: [userTable.id],
   }),
 }));

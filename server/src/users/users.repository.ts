@@ -3,47 +3,73 @@ import { eq } from 'drizzle-orm';
 import { BaseRepository } from '../common/base.repository';
 import { DATABASE_CONNECTION } from '../database/database.token';
 import type { DrizzleDatabase } from '../database/database.types';
-import * as schema from '../database/schema';
+import { userTable } from '../database/schema';
+import { CreateUserDto } from './dto/create-user.dto';
 
-export type User = typeof schema.users.$inferSelect;
-type UserInsert = typeof schema.users.$inferInsert;
+export type UserSelect = typeof userTable.$inferSelect;
+export type UserInsert = typeof userTable.$inferInsert;
 
 @Injectable()
 export class UsersRepository extends BaseRepository<
-  typeof schema.users,
-  User,
-  UserInsert,
-  Partial<User>
+  typeof userTable,
+  UserSelect,
+  UserInsert
 > {
   constructor(@Inject(DATABASE_CONNECTION) db: DrizzleDatabase) {
-    super(db, schema.users);
+    super(db, userTable);
   }
 
-  // Custom method specific to users
-  async findByEmail(email: string): Promise<User | undefined> {
+  async findByEmail(email: string): Promise<UserSelect | null> {
     const [user] = await this.db
       .select()
-      .from(schema.users)
-      .where(eq(schema.users.email, email))
+      .from(userTable)
+      .where(eq(userTable.email, email))
       .limit(1);
 
     return user;
   }
 
-  // Custom method specific to users
-  async updateStatus(
-    userId: string,
-    status: 'online' | 'offline' | 'away',
-  ): Promise<User> {
+  async create(data: CreateUserDto) {
+    const user = await this.save(data);
+
+    return user;
+  }
+
+  async updateStatus(userId: string, status: 'online' | 'offline' | 'away') {
     const [user] = await this.db
-      .update(schema.users)
+      .update(userTable)
       .set({
         status,
         lastSeen: status === 'offline' ? new Date() : undefined,
       })
-      .where(eq(schema.users.id, userId))
+      .where(eq(userTable.id, userId))
       .returning();
 
     return user;
+  }
+
+  async getUsersWithChats(userId: string) {
+    return await this.db.query.userTable.findFirst({
+      where: eq(userTable.id, userId),
+      with: {
+        chatMembers: {
+          with: {
+            chat: {
+              with: {
+                messages: {
+                  limit: 1,
+                  orderBy: (messages) => [messages.createdAt, 'desc'],
+                },
+                members: {
+                  with: {
+                    user: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
   }
 }
