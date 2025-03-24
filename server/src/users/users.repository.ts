@@ -4,7 +4,6 @@ import { BaseRepository } from '../common/base.repository';
 import { DATABASE_CONNECTION } from '../database/database.token';
 import type { DrizzleDatabase } from '../database/database.types';
 import { userTable } from '../database/schema';
-import { CreateUserDto } from './dto/create-user.dto';
 
 export type UserSelect = typeof userTable.$inferSelect;
 export type UserInsert = typeof userTable.$inferInsert;
@@ -25,12 +24,6 @@ export class UsersRepository extends BaseRepository<
       .from(userTable)
       .where(eq(userTable.email, email))
       .limit(1);
-
-    return user;
-  }
-
-  async create(data: CreateUserDto) {
-    const user = await this.save(data);
 
     return user;
   }
@@ -58,7 +51,7 @@ export class UsersRepository extends BaseRepository<
               with: {
                 messages: {
                   limit: 1,
-                  orderBy: (messages) => [messages.createdAt, 'desc'],
+                  orderBy: (messages) => messages.createdAt,
                 },
                 members: {
                   with: {

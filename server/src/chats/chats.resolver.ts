@@ -1,6 +1,7 @@
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { ChatsRepository } from './chats.repository';
+import { Message } from './models/message.model';
 
 @Resolver('Chat')
 export class ChatsResolver {
@@ -8,7 +9,7 @@ export class ChatsResolver {
 
   constructor(private readonly chatsRepository: ChatsRepository) {}
 
-  @Query()
+  @Query(() => [Message])
   async getMessages(
     @Args('chatId') chatId: string,
     @Args('limit') limit: number,
@@ -21,25 +22,25 @@ export class ChatsResolver {
     );
   }
 
-  @Mutation()
-  async sendMessage(
-    @Args('chatId') chatId: string,
-    @Args('userId') userId: string,
-    @Args('content') content: string,
-  ) {
-    const message = await this.chatsRepository.addMessage({
-      chatId,
-      userId,
-      content,
-    });
+  // @Mutation()
+  // async sendMessage(
+  //   @Args('chatId') chatId: string,
+  //   @Args('userId') userId: string,
+  //   @Args('content') content: string,
+  // ) {
+  //   const message = await this.chatsRepository.addMessage({
+  //     chatId,
+  //     userId,
+  //     content,
+  //   });
 
-    await this.pubSub.publish('messageAdded', { messageAdded: message });
+  //   await this.pubSub.publish('messageAdded', { messageAdded: message });
 
-    return message;
-  }
+  //   return message;
+  // }
 
-  @Subscription()
-  messageAdded() {
-    return this.pubSub.asyncIterator('messageAdded');
-  }
+  // @Subscription()
+  // messageAdded() {
+  //   return this.pubSub.asyncIterableIterator('messageAdded');
+  // }
 }

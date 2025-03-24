@@ -49,41 +49,4 @@ export abstract class BaseRepository<
 
     return Number(result.count);
   }
-
-  async save(data: TInsert): Promise<TSelect> {
-    if (data.id) {
-      return await this.update(data.id, data);
-    }
-
-    const [record] = await this.db.insert(this.table).values(data).returning();
-
-    return record as TSelect;
-  }
-
-  async createMany(data: TInsert[]): Promise<TInsert[]> {
-    return this.db.insert(this.table).values(data).returning();
-  }
-
-  async update(id: string, data: Partial<TInsert>): Promise<TSelect | null> {
-    const record = await this.db
-      .update(this.table)
-      .set(data)
-      .where(eq(this.table.id, id))
-      .returning();
-
-    if (!record.length) {
-      return null;
-    }
-
-    return record as TSelect;
-  }
-
-  async delete(id: string): Promise<TSelect | null> {
-    const [record] = await this.db
-      .delete(this.table)
-      .where(eq(this.table.id, id))
-      .returning();
-
-    return record;
-  }
 }
