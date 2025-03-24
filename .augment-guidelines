@@ -12,7 +12,25 @@ project:
       save_exact: true
 
   tech_stack:
-    frontend: "Next.js + React"
+    frontend: 
+      framework: "Next.js + React"
+      state_management:
+        local:
+          library: "Zustand"
+          version: "4.5.x"
+          use_cases:
+            - "Authentication state"
+            - "UI state"
+            - "Local cache"
+            - "Form state"
+        remote:
+          library: "Apollo Client"
+          version: "3.8.x"
+          use_cases:
+            - "GraphQL queries"
+            - "GraphQL mutations"
+            - "Real-time subscriptions"
+            - "Remote data caching"
     backend: "Nest.js + Fastify"
     database:
       provider: "Neon PostgreSQL"
@@ -141,6 +159,18 @@ conventions:
       columns: "snake_case"
       indexes: "idx_table_column"
       constraints: "fk_table_column"
+  state_management:
+    store_naming: "${feature}.store.ts"
+    location: "src/stores/"
+    patterns:
+      - "Use separate stores for different domains"
+      - "Keep stores small and focused"
+      - "Use TypeScript for type safety"
+      - "Implement persist middleware when needed"
+    examples:
+      auth: "auth.store.ts"
+      chat: "chat.store.ts"
+      ui: "ui.store.ts"
 
 architecture:
   frontend:
