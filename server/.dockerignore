@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+dist
+build
+
+# Development
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.vscode
+.idea
+
+# Testing
+coverage
+.nyc_output
+test
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store

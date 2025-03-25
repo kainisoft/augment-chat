@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@apollo/client": "3.13.5",
+    "@apollo/link-context": "2.0.0-beta.3",
+    "graphql": "16.10.0",
+    "graphql-ws": "5.15.0",
     "next": "15.2.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
