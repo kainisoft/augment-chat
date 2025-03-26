@@ -1,9 +1,10 @@
+import { AuthModule } from '@/auth/auth.module';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ChatsModule } from '../chats/chats.module';
 import { HealthResolver } from './health.resolver';
-import { AuthModule } from '@/auth/auth.module';
 
 @Module({
   imports: [
@@ -12,6 +13,8 @@ import { AuthModule } from '@/auth/auth.module';
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
       include: [AuthModule, ChatsModule],
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
       subscriptions: {
         'graphql-ws': {
           path: '/graphql/subscriptions',

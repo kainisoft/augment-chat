@@ -21,9 +21,9 @@ export function useAuth() {
     });
 
     if (data) {
-      const { accessToken, user } = data.login;
+      const { accessToken, refreshToken, user } = data.login;
 
-      setAuth(accessToken, user);
+      setAuth(accessToken, refreshToken, user);
     }
   };
 

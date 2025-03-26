@@ -9,13 +9,20 @@ export type UserSelect = typeof userTable.$inferSelect;
 export type UserInsert = typeof userTable.$inferInsert;
 
 @Injectable()
-export class UsersRepository extends BaseRepository<
-  typeof userTable,
-  UserSelect,
-  UserInsert
-> {
+export class UsersRepository extends BaseRepository<typeof userTable, UserSelect, UserInsert> {
   constructor(@Inject(DATABASE_CONNECTION) db: DrizzleDatabase) {
     super(db, userTable);
+  }
+
+  async create(data: {
+    email: string;
+    username: string;
+    password: string;
+    avatarUrl?: string;
+  }): Promise<UserSelect> {
+    const [user] = await this.db.insert(userTable).values(data).returning();
+
+    return user;
   }
 
   async findByEmail(email: string): Promise<UserSelect | null> {

@@ -21,26 +21,4 @@ export class ChatsResolver {
       before ? new Date(before) : undefined,
     );
   }
-
-  // @Mutation()
-  // async sendMessage(
-  //   @Args('chatId') chatId: string,
-  //   @Args('userId') userId: string,
-  //   @Args('content') content: string,
-  // ) {
-  //   const message = await this.chatsRepository.addMessage({
-  //     chatId,
-  //     userId,
-  //     content,
-  //   });
-
-  //   await this.pubSub.publish('messageAdded', { messageAdded: message });
-
-  //   return message;
-  // }
-
-  // @Subscription()
-  // messageAdded() {
-  //   return this.pubSub.asyncIterableIterator('messageAdded');
-  // }
 }

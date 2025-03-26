@@ -1,9 +1,10 @@
-import { gql } from '@apollo/client';
+import { gql } from '../generated/';
 
-export const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql(`
   mutation Login($input: LoginInput!) {
     login(input: $input) {
       accessToken
+      refreshToken
       user {
         id
         email
@@ -12,4 +13,4 @@ export const LOGIN_MUTATION = gql`
       }
     }
   }
-`;
+`);

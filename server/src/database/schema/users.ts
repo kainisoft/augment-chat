@@ -4,11 +4,7 @@ import { chatMemberTable } from './chat_members';
 import { messageTable } from './messages';
 import { schema } from './root';
 
-export const userStatusEnum = schema.enum('user_status', [
-  'online',
-  'offline',
-  'away',
-]);
+export const userStatusEnum = schema.enum('user_status', ['online', 'offline', 'away']);
 
 export const userTable = schema.table('user', {
   id: uuid('id').primaryKey().defaultRandom(),
