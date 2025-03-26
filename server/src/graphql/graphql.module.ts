@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ChatsModule } from '../chats/chats.module';
 import { HealthResolver } from './health.resolver';
+import { AuthModule } from '@/auth/auth.module';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { HealthResolver } from './health.resolver';
       driver: ApolloDriver,
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
-      include: [ChatsModule],
+      include: [AuthModule, ChatsModule],
       subscriptions: {
         'graphql-ws': {
           path: '/graphql/subscriptions',

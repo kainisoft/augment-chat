@@ -5,7 +5,7 @@ interface User {
   id: string;
   email: string;
   username: string;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
 }
 
 interface AuthState {
@@ -22,10 +22,8 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       isAuthenticated: false,
-      setAuth: (token, user) => 
-        set({ token, user, isAuthenticated: true }),
-      logout: () => 
-        set({ token: null, user: null, isAuthenticated: false }),
+      setAuth: (token, user) => set({ token, user, isAuthenticated: true }),
+      logout: () => set({ token: null, user: null, isAuthenticated: false }),
     }),
     {
       name: 'auth-storage',

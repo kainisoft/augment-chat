@@ -1,28 +1,12 @@
-import { LOGIN_MUTATION } from "@/graphql/mutations/login";
-import { useAuthStore } from "@/stores/auth.store";
-import { useMutation } from "@apollo/client";
-
-interface LoginInput {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  login: {
-    accessToken: string;
-    user: {
-      id: string;
-      email: string;
-      username: string;
-      avatarUrl?: string;
-    };
-  };
-}
+import { LoginMutation, LoginMutationVariables } from '@/graphql/generated/types';
+import { LOGIN_MUTATION } from '@/graphql/mutations/login';
+import { useAuthStore } from '@/stores/auth.store';
+import { useMutation } from '@apollo/client';
 
 export function useAuth() {
   const { setAuth, logout } = useAuthStore();
 
-  const [loginMutation, { loading }] = useMutation<LoginResponse, { input: LoginInput }>(
+  const [loginMutation, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(
     LOGIN_MUTATION
   );
 

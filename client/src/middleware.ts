@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server';
 const publicPaths = ['/login', '/register', '/forgot-password'];
 
 export function middleware(request: NextRequest) {
-  debugger;
+  // Get the current path and token from the request
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('auth-storage');
 
