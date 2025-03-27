@@ -1,18 +1,18 @@
-import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth.store';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export function useAuthCheck() {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated } = useAuthStore();
-  
-  const publicPaths = ['/login', '/register', '/forgot-password'];
+
+  const publicPaths = ['/sign-in', '/sign-up', '/forgot-password'];
   const isPublicPath = publicPaths.includes(pathname);
 
   useEffect(() => {
     if (!isAuthenticated && !isPublicPath) {
-      router.push('/login');
+      router.push('/sign-in');
     }
   }, [isAuthenticated, isPublicPath, router]);
 

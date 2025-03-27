@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // Add paths that don't require authentication
-const publicPaths = ['/login', '/register', '/forgot-password'];
+const publicPaths = ['/sign-in', '/sign-up', '/forgot-password'];
 
 export function middleware(request: NextRequest) {
   // Get the current path and token from the request
@@ -10,8 +10,8 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-storage');
 
   // Check if the path requires authentication
-  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
-  
+  const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
+
   // Redirect authenticated users trying to access public paths
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL('/chat', request.url));
@@ -19,7 +19,7 @@ export function middleware(request: NextRequest) {
 
   // Redirect unauthenticated users trying to access protected paths
   if (!isPublicPath && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
   return NextResponse.next();

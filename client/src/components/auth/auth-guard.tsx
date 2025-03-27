@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth.store';
 
-const publicPaths = ['/login', '/register', '/forgot-password'];
+const publicPaths = ['/sign-in', '/sign-up', '/forgot-password'];
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -13,7 +13,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isAuthenticated && !publicPaths.includes(pathname)) {
-      router.push('/login');
+      router.push('/sign-in');
     } else if (isAuthenticated && publicPaths.includes(pathname)) {
       router.push('/chat');
     }

@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm';
 import { jsonb, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { chatMemberTable } from './chat_members';
-import { messageTable } from './messages';
+import { chatMemberTable } from './chat_member';
+import { messageTable } from './message';
 import { schema } from './root';
 
 export const userStatusEnum = schema.enum('user_status', ['online', 'offline', 'away']);

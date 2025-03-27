@@ -10,19 +10,19 @@ import { useAuthStore } from '@/stores/auth.store';
 import { useMutation } from '@apollo/client';
 
 export function useAuth() {
-  const { setAuth, logout } = useAuthStore();
+  const { setAuth, signOut } = useAuthStore();
 
-  const [signInMutation, { loading: loginLoading }] = useMutation<
+  const [signInMutation, { loading: signInLoading }] = useMutation<
     SingInMutation,
     SingInMutationVariables
   >(SIGNIN_MUTATION);
 
-  const [signUpMutation, { loading: registerLoading }] = useMutation<
+  const [signUpMutation, { loading: signUpLoading }] = useMutation<
     SignUpMutation,
     SignUpMutationVariables
   >(SIGNUP_MUTATION);
 
-  const login = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string) => {
     const { data } = await signInMutation({
       variables: {
         input: {
@@ -38,7 +38,7 @@ export function useAuth() {
     }
   };
 
-  const register = async (email: string, password: string, username: string) => {
+  const signUp = async (email: string, password: string, username: string) => {
     const { data } = await signUpMutation({
       variables: {
         input: {
@@ -56,9 +56,9 @@ export function useAuth() {
   };
 
   return {
-    login,
-    register,
-    logout,
-    isLoading: loginLoading || registerLoading,
+    signIn,
+    signUp,
+    signOut,
+    isLoading: signInLoading || signUpLoading,
   };
 }

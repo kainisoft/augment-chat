@@ -121,6 +121,13 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: string, email: string, username: string, avatarUrl?: string | null } } };
 
+export type RefreshTokensMutationVariables = Exact<{
+  input: RefreshTokenInput;
+}>;
+
+
+export type RefreshTokensMutation = { __typename?: 'Mutation', refreshTokens: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: string, email: string, username: string, avatarUrl?: string | null } } };
+
 
 export const SingInDocument = gql`
     mutation SingIn($input: SignInInput!) {
@@ -202,3 +209,43 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const RefreshTokensDocument = gql`
+    mutation RefreshTokens($input: RefreshTokenInput!) {
+  refreshTokens(input: $input) {
+    accessToken
+    refreshToken
+    user {
+      id
+      email
+      username
+      avatarUrl
+    }
+  }
+}
+    `;
+export type RefreshTokensMutationFn = Apollo.MutationFunction<RefreshTokensMutation, RefreshTokensMutationVariables>;
+
+/**
+ * __useRefreshTokensMutation__
+ *
+ * To run a mutation, you first call `useRefreshTokensMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRefreshTokensMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [refreshTokensMutation, { data, loading, error }] = useRefreshTokensMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRefreshTokensMutation(baseOptions?: Apollo.MutationHookOptions<RefreshTokensMutation, RefreshTokensMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RefreshTokensMutation, RefreshTokensMutationVariables>(RefreshTokensDocument, options);
+      }
+export type RefreshTokensMutationHookResult = ReturnType<typeof useRefreshTokensMutation>;
+export type RefreshTokensMutationResult = Apollo.MutationResult<RefreshTokensMutation>;
+export type RefreshTokensMutationOptions = Apollo.BaseMutationOptions<RefreshTokensMutation, RefreshTokensMutationVariables>;

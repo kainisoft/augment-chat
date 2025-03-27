@@ -4,6 +4,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 import { setContext } from '@apollo/client/link/context';
 import { useAuthStore } from '@/stores/auth.store';
+import { errorLink } from './apollo-links/auth-link';
 
 // Get URLs from environment variables
 const httpUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/graphql';
@@ -50,9 +51,9 @@ const splitLink = typeof window !== 'undefined' && wsLink
         );
       },
       wsLink,
-      from([authLink, httpLink])
+      from([errorLink, authLink, httpLink])
     )
-  : from([authLink, httpLink]);
+  : from([errorLink, authLink, httpLink]);
 
 // Create Apollo Client instance
 export const client = new ApolloClient({

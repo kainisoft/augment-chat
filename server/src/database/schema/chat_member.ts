@@ -1,8 +1,8 @@
 import { relations } from 'drizzle-orm';
 import { primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { chatTable } from './chats';
+import { chatTable } from './chat';
 import { schema } from './root';
-import { userTable } from './users';
+import { userTable } from './user';
 
 export const chatMemberTable = schema.table(
   'chat_member',
