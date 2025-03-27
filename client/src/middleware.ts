@@ -5,11 +5,25 @@ import { NextResponse } from 'next/server';
 const publicPaths = ['/sign-in', '/sign-up', '/forgot-password'];
 
 export function middleware(request: NextRequest) {
-  // Get the current path and token from the request
+  // Get the current path and auth storage from the cookie
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get('auth-storage');
+  
+  // Improved token extraction
+  const getToken = () => {
+    try {
+      const authStorage = request.cookies.get('auth-storage');
 
-  // Check if the path requires authentication
+      if (!authStorage) return null;
+      
+      const parsed = JSON.parse(JSON.parse(decodeURIComponent(authStorage.value))); // TODO implement better solution
+
+      return parsed?.state?.token || null;
+    } catch {
+      return null;
+    }
+  };
+
+  const token = getToken();
   const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
 
   // Redirect authenticated users trying to access public paths

@@ -1,6 +1,9 @@
 'use client';
 
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { ChatSidebar } from '@/components/chat/chat-sidebar';
+import { ChatContent } from '@/components/chat/chat-content';
+import { ChatProvider } from '@/components/providers/chat-provider';
 
 export default function ChatPage() {
   const { isLoading } = useAuthCheck();
@@ -14,9 +17,11 @@ export default function ChatPage() {
   }
 
   return (
-    <div>
-      <h1>Chat Page</h1>
-      {/* Your chat component content */}
-    </div>
+    <ChatProvider>
+      <div className="h-screen flex">
+        <ChatSidebar />
+        <ChatContent />
+      </div>
+    </ChatProvider>
   );
 }

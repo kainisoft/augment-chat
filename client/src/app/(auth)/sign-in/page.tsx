@@ -16,19 +16,52 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+const signInSchema = z.object({
+  email: z.string().email('Please provide a valid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters long'),
+});
+
+type SignInSchema = z.infer<typeof signInSchema>;
 
 export default function SignInPage() {
   const router = useRouter();
   const { signIn, isLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<Partial<SignInSchema>>({});
+
+  const validateForm = (): boolean => {
+    try {
+      signInSchema.parse({ email, password });
+      setErrors({});
+
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formattedErrors = error.errors.reduce(
+          (acc, err) => ({
+            ...acc,
+            [err.path[0]]: err.message,
+          }),
+          {}
+        );
+        setErrors(formattedErrors);
+      }
+      return false;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       await signIn(email, password);
-      // Change redirect from '/sign-in' to '/chat'
       router.push('/chat');
     } catch (err) {
       toast('Authentication failed', {
@@ -54,7 +87,9 @@ export default function SignInPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               required
+              aria-invalid={!!errors.email}
             />
+            {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
@@ -65,7 +100,9 @@ export default function SignInPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
+              aria-invalid={!!errors.password}
             />
+            {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
           </div>
           <div className="text-sm text-right">
             <Link href="/forgot-password" className="text-primary hover:underline">
