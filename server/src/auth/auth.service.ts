@@ -2,8 +2,8 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersRepository } from '../users/users.repository';
-import { LoginInput } from './dto/login.input';
-import { RegisterInput } from './dto/register.input';
+import { SignInInput } from './dto/sign-in.input';
+import { SignUpInput } from './dto/sign-up.input';
 
 @Injectable()
 export class AuthService {
@@ -12,8 +12,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(loginInput: LoginInput) {
-    const user = await this.validateUser(loginInput.email, loginInput.password);
+  async signIn(signInInput: SignInInput) {
+    const user = await this.validateUser(signInInput.email, signInInput.password);
     const [accessToken, refreshToken] = await Promise.all([
       this.createAccessToken(user.id),
       this.createRefreshToken(user.id),
@@ -83,23 +83,23 @@ export class AuthService {
     return user;
   }
 
-  async register(registerInput: RegisterInput) {
+  async register(signUpInput: SignUpInput) {
     // Check if user already exists
-    const existingUser = await this.usersRepository.findByEmail(registerInput.email);
+    const existingUser = await this.usersRepository.findByEmail(signUpInput.email);
 
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(registerInput.password, 10);
+    const hashedPassword = await bcrypt.hash(signUpInput.password, 10);
 
     // Create user
     const user = await this.usersRepository.create({
-      email: registerInput.email,
-      username: registerInput.username,
+      email: signUpInput.email,
+      username: signUpInput.username,
       password: hashedPassword,
-      avatarUrl: registerInput.avatarUrl,
+      avatarUrl: signUpInput.avatarUrl,
     });
 
     // Generate tokens

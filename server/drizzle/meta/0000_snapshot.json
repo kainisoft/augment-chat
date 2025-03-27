@@ -1,11 +1,11 @@
 {
-  "id": "7cf6e406-0507-44ad-b2a5-efd1ec397ec9",
+  "id": "0a5cff10-3ac0-4e50-8277-19c3798c310b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "chat.chat_members": {
-      "name": "chat_members",
+    "chat.chat_member": {
+      "name": "chat_member",
       "schema": "chat",
       "columns": {
         "chat_id": {
@@ -43,10 +43,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "chat_members_chat_id_chats_id_fk": {
-          "name": "chat_members_chat_id_chats_id_fk",
-          "tableFrom": "chat_members",
-          "tableTo": "chats",
+        "chat_member_chat_id_chat_id_fk": {
+          "name": "chat_member_chat_id_chat_id_fk",
+          "tableFrom": "chat_member",
+          "tableTo": "chat",
           "schemaTo": "chat",
           "columnsFrom": [
             "chat_id"
@@ -57,10 +57,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "chat_members_user_id_users_id_fk": {
-          "name": "chat_members_user_id_users_id_fk",
-          "tableFrom": "chat_members",
-          "tableTo": "users",
+        "chat_member_user_id_user_id_fk": {
+          "name": "chat_member_user_id_user_id_fk",
+          "tableFrom": "chat_member",
+          "tableTo": "user",
           "schemaTo": "chat",
           "columnsFrom": [
             "user_id"
@@ -73,8 +73,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "chat_members_chat_id_user_id_pk": {
-          "name": "chat_members_chat_id_user_id_pk",
+        "chat_member_chat_id_user_id_pk": {
+          "name": "chat_member_chat_id_user_id_pk",
           "columns": [
             "chat_id",
             "user_id"
@@ -86,8 +86,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "chat.chats": {
-      "name": "chats",
+    "chat.chat": {
+      "name": "chat",
       "schema": "chat",
       "columns": {
         "id": {
@@ -133,10 +133,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "chats_created_by_users_id_fk": {
-          "name": "chats_created_by_users_id_fk",
-          "tableFrom": "chats",
-          "tableTo": "users",
+        "chat_created_by_user_id_fk": {
+          "name": "chat_created_by_user_id_fk",
+          "tableFrom": "chat",
+          "tableTo": "user",
           "schemaTo": "chat",
           "columnsFrom": [
             "created_by"
@@ -154,8 +154,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "chat.messages": {
-      "name": "messages",
+    "chat.message": {
+      "name": "message",
       "schema": "chat",
       "columns": {
         "id": {
@@ -220,10 +220,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_chat_id_chats_id_fk": {
-          "name": "messages_chat_id_chats_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "chats",
+        "message_chat_id_chat_id_fk": {
+          "name": "message_chat_id_chat_id_fk",
+          "tableFrom": "message",
+          "tableTo": "chat",
           "schemaTo": "chat",
           "columnsFrom": [
             "chat_id"
@@ -234,10 +234,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "messages_user_id_users_id_fk": {
-          "name": "messages_user_id_users_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "users",
+        "message_user_id_user_id_fk": {
+          "name": "message_user_id_user_id_fk",
+          "tableFrom": "message",
+          "tableTo": "user",
           "schemaTo": "chat",
           "columnsFrom": [
             "user_id"
@@ -255,8 +255,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "chat.users": {
-      "name": "users",
+    "chat.user": {
+      "name": "user",
       "schema": "chat",
       "columns": {
         "id": {
@@ -330,15 +330,15 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "user_email_unique": {
+          "name": "user_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"
           ]
         },
-        "users_username_unique": {
-          "name": "users_username_unique",
+        "user_username_unique": {
+          "name": "user_username_unique",
           "nullsNotDistinct": false,
           "columns": [
             "username"
@@ -370,9 +370,7 @@
       ]
     }
   },
-  "schemas": {
-    "chat": "chat"
-  },
+  "schemas": {},
   "sequences": {},
   "roles": {},
   "policies": {},

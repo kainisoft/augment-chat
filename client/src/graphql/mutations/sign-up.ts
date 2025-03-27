@@ -1,8 +1,8 @@
 import { gql } from '../generated/';
 
-export const LOGIN_MUTATION = gql(`
-  mutation Login($input: LoginInput!) {
-    login(input: $input) {
+export const SIGNUP_MUTATION = gql(`
+  mutation SignUp($input: SignUpInput!) {
+    signUp(input: $input) {
       accessToken
       refreshToken
       user {
