@@ -5,6 +5,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { ChatsModule } from '../chats/chats.module';
+import { UsersModule } from '../users/users.module';
 import { HealthResolver } from './health.resolver';
 
 @Module({
@@ -13,7 +14,7 @@ import { HealthResolver } from './health.resolver';
       driver: ApolloDriver,
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
-      include: [AuthModule, ChatsModule],
+      include: [AuthModule, UsersModule, ChatsModule],
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       resolvers: { JSON: GraphQLJSON },

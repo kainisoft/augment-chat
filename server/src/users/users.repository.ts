@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq, ilike, not, or } from 'drizzle-orm';
 import { BaseRepository } from '../common/base.repository';
 import { DATABASE_CONNECTION } from '../database/database.token';
 import type { DrizzleDatabase } from '../database/database.types';
@@ -71,5 +71,20 @@ export class UsersRepository extends BaseRepository<typeof userTable, UserSelect
         },
       },
     });
+  }
+
+  async searchUsers(query: string, excludeUserId: string) {
+    const users = await this.db
+      .select()
+      .from(userTable)
+      .where(
+        and(
+          not(eq(userTable.id, excludeUserId)),
+          or(ilike(userTable.username, `%${query}%`), ilike(userTable.email, `%${query}%`)),
+        ),
+      )
+      .limit(10);
+
+    return users;
   }
 }

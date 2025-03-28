@@ -1,14 +1,5 @@
 CREATE TYPE "chat"."message_type" AS ENUM('text', 'image', 'file');--> statement-breakpoint
 CREATE TYPE "chat"."user_status" AS ENUM('online', 'offline', 'away');--> statement-breakpoint
-CREATE TABLE "chat"."chat_member" (
-	"chat_id" uuid,
-	"user_id" uuid,
-	"role" text DEFAULT 'member',
-	"joined_at" timestamp DEFAULT now(),
-	"last_read" timestamp,
-	CONSTRAINT "chat_member_chat_id_user_id_pk" PRIMARY KEY("chat_id","user_id")
-);
---> statement-breakpoint
 CREATE TABLE "chat"."chat" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text,
@@ -16,6 +7,15 @@ CREATE TABLE "chat"."chat" (
 	"last_message_at" timestamp DEFAULT now(),
 	"created_at" timestamp DEFAULT now(),
 	"created_by" uuid
+);
+--> statement-breakpoint
+CREATE TABLE "chat"."chat_member" (
+	"chat_id" uuid,
+	"user_id" uuid,
+	"role" text DEFAULT 'member',
+	"joined_at" timestamp DEFAULT now(),
+	"last_read" timestamp,
+	CONSTRAINT "chat_member_chat_id_user_id_pk" PRIMARY KEY("chat_id","user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "chat"."message" (
@@ -45,8 +45,10 @@ CREATE TABLE "chat"."user" (
 	CONSTRAINT "user_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
+ALTER TABLE "chat"."chat" ADD CONSTRAINT "chat_created_by_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "chat"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "chat"."chat_member" ADD CONSTRAINT "chat_member_chat_id_chat_id_fk" FOREIGN KEY ("chat_id") REFERENCES "chat"."chat"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "chat"."chat_member" ADD CONSTRAINT "chat_member_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "chat"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "chat"."chat" ADD CONSTRAINT "chat_created_by_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "chat"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "chat"."message" ADD CONSTRAINT "message_chat_id_chat_id_fk" FOREIGN KEY ("chat_id") REFERENCES "chat"."chat"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "chat"."message" ADD CONSTRAINT "message_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "chat"."user"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "chat"."message" ADD CONSTRAINT "message_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "chat"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "idx_user_username_search" ON "chat"."user" USING gin ("username" gin_trgm_ops);--> statement-breakpoint
+CREATE INDEX "idx_user_email_search" ON "chat"."user" USING gin ("email" gin_trgm_ops);

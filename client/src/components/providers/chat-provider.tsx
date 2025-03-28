@@ -1,20 +1,14 @@
 'use client';
 
 import {
-  createContext,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react';
-import { useQuery, useMutation, useSubscription } from '@apollo/client';
-import {
-  GET_CHATS,
   GET_CHAT_MESSAGES,
+  GET_CHATS,
   NEW_MESSAGE_SUBSCRIPTION,
   SEND_MESSAGE,
 } from '@/graphql/chat';
 import type { Chat, Message, MessageConnection } from '@/types/chat';
+import { useMutation, useQuery, useSubscription } from '@apollo/client';
+import { createContext, useCallback, useRef, useState } from 'react';
 
 interface ChatContextType {
   chats: Chat[];
@@ -36,27 +30,23 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const endCursor = useRef<string | null>(null);
-  
   const { data: chatsData, loading: chatsLoading } = useQuery(GET_CHATS);
-  
-  const { loading: messagesLoading, fetchMore } = useQuery(
-    GET_CHAT_MESSAGES,
-    {
-      variables: { 
-        input: {
-          chatId: selectedChat?.id,
-          limit: 50
-        }
+
+  const { loading: messagesLoading, fetchMore } = useQuery(GET_CHAT_MESSAGES, {
+    variables: {
+      input: {
+        chatId: selectedChat?.id,
+        limit: 50,
       },
-      skip: !selectedChat,
-      onCompleted: (data) => {
-        const connection = data.messages as MessageConnection;
-        setMessages(connection.edges.map((edge) => edge.node));
-        setHasMore(connection.pageInfo.hasNextPage);
-        endCursor.current = connection.pageInfo.endCursor;
-      },
-    }
-  );
+    },
+    skip: !selectedChat,
+    onCompleted: (data) => {
+      const connection = data.messages as MessageConnection;
+      setMessages(connection.edges.map((edge) => edge.node));
+      setHasMore(connection.pageInfo.hasNextPage);
+      endCursor.current = connection.pageInfo.endCursor;
+    },
+  });
 
   const [sendMessageMutation] = useMutation(SEND_MESSAGE);
 
@@ -102,16 +92,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           input: {
             chatId: selectedChat.id,
             limit: 50,
-            before: endCursor.current
-          }
+            before: endCursor.current,
+          },
         },
       });
 
       const connection = data.messages as MessageConnection;
-      setMessages((prev) => [
-        ...connection.edges.map((edge) => edge.node),
-        ...prev,
-      ]);
+      setMessages((prev) => [...connection.edges.map((edge) => edge.node), ...prev]);
       setHasMore(connection.pageInfo.hasNextPage);
       endCursor.current = connection.pageInfo.endCursor;
     } finally {

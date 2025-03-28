@@ -21,6 +21,7 @@ type Documents = {
     "\n  mutation CreateChat($input: CreateChatInput!) {\n    createChat(input: $input) {\n      id\n      name\n      isGroup\n      members {\n        userId\n      }\n    }\n  }\n": typeof types.CreateChatDocument,
     "\n  mutation SingIn($input: SignInInput!) {\n    signIn(input: $input) {\n      accessToken\n      refreshToken\n      user {\n        id\n        email\n        username\n        avatarUrl\n      }\n    }\n  }\n": typeof types.SingInDocument,
     "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) {\n      accessToken\n      refreshToken\n      user {\n        id\n        email\n        username\n        avatarUrl\n      }\n    }\n  }\n": typeof types.SignUpDocument,
+    "\n  query SearchUsers($query: String!) {\n    searchUsers(query: $query) {\n      id\n      username\n      avatarUrl\n      status\n    }\n  }\n": typeof types.SearchUsersDocument,
     "\n  mutation RefreshTokens($input: RefreshTokenInput!) {\n    refreshTokens(input: $input) {\n      accessToken\n      refreshToken\n      user {\n        id\n        email\n        username\n        avatarUrl\n      }\n    }\n  }\n": typeof types.RefreshTokensDocument,
 };
 const documents: Documents = {
@@ -31,6 +32,7 @@ const documents: Documents = {
     "\n  mutation CreateChat($input: CreateChatInput!) {\n    createChat(input: $input) {\n      id\n      name\n      isGroup\n      members {\n        userId\n      }\n    }\n  }\n": types.CreateChatDocument,
     "\n  mutation SingIn($input: SignInInput!) {\n    signIn(input: $input) {\n      accessToken\n      refreshToken\n      user {\n        id\n        email\n        username\n        avatarUrl\n      }\n    }\n  }\n": types.SingInDocument,
     "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) {\n      accessToken\n      refreshToken\n      user {\n        id\n        email\n        username\n        avatarUrl\n      }\n    }\n  }\n": types.SignUpDocument,
+    "\n  query SearchUsers($query: String!) {\n    searchUsers(query: $query) {\n      id\n      username\n      avatarUrl\n      status\n    }\n  }\n": types.SearchUsersDocument,
     "\n  mutation RefreshTokens($input: RefreshTokenInput!) {\n    refreshTokens(input: $input) {\n      accessToken\n      refreshToken\n      user {\n        id\n        email\n        username\n        avatarUrl\n      }\n    }\n  }\n": types.RefreshTokensDocument,
 };
 
@@ -76,6 +78,10 @@ export function gql(source: "\n  mutation SingIn($input: SignInInput!) {\n    si
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) {\n      accessToken\n      refreshToken\n      user {\n        id\n        email\n        username\n        avatarUrl\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) {\n      accessToken\n      refreshToken\n      user {\n        id\n        email\n        username\n        avatarUrl\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query SearchUsers($query: String!) {\n    searchUsers(query: $query) {\n      id\n      username\n      avatarUrl\n      status\n    }\n  }\n"): (typeof documents)["\n  query SearchUsers($query: String!) {\n    searchUsers(query: $query) {\n      id\n      username\n      avatarUrl\n      status\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

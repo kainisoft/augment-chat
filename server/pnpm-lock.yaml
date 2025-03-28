@@ -57,7 +57,7 @@ dependencies:
     specifier: 3.0.0
     version: 3.0.0(graphql@16.10.0)
   graphql-type-json:
-    specifier: ^0.3.2
+    specifier: 0.3.2
     version: 0.3.2(graphql@16.10.0)
   reflect-metadata:
     specifier: 0.2.2

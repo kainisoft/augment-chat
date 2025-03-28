@@ -196,7 +196,22 @@ pnpm test:cov      # Coverage report
    - Go to "Connection Details"
    - Copy the connection string
 
-4. Set up your environment variables:
+4. Enable required PostgreSQL extensions:
+   ```sql
+   -- Required for fuzzy text search functionality
+   CREATE EXTENSION IF NOT EXISTS pg_trgm;
+   ```
+   
+   You can enable this extension in several ways:
+   - Using Neon's SQL Editor in the dashboard
+   - Using any PostgreSQL client connected to your database
+   - The extension will be automatically enabled through our migration scripts
+   
+   > **Important**: The `pg_trgm` extension is required for user search functionality. 
+   > Our application uses GIN indexes with trigram operations for efficient username 
+   > and email searches.
+
+5. Set up your environment variables:
    ```bash
    # server/.env
    DATABASE_URL=postgres://[user]:[password]@[hostname]/[database]?sslmode=require
