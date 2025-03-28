@@ -1,11 +1,22 @@
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+  Subscription,
+} from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { ChatsRepository } from './chats.repository';
 import { CreateChatInput } from './dto/create-chat.input';
+import { GetMessagesInput } from './dto/get-messages.input';
 import { SendMessageInput } from './dto/send-message.input';
 import { Chat } from './models/chat.model';
 import { Message } from './models/message.model';
+import { ChatMember } from './models/chat-member.model';
 
 @Resolver(() => Chat)
 export class ChatsResolver {
@@ -18,16 +29,20 @@ export class ChatsResolver {
     return this.chatsRepository.getUserChats(userId);
   }
 
-  @Query(() => [Message])
-  async getMessages(
-    @Args('chatId') chatId: string,
-    @Args('limit') limit: number,
-    @Args('before') before?: string,
+  @ResolveField(() => [Message])
+  async messages(
+    @Parent() chat: Chat,
+    @Args('last', { type: () => Int, nullable: true }) last?: number,
   ) {
+    return this.chatsRepository.getChatMessages(chat.id, last || 50);
+  }
+
+  @Query(() => [Message])
+  async getMessages(@Args('input') input: GetMessagesInput) {
     return this.chatsRepository.getChatMessages(
-      chatId,
-      limit,
-      before ? new Date(before) : undefined,
+      input.chatId,
+      input.limit,
+      input.before ? new Date(input.before) : undefined,
     );
   }
 
@@ -41,6 +56,11 @@ export class ChatsResolver {
     });
 
     return chat;
+  }
+
+  @ResolveField(() => [ChatMember])
+  async members(@Parent() chat: Chat) {
+    return this.chatsRepository.getChatMembers(chat.id);
   }
 
   @Mutation(() => Message)

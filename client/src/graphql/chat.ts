@@ -2,26 +2,16 @@ import { gql } from '@apollo/client';
 
 export const GET_CHATS = gql`
   query GetChats {
-    chats {
+    getChats {
       id
       name
       isGroup
       lastMessageAt
-      members {
-        id
-        user {
-          id
-          username
-          avatarUrl
-          status
-        }
-        role
-      }
       messages(last: 1) {
         id
         content
         createdAt
-        sender {
+        user {
           id
           username
           avatarUrl
@@ -32,36 +22,30 @@ export const GET_CHATS = gql`
 `;
 
 export const GET_CHAT_MESSAGES = gql`
-  query GetChatMessages($chatId: ID!, $cursor: String) {
-    messages(chatId: $chatId, first: 50, before: $cursor) {
-      edges {
-        node {
-          id
-          content
-          createdAt
-          sender {
-            id
-            username
-            avatarUrl
-          }
-        }
-        cursor
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
+  query GetChatMessages($input: GetMessagesInput!) {
+    getMessages(input: $input) {
+      id
+      content
+      type
+      metadata
+      createdAt
+      user {
+        id
+        username
+        avatarUrl
+        status
       }
     }
   }
 `;
 
 export const SEND_MESSAGE = gql`
-  mutation SendMessage($chatId: ID!, $content: String!) {
-    sendMessage(chatId: $chatId, content: $content) {
+  mutation SendMessage($input: SendMessageInput!) {
+    sendMessage(input: $input) {
       id
       content
       createdAt
-      sender {
+      user {
         id
         username
         avatarUrl
@@ -71,12 +55,12 @@ export const SEND_MESSAGE = gql`
 `;
 
 export const NEW_MESSAGE_SUBSCRIPTION = gql`
-  subscription OnNewMessage($chatId: ID!) {
+  subscription OnNewMessage($chatId: String!) {
     messageCreated(chatId: $chatId) {
       id
       content
       createdAt
-      sender {
+      user {
         id
         username
         avatarUrl
@@ -92,14 +76,7 @@ export const CREATE_CHAT = gql`
       name
       isGroup
       members {
-        id
-        user {
-          id
-          username
-          avatarUrl
-          status
-        }
-        role
+        userId
       }
     }
   }

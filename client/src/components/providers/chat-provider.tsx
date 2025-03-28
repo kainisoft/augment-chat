@@ -42,7 +42,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const { loading: messagesLoading, fetchMore } = useQuery(
     GET_CHAT_MESSAGES,
     {
-      variables: { chatId: selectedChat?.id },
+      variables: { 
+        input: {
+          chatId: selectedChat?.id,
+          limit: 50
+        }
+      },
       skip: !selectedChat,
       onCompleted: (data) => {
         const connection = data.messages as MessageConnection;
@@ -88,14 +93,17 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   );
 
   const loadMoreMessages = useCallback(async () => {
-    if (!selectedChat || !hasMore || loadingMore) return;
+    if (!selectedChat || !hasMore || loadingMore || !endCursor.current) return;
 
     setLoadingMore(true);
     try {
       const { data } = await fetchMore({
         variables: {
-          chatId: selectedChat.id,
-          cursor: endCursor.current,
+          input: {
+            chatId: selectedChat.id,
+            limit: 50,
+            before: endCursor.current
+          }
         },
       });
 

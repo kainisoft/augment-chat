@@ -130,4 +130,13 @@ export class ChatsRepository extends BaseRepository<typeof chatTable, ChatSelect
         .where(and(eq(chatMemberTable.chatId, chatId), eq(chatMemberTable.userId, userId)));
     });
   }
+
+  async getChatMembers(chatId: string) {
+    return await this.db.query.chatMemberTable.findMany({
+      where: eq(chatMemberTable.chatId, chatId),
+      with: {
+        user: true,
+      },
+    });
+  }
 }
