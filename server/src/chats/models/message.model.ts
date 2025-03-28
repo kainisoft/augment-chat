@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { User } from '../../users/models/user.model';
+import GraphQLJSON from 'graphql-type-json';
 
 export enum MessageType {
   TEXT = 'text',
@@ -17,10 +18,16 @@ export class Message {
   id: string;
 
   @Field(() => String)
+  chatId: string;
+
+  @Field(() => String)
   content: string;
 
   @Field(() => MessageType)
   type: MessageType;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  metadata?: Record<string, any>;
 
   @Field(() => User)
   user: User;

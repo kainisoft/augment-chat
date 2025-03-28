@@ -38,6 +38,7 @@
     "drizzle-orm": "0.41.0",
     "graphql": "16.10.0",
     "graphql-subscriptions": "3.0.0",
+    "graphql-type-json": "0.3.2",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.1"
   },

@@ -1,61 +1,128 @@
 'use client';
 
-import { createContext, useState, useCallback } from 'react';
+import {
+  createContext,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { useQuery, useMutation, useSubscription } from '@apollo/client';
-import { GET_CHATS, NEW_MESSAGE_SUBSCRIPTION, SEND_MESSAGE } from '@/graphql/chat';
-import type { Chat, Message } from '@/types/chat';
+import {
+  GET_CHATS,
+  GET_CHAT_MESSAGES,
+  NEW_MESSAGE_SUBSCRIPTION,
+  SEND_MESSAGE,
+} from '@/graphql/chat';
+import type { Chat, Message, MessageConnection } from '@/types/chat';
 
 interface ChatContextType {
   chats: Chat[];
   selectedChat: Chat | null;
   messages: Message[];
   loading: boolean;
+  loadingMore: boolean;
+  hasMore: boolean;
   selectChat: (chat: Chat) => void;
   sendMessage: (content: string) => Promise<void>;
+  loadMoreMessages: () => Promise<void>;
 }
 
 export const ChatContext = createContext<ChatContextType | null>(null);
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const endCursor = useRef<string | null>(null);
   
-  const { data, loading } = useQuery(GET_CHATS);
+  const { data: chatsData, loading: chatsLoading } = useQuery(GET_CHATS);
+  
+  const { loading: messagesLoading, fetchMore } = useQuery(
+    GET_CHAT_MESSAGES,
+    {
+      variables: { chatId: selectedChat?.id },
+      skip: !selectedChat,
+      onCompleted: (data) => {
+        const connection = data.messages as MessageConnection;
+        setMessages(connection.edges.map((edge) => edge.node));
+        setHasMore(connection.pageInfo.hasNextPage);
+        endCursor.current = connection.pageInfo.endCursor;
+      },
+    }
+  );
+
   const [sendMessageMutation] = useMutation(SEND_MESSAGE);
 
   useSubscription(NEW_MESSAGE_SUBSCRIPTION, {
     variables: { chatId: selectedChat?.id },
+    skip: !selectedChat,
     onData: ({ data }) => {
-      // Handle new message
+      const newMessage = data.data.messageCreated;
+      setMessages((prev) => [...prev, newMessage]);
     },
   });
 
   const selectChat = useCallback((chat: Chat) => {
     setSelectedChat(chat);
+    setMessages([]);
+    setHasMore(false);
+    endCursor.current = null;
   }, []);
 
   const sendMessage = useCallback(
     async (content: string) => {
       if (!selectedChat) return;
 
-      await sendMessageMutation({
+      const { data } = await sendMessageMutation({
         variables: {
           chatId: selectedChat.id,
           content,
         },
       });
+
+      setMessages((prev) => [...prev, data.sendMessage]);
     },
     [selectedChat, sendMessageMutation]
   );
 
+  const loadMoreMessages = useCallback(async () => {
+    if (!selectedChat || !hasMore || loadingMore) return;
+
+    setLoadingMore(true);
+    try {
+      const { data } = await fetchMore({
+        variables: {
+          chatId: selectedChat.id,
+          cursor: endCursor.current,
+        },
+      });
+
+      const connection = data.messages as MessageConnection;
+      setMessages((prev) => [
+        ...connection.edges.map((edge) => edge.node),
+        ...prev,
+      ]);
+      setHasMore(connection.pageInfo.hasNextPage);
+      endCursor.current = connection.pageInfo.endCursor;
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [selectedChat, hasMore, loadingMore, fetchMore]);
+
   return (
     <ChatContext.Provider
       value={{
-        chats: data?.chats ?? [],
+        chats: chatsData?.chats ?? [],
         selectedChat,
-        messages: selectedChat?.messages ?? [],
-        loading,
+        messages,
+        loading: chatsLoading || messagesLoading,
+        loadingMore,
+        hasMore,
         selectChat,
         sendMessage,
+        loadMoreMessages,
       }}
     >
       {children}

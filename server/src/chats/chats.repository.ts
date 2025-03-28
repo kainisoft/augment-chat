@@ -1,21 +1,38 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { eq, and, desc } from 'drizzle-orm';
-import { chatMemberTable, chatTable, messageTable } from '@/database/schema';
 import { BaseRepository } from '@/common/base.repository';
-import { DrizzleDatabase } from '@/database/database.types';
 import { DATABASE_CONNECTION } from '@/database/database.token';
+import { DrizzleDatabase } from '@/database/database.types';
+import { chatMemberTable, chatTable, messageTable } from '@/database/schema';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, desc, eq, sql } from 'drizzle-orm';
 
 export type ChatSelect = typeof chatTable.$inferSelect;
 export type ChatInsert = typeof chatTable.$inferInsert;
 
 @Injectable()
-export class ChatsRepository extends BaseRepository<
-  typeof chatTable,
-  ChatSelect,
-  ChatInsert
-> {
+export class ChatsRepository extends BaseRepository<typeof chatTable, ChatSelect, ChatInsert> {
   constructor(@Inject(DATABASE_CONNECTION) db: DrizzleDatabase) {
     super(db, chatTable);
+  }
+
+  async getUserChats(userId: string) {
+    return await this.db.query.chatTable.findMany({
+      where: eq(chatMemberTable.userId, userId),
+      with: {
+        members: {
+          with: {
+            user: true,
+          },
+        },
+        messages: {
+          limit: 1,
+          orderBy: desc(messageTable.createdAt),
+          with: {
+            user: true,
+          },
+        },
+      },
+      orderBy: desc(chatTable.lastMessageAt),
+    });
   }
 
   async createChat(data: {
@@ -24,7 +41,7 @@ export class ChatsRepository extends BaseRepository<
     createdBy: string;
     memberIds: string[];
   }) {
-    const chat = await this.db.transaction(async (tx) => {
+    await this.db.transaction(async (tx) => {
       const [newChat] = await tx
         .insert(chatTable)
         .values({
@@ -45,7 +62,7 @@ export class ChatsRepository extends BaseRepository<
       return newChat;
     });
 
-    return chat;
+    return this.getUserChats(data.createdBy);
   }
 
   async getChatMessages(chatId: string, limit = 50, before?: Date) {
@@ -55,7 +72,7 @@ export class ChatsRepository extends BaseRepository<
       .where(
         and(
           eq(messageTable.chatId, chatId),
-          before ? desc(messageTable.createdAt) : undefined,
+          before ? sql`${messageTable.createdAt} < ${before}` : undefined,
         ),
       )
       .limit(limit)
@@ -74,7 +91,10 @@ export class ChatsRepository extends BaseRepository<
     const [message] = await this.db.transaction(async (tx) => {
       const [newMessage] = await tx
         .insert(messageTable)
-        .values(data)
+        .values({
+          ...data,
+          readBy: [data.userId],
+        })
         .returning();
 
       await tx
@@ -82,7 +102,12 @@ export class ChatsRepository extends BaseRepository<
         .set({ lastMessageAt: new Date() })
         .where(eq(chatTable.id, data.chatId));
 
-      return [newMessage];
+      return this.db.query.messageTable.findMany({
+        where: eq(messageTable.id, newMessage.id),
+        with: {
+          user: true,
+        },
+      });
     });
 
     return message;
@@ -91,14 +116,18 @@ export class ChatsRepository extends BaseRepository<
   async markMessagesAsRead(chatId: string, userId: string) {
     await this.db.transaction(async (tx) => {
       await tx
+        .update(messageTable)
+        .set({
+          readBy: sql`array_append(${messageTable.readBy}, ${userId})`,
+        })
+        .where(
+          and(eq(messageTable.chatId, chatId), sql`NOT (${userId} = ANY(${messageTable.readBy}))`),
+        );
+
+      await tx
         .update(chatMemberTable)
         .set({ lastRead: new Date() })
-        .where(
-          and(
-            eq(chatMemberTable.chatId, chatId),
-            eq(chatMemberTable.userId, userId),
-          ),
-        );
+        .where(and(eq(chatMemberTable.chatId, chatId), eq(chatMemberTable.userId, userId)));
     });
   }
 }
