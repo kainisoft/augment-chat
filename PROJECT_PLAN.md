@@ -4,6 +4,7 @@ This is the main dashboard for the Chat Application project. The plan has been o
 
 ## Project Overview
 - [Project Overview](PROJECT_OVERVIEW.md) - Project description, technology stack, and high-level architecture
+- [Testing Plan](TESTING_PLAN.md) - Comprehensive testing strategy using NestJS testing tools
 
 ## Server-Side Development
 - [Server Development Overview](SERVER_PLAN.md) - General server-side development phases
@@ -40,6 +41,7 @@ This is the main dashboard for the Chat Application project. The plan has been o
 ### Infrastructure
 - [x] Phase 1, Step 1: Create Docker Compose configuration for local development
 - [x] Phase 1, Step 2: Set up service-specific Dockerfiles
+- [x] Phase 1, Step 3: Configure ports 4000+ for all microservices
 
 ## Next Steps
 1. Initialize the Next.js web client project
@@ -52,3 +54,4 @@ This is the main dashboard for the Chat Application project. The plan has been o
 - Redis will be implemented as a custom Redis Cluster on EC2 instances in production
 - All Redis communication will use private IP addresses for security
 - Local development will simulate the cluster setup with Docker containers
+- Microservices will use port 4000 and higher (API Gateway: 4000, Auth: 4001, User: 4002, Chat: 4003, Notification: 4004)
