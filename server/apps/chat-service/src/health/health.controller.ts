@@ -1,5 +1,5 @@
 import { Controller, Injectable } from '@nestjs/common';
-import { HealthController as BaseHealthController } from '@app/common';
+import { BaseHealthController } from '@app/common';
 
 /**
  * Service to check chat service dependencies

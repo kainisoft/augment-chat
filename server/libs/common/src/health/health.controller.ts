@@ -31,7 +31,7 @@ export interface HealthCheckResult {
 }
 
 @Controller('health')
-export class HealthController {
+export class BaseHealthController {
   private readonly startTime: number;
   private readonly version: string;
 
