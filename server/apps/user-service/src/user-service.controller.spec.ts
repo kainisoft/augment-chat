@@ -3,20 +3,41 @@ import { UserServiceController } from './user-service.controller';
 import { UserServiceService } from './user-service.service';
 
 describe('UserServiceController', () => {
-  let userServiceController: UserServiceController;
+  let controller: UserServiceController;
+  let service: UserServiceService;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [UserServiceController],
-      providers: [UserServiceService],
+      providers: [
+        {
+          provide: UserServiceService,
+          useValue: {
+            getHello: jest.fn().mockReturnValue('Hello World!'),
+          },
+        },
+      ],
     }).compile();
 
-    userServiceController = app.get<UserServiceController>(UserServiceController);
+    controller = module.get<UserServiceController>(UserServiceController);
+    service = module.get<UserServiceService>(UserServiceService);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(userServiceController.getHello()).toBe('Hello World!');
-    });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
+
+  describe('getHello', () => {
+    it('should return the string from the service', () => {
+      // Arrange
+      const expectedResult = 'Hello World!';
+      jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
+
+      // Act
+      const result = controller.getHello();
+
+      // Assert
+      expect(result).toBe(expectedResult);
+      expect(service.getHello).toHaveBeenCalled();
+    });
 });

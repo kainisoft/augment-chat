@@ -3,20 +3,42 @@ import { AuthServiceController } from './auth-service.controller';
 import { AuthServiceService } from './auth-service.service';
 
 describe('AuthServiceController', () => {
-  let authServiceController: AuthServiceController;
+  let controller: AuthServiceController;
+  let service: AuthServiceService;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthServiceController],
-      providers: [AuthServiceService],
+      providers: [
+        {
+          provide: AuthServiceService,
+          useValue: {
+            getHello: jest.fn().mockReturnValue('Hello World!'),
+          },
+        },
+      ],
     }).compile();
 
-    authServiceController = app.get<AuthServiceController>(AuthServiceController);
+    controller = module.get<AuthServiceController>(AuthServiceController);
+    service = module.get<AuthServiceService>(AuthServiceService);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(authServiceController.getHello()).toBe('Hello World!');
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  describe('getHello', () => {
+    it('should return the string from the service', () => {
+      // Arrange
+      const expectedResult = 'Hello World!';
+      jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
+
+      // Act
+      const result = controller.getHello();
+
+      // Assert
+      expect(result).toBe(expectedResult);
+      expect(service.getHello).toHaveBeenCalled();
     });
   });
 });

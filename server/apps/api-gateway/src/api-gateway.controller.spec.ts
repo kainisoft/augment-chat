@@ -3,20 +3,55 @@ import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 
 describe('ApiGatewayController', () => {
-  let apiGatewayController: ApiGatewayController;
+  let controller: ApiGatewayController;
+  let service: ApiGatewayService;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [ApiGatewayController],
-      providers: [ApiGatewayService],
+      providers: [
+        {
+          provide: ApiGatewayService,
+          useValue: {
+            getHello: jest.fn().mockReturnValue('Hello World!'),
+          },
+        },
+      ],
     }).compile();
 
-    apiGatewayController = app.get<ApiGatewayController>(ApiGatewayController);
+    controller = module.get<ApiGatewayController>(ApiGatewayController);
+    service = module.get<ApiGatewayService>(ApiGatewayService);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(apiGatewayController.getHello()).toBe('Hello World!');
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  describe('getHello', () => {
+    it('should return the string from the service', () => {
+      // Arrange
+      const expectedResult = 'Hello World!';
+      jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
+
+      // Act
+      const result = controller.getHello();
+
+      // Assert
+      expect(result).toBe(expectedResult);
+      expect(service.getHello).toHaveBeenCalled();
+    });
+
+    it('should handle different return values from the service', () => {
+      // Arrange
+      const expectedResult = 'Different greeting';
+      jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
+
+      // Act
+      const result = controller.getHello();
+
+      // Assert
+      expect(result).toBe(expectedResult);
+      expect(service.getHello).toHaveBeenCalled();
     });
   });
 });

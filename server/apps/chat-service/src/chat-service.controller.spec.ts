@@ -3,20 +3,42 @@ import { ChatServiceController } from './chat-service.controller';
 import { ChatServiceService } from './chat-service.service';
 
 describe('ChatServiceController', () => {
-  let chatServiceController: ChatServiceController;
+  let controller: ChatServiceController;
+  let service: ChatServiceService;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [ChatServiceController],
-      providers: [ChatServiceService],
+      providers: [
+        {
+          provide: ChatServiceService,
+          useValue: {
+            getHello: jest.fn().mockReturnValue('Hello World!'),
+          },
+        },
+      ],
     }).compile();
 
-    chatServiceController = app.get<ChatServiceController>(ChatServiceController);
+    controller = module.get<ChatServiceController>(ChatServiceController);
+    service = module.get<ChatServiceService>(ChatServiceService);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(chatServiceController.getHello()).toBe('Hello World!');
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  describe('getHello', () => {
+    it('should return the string from the service', () => {
+      // Arrange
+      const expectedResult = 'Hello World!';
+      jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
+
+      // Act
+      const result = controller.getHello();
+
+      // Assert
+      expect(result).toBe(expectedResult);
+      expect(service.getHello).toHaveBeenCalled();
     });
   });
 });
