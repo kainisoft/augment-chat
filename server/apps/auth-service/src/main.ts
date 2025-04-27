@@ -7,6 +7,7 @@ async function bootstrap() {
     AuthServiceModule,
     new FastifyAdapter()
   );
-  await app.listen(process.env.PORT ?? 3002, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 4001, '0.0.0.0');
+  console.log(`Auth Service is running on: ${await app.getUrl()}`);
 }
-bootstrap();
+bootstrap().catch(err => console.error('Error starting Auth Service:', err));

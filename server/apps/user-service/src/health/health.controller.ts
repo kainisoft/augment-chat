@@ -41,7 +41,7 @@ export class UserServiceHealthService {
 }
 
 @Controller('health')
-export class HealthController extends BaseHealthController {
+export class UserServiceHealthController extends BaseHealthController {
   constructor(private readonly healthService: UserServiceHealthService) {
     super();
   }

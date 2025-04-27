@@ -7,9 +7,9 @@
   - Use `pnpm` for package management
   - Use NestJS CLI commands for project generation
   - Configure for strict package versioning
-- [ ] 2. Set up Docker configuration for local development
-- [ ] 3. Configure Kafka for local development
-- [ ] 4. Set up PostgreSQL and MongoDB with Docker Compose
+- [x] 2. Set up Docker configuration for local development
+- [x] 3. Configure Kafka for local development
+- [x] 4. Set up PostgreSQL and MongoDB with Docker Compose
 
 ### Phase 2: Core Server Services
 - [ ] 1. Create shared libraries for common code
@@ -34,26 +34,26 @@
 
 ## Microservices Breakdown
 
-### API Gateway
+### API Gateway (Port 4000)
 - [ ] GraphQL schema stitching/federation
 - [ ] Authentication middleware
 - [ ] Request routing
 - [ ] Rate limiting
 
-### Authentication Service
+### Authentication Service (Port 4001)
 - [ ] User registration
 - [ ] Login/logout
 - [ ] JWT token management
 - [ ] Password reset
 - [ ] OAuth integration (optional)
 
-### User Service
+### User Service (Port 4002)
 - [ ] User profiles
 - [ ] User relationships (friends/contacts)
 - [ ] User settings
 - [ ] User search
 
-### Chat Service
+### Chat Service (Port 4003)
 - [ ] Private messaging
 - [ ] Group chats
 - [ ] Message history
@@ -61,7 +61,7 @@
 - [ ] Typing indicators
 - [ ] File attachments
 
-### Notification Service
+### Notification Service (Port 4004)
 - [ ] Real-time notifications
 - [ ] Email notifications (optional)
 - [ ] Push notifications (optional)
@@ -69,12 +69,12 @@
 ## Database Schema (High-Level)
 
 ### PostgreSQL
-- [ ] Users table
-- [ ] Authentication table
-- [ ] Relationships table
-- [ ] User settings table
+- [x] Users table
+- [x] Authentication table (refresh_tokens)
+- [x] Relationships table
+- [x] User settings table
 
 ### MongoDB
-- [ ] Chat messages collection
-- [ ] Group chats collection
-- [ ] Attachments metadata collection
+- [x] Chat messages collection
+- [x] Group chats collection (conversations)
+- [x] Attachments metadata collection

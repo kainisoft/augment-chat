@@ -45,7 +45,7 @@ export class ApiGatewayHealthService {
 }
 
 @Controller('health')
-export class HealthController extends BaseHealthController {
+export class ApiGatewayHealthController extends BaseHealthController {
   constructor(private readonly healthService: ApiGatewayHealthService) {
     super();
   }

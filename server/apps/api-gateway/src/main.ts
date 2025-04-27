@@ -7,6 +7,7 @@ async function bootstrap() {
     ApiGatewayModule,
     new FastifyAdapter()
   );
-  await app.listen(process.env.PORT ?? 3001, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 4000, '0.0.0.0');
+  console.log(`API Gateway is running on: ${await app.getUrl()}`);
 }
-bootstrap();
+bootstrap().catch(err => console.error('Error starting API Gateway:', err));

@@ -7,6 +7,7 @@ async function bootstrap() {
     UserServiceModule,
     new FastifyAdapter()
   );
-  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 4002, '0.0.0.0');
+  console.log(`User service is running on: ${await app.getUrl()}`);
 }
-bootstrap();
+bootstrap().catch(err => console.error('Error starting user service:', err));

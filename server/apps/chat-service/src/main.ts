@@ -7,6 +7,7 @@ async function bootstrap() {
     ChatServiceModule,
     new FastifyAdapter()
   );
-  await app.listen(process.env.PORT ?? 3003, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 4003, '0.0.0.0');
+  console.log(`Chat Service is running on: ${await app.getUrl()}`);
 }
-bootstrap();
+bootstrap().catch(err => console.error('Error starting Chat Service:', err));

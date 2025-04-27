@@ -7,6 +7,7 @@ async function bootstrap() {
     NotificationServiceModule,
     new FastifyAdapter()
   );
-  await app.listen(process.env.PORT ?? 3004, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 4004, '0.0.0.0');
+  console.log(`Notification Service is running on: ${await app.getUrl()}`);
 }
-bootstrap();
+bootstrap().catch(err => console.error('Error starting Notification Service:', err));
