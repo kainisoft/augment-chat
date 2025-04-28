@@ -170,16 +170,96 @@ Then start services by profile:
 docker-compose --profile auth up
 ```
 
-### Optimize Nodemon Configuration
+### Implement NestJS Hot Module Replacement (HMR)
 
-Create a custom nodemon.json for faster reloading:
+NestJS provides built-in Hot Module Replacement using webpack, which is more efficient than nodemon for development:
+
+1. Create a webpack-hmr.config.js file in your server directory:
+
+```javascript
+// webpack-hmr.config.js
+const nodeExternals = require('webpack-node-externals');
+const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
+
+module.exports = function (options, webpack) {
+  return {
+    ...options,
+    entry: ['webpack/hot/poll?100', options.entry],
+    externals: [
+      nodeExternals({
+        allowlist: ['webpack/hot/poll?100'],
+      }),
+    ],
+    plugins: [
+      ...options.plugins,
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.WatchIgnorePlugin({
+        paths: [/\.js$/, /\.d\.ts$/],
+      }),
+      new RunScriptWebpackPlugin({
+        name: options.output.filename,
+        autoRestart: true,
+      }),
+    ],
+  };
+};
+```
+
+2. Install required dependencies:
+
+```bash
+pnpm add -D webpack-node-externals run-script-webpack-plugin
+```
+
+3. Update your main.ts files to support HMR:
+
+```typescript
+// main.ts
+import { bootstrap } from '@app/common';
+import { AuthServiceModule } from './auth-service.module';
+
+declare const module: any;
+
+async function startApplication() {
+  try {
+    const app = await bootstrap(AuthServiceModule, {
+      port: 4001,
+      serviceName: 'Auth Service',
+    });
+
+    // Enable HMR
+    if (module.hot) {
+      module.hot.accept();
+      module.hot.dispose(() => app.close());
+    }
+  } catch (error) {
+    console.error('Error starting Auth Service:', error);
+    process.exit(1);
+  }
+}
+
+void startApplication();
+```
+
+4. Update your nest-cli.json to use the webpack HMR config:
 
 ```json
 {
-  "watch": ["apps/auth-service/src", "libs"],
-  "ext": "ts",
-  "ignore": ["**/*.spec.ts"],
-  "exec": "nest start auth-service --watch"
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps",
+  "compilerOptions": {
+    "webpack": true,
+    "webpackConfigPath": "webpack-hmr.config.js"
+  }
+}
+```
+
+5. Update your package.json scripts:
+
+```json
+"scripts": {
+  "start:dev": "nest start --watch",
+  "start:dev:hmr": "nest build --webpack --webpackPath webpack-hmr.config.js --watch"
 }
 ```
 
@@ -264,7 +344,7 @@ declare const module: any;
 
 async function bootstrap() {
   // ... app initialization
-  
+
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());

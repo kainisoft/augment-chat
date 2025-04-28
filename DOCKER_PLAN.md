@@ -402,7 +402,10 @@ CMD ["pnpm", "start"]
 - [ ] Enhance service startup
   - [ ] Implement conditional service dependencies
   - [ ] Create service profiles for different development scenarios
-  - [ ] Optimize nodemon configuration for faster reloading
+  - [ ] Implement NestJS Hot Module Replacement (HMR)
+    - [ ] Configure webpack-hmr.config.js for optimal HMR
+    - [ ] Update main.ts files to support HMR
+    - [ ] Configure Docker volumes for efficient file watching
 - [ ] Resource optimization
   - [ ] Configure appropriate resource limits for development
   - [ ] Implement service prioritization

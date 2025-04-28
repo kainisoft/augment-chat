@@ -23,5 +23,5 @@ COPY libs ./libs
 # Expose port
 EXPOSE 4001
 
-# Use nodemon with optimized configuration for faster reloading
-CMD ["pnpm", "run", "start:dev", "auth-service"]
+# Start the application with Hot Module Replacement
+CMD ["pnpm", "run", "start:dev:hmr", "auth-service"]
