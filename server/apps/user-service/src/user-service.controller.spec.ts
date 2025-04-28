@@ -40,4 +40,5 @@ describe('UserServiceController', () => {
       expect(result).toBe(expectedResult);
       expect(service.getHello).toHaveBeenCalled();
     });
+  });
 });

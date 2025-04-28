@@ -1,13 +1,17 @@
-import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { bootstrap } from '@app/common';
 import { AuthServiceModule } from './auth-service.module';
 
-async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AuthServiceModule,
-    new FastifyAdapter()
-  );
-  await app.listen(process.env.PORT ?? 4001, '0.0.0.0');
-  console.log(`Auth Service is running on: ${await app.getUrl()}`);
+async function startApplication() {
+  try {
+    await bootstrap(AuthServiceModule, {
+      port: 4001,
+      serviceName: 'Auth Service',
+    });
+  } catch (error) {
+    console.error('Error starting Auth Service:', error);
+    process.exit(1);
+  }
 }
-bootstrap().catch(err => console.error('Error starting Auth Service:', err));
+
+// Use void to explicitly mark the promise as intentionally not awaited
+void startApplication();

@@ -28,10 +28,12 @@ export class ApiGatewayHealthService {
         },
       };
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      const errorStack = error instanceof Error && process.env.NODE_ENV !== 'production'
-        ? error.stack
-        : undefined;
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack =
+        error instanceof Error && process.env.NODE_ENV !== 'production'
+          ? error.stack
+          : undefined;
 
       return {
         status: 'error',

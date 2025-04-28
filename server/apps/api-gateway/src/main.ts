@@ -1,13 +1,17 @@
-import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { bootstrap } from '@app/common';
 import { ApiGatewayModule } from './api-gateway.module';
 
-async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    ApiGatewayModule,
-    new FastifyAdapter()
-  );
-  await app.listen(process.env.PORT ?? 4000, '0.0.0.0');
-  console.log(`API Gateway is running on: ${await app.getUrl()}`);
+async function startApplication() {
+  try {
+    await bootstrap(ApiGatewayModule, {
+      port: 4000,
+      serviceName: 'API Gateway',
+    });
+  } catch (error) {
+    console.error('Error starting API Gateway:', error);
+    process.exit(1);
+  }
 }
-bootstrap().catch(err => console.error('Error starting API Gateway:', err));
+
+// Use void to explicitly mark the promise as intentionally not awaited
+void startApplication();
