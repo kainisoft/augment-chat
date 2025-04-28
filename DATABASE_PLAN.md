@@ -5,12 +5,27 @@ This document outlines the database architecture for the chat application, inclu
 
 ## Database Technologies
 
-### PostgreSQL
+### PostgreSQL with Drizzle ORM
 Used for structured data with relationships:
 - User accounts and profiles
 - Authentication data
 - User relationships
 - User settings and preferences
+
+#### Single Schema Approach
+We'll use a single PostgreSQL schema named `chat_app` for all tables in the database. This approach offers:
+- **Simplicity**: Easier to understand and maintain
+- **Query Simplicity**: No need to specify schema names in queries or handle cross-schema references
+- **Unified Structure**: All tables organized under one namespace
+
+#### Drizzle ORM Benefits
+- **Type Safety**: Full TypeScript support with type inference for database schema
+- **SQL-like Syntax**: Intuitive query API that closely resembles SQL
+- **Relational Queries**: Powerful relational query builder for nested data fetching
+- **Zero Dependencies**: Lightweight with no external dependencies (only ~31kb)
+- **Performance**: Optimized for serverless environments with minimal overhead
+- **Migrations**: Automatic SQL migration generation
+- **NestJS Integration**: Seamless integration with NestJS through custom modules
 
 ### MongoDB
 Used for unstructured and high-volume data:
@@ -165,10 +180,12 @@ Used for caching and ephemeral data:
 
 ## Implementation Tasks
 
-### PostgreSQL Setup
+### PostgreSQL Setup with Drizzle ORM
 - [ ] Create database initialization scripts
-- [ ] Set up migrations system
-- [ ] Implement entity models in NestJS
+- [ ] Set up Drizzle ORM schema definitions
+- [ ] Configure Drizzle migrations system
+- [ ] Implement type-safe queries with Drizzle
+- [ ] Set up NestJS integration with Drizzle ORM
 - [ ] Configure connection pooling
 - [ ] Set up indexes for performance
 - [ ] Implement data validation
@@ -186,6 +203,92 @@ Used for caching and ephemeral data:
 - [ ] Set up key expiration policies
 - [ ] Implement caching strategies
 - [ ] Configure persistence options
+
+## Drizzle ORM Implementation
+
+### Schema Definition
+Drizzle ORM allows defining database schema in TypeScript, using a single PostgreSQL schema for all tables:
+
+```typescript
+// Example schema definition for Users table with a single PostgreSQL schema
+import { pgTable, pgSchema, uuid, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
+
+// Define a single PostgreSQL schema for all tables
+const chatAppSchema = pgSchema('chat_app');
+
+// Tables in the 'chat_app' schema
+export const users = chatAppSchema.table('users', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  username: varchar('username', { length: 50 }).notNull().unique(),
+  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  lastLoginAt: timestamp('last_login_at'),
+  isActive: boolean('is_active').notNull().default(true),
+  isVerified: boolean('is_verified').notNull().default(false),
+});
+
+export const profiles = chatAppSchema.table('profiles', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  displayName: varchar('display_name', { length: 100 }),
+  bio: varchar('bio', { length: 500 }),
+  avatarUrl: varchar('avatar_url', { length: 255 }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+```
+
+### NestJS Integration
+Integration with NestJS will be done using a custom module:
+
+```typescript
+// Example NestJS module for Drizzle ORM
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from '../db/schema';
+
+@Module({
+  imports: [ConfigModule],
+  providers: [
+    {
+      provide: 'DATABASE_CONNECTION',
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const connectionString = configService.get<string>('DATABASE_URL');
+        const client = postgres(connectionString);
+        return drizzle(client, { schema });
+      },
+    },
+  ],
+  exports: ['DATABASE_CONNECTION'],
+})
+export class DrizzleModule {}
+```
+
+### Query Examples
+Drizzle provides both SQL-like and relational query APIs:
+
+```typescript
+// SQL-like query example
+const users = await db
+  .select()
+  .from(schema.users)
+  .where(eq(schema.users.email, 'user@example.com'));
+
+// Relational query example
+const usersWithProfiles = await db.query.users.findMany({
+  with: {
+    profile: true,
+    relationships: {
+      where: eq(schema.relationships.status, 'accepted'),
+    },
+  },
+});
+```
 
 ## Database Security
 - [ ] Implement row-level security in PostgreSQL

@@ -29,6 +29,7 @@ A real-time chat application with microservice architecture, deployed on AWS.
 
 ### Databases
 - **PostgreSQL**: For structured data (users, authentication, relationships)
+  - **ORM**: Drizzle ORM for type-safe database access and schema management
 - **MongoDB**: For chat messages and unstructured data
 - **Redis Cluster**: For caching, session management, and real-time features
   - Custom implementation on EC2 instances in production
