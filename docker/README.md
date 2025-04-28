@@ -82,11 +82,69 @@ docker-compose down
 docker-compose down -v
 ```
 
+#### Development Scripts
+
+We provide several development scripts to make working with Docker easier:
+
+1. **General Development Script** (dev.sh):
+
+```bash
+# Start all infrastructure services (PostgreSQL, MongoDB, Kafka, Redis)
+./docker/scripts/dev.sh infra
+
+# Start a specific service with its dependencies
+./docker/scripts/dev.sh auth
+
+# Start all services
+./docker/scripts/dev.sh all
+
+# View logs for a specific service
+./docker/scripts/dev.sh logs auth-service
+
+# Stop all services
+./docker/scripts/dev.sh down
+
+# Stop all services and remove volumes
+./docker/scripts/dev.sh clean
+```
+
+2. **Database Migration Script** (db-migrate.sh):
+
+```bash
+# Run migrations for a specific service
+./docker/scripts/db-migrate.sh up auth
+
+# Rollback migrations for a specific service
+./docker/scripts/db-migrate.sh down user
+
+# Create a new migration for a specific service
+./docker/scripts/db-migrate.sh create auth CreateUsersTable
+
+# Check migration status for a specific service
+./docker/scripts/db-migrate.sh status auth
+
+# Run migrations for all services
+./docker/scripts/db-migrate.sh up all
+```
+
+3. **Database Seeding Script** (db-seed.sh):
+
+```bash
+# Seed database for a specific service
+./docker/scripts/db-seed.sh run auth
+
+# Clear seeded data for a specific service
+./docker/scripts/db-seed.sh clear user
+
+# Seed databases for all services
+./docker/scripts/db-seed.sh run all
+```
+
 #### Optimized Development with Hot Module Replacement (HMR)
 
 For a faster development experience, we provide an optimized Docker setup with Hot Module Replacement (HMR) support:
 
-1. Using the HMR development script:
+1. **HMR Development Script** (hmr-dev.sh):
 
 ```bash
 # Build a service with HMR support
@@ -102,7 +160,7 @@ For a faster development experience, we provide an optimized Docker setup with H
 ./docker/scripts/hmr-dev.sh stop auth-service
 ```
 
-2. Using the optimized Docker Compose file:
+2. **Using the optimized Docker Compose file**:
 
 ```bash
 # Start all services with HMR support

@@ -379,12 +379,15 @@ CMD ["pnpm", "start"]
 - [ ] Configure Kafka Connect (optional)
 
 ### Development Workflow
-- [ ] Create development scripts
-  - [ ] `docker-compose up` for starting all services
-  - [ ] `docker-compose up <service>` for starting specific services
-  - [ ] Scripts for database migrations
-  - [ ] Scripts for seeding test data
-- [ ] Configure hot-reloading for development
+- [x] Create development scripts
+  - [x] `docker-compose up` for starting all services (dev.sh)
+  - [x] `docker-compose up <service>` for starting specific services (dev.sh)
+  - [x] Scripts for database migrations (db-migrate.sh)
+  - [x] Scripts for seeding test data (db-seed.sh)
+- [x] Configure hot-reloading for development
+  - [x] Implement NestJS Hot Module Replacement (HMR)
+  - [x] Create optimized Dockerfiles with HMR support
+  - [x] Create hmr-dev.sh script for HMR development
 - [ ] Set up logging aggregation
 
 ## Docker Optimization for Local Development
