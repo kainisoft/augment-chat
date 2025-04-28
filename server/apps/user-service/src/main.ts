@@ -1,12 +1,20 @@
 import { bootstrap } from '@app/common';
 import { UserServiceModule } from './user-service.module';
 
+declare const module: any;
+
 async function startApplication() {
   try {
-    await bootstrap(UserServiceModule, {
+    const app = await bootstrap(UserServiceModule, {
       port: 4002,
       serviceName: 'User Service',
     });
+
+    // Enable Hot Module Replacement (HMR)
+    if (module.hot) {
+      module.hot.accept();
+      module.hot.dispose(() => app.close());
+    }
   } catch (error) {
     console.error('Error starting User Service:', error);
     process.exit(1);

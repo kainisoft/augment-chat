@@ -40,9 +40,25 @@ $ pnpm run start
 # watch mode
 $ pnpm run start:dev
 
+# hot module replacement (HMR) mode
+$ pnpm run start:dev:hmr
+
 # production mode
 $ pnpm run start:prod
 ```
+
+### Hot Module Replacement (HMR)
+
+This project supports Hot Module Replacement for a faster development experience. HMR allows code changes to be applied without restarting the entire application, preserving application state and significantly reducing reload times.
+
+To use HMR:
+
+```bash
+# Start a specific service with HMR
+$ pnpm run start:dev:hmr auth-service
+```
+
+When using HMR, changes to your code will be automatically applied without restarting the entire application. This is particularly useful when working with microservices, as it allows you to make changes to one service without affecting others.
 
 ## Run tests
 

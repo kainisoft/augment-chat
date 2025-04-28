@@ -73,6 +73,49 @@ curl http://localhost:4002/health
 
 ## Development
 
+### Development with Hot Module Replacement (HMR)
+
+This project uses NestJS's built-in Hot Module Replacement for a faster development experience. HMR allows code changes to be applied without restarting the entire application, preserving application state and significantly reducing reload times.
+
+#### Using the HMR Development Script
+
+We provide a specialized script for working with HMR:
+
+```bash
+# Build a service with HMR support
+./docker/scripts/hmr-dev.sh build auth-service
+
+# Run a service with HMR support
+./docker/scripts/hmr-dev.sh run auth-service
+
+# View logs for a running service
+./docker/scripts/hmr-dev.sh logs auth-service
+
+# Stop a running service
+./docker/scripts/hmr-dev.sh stop auth-service
+```
+
+#### Using Docker Compose with HMR
+
+Alternatively, you can use the optimized Docker Compose configuration:
+
+```bash
+# Start all services with HMR support
+docker-compose -f docker-compose.optimized.yml up -d
+
+# Start a specific service with HMR support
+docker-compose -f docker-compose.optimized.yml up -d auth-service
+```
+
+#### Benefits of HMR
+
+- **Faster Development Cycle**: Changes are applied almost instantly (typically under 1 second)
+- **State Preservation**: Application state is maintained between updates
+- **Improved Developer Experience**: No need to manually restart services
+- **Efficient Resource Usage**: Only the changed modules are recompiled
+
+For more detailed information about Docker optimizations, including HMR, see the [Docker Optimization Guide](DOCKER_OPTIMIZATION_GUIDE.md).
+
 ### Adding New Features
 
 1. Create a feature branch

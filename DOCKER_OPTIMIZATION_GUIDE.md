@@ -2,6 +2,24 @@
 
 This guide provides detailed implementation instructions for optimizing Docker containers in the local development environment, focusing on faster startup times and improved developer experience.
 
+## Quick Start with HMR
+
+To quickly start a service with Hot Module Replacement (HMR):
+
+```bash
+# Build a service with HMR support
+./docker/scripts/hmr-dev.sh build auth-service
+
+# Run a service with HMR support
+./docker/scripts/hmr-dev.sh run auth-service
+
+# View logs for a running service
+./docker/scripts/hmr-dev.sh logs auth-service
+
+# Stop a running service
+./docker/scripts/hmr-dev.sh stop auth-service
+```
+
 ## 1. Implementing BuildKit for Faster Builds
 
 ### Enable BuildKit

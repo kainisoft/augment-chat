@@ -15,10 +15,10 @@ services:
       context: ./server
       dockerfile: ./docker/Dockerfiles/api-gateway.Dockerfile
     ports:
-      - "3001:3001"
+      - "4000:4000"
     environment:
       - NODE_ENV=development
-      - PORT=3001
+      - PORT=4000
     volumes:
       - ./server:/app
       - /app/node_modules
@@ -36,10 +36,10 @@ services:
       context: ./server
       dockerfile: ./docker/Dockerfiles/auth-service.Dockerfile
     ports:
-      - "3002:3002"
+      - "4001:4001"
     environment:
       - NODE_ENV=development
-      - PORT=3002
+      - PORT=4001
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/auth_db
     volumes:
       - ./server:/app
@@ -56,10 +56,10 @@ services:
       context: ./server
       dockerfile: ./docker/Dockerfiles/user-service.Dockerfile
     ports:
-      - "3000:3000"
+      - "4002:4002"
     environment:
       - NODE_ENV=development
-      - PORT=3000
+      - PORT=4002
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/user_db
     volumes:
       - ./server:/app
@@ -76,10 +76,10 @@ services:
       context: ./server
       dockerfile: ./docker/Dockerfiles/chat-service.Dockerfile
     ports:
-      - "3003:3003"
+      - "4003:4003"
     environment:
       - NODE_ENV=development
-      - PORT=3003
+      - PORT=4003
       - MONGODB_URI=mongodb://mongo:27017/chat_db
     volumes:
       - ./server:/app
@@ -96,10 +96,10 @@ services:
       context: ./server
       dockerfile: ./docker/Dockerfiles/notification-service.Dockerfile
     ports:
-      - "3004:3004"
+      - "4004:4004"
     environment:
       - NODE_ENV=development
-      - PORT=3004
+      - PORT=4004
       - MONGODB_URI=mongodb://mongo:27017/notification_db
     volumes:
       - ./server:/app
@@ -119,7 +119,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://localhost:3001/graphql
+      - NEXT_PUBLIC_API_URL=http://localhost:4000/graphql
     volumes:
       - ./client/web:/app
       - /app/node_modules
@@ -402,10 +402,10 @@ CMD ["pnpm", "start"]
 - [ ] Enhance service startup
   - [ ] Implement conditional service dependencies
   - [ ] Create service profiles for different development scenarios
-  - [ ] Implement NestJS Hot Module Replacement (HMR)
-    - [ ] Configure webpack-hmr.config.js for optimal HMR
-    - [ ] Update main.ts files to support HMR
-    - [ ] Configure Docker volumes for efficient file watching
+  - [x] Implement NestJS Hot Module Replacement (HMR)
+    - [x] Configure webpack-hmr.config.js for optimal HMR
+    - [x] Update main.ts files to support HMR
+    - [x] Configure Docker volumes for efficient file watching
 - [ ] Resource optimization
   - [ ] Configure appropriate resource limits for development
   - [ ] Implement service prioritization

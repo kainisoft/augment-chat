@@ -8,15 +8,23 @@ This directory contains Docker configuration for local development of the Chat A
 docker/
 ├── Dockerfiles/                # Service-specific Dockerfiles
 │   ├── api-gateway.Dockerfile
+│   ├── api-gateway.optimized.Dockerfile  # Optimized with HMR support
 │   ├── auth-service.Dockerfile
+│   ├── auth-service.optimized.Dockerfile # Optimized with HMR support
 │   ├── chat-service.Dockerfile
+│   ├── chat-service.optimized.Dockerfile # Optimized with HMR support
 │   ├── notification-service.Dockerfile
-│   └── user-service.Dockerfile
+│   ├── notification-service.optimized.Dockerfile # Optimized with HMR support
+│   ├── user-service.Dockerfile
+│   └── user-service.optimized.Dockerfile # Optimized with HMR support
 ├── config/                     # Configuration files
 │   └── redis/                  # Redis configuration
 │       ├── redis-node-1.conf
 │       ├── redis-node-2.conf
 │       └── redis-node-3.conf
+├── scripts/                    # Helper scripts
+│   ├── dev.sh                  # General development script
+│   └── hmr-dev.sh              # HMR development script
 └── init-scripts/               # Initialization scripts
     ├── kafka/                  # Kafka initialization
     │   └── create-topics.sh
@@ -35,6 +43,8 @@ docker/
 - Git repository cloned to your local machine
 
 ### Running the Environment
+
+#### Standard Docker Compose
 
 1. Start all services:
 
@@ -72,13 +82,51 @@ docker-compose down
 docker-compose down -v
 ```
 
+#### Optimized Development with Hot Module Replacement (HMR)
+
+For a faster development experience, we provide an optimized Docker setup with Hot Module Replacement (HMR) support:
+
+1. Using the HMR development script:
+
+```bash
+# Build a service with HMR support
+./docker/scripts/hmr-dev.sh build auth-service
+
+# Run a service with HMR support
+./docker/scripts/hmr-dev.sh run auth-service
+
+# View logs for a running service
+./docker/scripts/hmr-dev.sh logs auth-service
+
+# Stop a running service
+./docker/scripts/hmr-dev.sh stop auth-service
+```
+
+2. Using the optimized Docker Compose file:
+
+```bash
+# Start all services with HMR support
+docker-compose -f docker-compose.optimized.yml up -d
+
+# Start a specific service with HMR support
+docker-compose -f docker-compose.optimized.yml up -d auth-service
+```
+
+Benefits of using HMR:
+- **Faster Development Cycle**: Changes are applied almost instantly (typically under 1 second)
+- **State Preservation**: Application state is maintained between updates
+- **Improved Developer Experience**: No need to manually restart services
+- **Efficient Resource Usage**: Only the changed modules are recompiled
+
+For more detailed information about Docker optimizations, including HMR, see the [Docker Optimization Guide](../DOCKER_OPTIMIZATION_GUIDE.md).
+
 ## Service Endpoints
 
-- API Gateway: http://localhost:3001
-- Auth Service: http://localhost:3002
-- User Service: http://localhost:3000
-- Chat Service: http://localhost:3003
-- Notification Service: http://localhost:3004
+- API Gateway: http://localhost:4000
+- Auth Service: http://localhost:4001
+- User Service: http://localhost:4002
+- Chat Service: http://localhost:4003
+- Notification Service: http://localhost:4004
 
 ## Database Access
 
