@@ -1,7 +1,24 @@
 # Docker Development Environment Plan
 
 ## Overview
-This document outlines the Docker configuration for local development, including service containers, networking, and volume management.
+
+This document outlines the Docker configuration for local development of the Chat Application, including service containers, networking, and volume management. It provides detailed specifications for the Docker Compose setup, Dockerfile templates, and development tasks to ensure a consistent and efficient development environment.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Docker Compose Structure](#docker-compose-structure)
+- [Dockerfile Templates](#dockerfile-templates)
+  - [Base Dockerfile for NestJS Services](#base-dockerfile-for-nestjs-services)
+  - [Web Client Dockerfile](#web-client-dockerfile)
+- [Development Tasks](#development-tasks)
+  - [Docker Setup](#docker-setup)
+  - [Database Setup](#database-setup)
+  - [Kafka Setup](#kafka-setup)
+  - [Development Workflow](#development-workflow)
+- [Docker Performance Enhancements for Local Development](#docker-performance-enhancements-for-local-development)
+- [Production Considerations](#production-considerations)
+- [Related Documents](#related-documents)
 
 ## Docker Compose Structure
 
@@ -428,3 +445,17 @@ CMD ["pnpm", "start"]
 - [ ] Set up health checks
 - [ ] Configure resource limits
 - [ ] Implement container security best practices
+
+## Related Documents
+
+- [Project Overview](../project/PROJECT_OVERVIEW.md)
+- [Infrastructure Plan](../infrastructure/INFRASTRUCTURE_PLAN.md)
+- [Docker Performance Guide](DOCKER_PERFORMANCE_GUIDE.md)
+- [AWS Deployment Plan](../deployment/AWS_DEPLOYMENT_PLAN.md)
+- [Server Plan](../server/SERVER_PLAN.md)
+
+## Document Information
+- **Author**: Chat Application Team
+- **Created**: 2023-06-15
+- **Last Updated**: 2023-07-15
+- **Version**: 1.1.0

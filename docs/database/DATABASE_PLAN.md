@@ -1,7 +1,24 @@
 # Database Plan
 
 ## Overview
-This document outlines the database architecture for the chat application, including schema design, relationships, and implementation details.
+
+This document outlines the database architecture for the Chat Application, including schema design, relationships, and implementation details. It covers the use of PostgreSQL with Drizzle ORM for structured data, MongoDB for unstructured data, and Redis for caching, along with the implementation of Domain-Driven Design principles.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Database Technologies](#database-technologies)
+  - [PostgreSQL with Drizzle ORM](#postgresql-with-drizzle-orm)
+  - [MongoDB](#mongodb)
+  - [Redis (Optional)](#redis-optional)
+- [PostgreSQL Schema](#postgresql-schema)
+- [MongoDB Collections](#mongodb-collections)
+- [Implementation Tasks](#implementation-tasks)
+- [Domain-Driven Design Implementation](#domain-driven-design-implementation)
+- [Drizzle ORM Implementation](#drizzle-orm-implementation)
+- [Database Security](#database-security)
+- [Next Steps](#next-steps)
+- [Related Documents](#related-documents)
 
 ## Database Technologies
 
@@ -430,3 +447,16 @@ const usersWithProfiles = await db.query.users.findMany({
 - [ ] Create notification system
 - [ ] Add notification preferences
 - [ ] Implement real-time notifications
+
+## Related Documents
+
+- [Project Overview](../project/PROJECT_OVERVIEW.md)
+- [Server Plan](../server/SERVER_PLAN.md)
+- [Drizzle Setup](DRIZZLE_SETUP.md)
+- [Infrastructure Plan](../infrastructure/INFRASTRUCTURE_PLAN.md)
+
+## Document Information
+- **Author**: Chat Application Team
+- **Created**: 2023-06-15
+- **Last Updated**: 2023-07-15
+- **Version**: 1.2.0

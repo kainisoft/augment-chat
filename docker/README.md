@@ -171,7 +171,7 @@ Benefits of using HMR:
 - **Improved Developer Experience**: No need to manually restart services
 - **Efficient Resource Usage**: Only the changed modules are recompiled
 
-For more detailed information about Docker performance enhancements, including HMR, see the [Docker Performance Guide](../DOCKER_PERFORMANCE_GUIDE.md).
+For more detailed information about Docker performance enhancements, including HMR, see the [Docker Performance Guide](../docs/docker/DOCKER_PERFORMANCE_GUIDE.md).
 
 ## Service Endpoints
 

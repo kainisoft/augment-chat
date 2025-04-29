@@ -1,7 +1,20 @@
 # Chat Application Project Overview
 
-## Project Description
-A real-time chat application with microservice architecture, deployed on AWS.
+## Overview
+
+This document provides a comprehensive overview of the Chat Application project, including its architecture, technology stack, and project structure. The Chat Application is a real-time messaging platform built with a microservice architecture and designed for deployment on AWS.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Development Guidelines](#development-guidelines)
+- [Technology Stack](#technology-stack)
+  - [Client](#client)
+  - [Server](#server)
+  - [Databases](#databases)
+  - [DevOps & Infrastructure](#devops--infrastructure)
+- [Project Structure](#project-structure)
+- [Related Documents](#related-documents)
 
 ## Development Guidelines
 - Use pnpm as the package manager
@@ -74,7 +87,33 @@ A real-time chat application with microservice architecture, deployed on AWS.
 │   │   ├── public/           # Static assets
 │   │   └── styles/           # CSS/Tailwind styles
 │   └── mobile/               # Future mobile application
-└── docker/                   # Docker configuration
-    ├── docker-compose.yml    # Local development environment
-    └── Dockerfiles/          # Service-specific Dockerfiles
+├── docker/                   # Docker configuration
+│   ├── docker-compose.yml    # Local development environment
+│   └── Dockerfiles/          # Service-specific Dockerfiles
+└── docs/                     # Project documentation
+    ├── project/              # Project overview and plans
+    ├── server/               # Server-side documentation
+    ├── client/               # Client-side documentation
+    ├── database/             # Database documentation
+    ├── infrastructure/       # Infrastructure documentation
+    ├── docker/               # Docker documentation
+    ├── deployment/           # Deployment documentation
+    ├── testing/              # Testing documentation
+    └── logging/              # Logging system documentation
 ```
+
+## Related Documents
+
+- [Project Plan](PROJECT_PLAN.md)
+- [Server Plan](../server/SERVER_PLAN.md)
+- [Client Plan](../client/CLIENT_PLAN.md)
+- [Database Plan](../database/DATABASE_PLAN.md)
+- [Infrastructure Plan](../infrastructure/INFRASTRUCTURE_PLAN.md)
+- [Docker Plan](../docker/DOCKER_PLAN.md)
+- [AWS Deployment Plan](../deployment/AWS_DEPLOYMENT_PLAN.md)
+
+## Document Information
+- **Author**: Chat Application Team
+- **Created**: 2023-06-01
+- **Last Updated**: 2023-07-15
+- **Version**: 1.1.0

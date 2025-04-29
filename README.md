@@ -7,6 +7,7 @@ A modern chat application with microservice architecture built with NestJS, Mong
 - **server/** - Backend NestJS monorepo with microservices
 - **client/** - Frontend applications (web, mobile)
 - **docker/** - Docker configuration files
+- **docs/** - Project documentation and implementation plans
 
 ## Microservices
 
@@ -114,7 +115,7 @@ docker-compose up -d auth-service
 - **Improved Developer Experience**: No need to manually restart services
 - **Efficient Resource Usage**: Only the changed modules are recompiled
 
-For more detailed information about Docker performance enhancements, including HMR, see the [Docker Performance Guide](DOCKER_PERFORMANCE_GUIDE.md).
+For more detailed information about Docker performance enhancements, including HMR, see the [Docker Performance Guide](docs/docker/DOCKER_PERFORMANCE_GUIDE.md).
 
 ### Adding New Features
 
@@ -148,3 +149,28 @@ The application is designed to be deployed on AWS using:
 - DocumentDB for MongoDB
 - MSK for Kafka
 - EC2 instances for Redis Cluster
+
+## Documentation
+
+All project documentation is organized in the `docs/` directory:
+
+- [Project Overview and Plans](docs/project/) - High-level project information
+- [Server Implementation](docs/server/) - Server-side implementation details
+- [Client Implementation](docs/client/) - Client-side implementation details
+- [Infrastructure Setup](docs/infrastructure/) - Infrastructure configuration
+- [Database Design](docs/database/) - Database schemas and ORM setup
+- [Docker Configuration](docs/docker/) - Docker setup and optimization
+- [Deployment Plans](docs/deployment/) - AWS deployment instructions
+- [Testing Strategy](docs/testing/) - Testing approach and reports
+- [Logging System](docs/logging/) - Centralized logging architecture
+
+### Documentation Standards
+
+To ensure consistency, all documentation follows a standardized format:
+
+- [Documentation Standard](docs/DOCUMENTATION_STANDARD.md) - Guidelines for document formatting
+- [Document Templates](docs/TEMPLATE.md) - Templates for creating new documentation
+
+When contributing to the project, please follow these documentation standards to maintain consistency and clarity.
+
+See the [Documentation Index](docs/README.md) for a complete list of available documentation.
