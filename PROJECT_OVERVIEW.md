@@ -26,6 +26,15 @@ A real-time chat application with microservice architecture, deployed on AWS.
 - **API**: GraphQL for client communication
 - **Inter-service Communication**: Kafka
 - **Authentication**: JWT
+- **Architecture**: Domain-Driven Design (DDD)
+  - **Domain Layer**: Rich domain models with business logic
+  - **Application Layer**: Use cases and application services
+  - **Infrastructure Layer**: External systems integration
+  - **Presentation Layer**: Controllers and resolvers
+- **Design Patterns**:
+  - **Repository Pattern**: For data access abstraction
+  - **CQRS**: Command Query Responsibility Segregation for complex operations
+  - **Event Sourcing**: For tracking state changes as events
 
 ### Databases
 - **PostgreSQL**: For structured data (users, authentication, relationships)
