@@ -386,7 +386,7 @@ CMD ["pnpm", "start"]
   - [x] Scripts for seeding test data (db-seed.sh)
 - [x] Configure hot-reloading for development
   - [x] Implement NestJS Hot Module Replacement (HMR)
-  - [x] Create optimized Dockerfiles with HMR support
+  - [x] Create Dockerfiles with HMR support
   - [x] Create hmr-dev.sh script for HMR development
 - [ ] Set up logging aggregation
 
@@ -405,6 +405,10 @@ CMD ["pnpm", "start"]
 - [x] Enhance service startup
   - [x] Implement conditional service dependencies
   - [x] Create service profiles for different development scenarios
+- [x] Make optimized Docker configuration the default
+  - [x] Replace standard docker-compose.yml with optimized version
+  - [x] Replace standard Dockerfiles with optimized versions
+  - [x] Update scripts and documentation to reflect the change
   - [x] Implement NestJS Hot Module Replacement (HMR)
     - [x] Configure webpack-hmr.config.js for optimal HMR
     - [x] Update main.ts files to support HMR

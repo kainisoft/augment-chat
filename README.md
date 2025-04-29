@@ -97,14 +97,14 @@ We provide a specialized script for working with HMR:
 
 #### Using Docker Compose with HMR
 
-Alternatively, you can use the optimized Docker Compose configuration:
+Alternatively, you can use the Docker Compose configuration which includes optimizations by default:
 
 ```bash
 # Start all services with HMR support
-docker-compose -f docker-compose.optimized.yml up -d
+docker-compose up -d
 
 # Start a specific service with HMR support
-docker-compose -f docker-compose.optimized.yml up -d auth-service
+docker-compose up -d auth-service
 ```
 
 #### Benefits of HMR

@@ -7,16 +7,11 @@ This directory contains Docker configuration for local development of the Chat A
 ```
 docker/
 ├── Dockerfiles/                # Service-specific Dockerfiles
-│   ├── api-gateway.Dockerfile
-│   ├── api-gateway.optimized.Dockerfile  # Optimized with HMR support
-│   ├── auth-service.Dockerfile
-│   ├── auth-service.optimized.Dockerfile # Optimized with HMR support
-│   ├── chat-service.Dockerfile
-│   ├── chat-service.optimized.Dockerfile # Optimized with HMR support
-│   ├── notification-service.Dockerfile
-│   ├── notification-service.optimized.Dockerfile # Optimized with HMR support
-│   ├── user-service.Dockerfile
-│   └── user-service.optimized.Dockerfile # Optimized with HMR support
+│   ├── api-gateway.Dockerfile  # With HMR support
+│   ├── auth-service.Dockerfile # With HMR support
+│   ├── chat-service.Dockerfile # With HMR support
+│   ├── notification-service.Dockerfile # With HMR support
+│   └── user-service.Dockerfile # With HMR support
 ├── config/                     # Configuration files
 │   └── redis/                  # Redis configuration
 │       ├── redis-node-1.conf
@@ -160,14 +155,14 @@ For a faster development experience, we provide an optimized Docker setup with H
 ./docker/scripts/hmr-dev.sh stop auth-service
 ```
 
-2. **Using the optimized Docker Compose file**:
+2. **Using Docker Compose**:
 
 ```bash
 # Start all services with HMR support
-docker-compose -f docker-compose.optimized.yml up -d
+docker-compose up -d
 
 # Start a specific service with HMR support
-docker-compose -f docker-compose.optimized.yml up -d auth-service
+docker-compose up -d auth-service
 ```
 
 Benefits of using HMR:

@@ -56,8 +56,8 @@ else
   exit 1
 fi
 
-# Use optimized docker-compose file
-COMPOSE_FILE="docker-compose.optimized.yml"
+# Use standard docker-compose file (which is now the optimized version)
+COMPOSE_FILE="docker-compose.yml"
 
 # Get the correct path to the docker-compose file
 # If running from the docker/scripts directory, we need to go up two levels

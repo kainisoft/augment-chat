@@ -1,21 +1,27 @@
+# syntax=docker/dockerfile:1.4
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
+# Copy only package files first for better layer caching
 COPY package.json pnpm-lock.yaml ./
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm with BuildKit cache mount
+RUN --mount=type=cache,target=/root/.npm \
+    npm install -g pnpm
 
-# Install dependencies
-RUN pnpm install
+# Install dependencies with BuildKit cache mount and frozen lockfile
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm install --frozen-lockfile
 
-# Copy source code
-COPY . .
+# Copy only necessary files for the api-gateway service
+# This reduces the context size and improves build time
+COPY tsconfig.json nest-cli.json ./
+COPY apps/api-gateway ./apps/api-gateway
+COPY libs ./libs
 
 # Expose port
 EXPOSE 4000
 
-# Start the application in development mode
-CMD ["pnpm", "run", "start:dev", "api-gateway"]
+# Start the application with Hot Module Replacement
+CMD ["pnpm", "run", "start:dev:hmr", "api-gateway"]

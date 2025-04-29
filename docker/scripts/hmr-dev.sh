@@ -46,7 +46,7 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 build_service() {
   local service=$1
   echo "Building $service with HMR support..."
-  docker build -t $service-hmr -f $PROJECT_ROOT/docker/Dockerfiles/$service.optimized.Dockerfile $PROJECT_ROOT/server
+  docker build -t $service-hmr -f $PROJECT_ROOT/docker/Dockerfiles/$service.Dockerfile $PROJECT_ROOT/server
 }
 
 # Function to run a service
@@ -54,26 +54,26 @@ run_service() {
   local service=$1
   local port=$2
   local db_url=$3
-  
+
   # Stop the service if it's already running
   docker stop $service-hmr 2>/dev/null || true
   docker rm $service-hmr 2>/dev/null || true
-  
+
   echo "Running $service with HMR support..."
-  
+
   # Set environment variables based on service
   local env_vars="-e NODE_ENV=development -e PORT=$port"
   if [ ! -z "$db_url" ]; then
     env_vars="$env_vars -e $db_url"
   fi
-  
+
   # Run the container
   docker run -d --name $service-hmr -p $port:$port $env_vars \
     -v $PROJECT_ROOT/server/apps/$service:/app/apps/$service \
     -v $PROJECT_ROOT/server/libs:/app/libs \
     -v $PROJECT_ROOT/server/webpack-hmr.config.js:/app/webpack-hmr.config.js \
     $service-hmr
-  
+
   # Show logs
   docker logs -f $service-hmr
 }
@@ -92,7 +92,7 @@ case "$1" in
       echo "Error: Please specify a service name"
       exit 1
     fi
-    
+
     # Set port and database URL based on service
     case "$2" in
       api-gateway)

@@ -6,27 +6,51 @@ services:
     build:
       context: ./server
       dockerfile: ../docker/Dockerfiles/api-gateway.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
     ports:
       - "4000:4000"
     environment:
       - NODE_ENV=development
       - PORT=4000
     volumes:
-      - ./server:/app
-      - /app/node_modules
+      - ./server/apps/api-gateway:/app/apps/api-gateway:delegated
+      - ./server/libs:/app/libs:delegated
+      - ./server/nest-cli.json:/app/nest-cli.json:delegated
+      - ./server/tsconfig.json:/app/tsconfig.json:delegated
+      - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
+      - api-gateway-node-modules:/app/node_modules
     depends_on:
-      - auth-service
-      - user-service
-      - chat-service
-      - notification-service
+      auth-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      chat-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
     networks:
       - chat-network
+    profiles: [ "api", "all" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:4000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   # Auth Service
   auth-service:
     build:
       context: ./server
       dockerfile: ../docker/Dockerfiles/auth-service.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
     ports:
       - "4001:4001"
     environment:
@@ -34,19 +58,39 @@ services:
       - PORT=4001
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/auth_db
     volumes:
-      - ./server:/app
-      - /app/node_modules
+      - ./server/apps/auth-service:/app/apps/auth-service:delegated
+      - ./server/libs:/app/libs:delegated
+      - ./server/nest-cli.json:/app/nest-cli.json:delegated
+      - ./server/tsconfig.json:/app/tsconfig.json:delegated
+      - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
+      - auth-service-node-modules:/app/node_modules
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - chat-network
+    profiles: [ "auth", "all" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:4001/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   # User Service
   user-service:
     build:
       context: ./server
       dockerfile: ../docker/Dockerfiles/user-service.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
     ports:
       - "4002:4002"
     environment:
@@ -54,19 +98,39 @@ services:
       - PORT=4002
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/user_db
     volumes:
-      - ./server:/app
-      - /app/node_modules
+      - ./server/apps/user-service:/app/apps/user-service:delegated
+      - ./server/libs:/app/libs:delegated
+      - ./server/nest-cli.json:/app/nest-cli.json:delegated
+      - ./server/tsconfig.json:/app/tsconfig.json:delegated
+      - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
+      - user-service-node-modules:/app/node_modules
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - chat-network
+    profiles: [ "user", "all" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:4002/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   # Chat Service
   chat-service:
     build:
       context: ./server
       dockerfile: ../docker/Dockerfiles/chat-service.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
     ports:
       - "4003:4003"
     environment:
@@ -74,19 +138,39 @@ services:
       - PORT=4003
       - MONGODB_URI=mongodb://mongo:mongo@mongo:27017/chat_db?authSource=admin
     volumes:
-      - ./server:/app
-      - /app/node_modules
+      - ./server/apps/chat-service:/app/apps/chat-service:delegated
+      - ./server/libs:/app/libs:delegated
+      - ./server/nest-cli.json:/app/nest-cli.json:delegated
+      - ./server/tsconfig.json:/app/tsconfig.json:delegated
+      - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
+      - chat-service-node-modules:/app/node_modules
     depends_on:
-      - mongo
-      - kafka
+      mongo:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - chat-network
+    profiles: [ "chat", "all" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:4003/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   # Notification Service
   notification-service:
     build:
       context: ./server
       dockerfile: ../docker/Dockerfiles/notification-service.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
     ports:
       - "4004:4004"
     environment:
@@ -94,13 +178,31 @@ services:
       - PORT=4004
       - MONGODB_URI=mongodb://mongo:mongo@mongo:27017/notification_db?authSource=admin
     volumes:
-      - ./server:/app
-      - /app/node_modules
+      - ./server/apps/notification-service:/app/apps/notification-service:delegated
+      - ./server/libs:/app/libs:delegated
+      - ./server/nest-cli.json:/app/nest-cli.json:delegated
+      - ./server/tsconfig.json:/app/tsconfig.json:delegated
+      - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
+      - notification-service-node-modules:/app/node_modules
     depends_on:
-      - mongo
-      - kafka
+      mongo:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - chat-network
+    profiles: [ "notification", "all" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:4004/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   # PostgreSQL
   postgres:
@@ -115,6 +217,17 @@ services:
       - ./docker/init-scripts/postgres:/docker-entrypoint-initdb.d
     networks:
       - chat-network
+    profiles: [ "db", "all", "auth", "user" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
   # MongoDB
   mongo:
@@ -129,6 +242,17 @@ services:
       - ./docker/init-scripts/mongo:/docker-entrypoint-initdb.d
     networks:
       - chat-network
+    profiles: [ "db", "all", "chat", "notification" ]
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
   # Kafka
   zookeeper:
@@ -141,6 +265,17 @@ services:
       - zookeeper-data:/var/lib/zookeeper/data
     networks:
       - chat-network
+    profiles: [ "kafka", "all", "auth", "user", "chat", "notification" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   kafka:
     image: confluentinc/cp-kafka:7.0.0
@@ -156,9 +291,22 @@ services:
     volumes:
       - kafka-data:/var/lib/kafka/data
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     networks:
       - chat-network
+    profiles: [ "kafka", "all", "auth", "user", "chat", "notification" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
   # Redis Cluster (Simulating production setup)
   redis-node-1:
@@ -172,6 +320,17 @@ services:
       - redis-node-1-data:/data
     networks:
       - chat-network
+    profiles: [ "redis", "all" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
   redis-node-2:
     image: redis:6-alpine
@@ -184,6 +343,17 @@ services:
       - redis-node-2-data:/data
     networks:
       - chat-network
+    profiles: [ "redis", "all" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
   redis-node-3:
     image: redis:6-alpine
@@ -196,18 +366,32 @@ services:
       - redis-node-3-data:/data
     networks:
       - chat-network
+    profiles: [ "redis", "all" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
   redis-cluster-init:
     image: redis:6-alpine
     depends_on:
-      - redis-node-1
-      - redis-node-2
-      - redis-node-3
+      redis-node-1:
+        condition: service_healthy
+      redis-node-2:
+        condition: service_healthy
+      redis-node-3:
+        condition: service_healthy
     command: >
-      sh -c "sleep 5 &&
-             redis-cli --cluster create redis-node-1:6379 redis-node-2:6379 redis-node-3:6379 --cluster-yes"
+      sh -c "redis-cli --cluster create redis-node-1:6379 redis-node-2:6379 redis-node-3:6379 --cluster-yes"
     networks:
       - chat-network
+    profiles: [ "redis", "all" ]
 
 networks:
   chat-network:
@@ -221,3 +405,8 @@ volumes:
   redis-node-1-data:
   redis-node-2-data:
   redis-node-3-data:
+  api-gateway-node-modules:
+  auth-service-node-modules:
+  user-service-node-modules:
+  chat-service-node-modules:
+  notification-service-node-modules:

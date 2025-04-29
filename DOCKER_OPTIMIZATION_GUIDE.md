@@ -2,6 +2,8 @@
 
 This guide provides detailed implementation instructions for optimizing Docker containers in the local development environment, focusing on faster startup times and improved developer experience.
 
+> **Note:** The optimized Docker configuration described in this guide is now the default configuration for this project. The standard `docker-compose.yml` file and all Dockerfiles already include all these optimizations.
+
 ## Quick Start with HMR
 
 To quickly start a service with Hot Module Replacement (HMR):
@@ -187,6 +189,8 @@ Then start services by profile:
 ```bash
 docker-compose --profile auth up
 ```
+
+> Note: All docker-compose commands in this guide now use the default docker-compose.yml file, which already includes all the optimizations described.
 
 ### Implement NestJS Hot Module Replacement (HMR)
 
