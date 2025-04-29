@@ -180,17 +180,29 @@ Used for caching and ephemeral data:
 
 ## Implementation Tasks
 
-### PostgreSQL Setup with Drizzle ORM
-- [ ] Create database initialization scripts
-- [ ] Set up Drizzle ORM schema definitions
-- [ ] Configure Drizzle migrations system
-- [ ] Implement type-safe queries with Drizzle
-- [ ] Set up NestJS integration with Drizzle ORM
-- [ ] Configure connection pooling
+### Phase 1: Database Architecture and Setup (Completed)
+- [x] Design database schema structure
+- [x] Choose ORM and database technologies
+- [x] Plan MongoDB collections
+- [x] Define Redis caching strategy (Optional)
+
+### Phase 2: Domain-Driven Design Implementation (Completed)
+- [x] Implement abstract base repository pattern
+- [x] Create separate read/write repositories for CQRS
+- [x] Design domain entity interfaces
+- [x] Set up value objects for domain concepts
+
+### Phase 3: PostgreSQL Setup with Drizzle ORM
+- [x] Create database initialization scripts
+- [x] Set up Drizzle ORM schema definitions
+- [x] Configure Drizzle migrations system
+- [x] Implement type-safe queries with Drizzle
+- [x] Set up NestJS integration with Drizzle ORM
+- [x] Configure connection pooling
 - [ ] Set up indexes for performance
 - [ ] Implement data validation
 
-### MongoDB Setup
+### Phase 4: MongoDB Setup
 - [ ] Create database initialization scripts
 - [ ] Define schema validation rules
 - [ ] Implement repository patterns in NestJS
@@ -198,11 +210,91 @@ Used for caching and ephemeral data:
 - [ ] Set up indexes for performance
 - [ ] Implement data validation
 
-### Redis Setup (Optional)
+### Phase 5: Redis Setup (Optional)
 - [ ] Configure Redis instance
 - [ ] Set up key expiration policies
 - [ ] Implement caching strategies
 - [ ] Configure persistence options
+
+## Domain-Driven Design Implementation
+
+### Repository Pattern
+We've implemented a comprehensive repository pattern following DDD principles with CQRS:
+
+```
+BaseRepository (Interface)
+├── BaseWriteRepository (Interface)
+│   └── AbstractBaseWriteRepository (Abstract Class)
+│       └── AbstractDrizzleWriteRepository (Abstract Class)
+│           └── ConcreteEntityRepository (Implementation)
+│
+└── BaseReadRepository (Interface)
+    └── AbstractBaseReadRepository (Abstract Class)
+        └── AbstractDrizzleReadRepository (Abstract Class)
+            └── ConcreteEntityReadRepository (Implementation)
+```
+
+### Base Repository Interfaces
+
+```typescript
+// Base repository interface
+export interface BaseRepository<T, TId> {
+  findById(id: TId): Promise<T | null>;
+  exists(id: TId): Promise<boolean>;
+  count(filter?: any): Promise<number>;
+}
+
+// Write repository interface
+export interface BaseWriteRepository<T, TId> extends BaseRepository<T, TId> {
+  save(entity: T): Promise<void>;
+  delete(id: TId): Promise<void>;
+  create(entity: T): Promise<T>;
+  update(id: TId, entity: Partial<T>): Promise<T>;
+}
+
+// Read repository interface
+export interface BaseReadRepository<T, TId> extends BaseRepository<T, TId> {
+  findAll(options?: QueryOptions): Promise<T[]>;
+  findBy(field: string, value: any, options?: QueryOptions): Promise<T[]>;
+  search(term: string, options?: QueryOptions): Promise<T[]>;
+}
+```
+
+### Drizzle ORM Implementation
+
+```typescript
+// Example of a concrete repository implementation
+@Injectable()
+export class DrizzleUserRepository
+  extends AbstractDrizzleWriteRepository<User, UserId, typeof schema.profiles>
+  implements UserRepository {
+
+  constructor(drizzle: DrizzleService) {
+    super(drizzle, schema.profiles, schema.profiles.id);
+  }
+
+  // Domain-specific methods
+  async findByEmail(email: Email): Promise<User | null> {
+    const result = await this.drizzle.db
+      .select()
+      .from(schema.users)
+      .innerJoin(schema.profiles, eq(schema.users.id, schema.profiles.userId))
+      .where(eq(schema.users.email, email.toString()))
+      .limit(1);
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return this.mapToDomain({
+      ...result[0].users,
+      ...result[0].profiles,
+    });
+  }
+
+  // Other methods...
+}
+```
 
 ## Drizzle ORM Implementation
 
@@ -241,30 +333,41 @@ export const profiles = chatAppSchema.table('profiles', {
 ```
 
 ### NestJS Integration
-Integration with NestJS will be done using a custom module:
+Integration with NestJS is done using a custom module:
 
 ```typescript
-// Example NestJS module for Drizzle ORM
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from '../db/schema';
+// Drizzle service for NestJS
+@Injectable()
+export class DrizzleService implements OnModuleInit, OnModuleDestroy {
+  private _db: PostgresJsDatabase<typeof schema>;
+  private _client: postgres.Sql<{}>;
 
+  constructor(private readonly configService: ConfigService) {}
+
+  async onModuleInit() {
+    const connectionString = this.getConnectionString();
+    this._client = postgres(connectionString, {
+      max: this.configService.get<number>('DATABASE_POOL_SIZE', 10),
+    });
+    this._db = drizzle(this._client, { schema });
+  }
+
+  async onModuleDestroy() {
+    if (this._client) {
+      await this._client.end();
+    }
+  }
+
+  get db(): PostgresJsDatabase<typeof schema> {
+    return this._db;
+  }
+}
+
+// Drizzle module for NestJS
 @Module({
   imports: [ConfigModule],
-  providers: [
-    {
-      provide: 'DATABASE_CONNECTION',
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        const connectionString = configService.get<string>('DATABASE_URL');
-        const client = postgres(connectionString);
-        return drizzle(client, { schema });
-      },
-    },
-  ],
-  exports: ['DATABASE_CONNECTION'],
+  providers: [DrizzleService],
+  exports: [DrizzleService],
 })
 export class DrizzleModule {}
 ```
@@ -296,3 +399,34 @@ const usersWithProfiles = await db.query.users.findMany({
 - [ ] Configure network security for database access
 - [ ] Implement data encryption for sensitive fields
 - [ ] Set up regular backup procedures
+
+## Next Steps
+
+### 1. Initialize and Configure the Database
+- [ ] Set up PostgreSQL in Docker
+- [ ] Run schema creation script
+- [ ] Generate and run migrations
+- [ ] Verify database structure
+
+### 2. Implement Auth Service
+- [ ] Create user registration functionality
+- [ ] Implement JWT authentication
+- [ ] Add refresh token mechanism
+- [ ] Set up email verification
+
+### 3. Implement User Service
+- [ ] Create user profile management
+- [ ] Add user search functionality
+- [ ] Implement user relationships
+- [ ] Add user settings
+
+### 4. Implement Chat Service
+- [ ] Set up MongoDB for messages
+- [ ] Create conversation management
+- [ ] Implement real-time messaging
+- [ ] Add message delivery status
+
+### 5. Implement Notification Service
+- [ ] Create notification system
+- [ ] Add notification preferences
+- [ ] Implement real-time notifications

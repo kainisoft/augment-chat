@@ -41,94 +41,114 @@ show_help() {
   echo "  ./dev.sh logs auth  # Show logs for auth service"
 }
 
-# Check if docker-compose is installed
-if ! command -v docker-compose &> /dev/null; then
-  echo "Error: docker-compose is not installed"
+# Check if docker compose (v2) or docker-compose (v1) is available
+if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+  # Docker Compose V2 is available (docker compose)
+  DOCKER_COMPOSE="docker compose"
+  echo "Using Docker Compose V2"
+elif command -v docker-compose &> /dev/null; then
+  # Docker Compose V1 is available (docker-compose)
+  DOCKER_COMPOSE="docker-compose"
+  echo "Using Docker Compose V1"
+else
+  echo "Error: Neither docker-compose nor docker compose is available"
+  echo "Please install Docker and Docker Compose"
   exit 1
 fi
 
 # Use optimized docker-compose file
 COMPOSE_FILE="docker-compose.optimized.yml"
 
-# Check if the optimized docker-compose file exists
-if [ ! -f "../$COMPOSE_FILE" ]; then
+# Get the correct path to the docker-compose file
+# If running from the docker/scripts directory, we need to go up two levels
+# If running from the docker directory, we need to go up one level
+# If running from the root directory, we use the file directly
+if [ -f "../../$COMPOSE_FILE" ]; then
+  COMPOSE_PATH="../../$COMPOSE_FILE"
+elif [ -f "../$COMPOSE_FILE" ]; then
+  COMPOSE_PATH="../$COMPOSE_FILE"
+elif [ -f "$COMPOSE_FILE" ]; then
+  COMPOSE_PATH="$COMPOSE_FILE"
+else
   echo "Error: $COMPOSE_FILE not found"
   exit 1
 fi
+
+echo "Using Docker Compose file: $COMPOSE_PATH"
 
 # Process commands
 case "$1" in
   db)
     echo "Starting database services..."
-    docker-compose -f "../$COMPOSE_FILE" --profile db up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db up -d
     ;;
   kafka)
     echo "Starting Kafka and Zookeeper..."
-    docker-compose -f "../$COMPOSE_FILE" --profile kafka up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile kafka up -d
     ;;
   redis)
     echo "Starting Redis cluster..."
-    docker-compose -f "../$COMPOSE_FILE" --profile redis up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile redis up -d
     ;;
   infra)
     echo "Starting all infrastructure services..."
-    docker-compose -f "../$COMPOSE_FILE" --profile db --profile kafka --profile redis up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db --profile kafka --profile redis up -d
     ;;
   auth)
     echo "Starting auth service with dependencies..."
-    docker-compose -f "../$COMPOSE_FILE" --profile auth up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile auth up -d
     ;;
   user)
     echo "Starting user service with dependencies..."
-    docker-compose -f "../$COMPOSE_FILE" --profile user up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile user up -d
     ;;
   chat)
     echo "Starting chat service with dependencies..."
-    docker-compose -f "../$COMPOSE_FILE" --profile chat up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile chat up -d
     ;;
   notification)
     echo "Starting notification service with dependencies..."
-    docker-compose -f "../$COMPOSE_FILE" --profile notification up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile notification up -d
     ;;
   api)
     echo "Starting API gateway with dependencies..."
-    docker-compose -f "../$COMPOSE_FILE" --profile api up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile api up -d
     ;;
   all)
     echo "Starting all services..."
-    docker-compose -f "../$COMPOSE_FILE" --profile all up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all up -d
     ;;
   build)
     echo "Rebuilding all services..."
-    docker-compose -f "../$COMPOSE_FILE" build
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" build
     ;;
   build:auth)
     echo "Rebuilding auth service..."
-    docker-compose -f "../$COMPOSE_FILE" build auth-service
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" build auth-service
     ;;
   build:user)
     echo "Rebuilding user service..."
-    docker-compose -f "../$COMPOSE_FILE" build user-service
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" build user-service
     ;;
   build:chat)
     echo "Rebuilding chat service..."
-    docker-compose -f "../$COMPOSE_FILE" build chat-service
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" build chat-service
     ;;
   build:notification)
     echo "Rebuilding notification service..."
-    docker-compose -f "../$COMPOSE_FILE" build notification-service
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" build notification-service
     ;;
   build:api)
     echo "Rebuilding API gateway..."
-    docker-compose -f "../$COMPOSE_FILE" build api-gateway
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" build api-gateway
     ;;
   down)
     echo "Stopping all services..."
-    docker-compose -f "../$COMPOSE_FILE" down
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" down
     ;;
   clean)
     echo "Stopping all services and removing volumes..."
-    docker-compose -f "../$COMPOSE_FILE" down -v
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" down -v
     ;;
   logs)
     if [ -z "$2" ]; then
@@ -136,7 +156,7 @@ case "$1" in
       exit 1
     fi
     echo "Showing logs for $2 service..."
-    docker-compose -f "../$COMPOSE_FILE" logs -f "$2"
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" logs -f "$2"
     ;;
   stats)
     echo "Showing resource usage statistics..."
