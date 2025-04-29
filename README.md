@@ -97,7 +97,7 @@ We provide a specialized script for working with HMR:
 
 #### Using Docker Compose with HMR
 
-Alternatively, you can use the Docker Compose configuration which includes optimizations by default:
+Alternatively, you can use Docker Compose directly:
 
 ```bash
 # Start all services with HMR support
@@ -114,7 +114,7 @@ docker-compose up -d auth-service
 - **Improved Developer Experience**: No need to manually restart services
 - **Efficient Resource Usage**: Only the changed modules are recompiled
 
-For more detailed information about Docker optimizations, including HMR, see the [Docker Optimization Guide](DOCKER_OPTIMIZATION_GUIDE.md).
+For more detailed information about Docker performance enhancements, including HMR, see the [Docker Performance Guide](DOCKER_PERFORMANCE_GUIDE.md).
 
 ### Adding New Features
 

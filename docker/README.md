@@ -135,9 +135,9 @@ We provide several development scripts to make working with Docker easier:
 ./docker/scripts/db-seed.sh run all
 ```
 
-#### Optimized Development with Hot Module Replacement (HMR)
+#### Development with Hot Module Replacement (HMR)
 
-For a faster development experience, we provide an optimized Docker setup with Hot Module Replacement (HMR) support:
+For a faster development experience, our Docker setup includes Hot Module Replacement (HMR) support:
 
 1. **HMR Development Script** (hmr-dev.sh):
 
@@ -171,7 +171,7 @@ Benefits of using HMR:
 - **Improved Developer Experience**: No need to manually restart services
 - **Efficient Resource Usage**: Only the changed modules are recompiled
 
-For more detailed information about Docker optimizations, including HMR, see the [Docker Optimization Guide](../DOCKER_OPTIMIZATION_GUIDE.md).
+For more detailed information about Docker performance enhancements, including HMR, see the [Docker Performance Guide](../DOCKER_PERFORMANCE_GUIDE.md).
 
 ## Service Endpoints
 

@@ -1,8 +1,8 @@
-# Docker Optimization Guide for Local Development
+# Docker Performance Guide for Local Development
 
-This guide provides detailed implementation instructions for optimizing Docker containers in the local development environment, focusing on faster startup times and improved developer experience.
+This guide provides detailed implementation instructions for high-performance Docker containers in the local development environment, focusing on faster startup times and improved developer experience.
 
-> **Note:** The optimized Docker configuration described in this guide is now the default configuration for this project. The standard `docker-compose.yml` file and all Dockerfiles already include all these optimizations.
+> **Note:** All performance enhancements described in this guide are already implemented in the project's Docker configuration. The `docker-compose.yml` file and all Dockerfiles include these improvements by default.
 
 ## Quick Start with HMR
 
@@ -190,7 +190,7 @@ Then start services by profile:
 docker-compose --profile auth up
 ```
 
-> Note: All docker-compose commands in this guide now use the default docker-compose.yml file, which already includes all the optimizations described.
+> Note: All docker-compose commands in this guide use the default docker-compose.yml file, which already includes all the performance enhancements described.
 
 ### Implement NestJS Hot Module Replacement (HMR)
 
@@ -377,15 +377,15 @@ bootstrap();
 
 ## Implementation Strategy
 
-1. Start with BuildKit and dependency optimizations for the fastest initial gains
-2. Implement volume optimizations next to improve file system performance
+1. Start with BuildKit and dependency improvements for the fastest initial gains
+2. Implement volume performance enhancements next to improve file system performance
 3. Add service startup enhancements to reduce waiting time between services
 4. Configure resource limits based on your development machine's capabilities
 5. Finally, implement workflow improvements for day-to-day development
 
 ## Measuring Improvements
 
-To measure the impact of optimizations:
+To measure the impact of performance enhancements:
 
 1. Time the startup of services before and after changes:
    ```bash
