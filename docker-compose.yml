@@ -222,6 +222,7 @@ services:
       - loki
     networks:
       - chat-network
+    profiles: [ "logging", "all" ]
 
   # PostgreSQL
   postgres:
@@ -425,6 +426,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - chat-network
+    profiles: [ "logging", "all" ]
 
   # Grafana (Visualization)
   grafana:
@@ -442,6 +444,7 @@ services:
       - loki
     networks:
       - chat-network
+    profiles: [ "logging", "all" ]
 
 networks:
   chat-network:

@@ -16,7 +16,8 @@ show_help() {
   echo "  db          Start only database services (PostgreSQL, MongoDB)"
   echo "  kafka       Start Kafka and Zookeeper"
   echo "  redis       Start Redis cluster"
-  echo "  infra       Start all infrastructure services (db, kafka, redis)"
+  echo "  logging     Start Loki and Grafana logging system"
+  echo "  infra       Start all infrastructure services (db, kafka, redis, logging)"
   echo "  auth        Start auth service with dependencies"
   echo "  user        Start user service with dependencies"
   echo "  chat        Start chat service with dependencies"
@@ -90,9 +91,13 @@ case "$1" in
     echo "Starting Redis cluster..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile redis up -d
     ;;
+  logging)
+    echo "Starting logging system (Loki and Grafana)..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile logging up -d
+    ;;
   infra)
     echo "Starting all infrastructure services..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db --profile kafka --profile redis up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db --profile kafka --profile redis --profile logging up -d
     ;;
   auth)
     echo "Starting auth service with dependencies..."
