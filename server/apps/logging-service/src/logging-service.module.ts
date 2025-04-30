@@ -7,6 +7,9 @@ import { LogMessageValidator } from './kafka/log-message.validator';
 import { LogProcessorService } from './processing/log-processor.service';
 import { LogFilterService } from './processing/log-filter.service';
 import { LogBatchService } from './processing/log-batch.service';
+import { LokiClientService } from './loki/loki-client.service';
+import { LokiLabelService } from './loki/loki-label.service';
+import { LokiInitializerService } from './loki/loki-initializer.service';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { LogBatchService } from './processing/log-batch.service';
     LogProcessorService,
     LogFilterService,
     LogBatchService,
+    LokiClientService,
+    LokiLabelService,
+    LokiInitializerService,
   ],
 })
 export class LoggingServiceModule {}
