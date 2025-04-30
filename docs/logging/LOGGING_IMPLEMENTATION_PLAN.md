@@ -59,11 +59,12 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 - [x] Test end-to-end log flow from Kafka to Loki
 
 ### Step 2.5: Create Log Management API
-- [ ] Implement REST API for log management
-- [ ] Add endpoints for querying logs
-- [ ] Add endpoints for managing log levels
-- [ ] Implement authentication for the API
-- [ ] Create API documentation
+- [x] Implement REST API for log management
+- [x] Add endpoints for querying logs
+- [x] Add endpoints for managing log levels
+- [x] Implement authentication for the API
+- [x] Create API documentation
+- [x] Add validation using class-validator and class-transformer
 
 ## Phase 3: Common Logging Library
 
@@ -211,5 +212,5 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-07-15
-- **Last Updated**: 2023-07-19
+- **Last Updated**: 2023-07-21
 - **Version**: 1.0.0
