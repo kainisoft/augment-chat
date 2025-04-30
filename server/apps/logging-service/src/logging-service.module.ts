@@ -4,6 +4,9 @@ import { LoggingServiceController } from './logging-service.controller';
 import { LoggingServiceService } from './logging-service.service';
 import { LogConsumerService } from './kafka/log-consumer.service';
 import { LogMessageValidator } from './kafka/log-message.validator';
+import { LogProcessorService } from './processing/log-processor.service';
+import { LogFilterService } from './processing/log-filter.service';
+import { LogBatchService } from './processing/log-batch.service';
 
 @Module({
   imports: [
@@ -13,6 +16,13 @@ import { LogMessageValidator } from './kafka/log-message.validator';
     }),
   ],
   controllers: [LoggingServiceController],
-  providers: [LoggingServiceService, LogConsumerService, LogMessageValidator],
+  providers: [
+    LoggingServiceService,
+    LogConsumerService,
+    LogMessageValidator,
+    LogProcessorService,
+    LogFilterService,
+    LogBatchService,
+  ],
 })
 export class LoggingServiceModule {}

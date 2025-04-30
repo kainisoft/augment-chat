@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { Consumer, Kafka, KafkaMessage } from 'kafkajs';
 import { LogMessage } from './log-message.interface';
 import { LogMessageValidator } from './log-message.validator';
+import { LogProcessorService } from '../processing/log-processor.service';
 
 /**
  * Service for consuming log messages from Kafka
@@ -22,6 +23,7 @@ export class LogConsumerService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly configService: ConfigService,
     private readonly logMessageValidator: LogMessageValidator,
+    private readonly logProcessorService: LogProcessorService,
   ) {
     // Initialize Kafka client
     this.kafka = new Kafka({
@@ -176,14 +178,24 @@ export class LogConsumerService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Process a log message
-   * This is a placeholder for now - in the next steps we'll add actual processing
+   * Process a log message using the log processor service
    * @param logMessage The log message to process
    */
   private processLogMessage(logMessage: LogMessage) {
-    // For now, just log the message to the console
-    // In the next steps, we'll add actual processing and forwarding to Loki
-    this.logger.debug(`Received log message: ${JSON.stringify(logMessage)}`);
+    try {
+      // Process the log message using the log processor service
+      const processedLog = this.logProcessorService.processLogMessage(logMessage);
+
+      if (processedLog) {
+        this.logger.debug(`Processed log message from ${processedLog.service}`);
+      } else {
+        this.logger.debug(`Log message filtered out: ${logMessage.service}:${logMessage.level}`);
+      }
+    } catch (error: any) {
+      this.logger.error(`Error in log processor: ${error.message}`, error.stack);
+      // Log the original message to ensure it's not lost
+      this.logger.debug(`Original log message: ${JSON.stringify(logMessage)}`);
+    }
   }
 
   /**
