@@ -40,10 +40,10 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 - [x] Update project documentation to include the new service
 
 ### Step 2.2: Implement Kafka Consumer
-- [ ] Create Kafka consumer service for the "logs" topic
-- [ ] Implement log message parsing and validation
-- [ ] Add error handling for malformed log messages
-- [ ] Test consuming messages from Kafka
+- [x] Create Kafka consumer service for the "logs" topic
+- [x] Implement log message parsing and validation
+- [x] Add error handling for malformed log messages
+- [x] Test consuming messages from Kafka
 
 ### Step 2.3: Implement Log Processing
 - [ ] Create log processor service
@@ -211,5 +211,5 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-07-15
-- **Last Updated**: 2023-07-16
+- **Last Updated**: 2023-07-17
 - **Version**: 1.0.0
