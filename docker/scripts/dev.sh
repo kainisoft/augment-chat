@@ -36,6 +36,7 @@ show_help() {
   echo "  stats       Show resource usage statistics"
   echo "  status      Show status of all services"
   echo "  status:logging Show status of logging services"
+  echo "  health      Check health status of all services"
   echo "  help        Show this help message"
   echo ""
   echo "Examples:"
@@ -180,6 +181,10 @@ case "$1" in
     echo "Grafana UI: http://localhost:3001 (admin/admin)"
     echo "Loki API: http://localhost:3100"
     echo "Logging Service API: http://localhost:4005/health"
+    ;;
+  health)
+    echo "Checking health status of all services..."
+    ./docker/scripts/check-health.sh
     ;;
   help|*)
     show_help

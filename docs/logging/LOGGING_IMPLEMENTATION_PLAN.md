@@ -26,10 +26,10 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 - [x] Test Loki and Grafana connectivity
 
 ### Step 1.2: Configure Kafka for Log Transport
-- [ ] Create dedicated "logs" topic in Kafka
-- [ ] Configure appropriate partitioning (by service name)
-- [ ] Set retention policies for development environment
-- [ ] Test Kafka topic with sample log messages
+- [x] Create dedicated "logs" topic in Kafka
+- [x] Configure appropriate partitioning (by service name)
+- [x] Set retention policies for development environment
+- [x] Test Kafka topic with sample log messages
 
 ## Phase 2: Logging Microservice Implementation
 
