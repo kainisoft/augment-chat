@@ -13,6 +13,8 @@ ingester:
     final_sleep: 0s
   chunk_idle_period: 5m
   chunk_retain_period: 30s
+  wal:
+    dir: /tmp/wal
 
 schema_config:
   configs:
@@ -46,7 +48,7 @@ limits_config:
   reject_old_samples: true
   reject_old_samples_max_age: 168h
   retention_period: 168h  # 7 days (development)
-  # For production, this would be set to 2160h (90 days)
+  # For production, change to 2160h (90 days)
 
 chunk_store_config:
   max_look_back_period: 0s

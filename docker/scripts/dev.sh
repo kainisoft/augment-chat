@@ -34,6 +34,8 @@ show_help() {
   echo "  clean       Stop all services and remove volumes"
   echo "  logs [service] Show logs for a specific service"
   echo "  stats       Show resource usage statistics"
+  echo "  status      Show status of all services"
+  echo "  status:logging Show status of logging services"
   echo "  help        Show this help message"
   echo ""
   echo "Examples:"
@@ -92,7 +94,7 @@ case "$1" in
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile redis up -d
     ;;
   logging)
-    echo "Starting logging system (Loki and Grafana)..."
+    echo "Starting logging system (Loki, Grafana, and Logging Service)..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile logging up -d
     ;;
   infra)
@@ -166,6 +168,18 @@ case "$1" in
   stats)
     echo "Showing resource usage statistics..."
     docker stats
+    ;;
+  status)
+    echo "Showing status of all services..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" ps
+    ;;
+  status:logging)
+    echo "Showing status of logging services..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" ps loki grafana logging-service
+    echo ""
+    echo "Grafana UI: http://localhost:3001 (admin/admin)"
+    echo "Loki API: http://localhost:3100"
+    echo "Logging Service API: http://localhost:4005/health"
     ;;
   help|*)
     show_help

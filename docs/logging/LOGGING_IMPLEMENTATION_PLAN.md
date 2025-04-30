@@ -19,11 +19,11 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 ## Phase 1: Infrastructure Setup
 
 ### Step 1.1: Set up Loki and Grafana in Docker Compose
-- [ ] Add Loki service to docker-compose.yml
-- [ ] Add Grafana service to docker-compose.yml
-- [ ] Configure persistent volumes for both services
-- [ ] Create basic Loki configuration file
-- [ ] Test Loki and Grafana connectivity
+- [x] Add Loki service to docker-compose.yml
+- [x] Add Grafana service to docker-compose.yml
+- [x] Configure persistent volumes for both services
+- [x] Create basic Loki configuration file
+- [x] Test Loki and Grafana connectivity
 
 ### Step 1.2: Configure Kafka for Log Transport
 - [ ] Create dedicated "logs" topic in Kafka
@@ -34,10 +34,10 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 ## Phase 2: Logging Microservice Implementation
 
 ### Step 2.1: Create the Logging Microservice
-- [ ] Generate new NestJS microservice using CLI: `nest generate app logging-service`
-- [ ] Configure microservice to run on port 4005
-- [ ] Set up basic health check endpoint
-- [ ] Update project documentation to include the new service
+- [x] Generate new NestJS microservice using CLI: `nest generate app logging-service`
+- [x] Configure microservice to run on port 4005
+- [x] Set up basic health check endpoint
+- [x] Update project documentation to include the new service
 
 ### Step 2.2: Implement Kafka Consumer
 - [ ] Create Kafka consumer service for the "logs" topic
