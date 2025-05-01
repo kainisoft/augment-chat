@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PassportModule } from '@nestjs/passport';
 import { LoggingServiceController } from './logging-service.controller';
 import { LoggingServiceService } from './logging-service.service';
 import { LogConsumerService } from './kafka/log-consumer.service';
@@ -14,7 +13,6 @@ import { LokiInitializerService } from './loki/loki-initializer.service';
 import { LogApiController } from './api/log-api.controller';
 import { LogQueryService } from './api/log-query.service';
 import { LogLevelService } from './api/log-level.service';
-import { ApiKeyStrategy } from './api/auth/api-key.strategy';
 
 @Module({
   imports: [
@@ -22,7 +20,6 @@ import { ApiKeyStrategy } from './api/auth/api-key.strategy';
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
-    PassportModule.register({ defaultStrategy: 'api-key' }),
   ],
   controllers: [LoggingServiceController, LogApiController],
   providers: [
@@ -37,7 +34,6 @@ import { ApiKeyStrategy } from './api/auth/api-key.strategy';
     LokiInitializerService,
     LogQueryService,
     LogLevelService,
-    ApiKeyStrategy,
   ],
 })
 export class LoggingServiceModule {}

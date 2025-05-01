@@ -3,18 +3,33 @@ set -e
 
 # This script tests the Kafka logs topic by sending sample log messages
 
+# Check if docker compose (v2) or docker-compose (v1) is available
+if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+  # Docker Compose V2 is available (docker compose)
+  DOCKER_COMPOSE="docker compose"
+  echo "Using Docker Compose V2"
+elif command -v docker-compose &> /dev/null; then
+  # Docker Compose V1 is available (docker-compose)
+  DOCKER_COMPOSE="docker-compose"
+  echo "Using Docker Compose V1"
+else
+  echo "Error: Neither docker-compose nor docker compose is available"
+  echo "Please install Docker and Docker Compose"
+  exit 1
+fi
+
 # Check if Kafka is running
 echo "Checking if Kafka is running..."
-if ! docker compose exec kafka kafka-topics.sh --list --bootstrap-server localhost:9092 &> /dev/null; then
-  echo "Error: Kafka is not running. Please start Kafka first with 'docker compose -f docker-compose.yml --profile kafka up -d'"
+if ! docker exec pet6-kafka-1 kafka-topics --list --bootstrap-server localhost:9092 &> /dev/null; then
+  echo "Error: Kafka is not running. Please start Kafka first with '$DOCKER_COMPOSE -f docker-compose.yml --profile kafka up -d'"
   exit 1
 fi
 
 # Check if logs topic exists
 echo "Checking if logs topic exists..."
-if ! docker compose exec kafka kafka-topics.sh --list --bootstrap-server localhost:9092 | grep -q "^logs$"; then
+if ! docker exec pet6-kafka-1 kafka-topics --list --bootstrap-server localhost:9092 | grep -q "^logs$"; then
   echo "Creating logs topic..."
-  docker compose exec kafka kafka-topics.sh --create --if-not-exists --bootstrap-server localhost:9092 --partitions 10 --replication-factor 1 --topic logs \
+  docker exec pet6-kafka-1 kafka-topics --create --if-not-exists --bootstrap-server localhost:9092 --partitions 10 --replication-factor 1 --topic logs \
     --config cleanup.policy=delete \
     --config retention.ms=604800000 \
     --config compression.type=lz4
@@ -75,18 +90,22 @@ ERROR_LOG='{
 
 # Send the log messages to Kafka
 echo "Sending API Gateway log..."
-echo "api-gateway:$API_GATEWAY_LOG" | docker compose exec -T kafka kafka-console-producer.sh --broker-list localhost:9092 --topic logs --property "parse.key=true" --property "key.separator=:"
+API_GATEWAY_LOG_ONELINE=$(echo "$API_GATEWAY_LOG" | tr -d '\n')
+echo "api-gateway:$API_GATEWAY_LOG_ONELINE" | docker exec -i pet6-kafka-1 kafka-console-producer --broker-list localhost:9092 --topic logs --property "parse.key=true" --property "key.separator=:"
 
 echo "Sending Auth Service log..."
-echo "auth-service:$AUTH_SERVICE_LOG" | docker compose exec -T kafka kafka-console-producer.sh --broker-list localhost:9092 --topic logs --property "parse.key=true" --property "key.separator=:"
+AUTH_SERVICE_LOG_ONELINE=$(echo "$AUTH_SERVICE_LOG" | tr -d '\n')
+echo "auth-service:$AUTH_SERVICE_LOG_ONELINE" | docker exec -i pet6-kafka-1 kafka-console-producer --broker-list localhost:9092 --topic logs --property "parse.key=true" --property "key.separator=:"
 
 echo "Sending Chat Service log..."
-echo "chat-service:$CHAT_SERVICE_LOG" | docker compose exec -T kafka kafka-console-producer.sh --broker-list localhost:9092 --topic logs --property "parse.key=true" --property "key.separator=:"
+CHAT_SERVICE_LOG_ONELINE=$(echo "$CHAT_SERVICE_LOG" | tr -d '\n')
+echo "chat-service:$CHAT_SERVICE_LOG_ONELINE" | docker exec -i pet6-kafka-1 kafka-console-producer --broker-list localhost:9092 --topic logs --property "parse.key=true" --property "key.separator=:"
 
 echo "Sending Error log..."
-echo "user-service:$ERROR_LOG" | docker compose exec -T kafka kafka-console-producer.sh --broker-list localhost:9092 --topic logs --property "parse.key=true" --property "key.separator=:"
+ERROR_LOG_ONELINE=$(echo "$ERROR_LOG" | tr -d '\n')
+echo "user-service:$ERROR_LOG_ONELINE" | docker exec -i pet6-kafka-1 kafka-console-producer --broker-list localhost:9092 --topic logs --property "parse.key=true" --property "key.separator=:"
 
 echo "Sample log messages sent successfully!"
 echo ""
 echo "To consume messages from the logs topic, run:"
-echo "docker compose exec kafka kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic logs --from-beginning"
+echo "docker exec pet6-kafka-1 kafka-console-consumer --bootstrap-server localhost:9092 --topic logs --from-beginning"

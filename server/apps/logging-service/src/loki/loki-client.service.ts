@@ -5,7 +5,6 @@ import { LokiLabelService } from './loki-label.service';
 import {
   LokiPushRequest,
   LokiStream,
-  LokiErrorResponse,
 } from './loki-push.interface';
 
 /**
@@ -46,8 +45,9 @@ export class LokiClientService implements OnModuleInit {
           'Could not connect to Loki. Will retry on first log submission.',
         );
       }
-    } catch (error: any) {
-      this.logger.warn(`Error connecting to Loki: ${error.message}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`Error connecting to Loki: ${errorMessage}`);
     }
   }
 
@@ -73,9 +73,9 @@ export class LokiClientService implements OnModuleInit {
         const labels = this.parseLabelsFromString(labelKey);
 
         // Create values array for this stream
-        const values = messages.map((message) => {
+        const values: Array<[string, string]> = messages.map((message) => {
           // Convert timestamp to Loki format (nanoseconds since epoch)
-          const timestamp = this.getTimestampForLoki(message.timestamp);
+          const timestamp = this.getTimestampForLoki();
 
           // Stringify the log message for Loki
           const logContent = JSON.stringify(message);
@@ -97,10 +97,13 @@ export class LokiClientService implements OnModuleInit {
       await this.pushToLoki(pushRequest);
 
       this.logger.debug(`Successfully sent ${logMessages.length} logs to Loki`);
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
       this.logger.error(
-        `Error sending logs to Loki: ${error.message}`,
-        error.stack,
+        `Error sending logs to Loki: ${errorMessage}`,
+        errorStack,
       );
       throw error;
     }
@@ -126,21 +129,26 @@ export class LokiClientService implements OnModuleInit {
         });
 
         if (!response.ok) {
-          const errorData = (await response.json()) as LokiErrorResponse;
-          throw new Error(
-            `Loki API error: ${errorData.message || response.statusText}`,
-          );
+          // Handle error response - Loki returns text/plain for errors, not JSON
+          const errorText = await response.text();
+          throw new Error(`Loki API error (${response.status}): ${errorText}`);
         }
 
-        // Success
+        // Success - Loki returns 204 No Content on success
         return;
-      } catch (error: any) {
-        lastError = error;
+      } catch (error) {
+        if (error instanceof Error) {
+          lastError = error;
+        } else {
+          lastError = new Error(String(error));
+        }
+
         retries++;
 
         if (retries < this.maxRetries) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
           this.logger.warn(
-            `Retrying Loki push (${retries}/${this.maxRetries}): ${error.message}`,
+            `Retrying Loki push (${retries}/${this.maxRetries}): ${errorMessage}`,
           );
           await this.delay(this.retryDelayMs * retries);
         }
@@ -164,22 +172,21 @@ export class LokiClientService implements OnModuleInit {
       });
 
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
+      // Ignore the specific error, just return false to indicate Loki is not available
       return false;
     }
   }
 
   /**
    * Convert a timestamp to Loki format (nanoseconds since epoch)
-   * @param timestamp The timestamp to convert (ISO string or Date)
+   * Always uses current time to ensure we're within Loki's acceptable time range
    * @returns The timestamp in Loki format
    */
-  private getTimestampForLoki(timestamp?: string | Date): string {
-    const date = timestamp
-      ? typeof timestamp === 'string'
-        ? new Date(timestamp)
-        : timestamp
-      : new Date();
+  private getTimestampForLoki(): string {
+    // Always use current time to ensure we're within Loki's acceptable time range
+    // This is a temporary fix to ensure logs are accepted by Loki
+    const date = new Date();
 
     // Convert to nanoseconds (Loki expects nanoseconds)
     const timestampNs = date.getTime() * 1000000;

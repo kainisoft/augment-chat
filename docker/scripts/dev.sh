@@ -30,7 +30,8 @@ show_help() {
   echo "  build:chat  Rebuild chat service"
   echo "  build:notification Rebuild notification service"
   echo "  build:api   Rebuild API gateway"
-  echo "  down        Stop all services"
+  echo "  down        Stop all services (using all profiles)"
+  echo "  down:all    Forcefully stop all project containers"
   echo "  clean       Stop all services and remove volumes"
   echo "  logs [service] Show logs for a specific service"
   echo "  stats       Show resource usage statistics"
@@ -152,11 +153,25 @@ case "$1" in
     ;;
   down)
     echo "Stopping all services..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" down
+    # Stop services with all profiles to ensure everything is stopped
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile infra down
+    ;;
+  down:all)
+    echo "Forcefully stopping all project containers..."
+    # Get all containers with the project name and stop them directly
+    PROJECT_NAME=$(basename $(pwd))
+    CONTAINERS=$(docker ps -a --filter "name=${PROJECT_NAME}" --format "{{.Names}}")
+    if [ -n "$CONTAINERS" ]; then
+      echo "Stopping containers: $CONTAINERS"
+      docker stop $CONTAINERS
+      docker rm $CONTAINERS
+    else
+      echo "No containers found for project ${PROJECT_NAME}"
+    fi
     ;;
   clean)
     echo "Stopping all services and removing volumes..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" down -v
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile infra down -v
     ;;
   logs)
     if [ -z "$2" ]; then

@@ -43,7 +43,7 @@ echo "Using Docker Compose file: $COMPOSE_PATH"
 
 # Stop the logging services
 echo "Stopping logging services..."
-$DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile logging stop
+$DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile logging down
 
 # Start the logging services
 echo "Starting logging services..."

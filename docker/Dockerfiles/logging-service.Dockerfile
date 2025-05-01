@@ -14,10 +14,10 @@ RUN --mount=type=cache,target=/root/.npm \
 RUN --mount=type=cache,target=/root/.pnpm-store \
     pnpm install --frozen-lockfile
 
-# Copy only necessary files for the chat-service service
+# Copy only necessary files for the logging-service service
 # This reduces the context size and improves build time
 COPY tsconfig.json nest-cli.json ./
-COPY apps/chat-service ./apps/chat-service
+COPY apps/logging-service ./apps/logging-service
 COPY libs ./libs
 
 # Expose port

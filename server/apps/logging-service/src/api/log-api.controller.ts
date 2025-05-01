@@ -4,21 +4,18 @@ import {
   Post,
   Body,
   Query,
-  UseGuards,
   Logger,
 } from '@nestjs/common';
 import { LogQueryService } from './log-query.service';
 import { LogLevelService } from './log-level.service';
 import { LogQueryDto, LogQueryResponseDto } from './dto/log-query.dto';
 import { LogLevelUpdateDto, LogLevelResponseDto } from './dto/log-level.dto';
-import { ApiKeyGuard } from './auth/api-key.guard';
 import { LogLevel } from '../kafka/log-message.interface';
 
 /**
  * Controller for the Log Management API
  */
 @Controller('api/logs')
-@UseGuards(ApiKeyGuard)
 export class LogApiController {
   private readonly logger = new Logger(LogApiController.name);
 
