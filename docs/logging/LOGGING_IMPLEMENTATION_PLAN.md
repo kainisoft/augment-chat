@@ -62,17 +62,16 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 - [x] Implement REST API for log management
 - [x] Add endpoints for querying logs
 - [x] Add endpoints for managing log levels
-- [x] Implement authentication for the API
 - [x] Create API documentation
 - [x] Add validation using class-validator and class-transformer
 
 ## Phase 3: Common Logging Library
 
 ### Step 3.1: Create Kafka Log Transport
-- [ ] Create Winston transport for Kafka
-- [ ] Implement log formatting and serialization
-- [ ] Add service context and metadata
-- [ ] Test transport with sample logs
+- [x] Create Winston transport for Kafka
+- [x] Implement log formatting and serialization
+- [x] Add service context and metadata
+- [x] Test transport with sample logs
 
 ### Step 3.2: Update Common Logging Module
 - [ ] Modify existing logging module to use Kafka transport

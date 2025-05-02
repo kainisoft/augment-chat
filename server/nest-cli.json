@@ -65,6 +65,15 @@
         "tsConfigPath": "libs/kafka/tsconfig.lib.json"
       }
     },
+    "logging": {
+      "type": "library",
+      "root": "libs/logging",
+      "entryFile": "index",
+      "sourceRoot": "libs/logging/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/logging/tsconfig.lib.json"
+      }
+    },
     "logging-service": {
       "type": "application",
       "root": "apps/logging-service",
