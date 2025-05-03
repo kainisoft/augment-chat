@@ -13,6 +13,11 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4000
+      # Logging configuration
+      - LOG_LEVEL=info
+      - KAFKA_BROKERS=kafka:29092
+      - KAFKA_LOGS_TOPIC=logs
+      - LOG_CONSOLE=true
     volumes:
       - ./server/apps/api-gateway:/app/apps/api-gateway:delegated
       - ./server/libs:/app/libs:delegated
