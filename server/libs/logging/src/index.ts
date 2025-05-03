@@ -2,3 +2,8 @@ export * from './logging.module';
 export * from './logging.service';
 export * from './interfaces/log-message.interface';
 export * from './transports/kafka.transport';
+export * from './middleware/logging.middleware';
+export * from './interceptors/logging.interceptor';
+export * from './filters/exception.filter';
+export * from './utils/request-id.util';
+export * from './utils/redaction.util';

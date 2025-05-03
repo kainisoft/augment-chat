@@ -1,13 +1,29 @@
-import { Module, DynamicModule, Provider, Type } from '@nestjs/common';
+import {
+  Module,
+  DynamicModule,
+  Provider,
+  Type,
+  MiddlewareConsumer,
+  NestModule,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggingService, LoggingModuleOptions } from './logging.service';
+import { LoggingMiddleware } from './middleware/logging.middleware';
+import { LoggingProviders } from './providers/logging.providers';
 
 @Module({
   imports: [ConfigModule],
-  providers: [LoggingService],
+  providers: [LoggingService, ...LoggingProviders],
   exports: [LoggingService],
 })
-export class LoggingModule {
+export class LoggingModule implements NestModule {
+  /**
+   * Configure middleware
+   * @param consumer The middleware consumer
+   */
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
   /**
    * Register the logging module with the provided options
    * @param options The logging module options
@@ -23,6 +39,7 @@ export class LoggingModule {
           useValue: options,
         },
         LoggingService,
+        ...LoggingProviders,
       ],
       exports: [LoggingService],
     };
@@ -43,6 +60,7 @@ export class LoggingModule {
           useValue: options,
         },
         LoggingService,
+        ...LoggingProviders,
       ],
       exports: [LoggingService],
       global: true,
@@ -61,6 +79,7 @@ export class LoggingModule {
       providers: [
         ...this.createAsyncProviders(options),
         LoggingService,
+        ...LoggingProviders,
         ...(options.providers || []),
       ],
       exports: [LoggingService],
