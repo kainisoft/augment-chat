@@ -102,6 +102,11 @@ services:
       - NODE_ENV=development
       - PORT=4002
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/user_db
+      # Logging configuration
+      - LOG_LEVEL=info
+      - KAFKA_BROKERS=kafka:29092
+      - KAFKA_LOGS_TOPIC=logs
+      - LOG_CONSOLE=true
     volumes:
       - ./server/apps/user-service:/app/apps/user-service:delegated
       - ./server/libs:/app/libs:delegated

@@ -101,10 +101,10 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 - [ ] Test log flow from Auth Service to Grafana
 
 ### Step 4.3: Update User Service Logging
-- [ ] Integrate common logging library in User Service
-- [ ] Add user-specific context to logs
-- [ ] Configure appropriate log levels
-- [ ] Test log flow from User Service to Grafana
+- [x] Integrate common logging library in User Service
+- [x] Add user-specific context to logs
+- [x] Configure appropriate log levels
+- [x] Test log flow from User Service to Grafana
 
 ### Step 4.4: Update Chat Service Logging
 - [ ] Integrate common logging library in Chat Service
