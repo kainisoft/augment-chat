@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotificationServiceHealthController, NotificationServiceHealthService } from './health.controller';
+import {
+  NotificationServiceHealthController,
+  NotificationServiceHealthService,
+} from './health.controller';
 import { ServiceUnavailableException } from '@nestjs/common';
 
 describe('NotificationServiceHealthController', () => {
@@ -12,8 +15,12 @@ describe('NotificationServiceHealthController', () => {
       providers: [NotificationServiceHealthService],
     }).compile();
 
-    controller = module.get<NotificationServiceHealthController>(NotificationServiceHealthController);
-    healthService = module.get<NotificationServiceHealthService>(NotificationServiceHealthService);
+    controller = module.get<NotificationServiceHealthController>(
+      NotificationServiceHealthController,
+    );
+    healthService = module.get<NotificationServiceHealthService>(
+      NotificationServiceHealthService,
+    );
   });
 
   it('should be defined', () => {
@@ -47,7 +54,10 @@ describe('NotificationServiceHealthController', () => {
       expect(result.system).toHaveProperty('status', 'ok');
       expect(result.database).toHaveProperty('status', 'ok');
       expect(result.database.details).toHaveProperty('responseTime', 10);
-      expect(result.database.details).toHaveProperty('connection', 'established');
+      expect(result.database.details).toHaveProperty(
+        'connection',
+        'established',
+      );
     });
 
     it('should handle database check errors', async () => {
@@ -67,7 +77,10 @@ describe('NotificationServiceHealthController', () => {
       expect(result).toHaveProperty('database');
       expect(result.system).toHaveProperty('status', 'ok');
       expect(result.database).toHaveProperty('status', 'error');
-      expect(result.database.details).toHaveProperty('message', 'Database connection failed');
+      expect(result.database.details).toHaveProperty(
+        'message',
+        'Database connection failed',
+      );
     });
   });
 
@@ -76,7 +89,7 @@ describe('NotificationServiceHealthController', () => {
       // Mock the checkComponents method
       jest.spyOn(controller as any, 'checkComponents').mockResolvedValue({
         system: { status: 'ok' },
-        database: { 
+        database: {
           status: 'ok',
           details: {
             responseTime: 10,
@@ -100,7 +113,7 @@ describe('NotificationServiceHealthController', () => {
       // Mock the checkComponents method to return an error
       jest.spyOn(controller as any, 'checkComponents').mockResolvedValue({
         system: { status: 'ok' },
-        database: { 
+        database: {
           status: 'error',
           details: {
             message: 'Database connection failed',
@@ -108,7 +121,9 @@ describe('NotificationServiceHealthController', () => {
         },
       });
 
-      await expect(controller.check()).rejects.toThrow(ServiceUnavailableException);
+      await expect(controller.check()).rejects.toThrow(
+        ServiceUnavailableException,
+      );
     });
   });
 
@@ -145,7 +160,9 @@ describe('NotificationServiceHealthController', () => {
         database: { status: 'error' },
       });
 
-      await expect(controller.readiness()).rejects.toThrow(ServiceUnavailableException);
+      await expect(controller.readiness()).rejects.toThrow(
+        ServiceUnavailableException,
+      );
     });
   });
 });

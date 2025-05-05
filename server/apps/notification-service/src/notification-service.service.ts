@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { LoggingService } from '@app/logging';
+import {
+  LoggingService,
+  LogHelpers,
+  NotificationLogMetadata,
+} from '@app/logging';
 
 @Injectable()
 export class NotificationServiceService {
@@ -9,7 +13,21 @@ export class NotificationServiceService {
   }
 
   getHello(): string {
-    this.loggingService.debug('Generating hello message', 'getHello');
+    // Create type-safe notification metadata
+    const metadata = LogHelpers.createNotificationLogMetadata(
+      'service-operation',
+      {
+        channel: 'internal',
+        success: true,
+      },
+    );
+
+    this.loggingService.debug<NotificationLogMetadata>(
+      'Generating hello message',
+      'getHello',
+      metadata,
+    );
+
     return 'Hello World!';
   }
 }

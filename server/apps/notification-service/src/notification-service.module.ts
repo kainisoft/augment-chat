@@ -6,7 +6,7 @@ import { NotificationServiceController } from './notification-service.controller
 import { NotificationServiceService } from './notification-service.service';
 import {
   NotificationServiceHealthController,
-  NotificationServiceHealthService
+  NotificationServiceHealthService,
 } from './health/health.controller';
 
 @Module({
@@ -27,17 +27,24 @@ import {
         // Get log level from environment or use default
         const logLevelStr = configService.get<string>('LOG_LEVEL', 'info');
         // Map string to LogLevel enum
-        const level = logLevelStr === 'error' ? LogLevel.ERROR :
-                      logLevelStr === 'warn' ? LogLevel.WARN :
-                      logLevelStr === 'debug' ? LogLevel.DEBUG :
-                      logLevelStr === 'verbose' ? LogLevel.VERBOSE :
-                      LogLevel.INFO;
+        const level =
+          logLevelStr === 'error'
+            ? LogLevel.ERROR
+            : logLevelStr === 'warn'
+              ? LogLevel.WARN
+              : logLevelStr === 'debug'
+                ? LogLevel.DEBUG
+                : logLevelStr === 'verbose'
+                  ? LogLevel.VERBOSE
+                  : LogLevel.INFO;
 
         return {
           service: 'notification-service',
           level,
           kafka: {
-            brokers: configService.get<string>('KAFKA_BROKERS', 'kafka:29092').split(','),
+            brokers: configService
+              .get<string>('KAFKA_BROKERS', 'kafka:29092')
+              .split(','),
             topic: configService.get<string>('KAFKA_LOGS_TOPIC', 'logs'),
             clientId: 'notification-service',
           },
@@ -48,7 +55,10 @@ import {
       inject: [ConfigService],
     }),
   ],
-  controllers: [NotificationServiceController, NotificationServiceHealthController],
+  controllers: [
+    NotificationServiceController,
+    NotificationServiceHealthController,
+  ],
   providers: [NotificationServiceService, NotificationServiceHealthService],
 })
 export class NotificationServiceModule {}
