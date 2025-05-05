@@ -84,38 +84,113 @@ This document provides the technical design details for implementing the central
 ### 2.1 Log Message Format
 
 ```typescript
-interface LogMessage {
+// Log levels enum
+enum LogLevel {
+  ERROR = 'error',
+  WARN = 'warn',
+  INFO = 'info',
+  DEBUG = 'debug',
+  VERBOSE = 'verbose',
+}
+
+// Base metadata interface
+interface BaseLogMetadata {
+  requestId?: string;
+  correlationId?: string;
+  duration?: number;
+  [key: string]: any;
+}
+
+// HTTP-specific metadata
+interface HttpLogMetadata extends BaseLogMetadata {
+  method: string;
+  url: string;
+  statusCode?: number;
+  ip?: string;
+  userAgent?: string;
+}
+
+// Auth-specific metadata
+interface AuthLogMetadata extends BaseLogMetadata {
+  userId?: string;
+  username?: string;
+  action: string;
+  success?: boolean;
+}
+
+// User-specific metadata
+interface UserLogMetadata extends BaseLogMetadata {
+  userId: string;
+  action: string;
+  fields?: string[];
+}
+
+// Chat-specific metadata
+interface ChatLogMetadata extends BaseLogMetadata {
+  userId?: string;
+  roomId?: string;
+  messageId?: string;
+  action: string;
+}
+
+// Notification-specific metadata
+interface NotificationLogMetadata extends BaseLogMetadata {
+  userId?: string;
+  notificationType: string;
+  notificationId?: string;
+  channel?: string;
+  success?: boolean;
+}
+
+// Database-specific metadata
+interface DatabaseLogMetadata extends BaseLogMetadata {
+  operation: string;
+  table?: string;
+  collection?: string;
+  duration: number;
+  recordCount?: number;
+}
+
+// Error-specific metadata
+interface ErrorLogMetadata extends BaseLogMetadata {
+  errorName?: string;
+  errorCode?: string | number;
+  stack?: string;
+}
+
+// Union type of all metadata types
+type LogMetadata =
+  | BaseLogMetadata
+  | HttpLogMetadata
+  | AuthLogMetadata
+  | UserLogMetadata
+  | ChatLogMetadata
+  | NotificationLogMetadata
+  | DatabaseLogMetadata
+  | ErrorLogMetadata;
+
+// Generic log message interface
+interface LogMessage<T extends LogMetadata = BaseLogMetadata> {
   // Basic log information
-  timestamp: string;          // ISO format date-time
-  level: LogLevel;            // 'debug' | 'info' | 'warn' | 'error'
-  message: string;            // The log message
+  level: LogLevel;
+  message: string;
+  timestamp?: string; // ISO string format
 
-  // Service information
-  service: string;            // Service name (e.g., 'auth-service')
-  context?: string;           // Class or component name
-
-  // Request tracking
-  requestId?: string;         // Unique request identifier
-  correlationId?: string;     // For tracking across services
-
-  // User context (when applicable)
-  userId?: string;            // User identifier
+  // Context information
+  service: string;
+  context?: string;
 
   // Additional metadata
-  metadata?: {
-    // HTTP request details (when applicable)
-    method?: string;          // HTTP method
-    path?: string;            // Request path
-    statusCode?: number;      // Response status code
-    duration?: number;        // Request duration in ms
+  requestId?: string;
+  userId?: string;
+  traceId?: string;
 
-    // Error details (when applicable)
-    errorCode?: string;       // Error code
-    stack?: string;           // Error stack trace
+  // Error specific fields
+  stack?: string;
+  code?: string | number;
 
-    // Custom fields
-    [key: string]: any;       // Any additional metadata
-  };
+  // Typed metadata
+  metadata?: T;
 }
 ```
 
@@ -213,13 +288,41 @@ Response: 200 OK
 ### 3.2 Common Logging Library API
 
 ```typescript
-// Main logging service
+// Main logging service with generic type parameters
 interface LoggingService {
-  log(message: string, context?: string, metadata?: any): void;
-  error(message: string, trace?: string, context?: string, metadata?: any): void;
-  warn(message: string, context?: string, metadata?: any): void;
-  debug(message: string, context?: string, metadata?: any): void;
-  verbose(message: string, context?: string, metadata?: any): void;
+  // Type-safe logging methods with generic type parameters
+  log<T extends LogMetadata = BaseLogMetadata>(
+    message: string,
+    context?: string,
+    metadata?: T
+  ): void;
+
+  error<T extends LogMetadata = BaseLogMetadata>(
+    message: string,
+    trace?: string,
+    context?: string,
+    metadata?: T
+  ): void;
+
+  warn<T extends LogMetadata = BaseLogMetadata>(
+    message: string,
+    context?: string,
+    metadata?: T
+  ): void;
+
+  debug<T extends LogMetadata = BaseLogMetadata>(
+    message: string,
+    context?: string,
+    metadata?: T
+  ): void;
+
+  verbose<T extends LogMetadata = BaseLogMetadata>(
+    message: string,
+    context?: string,
+    metadata?: T
+  ): void;
+
+  // Context management methods
   setContext(context: string): void;
   setRequestId(requestId: string): void;
   setUserId(userId: string): void;
@@ -236,6 +339,115 @@ interface LoggingModuleOptions {
   };
   console?: boolean;
   redactFields?: string[];
+}
+
+// Helper utilities for creating typed metadata
+class LogHelpers {
+  // Create HTTP log metadata
+  static createHttpLogMetadata(
+    method: string,
+    url: string,
+    options?: {
+      statusCode?: number;
+      ip?: string;
+      userAgent?: string;
+      requestId?: string;
+      duration?: number;
+    }
+  ): HttpLogMetadata;
+
+  // Create auth log metadata
+  static createAuthLogMetadata(
+    action: string,
+    options?: {
+      userId?: string;
+      username?: string;
+      success?: boolean;
+      requestId?: string;
+    }
+  ): AuthLogMetadata;
+
+  // Create user log metadata
+  static createUserLogMetadata(
+    userId: string,
+    action: string,
+    options?: {
+      fields?: string[];
+      requestId?: string;
+    }
+  ): UserLogMetadata;
+
+  // Create chat log metadata
+  static createChatLogMetadata(
+    action: string,
+    options?: {
+      userId?: string;
+      roomId?: string;
+      messageId?: string;
+      requestId?: string;
+    }
+  ): ChatLogMetadata;
+
+  // Create notification log metadata
+  static createNotificationLogMetadata(
+    notificationType: string,
+    options?: {
+      userId?: string;
+      notificationId?: string;
+      channel?: string;
+      success?: boolean;
+      requestId?: string;
+    }
+  ): NotificationLogMetadata;
+
+  // Create database log metadata
+  static createDatabaseLogMetadata(
+    operation: string,
+    duration: number,
+    options?: {
+      table?: string;
+      collection?: string;
+      recordCount?: number;
+      requestId?: string;
+    }
+  ): DatabaseLogMetadata;
+
+  // Create error log metadata
+  static createErrorLogMetadata(
+    error: Error,
+    options?: {
+      errorCode?: string | number;
+      requestId?: string;
+    }
+  ): ErrorLogMetadata;
+
+  // Convenience methods for common logging patterns
+  static logHttpRequest(
+    logger: LoggingService,
+    method: string,
+    url: string,
+    options?: {
+      statusCode?: number;
+      ip?: string;
+      userAgent?: string;
+      requestId?: string;
+      duration?: number;
+      context?: string;
+    }
+  ): void;
+
+  static logAuthEvent(
+    logger: LoggingService,
+    action: string,
+    success: boolean,
+    options?: {
+      userId?: string;
+      username?: string;
+      requestId?: string;
+      context?: string;
+      error?: Error;
+    }
+  ): void;
 }
 ```
 
@@ -403,6 +615,7 @@ limits_config:
 
 - [Logging Architecture](LOGGING_ARCHITECTURE.md)
 - [Logging Implementation Plan](LOGGING_IMPLEMENTATION_PLAN.md)
+- [Type-Safe Logging](TYPE_SAFE_LOGGING.md)
 - [Logging Dashboard Design](LOGGING_DASHBOARD_DESIGN.md)
 - [Loki Retention Configuration](LOKI_RETENTION_CONFIG.md)
 - [Infrastructure Plan](../infrastructure/INFRASTRUCTURE_PLAN.md)
@@ -411,5 +624,5 @@ limits_config:
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-07-15
-- **Last Updated**: 2023-07-16
-- **Version**: 1.0.0
+- **Last Updated**: 2023-08-01
+- **Version**: 1.1.0
