@@ -1,6 +1,11 @@
 import Transport from 'winston-transport';
 import { Kafka, Producer, ProducerRecord } from 'kafkajs';
-import { LogMessage, LogLevel } from '../interfaces/log-message.interface';
+import {
+  LogMessage,
+  LogLevel,
+  LogMetadata,
+  BaseLogMetadata,
+} from '../interfaces/log-message.interface';
 
 /**
  * Options for the Kafka Winston transport
@@ -148,7 +153,7 @@ export class KafkaTransport extends Transport {
    * @param info The log information
    * @param callback Callback function
    */
-  async log(info: any, callback: () => void): Promise<void> {
+  async log(info: Record<string, any>, callback: () => void): Promise<void> {
     setImmediate(() => {
       this.emit('logged', info);
     });
@@ -183,12 +188,12 @@ export class KafkaTransport extends Transport {
    * @param info The log information
    * @returns The formatted log message
    */
-  private formatLogMessage(info: any): LogMessage {
+  private formatLogMessage(info: Record<string, any>): LogMessage<LogMetadata> {
     // Extract log level
-    const level = this.mapWinstonLevelToLogLevel(info.level);
+    const level = this.mapWinstonLevelToLogLevel(String(info.level || 'info'));
 
     // Extract message
-    const message = info.message || '';
+    const message = String(info.message || '');
 
     // Extract stack trace for errors
     const stack = info.stack || info.meta?.stack || undefined;
@@ -197,7 +202,7 @@ export class KafkaTransport extends Transport {
     const context = this.context || info.context || this.defaultContext;
 
     // Create the log message
-    const logMessage: LogMessage = {
+    const logMessage: LogMessage<LogMetadata> = {
       level,
       message,
       timestamp: new Date().toISOString(),
@@ -207,17 +212,17 @@ export class KafkaTransport extends Transport {
 
     // Add request ID if available
     if (this.requestId || info.requestId) {
-      logMessage.requestId = this.requestId || info.requestId;
+      logMessage.requestId = this.requestId || String(info.requestId);
     }
 
     // Add user ID if available
     if (this.userId || info.userId) {
-      logMessage.userId = this.userId || info.userId;
+      logMessage.userId = this.userId || String(info.userId);
     }
 
     // Add stack trace if available
     if (stack) {
-      logMessage.stack = stack;
+      logMessage.stack = String(stack);
     }
 
     // Add error code if available
@@ -227,9 +232,8 @@ export class KafkaTransport extends Transport {
 
     // Add metadata if enabled
     if (this.includeMetadata && (info.meta || info.metadata)) {
-      logMessage.metadata = this.redactSensitiveData(
-        info.meta || info.metadata,
-      );
+      const metaData = info.meta || info.metadata || {};
+      logMessage.metadata = this.redactSensitiveData(metaData);
     }
 
     return logMessage;
@@ -286,7 +290,9 @@ export class KafkaTransport extends Transport {
    * Send a log message to Kafka
    * @param logMessage The log message to send
    */
-  private async sendToKafka(logMessage: LogMessage): Promise<void> {
+  private async sendToKafka<T extends LogMetadata = BaseLogMetadata>(
+    logMessage: LogMessage<T>,
+  ): Promise<void> {
     // Create the Kafka message
     const record: ProducerRecord = {
       topic: this.topic,

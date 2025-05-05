@@ -5,7 +5,11 @@ import {
   KafkaTransport,
   KafkaTransportOptions,
 } from './transports/kafka.transport';
-import { LogLevel } from './interfaces/log-message.interface';
+import {
+  LogLevel,
+  LogMetadata,
+  BaseLogMetadata,
+} from './interfaces/log-message.interface';
 
 /**
  * Configuration options for the logging module
@@ -193,12 +197,16 @@ export class LoggingService {
    * @param context The context of the message
    * @param metadata Additional metadata
    */
-  log(message: string, context?: string, metadata?: Record<string, any>): void {
+  log<T extends LogMetadata = BaseLogMetadata>(
+    message: string,
+    context?: string,
+    metadata?: T,
+  ): void {
     this.logger.info(message, {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
-      ...metadata,
+      ...(metadata || {}),
     });
   }
 
@@ -209,18 +217,18 @@ export class LoggingService {
    * @param context The context of the message
    * @param metadata Additional metadata
    */
-  error(
+  error<T extends LogMetadata = BaseLogMetadata>(
     message: string,
     trace?: string,
     context?: string,
-    metadata?: Record<string, any>,
+    metadata?: T,
   ): void {
     this.logger.error(message, {
       stack: trace,
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
-      ...metadata,
+      ...(metadata || {}),
     });
   }
 
@@ -230,16 +238,16 @@ export class LoggingService {
    * @param context The context of the message
    * @param metadata Additional metadata
    */
-  warn(
+  warn<T extends LogMetadata = BaseLogMetadata>(
     message: string,
     context?: string,
-    metadata?: Record<string, any>,
+    metadata?: T,
   ): void {
     this.logger.warn(message, {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
-      ...metadata,
+      ...(metadata || {}),
     });
   }
 
@@ -249,16 +257,16 @@ export class LoggingService {
    * @param context The context of the message
    * @param metadata Additional metadata
    */
-  debug(
+  debug<T extends LogMetadata = BaseLogMetadata>(
     message: string,
     context?: string,
-    metadata?: Record<string, any>,
+    metadata?: T,
   ): void {
     this.logger.debug(message, {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
-      ...metadata,
+      ...(metadata || {}),
     });
   }
 
@@ -268,16 +276,16 @@ export class LoggingService {
    * @param context The context of the message
    * @param metadata Additional metadata
    */
-  verbose(
+  verbose<T extends LogMetadata = BaseLogMetadata>(
     message: string,
     context?: string,
-    metadata?: Record<string, any>,
+    metadata?: T,
   ): void {
     this.logger.verbose(message, {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
-      ...metadata,
+      ...(metadata || {}),
     });
   }
 

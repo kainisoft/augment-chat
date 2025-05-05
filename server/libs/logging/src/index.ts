@@ -7,3 +7,4 @@ export * from './interceptors/logging.interceptor';
 export * from './filters/exception.filter';
 export * from './utils/request-id.util';
 export * from './utils/redaction.util';
+export * from './utils/log-helpers';
