@@ -141,7 +141,7 @@ export class LoggingService {
    */
   private getOption<T>(key: string, defaultValue: T): T {
     if (this.options && key in this.options) {
-      return this.options[key] as T;
+      return this.options[key as keyof LoggingModuleOptions] as unknown as T;
     }
 
     if (this.configService) {

@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
@@ -24,8 +23,8 @@ export class LoggingExceptionFilter implements ExceptionFilter {
    */
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response | FastifyReply>();
-    const request = ctx.getRequest<Request | FastifyRequest>();
+    const response = ctx.getResponse<FastifyReply>();
+    const request = ctx.getRequest<FastifyRequest>();
 
     // Extract request ID
     const requestId = RequestIdUtil.extractRequestId(
@@ -69,25 +68,13 @@ export class LoggingExceptionFilter implements ExceptionFilter {
     );
 
     // Send response
-    if ('status' in response) {
-      // Express
-      response.status(status).json({
-        statusCode: status,
-        message,
-        timestamp: new Date().toISOString(),
-        path: url,
-        requestId,
-      });
-    } else {
-      // Fastify
-      response.code(status).header('X-Request-ID', requestId).send({
-        statusCode: status,
-        message,
-        timestamp: new Date().toISOString(),
-        path: url,
-        requestId,
-      });
-    }
+    response.code(status).header('X-Request-ID', requestId).send({
+      statusCode: status,
+      message,
+      timestamp: new Date().toISOString(),
+      path: url,
+      requestId,
+    });
   }
 
   /**
@@ -113,12 +100,7 @@ export class LoggingExceptionFilter implements ExceptionFilter {
    * @param req The request object
    * @returns The client IP address
    */
-  private getClientIp(req: Request | FastifyRequest): string {
-    // For Express
-    if ('ip' in req) {
-      return req.ip;
-    }
-
+  private getClientIp(req: FastifyRequest): string {
     // For Fastify
     if ('ips' in req && Array.isArray(req.ips) && req.ips.length > 0) {
       return req.ips[0];
@@ -126,6 +108,7 @@ export class LoggingExceptionFilter implements ExceptionFilter {
 
     // Fallback to headers
     const headers = req.headers as Record<string, any>;
+
     return headers['x-forwarded-for'] || headers['x-real-ip'] || 'unknown';
   }
 }

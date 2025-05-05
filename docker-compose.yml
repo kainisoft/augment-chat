@@ -187,6 +187,11 @@ services:
       - NODE_ENV=development
       - PORT=4004
       - MONGODB_URI=mongodb://mongo:mongo@mongo:27017/notification_db?authSource=admin
+      # Logging configuration
+      - LOG_LEVEL=info
+      - KAFKA_BROKERS=kafka:29092
+      - KAFKA_LOGS_TOPIC=logs
+      - LOG_CONSOLE=true
     volumes:
       - ./server/apps/notification-service:/app/apps/notification-service:delegated
       - ./server/libs:/app/libs:delegated

@@ -81,17 +81,32 @@ export class LoggingMiddleware implements NestMiddleware {
       const logMethod = isError ? 'error' : 'log';
 
       // Log response
-      this.loggingService[logMethod](
-        `Response: ${statusCode} ${method} ${url} - ${duration}ms`,
-        'LoggingMiddleware',
-        {
-          method,
-          url,
-          statusCode,
-          duration,
-          requestId,
-        },
-      );
+      if (logMethod === 'error') {
+        this.loggingService.error(
+          `Response: ${statusCode} ${method} ${url} - ${duration}ms`,
+          undefined,
+          'LoggingMiddleware',
+          {
+            method,
+            url,
+            statusCode,
+            duration,
+            requestId,
+          }
+        );
+      } else {
+        this.loggingService.log(
+          `Response: ${statusCode} ${method} ${url} - ${duration}ms`,
+          'LoggingMiddleware',
+          {
+            method,
+            url,
+            statusCode,
+            duration,
+            requestId,
+          }
+        );
+      }
 
       // Clean up event listeners
       if ('removeListener' in res) {
