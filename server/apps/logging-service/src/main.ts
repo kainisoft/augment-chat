@@ -1,33 +1,40 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { bootstrap } from '@app/common';
 import { LoggingServiceModule } from './logging-service.module';
+import { ValidationPipe } from '@nestjs/common';
 
-async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    LoggingServiceModule,
-    new FastifyAdapter()
-  );
+declare const module: any;
 
-  // Enable validation pipes
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transformOptions: {
-        enableImplicitConversion: false,
+async function startApplication() {
+  try {
+    const app = await bootstrap(LoggingServiceModule, {
+      port: 4005,
+      serviceName: 'Logging Service',
+      // Add custom setup for validation pipes
+      setup: (app) => {
+        app.useGlobalPipes(
+          new ValidationPipe({
+            transform: true,
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            transformOptions: {
+              enableImplicitConversion: false,
+            },
+          }),
+        );
+        return Promise.resolve();
       },
-    }),
-  );
+    });
 
-  const port = process.env.PORT ?? 4005;
-
-  console.log(`Logging service starting on port ${port}`);
-  await app.listen(port);
-  console.log(`Logging service running on port ${port}`);
+    // Enable Hot Module Replacement (HMR)
+    if (module.hot) {
+      module.hot.accept();
+      module.hot.dispose(() => app.close());
+    }
+  } catch (error) {
+    console.error('Error starting Logging Service:', error);
+    process.exit(1);
+  }
 }
-bootstrap().catch((err) => {
-  console.error('Error starting logging service:', err);
-  process.exit(1);
-});
+
+// Use void to explicitly mark the promise as intentionally not awaited
+void startApplication();

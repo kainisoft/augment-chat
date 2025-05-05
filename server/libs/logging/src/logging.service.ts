@@ -108,8 +108,15 @@ export class LoggingService {
     }
 
     // Add Kafka transport if configured
-    const kafkaConfig = this.getOption('kafka', undefined);
-    if (kafkaConfig && kafkaConfig.brokers && kafkaConfig.brokers.length > 0) {
+    const kafkaConfig = this.getOption<LoggingModuleOptions['kafka']>(
+      'kafka',
+      undefined,
+    );
+    if (
+      kafkaConfig &&
+      Array.isArray(kafkaConfig.brokers) &&
+      kafkaConfig.brokers.length > 0
+    ) {
       const kafkaOptions: KafkaTransportOptions = {
         brokers: kafkaConfig.brokers,
         clientId: kafkaConfig.clientId || 'winston-kafka-transport',

@@ -80,11 +80,13 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 - [x] Implement request ID generation for request tracking
 - [x] Add sensitive data redaction
 
-### Step 3.3: Implement Logging Middleware and Interceptors
-- [x] Update HTTP logging middleware to include request IDs
-- [x] Enhance logging interceptor with performance metrics
-- [x] Improve error logging with stack traces and context
-- [x] Test middleware and interceptors in sample service
+### Step 3.3: Implement Logging Middleware and Interceptors (POSTPONED)
+- [ ] Update HTTP logging middleware to include request IDs
+- [ ] Enhance logging interceptor with performance metrics
+- [ ] Improve error logging with stack traces and context
+- [ ] Test middleware and interceptors in sample service
+
+**Note**: This step has been postponed to focus on other aspects of the project. The middleware and interceptors have been temporarily disabled in the LoggingModule. We will revisit this implementation later.
 
 ### Step 3.4: Implement Type-Safe Logging
 - [x] Create specialized metadata interfaces for different log types (HTTP, Auth, User, etc.)
@@ -220,5 +222,8 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-07-15
-- **Last Updated**: 2023-08-01
-- **Version**: 1.1.0
+- **Last Updated**: 2025-05-05
+- **Version**: 1.2.0
+
+## Recent Updates
+- **2025-05-05**: Postponed the implementation of logging middleware and interceptors (Step 3.3) to focus on other aspects of the project. The middleware and interceptors have been temporarily disabled in the LoggingModule.

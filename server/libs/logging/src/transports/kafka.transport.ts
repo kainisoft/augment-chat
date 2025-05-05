@@ -1,4 +1,4 @@
-import Transport from 'winston-transport';
+import * as Transport from 'winston-transport';
 import { Kafka, Producer, ProducerRecord } from 'kafkajs';
 import {
   LogMessage,

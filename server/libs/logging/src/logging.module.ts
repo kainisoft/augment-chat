@@ -3,12 +3,12 @@ import {
   DynamicModule,
   Provider,
   Type,
-  MiddlewareConsumer,
-  NestModule,
+  // MiddlewareConsumer,
+  // NestModule,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggingService, LoggingModuleOptions } from './logging.service';
-import { LoggingMiddleware } from './middleware/logging.middleware';
+// import { LoggingMiddleware } from './middleware/logging.middleware';
 import { LoggingProviders } from './providers/logging.providers';
 
 @Module({
@@ -16,14 +16,16 @@ import { LoggingProviders } from './providers/logging.providers';
   providers: [LoggingService, ...LoggingProviders],
   exports: [LoggingService],
 })
-export class LoggingModule implements NestModule {
-  /**
-   * Configure middleware
-   * @param consumer The middleware consumer
-   */
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggingMiddleware).forRoutes('*');
-  }
+export class LoggingModule {
+  // Middleware temporarily disabled
+  // implements NestModule {
+  // /**
+  //  * Configure middleware
+  //  * @param consumer The middleware consumer
+  //  */
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(LoggingMiddleware).forRoutes('*');
+  // }
   /**
    * Register the logging module with the provided options
    * @param options The logging module options
