@@ -8,6 +8,7 @@ import {
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
+import { ErrorLogMetadata } from '../interfaces/log-message.interface';
 
 /**
  * Filter for logging and handling exceptions
@@ -49,23 +50,40 @@ export class LoggingExceptionFilter implements ExceptionFilter {
     // Get request information
     const method = request.method;
     const url = request.url;
-    const ip = this.getClientIp(request);
+    // const ip = this.getClientIp(request); // Uncomment if needed
 
-    // Log error
-    this.loggingService.error(
+    // We could create type-safe HTTP metadata if needed
+    // const httpMetadata: HttpLogMetadata = {
+    //   method: String(method),
+    //   url: String(url),
+    //   statusCode: status,
+    //   ip: String(ip),
+    //   requestId,
+    // };
+
+    // Create type-safe error metadata
+    const errorMetadata: ErrorLogMetadata = {
+      errorName: exception.name || 'HttpException',
+      errorCode: String(status),
+      stack,
+      requestId,
+    };
+
+    // Log error with type-safe metadata
+    this.loggingService.error<ErrorLogMetadata>(
       `Exception: ${status} ${method} ${url} - ${message}`,
       stack,
       'ExceptionFilter',
-      {
-        statusCode: status,
-        method,
-        url,
-        ip,
-        requestId,
-        errorName: exception.name,
-        errorMessage: message,
-      },
+      errorMetadata,
     );
+
+    // Also log with HTTP metadata if needed
+    // this.loggingService.error<HttpLogMetadata>(
+    //   `HTTP Exception: ${status} ${method} ${url}`,
+    //   undefined,
+    //   'ExceptionFilter',
+    //   httpMetadata,
+    // );
 
     // Send response
     response.code(status).header('X-Request-ID', requestId).send({
@@ -96,19 +114,24 @@ export class LoggingExceptionFilter implements ExceptionFilter {
   }
 
   /**
-   * Get client IP address
+   * Get client IP address - kept for future use
    * @param req The request object
    * @returns The client IP address
    */
   private getClientIp(req: FastifyRequest): string {
-    // For Fastify
-    if ('ips' in req && Array.isArray(req.ips) && req.ips.length > 0) {
-      return req.ips[0];
+    try {
+      // For Fastify
+      if ('ips' in req && Array.isArray(req.ips) && req.ips.length > 0) {
+        return String(req.ips[0]);
+      }
+
+      // Fallback to headers
+      const headers = req.headers as Record<string, any>;
+      return String(
+        headers['x-forwarded-for'] || headers['x-real-ip'] || 'unknown',
+      );
+    } catch (error) {
+      return 'unknown';
     }
-
-    // Fallback to headers
-    const headers = req.headers as Record<string, any>;
-
-    return headers['x-forwarded-for'] || headers['x-real-ip'] || 'unknown';
   }
 }

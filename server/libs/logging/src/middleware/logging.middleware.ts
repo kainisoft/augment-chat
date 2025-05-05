@@ -4,6 +4,10 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
 import { RedactionUtil } from '../utils/redaction.util';
+import {
+  HttpLogMetadata,
+  ErrorLogMetadata,
+} from '../interfaces/log-message.interface';
 
 /**
  * Middleware for logging HTTP requests
@@ -47,25 +51,37 @@ export class LoggingMiddleware implements NestMiddleware {
     const userAgent = req.headers['user-agent'] || 'unknown';
     const ip = this.getClientIp(req);
 
-    // Log request
-    this.loggingService.log(
+    // Create type-safe HTTP metadata
+    const requestMetadata: HttpLogMetadata = {
+      method: String(method),
+      url: String(url),
+      ip: String(ip),
+      userAgent: String(userAgent),
+      requestId,
+    };
+
+    // Log request with type-safe metadata
+    this.loggingService.log<HttpLogMetadata>(
       `Incoming request: ${method} ${url}`,
       'LoggingMiddleware',
-      {
-        method,
-        url,
-        ip,
-        userAgent,
-        requestId,
-      },
+      requestMetadata,
     );
 
     // Log request body if present (and not a GET request)
     if (method !== 'GET' && req.body) {
-      const redactedBody = RedactionUtil.redactRequestBody(req.body);
-      this.loggingService.debug('Request body', 'LoggingMiddleware', {
-        body: redactedBody,
-      });
+      const redactedBody = RedactionUtil.redactRequestBody(
+        req.body as Record<string, any>,
+      );
+      this.loggingService.debug<HttpLogMetadata>(
+        'Request body',
+        'LoggingMiddleware',
+        {
+          method: String(method),
+          url: String(url),
+          body: redactedBody,
+          requestId,
+        },
+      );
     }
 
     // Handle response
@@ -80,31 +96,30 @@ export class LoggingMiddleware implements NestMiddleware {
       const isError = statusCode >= 400;
       const logMethod = isError ? 'error' : 'log';
 
-      // Log response
+      // Create type-safe HTTP metadata for response
+      const responseMetadata: HttpLogMetadata = {
+        method: String(method),
+        url: String(url),
+        statusCode,
+        duration,
+        ip: String(this.getClientIp(req)),
+        userAgent: String(req.headers['user-agent'] || 'unknown'),
+        requestId,
+      };
+
+      // Log response with type-safe metadata
       if (logMethod === 'error') {
-        this.loggingService.error(
+        this.loggingService.error<HttpLogMetadata>(
           `Response: ${statusCode} ${method} ${url} - ${duration}ms`,
           undefined,
           'LoggingMiddleware',
-          {
-            method,
-            url,
-            statusCode,
-            duration,
-            requestId,
-          }
+          responseMetadata,
         );
       } else {
-        this.loggingService.log(
+        this.loggingService.log<HttpLogMetadata>(
           `Response: ${statusCode} ${method} ${url} - ${duration}ms`,
           'LoggingMiddleware',
-          {
-            method,
-            url,
-            statusCode,
-            duration,
-            requestId,
-          }
+          responseMetadata,
         );
       }
 
@@ -121,18 +136,32 @@ export class LoggingMiddleware implements NestMiddleware {
       // Calculate duration
       const duration = Date.now() - startTime;
 
-      // Log error
-      this.loggingService.error(
+      // Create type-safe error metadata
+      const errorMetadata: ErrorLogMetadata = {
+        errorName: error.name,
+        errorCode: 'HTTP_REQUEST_ERROR',
+        stack: error.stack,
+        requestId,
+      };
+
+      // We could also log with HTTP metadata if needed
+      // const httpMetadata = LogHelpers.createHttpLogMetadata(
+      //   String(method),
+      //   String(url),
+      //   {
+      //     ip: String(this.getClientIp(req)),
+      //     userAgent: String(req.headers['user-agent'] || 'unknown'),
+      //     duration,
+      //     requestId,
+      //   }
+      // );
+
+      // Log error with type-safe metadata
+      this.loggingService.error<ErrorLogMetadata>(
         `Request error: ${method} ${url} - ${error.message}`,
         error.stack,
         'LoggingMiddleware',
-        {
-          method,
-          url,
-          duration,
-          requestId,
-          error: error.message,
-        },
+        errorMetadata,
       );
 
       // Clean up event listeners
@@ -160,19 +189,25 @@ export class LoggingMiddleware implements NestMiddleware {
    * @returns The client IP address
    */
   private getClientIp(req: Request | FastifyRequest): string {
-    // For Express
-    if ('ip' in req) {
-      return req.ip;
-    }
+    try {
+      // For Express
+      if ('ip' in req && req.ip) {
+        return String(req.ip);
+      }
 
-    // For Fastify
-    if ('ips' in req && Array.isArray(req.ips) && req.ips.length > 0) {
-      return req.ips[0];
-    }
+      // For Fastify
+      if ('ips' in req && Array.isArray(req.ips) && req.ips.length > 0) {
+        return String(req.ips[0]);
+      }
 
-    // Fallback to headers
-    const headers = req.headers as Record<string, any>;
-    return headers['x-forwarded-for'] || headers['x-real-ip'] || 'unknown';
+      // Fallback to headers
+      const headers = req.headers as Record<string, any>;
+      return String(
+        headers['x-forwarded-for'] || headers['x-real-ip'] || 'unknown',
+      );
+    } catch (error) {
+      return 'unknown';
+    }
   }
 
   /**
@@ -181,16 +216,20 @@ export class LoggingMiddleware implements NestMiddleware {
    * @returns The status code
    */
   private getStatusCode(res: Response | FastifyReply): number {
-    // For Express
-    if ('statusCode' in res) {
-      return res.statusCode;
-    }
+    try {
+      // For Express
+      if ('statusCode' in res) {
+        return Number(res.statusCode);
+      }
 
-    // For Fastify
-    if ('raw' in res && res.raw && 'statusCode' in res.raw) {
-      return res.raw.statusCode;
-    }
+      // For Fastify
+      if ('raw' in res && res.raw && 'statusCode' in res.raw) {
+        return Number((res.raw as any).statusCode);
+      }
 
-    return 0; // Unknown
+      return 0; // Unknown
+    } catch (error) {
+      return 0;
+    }
   }
 }

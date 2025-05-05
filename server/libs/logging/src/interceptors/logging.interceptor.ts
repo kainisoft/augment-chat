@@ -8,6 +8,10 @@ import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
+import {
+  HttpLogMetadata,
+  ErrorLogMetadata,
+} from '../interfaces/log-message.interface';
 
 /**
  * Interceptor for logging method execution and performance metrics
@@ -46,55 +50,60 @@ export class LoggingInterceptor implements NestInterceptor {
     // Set context in logging service
     this.loggingService.setContext(controllerName);
 
-    // Log method execution start
-    this.loggingService.debug(
+    // Create type-safe HTTP metadata for method execution
+    const executionMetadata: HttpLogMetadata = {
+      method: String(contextType),
+      url: `${controllerName}.${handlerName}`,
+      requestId,
+    };
+
+    // Log method execution start with type-safe metadata
+    this.loggingService.debug<HttpLogMetadata>(
       `${contextType} | ${controllerName}.${handlerName} | Execution started`,
       undefined,
-      {
-        type: contextType,
-        controller: controllerName,
-        handler: handlerName,
-        requestId,
-      },
+      executionMetadata,
     );
 
     // Handle method execution
     return next.handle().pipe(
-      tap((data) => {
+      tap(() => {
         // Calculate duration
         const duration = Date.now() - startTime;
 
-        // Log successful execution
-        this.loggingService.debug(
+        // Create type-safe HTTP metadata for successful execution
+        const successMetadata: HttpLogMetadata = {
+          method: String(contextType),
+          url: `${controllerName}.${handlerName}`,
+          statusCode: 200, // Assume success
+          duration,
+          requestId,
+        };
+
+        // Log successful execution with type-safe metadata
+        this.loggingService.debug<HttpLogMetadata>(
           `${contextType} | ${controllerName}.${handlerName} | Execution completed (${duration}ms)`,
           undefined,
-          {
-            type: contextType,
-            controller: controllerName,
-            handler: handlerName,
-            duration,
-            requestId,
-            dataSize: this.getDataSize(data),
-          },
+          successMetadata,
         );
       }),
-      catchError((error) => {
+      catchError((error: Error) => {
         // Calculate duration
         const duration = Date.now() - startTime;
 
-        // Log error
-        this.loggingService.error(
+        // Create type-safe error metadata
+        const errorMetadata: ErrorLogMetadata = {
+          errorName: error.name || 'Error',
+          errorCode: 'EXECUTION_ERROR',
+          stack: error.stack,
+          requestId,
+        };
+
+        // Log error with type-safe metadata
+        this.loggingService.error<ErrorLogMetadata>(
           `${contextType} | ${controllerName}.${handlerName} | Execution failed (${duration}ms): ${error.message}`,
           error.stack,
           undefined,
-          {
-            type: contextType,
-            controller: controllerName,
-            handler: handlerName,
-            duration,
-            requestId,
-            error: error.message,
-          },
+          errorMetadata,
         );
 
         // Re-throw the error
@@ -127,22 +136,5 @@ export class LoggingInterceptor implements NestInterceptor {
     return null;
   }
 
-  /**
-   * Get the size of data in bytes
-   * @param data The data to measure
-   * @returns The size in bytes or 0 if not measurable
-   */
-  private getDataSize(data: any): number {
-    try {
-      if (!data) {
-        return 0;
-      }
-
-      // Convert to JSON string and measure length
-      const json = JSON.stringify(data);
-      return json.length;
-    } catch (error) {
-      return 0;
-    }
-  }
+  // Removed unused getDataSize method
 }
