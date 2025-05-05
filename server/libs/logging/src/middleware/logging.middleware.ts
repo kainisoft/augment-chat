@@ -1,5 +1,4 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
@@ -22,11 +21,7 @@ export class LoggingMiddleware implements NestMiddleware {
    * @param res The response object
    * @param next The next function
    */
-  use(
-    req: Request | FastifyRequest,
-    res: Response | FastifyReply,
-    next: NextFunction,
-  ) {
+  use(req: FastifyRequest, res: FastifyReply, next: (err?: Error) => void) {
     // Get start time
     const startTime = Date.now();
 
@@ -39,11 +34,7 @@ export class LoggingMiddleware implements NestMiddleware {
     this.loggingService.setRequestId(requestId);
 
     // Set request ID in response headers
-    if ('setHeader' in res) {
-      res.setHeader('X-Request-ID', requestId);
-    } else {
-      (res as FastifyReply).header('X-Request-ID', requestId);
-    }
+    res.header('X-Request-ID', requestId);
 
     // Extract request information
     const method = req.method;
@@ -124,24 +115,20 @@ export class LoggingMiddleware implements NestMiddleware {
       }
 
       // Clean up event listeners
-      if ('removeListener' in res) {
-        res.removeListener('finish', handleResponse);
-        res.removeListener('close', handleResponse);
-        res.removeListener('error', handleError);
-      }
+      res.raw.removeListener('finish', handleResponse);
+      res.raw.removeListener('close', handleResponse);
+      res.raw.removeListener('error', handleError);
     };
 
     // Handle error
     const handleError = (error: Error) => {
-      // Calculate duration
-      const duration = Date.now() - startTime;
-
       // Create type-safe error metadata
       const errorMetadata: ErrorLogMetadata = {
         errorName: error.name,
         errorCode: 'HTTP_REQUEST_ERROR',
         stack: error.stack,
         requestId,
+        duration: Date.now() - startTime, // Include duration in error metadata
       };
 
       // We could also log with HTTP metadata if needed
@@ -165,19 +152,15 @@ export class LoggingMiddleware implements NestMiddleware {
       );
 
       // Clean up event listeners
-      if ('removeListener' in res) {
-        res.removeListener('finish', handleResponse);
-        res.removeListener('close', handleResponse);
-        res.removeListener('error', handleError);
-      }
+      res.raw.removeListener('finish', handleResponse);
+      res.raw.removeListener('close', handleResponse);
+      res.raw.removeListener('error', handleError);
     };
 
     // Add event listeners
-    if ('on' in res) {
-      res.on('finish', handleResponse);
-      res.on('close', handleResponse);
-      res.on('error', handleError);
-    }
+    res.raw.on('finish', handleResponse);
+    res.raw.on('close', handleResponse);
+    res.raw.on('error', handleError);
 
     // Continue to next middleware
     next();
@@ -188,16 +171,16 @@ export class LoggingMiddleware implements NestMiddleware {
    * @param req The request object
    * @returns The client IP address
    */
-  private getClientIp(req: Request | FastifyRequest): string {
+  private getClientIp(req: FastifyRequest): string {
     try {
-      // For Express
-      if ('ip' in req && req.ip) {
-        return String(req.ip);
+      // Try to get IP from Fastify's ips array
+      if (Array.isArray(req.ips) && req.ips.length > 0) {
+        return String(req.ips[0]);
       }
 
-      // For Fastify
-      if ('ips' in req && Array.isArray(req.ips) && req.ips.length > 0) {
-        return String(req.ips[0]);
+      // Try to get IP from Fastify's ip property
+      if (req.ip) {
+        return String(req.ip);
       }
 
       // Fallback to headers
@@ -205,7 +188,7 @@ export class LoggingMiddleware implements NestMiddleware {
       return String(
         headers['x-forwarded-for'] || headers['x-real-ip'] || 'unknown',
       );
-    } catch (error) {
+    } catch {
       return 'unknown';
     }
   }
@@ -215,20 +198,20 @@ export class LoggingMiddleware implements NestMiddleware {
    * @param res The response object
    * @returns The status code
    */
-  private getStatusCode(res: Response | FastifyReply): number {
+  private getStatusCode(res: FastifyReply): number {
     try {
-      // For Express
-      if ('statusCode' in res) {
+      // Get status code from Fastify response
+      if (res.statusCode) {
         return Number(res.statusCode);
       }
 
-      // For Fastify
-      if ('raw' in res && res.raw && 'statusCode' in res.raw) {
-        return Number((res.raw as any).statusCode);
+      // Fallback to raw response if available
+      if (res.raw && typeof res.raw === 'object' && 'statusCode' in res.raw) {
+        return Number(res.raw.statusCode);
       }
 
       return 0; // Unknown
-    } catch (error) {
+    } catch {
       return 0;
     }
   }

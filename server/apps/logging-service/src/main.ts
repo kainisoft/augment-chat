@@ -1,9 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { LoggingServiceModule } from './logging-service.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(LoggingServiceModule);
+  const app = await NestFactory.create<NestFastifyApplication>(
+    LoggingServiceModule,
+    new FastifyAdapter()
+  );
 
   // Enable validation pipes
   app.useGlobalPipes(
