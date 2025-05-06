@@ -105,10 +105,10 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 - [x] Test log flow from API Gateway to Grafana
 
 ### Step 4.2: Update Auth Service Logging
-- [ ] Integrate common logging library in Auth Service
-- [ ] Add security-specific log fields
-- [ ] Configure appropriate log levels
-- [ ] Test log flow from Auth Service to Grafana
+- [x] Integrate common logging library in Auth Service
+- [x] Add security-specific log fields
+- [x] Configure appropriate log levels
+- [x] Test log flow from Auth Service to Grafana
 
 ### Step 4.3: Update User Service Logging
 - [x] Integrate common logging library in User Service
@@ -222,8 +222,9 @@ This document outlines the step-by-step plan for implementing a dedicated loggin
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-07-15
-- **Last Updated**: 2025-05-05
+- **Last Updated**: 2025-05-06
 - **Version**: 1.2.0
 
 ## Recent Updates
+- **2025-05-06**: Completed Phase 4, Step 4.2: Update Auth Service Logging. The Auth Service now uses the common logging library with type-safe metadata.
 - **2025-05-05**: Postponed the implementation of logging middleware and interceptors (Step 3.3) to focus on other aspects of the project. The middleware and interceptors have been temporarily disabled in the LoggingModule.
