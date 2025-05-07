@@ -1,6 +1,7 @@
 import { AbstractBaseWriteRepository } from '../base-write.repository';
 import { DrizzleService } from '../../drizzle/drizzle.service';
 import { SQL, eq } from 'drizzle-orm';
+import type { PgTableWithColumns } from 'drizzle-orm/pg-core';
 
 /**
  * Abstract Drizzle Write Repository
@@ -14,7 +15,7 @@ import { SQL, eq } from 'drizzle-orm';
 export abstract class AbstractDrizzleWriteRepository<
   T,
   TId,
-  TTable extends Record<string, any>,
+  TTable extends PgTableWithColumns<any>,
 > extends AbstractBaseWriteRepository<T, TId> {
   /**
    * Constructor
@@ -40,7 +41,7 @@ export abstract class AbstractDrizzleWriteRepository<
 
     const result = await this.drizzle.db
       .select()
-      .from(this.table)
+      .from(this.table as any)
       .where(eq(this.idField, idValue))
       .limit(1);
 
@@ -59,7 +60,7 @@ export abstract class AbstractDrizzleWriteRepository<
   async count(filter?: SQL<unknown>): Promise<number> {
     const query = this.drizzle.db
       .select({ count: this.drizzle.sql`count(*)` })
-      .from(this.table);
+      .from(this.table as any);
 
     if (filter) {
       query.where(filter);
@@ -93,8 +94,8 @@ export abstract class AbstractDrizzleWriteRepository<
     const data = this.mapToPersistence(entity);
 
     const result = await this.drizzle.db
-      .insert(this.table)
-      .values(data)
+      .insert(this.table as any)
+      .values(data as any)
       .returning();
 
     return this.mapToDomain(result[0]);
@@ -111,8 +112,8 @@ export abstract class AbstractDrizzleWriteRepository<
     const data = this.mapToPersistence(entity as T);
 
     const result = await this.drizzle.db
-      .update(this.table)
-      .set(data)
+      .update(this.table as any)
+      .set(data as any)
       .where(eq(this.idField, idValue))
       .returning();
 
@@ -126,7 +127,9 @@ export abstract class AbstractDrizzleWriteRepository<
   async delete(id: TId): Promise<void> {
     const idValue = this.getIdValue(id);
 
-    await this.drizzle.db.delete(this.table).where(eq(this.idField, idValue));
+    await this.drizzle.db
+      .delete(this.table as any)
+      .where(eq(this.idField, idValue));
   }
 
   /**

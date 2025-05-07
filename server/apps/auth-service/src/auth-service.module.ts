@@ -2,12 +2,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
+import { DatabaseModule } from '@app/database';
 import { AuthServiceController } from './auth-service.controller';
 import { AuthServiceService } from './auth-service.service';
 import {
   AuthServiceHealthController,
   AuthServiceHealthService,
 } from './health/health.controller';
+import { RepositoryProviders } from './infrastructure/repositories';
 
 @Module({
   imports: [
@@ -18,6 +20,9 @@ import {
 
     // Import CommonModule
     CommonModule,
+
+    // Import DatabaseModule for database access
+    DatabaseModule,
 
     // Import LoggingModule with Auth Service specific configuration
     LoggingModule.registerAsync({
@@ -56,6 +61,10 @@ import {
     }),
   ],
   controllers: [AuthServiceController, AuthServiceHealthController],
-  providers: [AuthServiceService, AuthServiceHealthService],
+  providers: [
+    AuthServiceService,
+    AuthServiceHealthService,
+    ...RepositoryProviders,
+  ],
 })
 export class AuthServiceModule {}

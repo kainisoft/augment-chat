@@ -14,8 +14,8 @@ The Authentication Service handles user registration, login, and token managemen
 ### Phase 1: Basic Setup
 - [x] Initialize service with NestJS CLI
 - [x] Configure Fastify adapter
-- [ ] Set up database connection
-- [ ] Create user entity and repository
+- [x] Set up database connection
+- [x] Create user entity and repository
 
 ### Phase 2: Core Features
 - [ ] Implement user registration

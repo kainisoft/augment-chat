@@ -38,12 +38,14 @@ show_help() {
   echo "  status      Show status of all services"
   echo "  status:logging Show status of logging services"
   echo "  health      Check health status of all services"
+  echo "  restart [service] Restart a specific service"
   echo "  help        Show this help message"
   echo ""
   echo "Examples:"
   echo "  ./dev.sh infra      # Start all infrastructure services"
   echo "  ./dev.sh auth       # Start auth service with dependencies"
   echo "  ./dev.sh logs auth  # Show logs for auth service"
+  echo "  ./dev.sh restart auth-service # Restart the auth service"
 }
 
 # Check if docker compose (v2) or docker-compose (v1) is available
@@ -85,47 +87,47 @@ echo "Using Docker Compose file: $COMPOSE_PATH"
 case "$1" in
   db)
     echo "Starting database services..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db up -d --build --force-recreate
     ;;
   kafka)
     echo "Starting Kafka and Zookeeper..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile kafka up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile kafka up -d --build --force-recreate
     ;;
   redis)
     echo "Starting Redis cluster..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile redis up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile redis up -d --build --force-recreate
     ;;
   logging)
     echo "Starting logging system (Loki, Grafana, and Logging Service)..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile logging --profile kafka up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile logging --profile kafka up -d --build --force-recreate
     ;;
   infra)
     echo "Starting all infrastructure services..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db --profile redis --profile kafka --profile logging up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db --profile redis --profile kafka --profile logging up -d --build --force-recreate
     ;;
   auth)
     echo "Starting auth service with dependencies..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile auth up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile auth up -d --build --force-recreate
     ;;
   user)
     echo "Starting user service with dependencies..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile user up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile user up -d --build --force-recreate
     ;;
   chat)
     echo "Starting chat service with dependencies..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile chat up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile chat up -d --build --force-recreate
     ;;
   notification)
     echo "Starting notification service with dependencies..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile notification up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile notification up -d --build --force-recreate
     ;;
   api)
     echo "Starting API gateway with dependencies..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile api up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile api up -d --build --force-recreate
     ;;
   all)
     echo "Starting all services..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all up -d
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all up -d --build --force-recreate
     ;;
   build)
     echo "Rebuilding all services..."
@@ -200,6 +202,17 @@ case "$1" in
   health)
     echo "Checking health status of all services..."
     ./docker/scripts/check-health.sh
+    ;;
+  restart)
+    if [ -z "$2" ]; then
+      echo "Error: Please specify a service name to restart"
+      echo "Usage: ./dev.sh restart [service-name]"
+      echo "Example: ./dev.sh restart auth-service"
+      exit 1
+    fi
+    echo "Restarting $2 service..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" restart "$2"
+    echo "Service $2 has been restarted"
     ;;
   help|*)
     show_help

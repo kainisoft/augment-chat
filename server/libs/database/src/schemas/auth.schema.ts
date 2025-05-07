@@ -9,7 +9,7 @@ import { chatAppSchema } from './schema';
 export const users = chatAppSchema.table('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: varchar('email', { length: 255 }).notNull().unique(),
-  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+  password: varchar('password', { length: 255 }).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   lastLoginAt: timestamp('last_login_at'),
