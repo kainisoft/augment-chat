@@ -6,3 +6,4 @@ export * from './constants/redis.constants';
 export * from './health/redis-health.indicator';
 export * from './repositories';
 export * from './cache';
+export * from './session';

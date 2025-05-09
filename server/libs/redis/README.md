@@ -208,6 +208,86 @@ export class PaymentService {
 }
 ```
 
+### Using Session Management
+
+```typescript
+import { Module, Injectable } from '@nestjs/common';
+import { RedisModule, SessionModule, RedisSessionStore } from '@app/redis';
+
+// Import the session module
+@Module({
+  imports: [
+    RedisModule.register({
+      host: 'localhost',
+      port: 6379,
+      isGlobal: true,
+    }),
+    SessionModule.register({
+      ttl: 3600, // 1 hour
+      prefix: 'app:session',
+      encrypt: true,
+      encryptionKey: process.env.SESSION_ENCRYPTION_KEY,
+      isGlobal: true,
+    }),
+  ],
+})
+export class AppModule {}
+
+// Use the session store in a service
+@Injectable()
+export class AuthService {
+  constructor(
+    private readonly sessionStore: RedisSessionStore,
+  ) {}
+
+  async login(userId: string, userData: any): Promise<string> {
+    // Create a new session
+    const sessionId = await this.sessionStore.create({
+      userId,
+      data: {
+        ...userData,
+        roles: ['user'],
+        permissions: ['read', 'write'],
+      },
+      ip: '127.0.0.1',
+      userAgent: 'Mozilla/5.0',
+    });
+
+    return sessionId;
+  }
+
+  async validateSession(sessionId: string): Promise<boolean> {
+    // Get session data
+    const session = await this.sessionStore.get(sessionId);
+
+    if (!session) {
+      return false;
+    }
+
+    // Check if user is still active
+    const isActive = await this.userService.isActive(session.userId);
+
+    if (!isActive) {
+      // Delete the session if user is not active
+      await this.sessionStore.delete(sessionId);
+      return false;
+    }
+
+    return true;
+  }
+
+  async logout(sessionId: string): Promise<boolean> {
+    // Delete the session
+    return this.sessionStore.delete(sessionId);
+  }
+
+  async logoutAll(userId: string): Promise<number> {
+    // Delete all sessions for a user
+    return this.sessionStore.deleteByUserId(userId);
+  }
+}
+```
+
 ### Using Redis Repositories
 
 ```typescript
