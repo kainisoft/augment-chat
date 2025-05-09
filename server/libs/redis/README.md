@@ -115,6 +115,99 @@ export class HealthController {
 
 ## Advanced Usage
 
+### Using Cache Decorators
+
+```typescript
+import { Module, Injectable, Controller, Get } from '@nestjs/common';
+import { RedisModule, CacheModule } from '@app/redis';
+
+// Import the Cache decorator from the module
+@Module({
+  imports: [
+    RedisModule.register({
+      host: 'localhost',
+      port: 6379,
+      isGlobal: true,
+    }),
+    CacheModule.register({
+      ttl: 300, // 5 minutes default TTL
+      prefix: 'api',
+      enableLogs: true,
+      isGlobal: true,
+    }),
+  ],
+})
+export class AppModule {}
+
+// Use the Cache decorator in a service
+@Injectable()
+export class UserService {
+  constructor(
+    @Inject(CACHE_DECORATOR) private readonly Cache: Function,
+  ) {}
+
+  // Cache the result of this method for 60 seconds
+  @Cache(60, 'users')
+  async getUserById(id: string): Promise<User> {
+    // This will only be executed on cache miss
+    return this.userRepository.findOne(id);
+  }
+}
+```
+
+### Using Cache Invalidation
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { CacheInvalidationService, CacheInvalidationStrategy } from '@app/redis';
+
+@Injectable()
+export class UserService {
+  constructor(
+    private readonly cacheInvalidation: CacheInvalidationService,
+  ) {}
+
+  async updateUser(id: string, data: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.update(id, data);
+
+    // Invalidate specific cache key
+    await this.cacheInvalidation.invalidateKey(`users:${id}`);
+
+    // Or invalidate all user-related caches
+    await this.cacheInvalidation.invalidateByPrefix('users');
+
+    return user;
+  }
+}
+```
+
+### Using Distributed Locks
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { DistributedLockService } from '@app/redis';
+
+@Injectable()
+export class PaymentService {
+  constructor(
+    private readonly lockService: DistributedLockService,
+  ) {}
+
+  async processPayment(orderId: string): Promise<PaymentResult> {
+    // Execute with a lock to prevent concurrent processing
+    return this.lockService.withLock(
+      `payment:${orderId}`,
+      async () => {
+        // This code is guaranteed to run exclusively
+        // No other instance can acquire the same lock
+        return this.paymentProcessor.process(orderId);
+      },
+      { ttl: 60, maxRetries: 5 }
+    );
+  }
+}
+```
+
 ### Using Redis Repositories
 
 ```typescript

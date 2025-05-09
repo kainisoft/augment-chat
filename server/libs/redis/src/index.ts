@@ -5,3 +5,4 @@ export * from './interfaces/redis-client.interface';
 export * from './constants/redis.constants';
 export * from './health/redis-health.indicator';
 export * from './repositories';
+export * from './cache';
