@@ -3,6 +3,7 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Pool } from 'pg';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { createDatabase } from './create-database';
 
 dotenv.config();
 
@@ -34,6 +35,9 @@ if (!currentConfig) {
  * Run migrations for the specified service
  */
 const runMigration = async () => {
+  // First ensure the database exists
+  await createDatabase();
+
   // Create connection pool
   const pool = new Pool({
     host: process.env.POSTGRES_HOST || 'localhost',

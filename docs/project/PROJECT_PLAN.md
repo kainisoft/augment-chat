@@ -37,6 +37,7 @@ This is the main dashboard for the Chat Application project. The plan has been o
 
 ## Infrastructure & Deployment
 - [Database Plan](../database/DATABASE_PLAN.md) - Database architecture and implementation
+- [Redis Implementation Plan](../redis/REDIS_IMPLEMENTATION_PLAN.md) - Redis Cluster implementation and integration
 - [Docker Development Environment](../docker/DOCKER_PLAN.md) - Local development with Docker
 - [AWS Deployment](../deployment/AWS_DEPLOYMENT_PLAN.md) - Production deployment on AWS
 
@@ -77,6 +78,7 @@ This is the main dashboard for the Chat Application project. The plan has been o
 - [Server Plan](../server/SERVER_PLAN.md)
 - [Client Plan](../client/CLIENT_PLAN.md)
 - [Database Plan](../database/DATABASE_PLAN.md)
+- [Redis Implementation Plan](../redis/REDIS_IMPLEMENTATION_PLAN.md)
 - [Infrastructure Plan](../infrastructure/INFRASTRUCTURE_PLAN.md)
 - [Docker Plan](../docker/DOCKER_PLAN.md)
 - [AWS Deployment Plan](../deployment/AWS_DEPLOYMENT_PLAN.md)
@@ -85,5 +87,5 @@ This is the main dashboard for the Chat Application project. The plan has been o
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-06-01
-- **Last Updated**: 2023-07-15
-- **Version**: 1.2.0
+- **Last Updated**: 2023-07-20
+- **Version**: 1.3.0

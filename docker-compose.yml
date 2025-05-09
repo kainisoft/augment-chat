@@ -271,7 +271,6 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./docker/init-scripts/postgres:/docker-entrypoint-initdb.d
     networks:
       - chat-network
     profiles: [ "db", "all", "auth", "user" ]
