@@ -16,11 +16,11 @@ import { UserRepository } from '../../domain/repositories/user.repository.interf
  */
 @Injectable()
 export class DrizzleUserRepository
-  extends AbstractDrizzleWriteRepository<User, UserId, typeof schema.users>
+  extends AbstractDrizzleWriteRepository<User, UserId, typeof schema.auth.users>
   implements UserRepository
 {
   constructor(drizzle: DrizzleService) {
-    super(drizzle, schema.users, schema.users.id);
+    super(drizzle, schema.auth.users, schema.auth.users.id);
   }
 
   /**
@@ -31,8 +31,8 @@ export class DrizzleUserRepository
   async findByEmail(email: Email): Promise<User | null> {
     const result = await this.drizzle.db
       .select()
-      .from(schema.users)
-      .where(eq(schema.users.email, email.toString()))
+      .from(schema.auth.users)
+      .where(eq(schema.auth.users.email, email.toString()))
       .limit(1);
 
     if (result.length === 0) {
@@ -68,27 +68,27 @@ export class DrizzleUserRepository
   protected mapToDomain(data: Record<string, any>): User {
     // Handle dates safely
     const createdAt =
-      data.createdAt instanceof Date
-        ? data.createdAt
-        : new Date(data.createdAt as string);
+      data.created_at instanceof Date
+        ? data.created_at
+        : new Date(data.created_at as string);
 
     const updatedAt =
-      data.updatedAt instanceof Date
-        ? data.updatedAt
-        : new Date(data.updatedAt as string);
+      data.updated_at instanceof Date
+        ? data.updated_at
+        : new Date(data.updated_at as string);
 
-    const lastLoginAt = data.lastLoginAt
-      ? data.lastLoginAt instanceof Date
-        ? data.lastLoginAt
-        : new Date(data.lastLoginAt as string)
+    const lastLoginAt = data.last_login_at
+      ? data.last_login_at instanceof Date
+        ? data.last_login_at
+        : new Date(data.last_login_at as string)
       : null;
 
     return new User({
       id: new UserId(data.id as string),
       email: new Email(data.email as string),
-      password: new Password(data.passwordHash as string, true),
-      isActive: Boolean(data.isActive),
-      isVerified: Boolean(data.isVerified),
+      password: new Password(data.password as string, true),
+      isActive: Boolean(data.is_active),
+      isVerified: Boolean(data.is_verified),
       createdAt,
       updatedAt,
       lastLoginAt,
@@ -104,10 +104,10 @@ export class DrizzleUserRepository
     return {
       id: entity.getId().toString(),
       email: entity.getEmail().toString(),
-      passwordHash: entity.getPassword().toString(),
-      isActive: entity.getIsActive(),
-      isVerified: entity.getIsVerified(),
-      updatedAt: entity.getUpdatedAt(),
+      password: entity.getPassword().toString(),
+      is_active: entity.getIsActive(),
+      is_verified: entity.getIsVerified(),
+      updated_at: entity.getUpdatedAt(),
     };
   }
 }
