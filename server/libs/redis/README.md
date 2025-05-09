@@ -288,6 +288,169 @@ export class AuthService {
 }
 ```
 
+### Using Pub/Sub for Real-time Communication
+
+```typescript
+import { Module, Injectable } from '@nestjs/common';
+import {
+  RedisModule,
+  PubSubModule,
+  RedisEventPublisher,
+  RedisEventSubscriber,
+  BaseEvent,
+  Event
+} from '@app/redis';
+
+// Define typed events
+@Event({ type: 'message.created' })
+class MessageCreatedEvent implements BaseEvent {
+  type: string;
+  timestamp: number;
+
+  constructor(
+    public readonly messageId: string,
+    public readonly conversationId: string,
+    public readonly senderId: string,
+    public readonly content: string,
+  ) {
+    this.timestamp = Date.now();
+  }
+}
+
+@Event({ type: 'user.status.changed' })
+class UserStatusChangedEvent implements BaseEvent {
+  type: string;
+  timestamp: number;
+
+  constructor(
+    public readonly userId: string,
+    public readonly status: 'online' | 'offline' | 'away',
+    public readonly lastSeen?: number,
+  ) {
+    this.timestamp = Date.now();
+  }
+}
+
+// Import the PubSub module
+@Module({
+  imports: [
+    RedisModule.register({
+      host: 'localhost',
+      port: 6379,
+      isGlobal: true,
+    }),
+    PubSubModule.register({
+      publisher: {
+        channelPrefix: 'chat',
+        enableLogs: true,
+      },
+      subscriber: {
+        channelPrefix: 'chat',
+        enableLogs: true,
+        maxRetries: 3,
+      },
+      isGlobal: true,
+    }),
+  ],
+})
+export class AppModule {}
+
+// Publisher service
+@Injectable()
+export class ChatService {
+  constructor(
+    private readonly eventPublisher: RedisEventPublisher,
+  ) {}
+
+  async sendMessage(conversationId: string, senderId: string, content: string): Promise<string> {
+    // Save message to database
+    const messageId = await this.messageRepository.create({
+      conversationId,
+      senderId,
+      content,
+    });
+
+    // Publish message created event
+    await this.eventPublisher.publish(
+      `conversation.${conversationId}`,
+      new MessageCreatedEvent(messageId, conversationId, senderId, content),
+    );
+
+    return messageId;
+  }
+
+  async updateUserStatus(userId: string, status: 'online' | 'offline' | 'away'): Promise<void> {
+    // Update user status in database
+    await this.userRepository.updateStatus(userId, status);
+
+    // Publish user status changed event
+    await this.eventPublisher.publish(
+      'user.status',
+      new UserStatusChangedEvent(userId, status, Date.now()),
+    );
+  }
+}
+
+// Subscriber service
+@Injectable()
+export class NotificationService implements OnModuleInit {
+  constructor(
+    private readonly eventSubscriber: RedisEventSubscriber,
+  ) {}
+
+  async onModuleInit() {
+    // Subscribe to all conversation channels
+    await this.eventSubscriber.psubscribe<MessageCreatedEvent>(
+      'conversation.*',
+      this.handleMessageCreated.bind(this),
+    );
+
+    // Subscribe to user status channel
+    await this.eventSubscriber.subscribe<UserStatusChangedEvent>(
+      'user.status',
+      this.handleUserStatusChanged.bind(this),
+    );
+  }
+
+  private async handleMessageCreated(event: MessageCreatedEvent): Promise<void> {
+    // Get conversation participants
+    const participants = await this.conversationRepository.getParticipants(event.conversationId);
+
+    // Send notifications to all participants except the sender
+    for (const userId of participants) {
+      if (userId !== event.senderId) {
+        await this.sendNotification(userId, {
+          type: 'new_message',
+          title: 'New Message',
+          body: `You have a new message in conversation ${event.conversationId}`,
+          data: {
+            messageId: event.messageId,
+            conversationId: event.conversationId,
+            senderId: event.senderId,
+          },
+        });
+      }
+    }
+  }
+
+  private async handleUserStatusChanged(event: UserStatusChangedEvent): Promise<void> {
+    // Update user status in cache
+    await this.userStatusCache.set(event.userId, event.status);
+
+    // Notify friends about status change
+    const friends = await this.userRepository.getFriends(event.userId);
+
+    for (const friendId of friends) {
+      await this.sendStatusUpdate(friendId, {
+        userId: event.userId,
+        status: event.status,
+        lastSeen: event.lastSeen,
+      });
+    }
+  }
+}
+```
+
 ### Using Redis Repositories
 
 ```typescript

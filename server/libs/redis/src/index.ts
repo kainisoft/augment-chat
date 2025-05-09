@@ -7,3 +7,4 @@ export * from './health/redis-health.indicator';
 export * from './repositories';
 export * from './cache';
 export * from './session';
+export * from './pubsub';
