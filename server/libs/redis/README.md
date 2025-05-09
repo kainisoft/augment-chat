@@ -115,6 +115,69 @@ export class HealthController {
 
 ## Advanced Usage
 
+### Using Redis Repositories
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { RedisRepositoryFactory, RedisHashRepositoryFactory } from '@app/redis';
+
+// Define your entity type
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  age: number;
+  isActive: boolean;
+}
+
+@Injectable()
+export class UserCacheService {
+  private readonly userRepository;
+  private readonly userPreferencesRepository;
+
+  constructor(
+    private readonly repositoryFactory: RedisRepositoryFactory,
+    private readonly hashRepositoryFactory: RedisHashRepositoryFactory,
+  ) {
+    // Create a repository for User entities with 'user' prefix
+    this.userRepository = this.repositoryFactory.create<User, string>('user');
+
+    // Create a hash repository for user preferences
+    this.userPreferencesRepository = this.hashRepositoryFactory.create<Record<string, any>>('user:preferences');
+  }
+
+  // Store a user in Redis
+  async cacheUser(user: User, ttl: number = 3600): Promise<User> {
+    return this.userRepository.save(user.id, user, ttl);
+  }
+
+  // Get a user from Redis
+  async getCachedUser(userId: string): Promise<User | null> {
+    return this.userRepository.findById(userId);
+  }
+
+  // Delete a user from Redis
+  async removeCachedUser(userId: string): Promise<boolean> {
+    return this.userRepository.delete(userId);
+  }
+
+  // Store user preferences as a Redis hash
+  async saveUserPreferences(userId: string, preferences: Record<string, any>): Promise<boolean> {
+    return this.userPreferencesRepository.setAll(userId, preferences);
+  }
+
+  // Get user preferences from Redis
+  async getUserPreferences(userId: string): Promise<Record<string, any> | null> {
+    return this.userPreferencesRepository.getAll(userId);
+  }
+
+  // Update a specific preference
+  async updateUserPreference(userId: string, key: string, value: any): Promise<boolean> {
+    return this.userPreferencesRepository.setField(userId, key, value);
+  }
+}
+```
+
 ### Custom Redis Commands
 
 ```typescript
