@@ -30,14 +30,14 @@ import { RedisModule } from '@app/redis';
       // Single node configuration
       host: 'localhost',
       port: 6379,
-      
+
       // OR cluster configuration
       nodes: [
         { host: 'localhost', port: 6379 },
         { host: 'localhost', port: 6380 },
         { host: 'localhost', port: 6381 },
       ],
-      
+
       // Optional settings
       password: 'password',
       db: 0,
@@ -93,7 +93,7 @@ export class HealthController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.redisHealthIndicator.isHealthy('redis'),
+      () => this.redisHealthIndicator.check('redis'),
     ]);
   }
 }

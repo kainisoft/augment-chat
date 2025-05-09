@@ -1,26 +1,22 @@
-import { Injectable, Inject } from '@nestjs/common';
-import {
-  HealthIndicator,
-  HealthIndicatorResult,
-  HealthCheckError,
-} from '@nestjs/terminus';
+import { Injectable, Inject, Logger } from '@nestjs/common';
+import { HealthIndicatorResult } from '@nestjs/terminus';
 import { REDIS_CLIENT } from '../constants/redis.constants';
 import { Redis, Cluster } from 'ioredis';
 
 @Injectable()
-export class RedisHealthIndicator extends HealthIndicator {
+export class RedisHealthIndicator {
+  private readonly logger = new Logger(RedisHealthIndicator.name);
+
   constructor(
     @Inject(REDIS_CLIENT) private readonly redisClient: Redis | Cluster,
-  ) {
-    super();
-  }
+  ) {}
 
   /**
    * Check Redis health
    * @param key Health check key
    * @returns Health indicator result
    */
-  async isHealthy(key: string): Promise<HealthIndicatorResult> {
+  async check(key: string): Promise<HealthIndicatorResult> {
     try {
       const startTime = Date.now();
 
@@ -30,21 +26,36 @@ export class RedisHealthIndicator extends HealthIndicator {
 
       const isHealthy = pingResult === 'PONG';
 
-      const result = this.getStatus(key, isHealthy, {
-        responseTime,
-      });
-
       if (isHealthy) {
-        return result;
+        return {
+          [key]: {
+            status: 'up',
+            responseTime,
+          },
+        };
       }
 
-      throw new HealthCheckError('Redis health check failed', result);
-    } catch (error) {
-      const result = this.getStatus(key, false, {
-        message: error.message,
-      });
+      this.logger.warn(
+        `Redis health check failed: Unexpected ping response: ${pingResult}`,
+      );
+      return {
+        [key]: {
+          status: 'down',
+          responseTime,
+          message: 'Unexpected ping response',
+        },
+      };
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Redis health check failed: ${errorMessage}`);
 
-      throw new HealthCheckError('Redis health check failed', result);
+      return {
+        [key]: {
+          status: 'down',
+          message: errorMessage,
+        },
+      };
     }
   }
 }
