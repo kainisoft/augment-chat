@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RedisService } from '@app/redis';
@@ -13,7 +13,6 @@ import { TokenType } from './enums/token-type.enum';
  */
 @Injectable()
 export class TokenService {
-  private readonly logger = new Logger(TokenService.name);
   private readonly accessTokenExpiry: number;
   private readonly refreshTokenExpiry: number;
   private readonly tokenBlacklistPrefix = 'token:blacklist:';

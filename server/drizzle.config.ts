@@ -48,6 +48,7 @@ export default defineConfig({
     user: process.env.POSTGRES_USER || 'postgres',
     password: process.env.POSTGRES_PASSWORD || 'postgres',
     database: currentConfig.dbName,
+    ssl: false,
   },
   schemaFilter: currentConfig.schemaFilter,
 });

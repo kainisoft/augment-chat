@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '@app/redis';
 import { LoggingService } from '@app/logging';
@@ -35,7 +35,6 @@ export interface UserPermissionData {
  */
 @Injectable()
 export class PermissionCacheService {
-  private readonly logger = new Logger(PermissionCacheService.name);
   private readonly keyPrefix = 'permissions:user:';
   private readonly defaultTtl: number;
 

@@ -58,10 +58,8 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     ports:
       - "4001:4001"
-    environment:
-      - NODE_ENV=development
-      - PORT=4001
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/auth_db
+    env_file:
+      - ./docker/config/auth/auth-config.env
     volumes:
       - ./server/apps/auth-service:/app/apps/auth-service:delegated
       - ./server/libs:/app/libs:delegated
@@ -74,9 +72,11 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+      redis-node-1:
+        condition: service_healthy
     networks:
       - chat-network
-    profiles: [ "auth", "all" ]
+    profiles: [ "auth", "all", "redis" ]
     healthcheck:
       test: [ "CMD", "wget", "--spider", "http://localhost:4001/health" ]
       interval: 10s

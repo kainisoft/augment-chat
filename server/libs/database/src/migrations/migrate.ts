@@ -28,7 +28,9 @@ const serviceConfigs = {
 const currentConfig = serviceConfigs[SERVICE];
 
 if (!currentConfig) {
-  throw new Error(`Invalid service: ${SERVICE}. Valid options are: ${Object.keys(serviceConfigs).join(', ')}`);
+  throw new Error(
+    `Invalid service: ${SERVICE}. Valid options are: ${Object.keys(serviceConfigs).join(', ')}`,
+  );
 }
 
 /**
@@ -45,32 +47,65 @@ const runMigration = async () => {
     user: process.env.POSTGRES_USER || 'postgres',
     password: process.env.POSTGRES_PASSWORD || 'postgres',
     database: currentConfig.dbName,
-    max: process.env.DATABASE_POOL_SIZE ? parseInt(process.env.DATABASE_POOL_SIZE) : 10,
-    idleTimeoutMillis: process.env.DATABASE_IDLE_TIMEOUT ? parseInt(process.env.DATABASE_IDLE_TIMEOUT) * 1000 : 30000,
+    max: process.env.DATABASE_POOL_SIZE
+      ? parseInt(process.env.DATABASE_POOL_SIZE)
+      : 10,
+    idleTimeoutMillis: process.env.DATABASE_IDLE_TIMEOUT
+      ? parseInt(process.env.DATABASE_IDLE_TIMEOUT) * 1000
+      : 30000,
   });
 
   try {
-    // First ensure the schema exists
-    console.log(`Creating ${SERVICE} PostgreSQL schema (${currentConfig.schema})...`);
-    await pool.query(`CREATE SCHEMA IF NOT EXISTS ${currentConfig.schema};`);
-    console.log(`${SERVICE} PostgreSQL schema created successfully`);
+    // Check if the schema already exists
+    const { rows: schemaRows } = await pool.query(`
+      SELECT schema_name
+      FROM information_schema.schemata
+      WHERE schema_name = '${currentConfig.schema}'
+    `);
+
+    const schemaExists = schemaRows.length > 0;
+
+    if (schemaExists) {
+      console.log(
+        `${SERVICE} PostgreSQL schema (${currentConfig.schema}) already exists`,
+      );
+    } else {
+      console.log(
+        `Creating ${SERVICE} PostgreSQL schema (${currentConfig.schema})...`,
+      );
+      await pool.query(`CREATE SCHEMA ${currentConfig.schema};`);
+      console.log(`${SERVICE} PostgreSQL schema created successfully`);
+    }
 
     // Initialize Drizzle with the pool
     const db = drizzle(pool);
 
     console.log(`Running migrations for ${SERVICE} database...`);
 
-    // Check if any tables exist in the schema
+    // Check if the drizzle_migrations table exists
+    const { rows: migrationTableRows } = await pool.query(`
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = '${currentConfig.schema}'
+      AND table_name = 'drizzle_migrations'
+    `);
+
+    const migrationTableExists = migrationTableRows.length > 0;
+
+    // Check if any tables exist in the schema (excluding drizzle_migrations)
     const { rows } = await pool.query(`
       SELECT COUNT(*) as table_count
       FROM information_schema.tables
       WHERE table_schema = '${currentConfig.schema}'
+      AND table_name != 'drizzle_migrations'
     `);
 
     const tableCount = parseInt(rows[0].table_count);
 
-    if (tableCount > 0) {
-      console.log(`${SERVICE} database already has ${tableCount} tables. Creating drizzle_migrations table...`);
+    if (tableCount > 0 && !migrationTableExists) {
+      console.log(
+        `${SERVICE} database already has ${tableCount} tables but no migration tracking. Creating drizzle_migrations table...`,
+      );
 
       // Create the drizzle_migrations table if it doesn't exist
       await pool.query(`

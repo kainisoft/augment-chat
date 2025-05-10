@@ -18,6 +18,7 @@ import { TokenService } from './token/token.service';
 import { SessionService } from './session/session.service';
 import { RateLimitService, RateLimitGuard } from './rate-limit';
 import { PermissionCacheService } from './permission/permission-cache.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,6 +32,9 @@ import { PermissionCacheService } from './permission/permission-cache.service';
 
     // Import DatabaseModule for database access
     DatabaseModule.forAuth(),
+
+    // Import AuthModule for authentication endpoints
+    AuthModule,
 
     // Import LoggingModule with Auth Service specific configuration
     LoggingModule.registerAsync({

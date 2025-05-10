@@ -112,10 +112,10 @@ pnpm add ioredis @types/ioredis @nestjs/terminus
 ## Phase 3: Service Integration
 
 ### 3.1 Auth Service Integration
-- [ ] Integrate Redis for token storage and validation
-- [ ] Implement session management
-- [ ] Add rate limiting for authentication attempts
-- [ ] Create cache for user permissions
+- [x] Integrate Redis for token storage and validation
+- [x] Implement session management
+- [x] Add rate limiting for authentication attempts
+- [x] Create cache for user permissions
 
 ### 3.2 User Service Integration
 - [ ] Implement user profile caching
@@ -215,5 +215,5 @@ pnpm add ioredis @types/ioredis @nestjs/terminus
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-07-20
-- **Last Updated**: 2023-07-25
-- **Version**: 1.5.0
+- **Last Updated**: 2023-10-15
+- **Version**: 1.6.0

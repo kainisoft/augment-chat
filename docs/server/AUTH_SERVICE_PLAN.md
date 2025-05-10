@@ -18,11 +18,11 @@ The Authentication Service handles user registration, login, and token managemen
 - [x] Create user entity and repository
 
 ### Phase 2: Core Features
-- [ ] Implement user registration
-- [ ] Create login/logout functionality
-- [ ] Develop JWT token generation and validation
-- [ ] Add password reset capability
-- [ ] Implement basic security measures (rate limiting, etc.)
+- [x] Implement user registration
+- [x] Create login/logout functionality
+- [x] Develop JWT token generation and validation
+- [x] Add password reset capability
+- [x] Implement basic security measures (rate limiting, etc.)
 
 ### Phase 3: Advanced Features
 - [ ] Add OAuth integration (Google, GitHub, etc.)

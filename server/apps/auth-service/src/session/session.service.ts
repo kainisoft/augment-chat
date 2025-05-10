@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisSessionStore } from '@app/redis/session';
 import { LoggingService } from '@app/logging';
@@ -11,7 +11,6 @@ import { SessionData } from './interfaces/session-data.interface';
  */
 @Injectable()
 export class SessionService {
-  private readonly logger = new Logger(SessionService.name);
 
   constructor(
     private readonly sessionStore: RedisSessionStore,

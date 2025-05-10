@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '@app/redis';
 import { LoggingService } from '@app/logging';
@@ -30,7 +30,6 @@ export interface RateLimitOptions {
  */
 @Injectable()
 export class RateLimitService {
-  private readonly logger = new Logger(RateLimitService.name);
   private readonly keyPrefix = 'rate-limit:';
   private readonly blockKeyPrefix = 'rate-limit:block:';
 

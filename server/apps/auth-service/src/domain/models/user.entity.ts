@@ -155,4 +155,12 @@ export class User {
     this.lastLoginAt = new Date();
     this.updatedAt = new Date();
   }
+
+  /**
+   * Update the user last login time
+   * Alias for updateLastLogin for better readability
+   */
+  updateLastLoginTime(): void {
+    this.updateLastLogin();
+  }
 }
