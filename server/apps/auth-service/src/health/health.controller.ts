@@ -5,15 +5,84 @@ import {
   DatabaseLogMetadata,
   ErrorLogMetadata,
 } from '@app/logging';
+import { RedisHealthIndicator } from '@app/redis/health/redis-health.indicator';
 
 /**
  * Service to check auth service dependencies
  */
 @Injectable()
 export class AuthServiceHealthService {
-  constructor(private readonly loggingService: LoggingService) {
+  constructor(
+    private readonly loggingService: LoggingService,
+    private readonly redisHealthIndicator: RedisHealthIndicator,
+  ) {
     // Set context for all logs from this service
     this.loggingService.setContext(AuthServiceHealthService.name);
+  }
+
+  /**
+   * Check Redis connectivity
+   */
+  async checkRedis(): Promise<{ status: 'ok' | 'error'; details?: any }> {
+    const startTime = Date.now();
+
+    this.loggingService.debug('Checking Redis connectivity', 'checkRedis', {
+      service: 'redis',
+    });
+
+    try {
+      // Use the Redis health indicator to check Redis
+      const result = await this.redisHealthIndicator.check('redis');
+      const duration = Date.now() - startTime;
+
+      this.loggingService.debug(
+        'Redis connectivity check successful',
+        'checkRedis',
+        {
+          service: 'redis',
+          duration,
+          status: 'ok',
+        },
+      );
+
+      return {
+        status: 'ok',
+        details: {
+          ...result.redis,
+          responseTime: duration,
+        },
+      };
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack =
+        error instanceof Error && process.env.NODE_ENV !== 'production'
+          ? error.stack
+          : undefined;
+
+      // Create error metadata
+      const errorMetadata: ErrorLogMetadata = {
+        errorName: error instanceof Error ? error.name : 'UnknownError',
+        errorCode: 'REDIS_CONN_ERROR',
+        stack: errorStack,
+      };
+
+      // Log the error with type-safe metadata
+      this.loggingService.error<ErrorLogMetadata>(
+        `Redis connectivity check failed: ${errorMessage}`,
+        errorStack,
+        'checkRedis',
+        errorMetadata,
+      );
+
+      return {
+        status: 'error' as const,
+        details: {
+          message: errorMessage,
+          stack: errorStack,
+        },
+      };
+    }
   }
 
   /**
@@ -124,14 +193,18 @@ export class AuthServiceHealthController extends BaseHealthController {
 
     // Add service-specific component checks
     const dbStatus = await this.healthService.checkDatabase();
+    const redisStatus = await this.healthService.checkRedis();
 
     const result = {
       ...baseComponents,
       database: dbStatus,
+      redis: redisStatus,
     };
 
     this.loggingService.debug('Health check completed', 'checkComponents', {
-      status: Object.values(result).every(comp => comp.status === 'ok') ? 'ok' : 'error'
+      status: Object.values(result).every((comp) => comp.status === 'ok')
+        ? 'ok'
+        : 'error',
     });
 
     return result;
