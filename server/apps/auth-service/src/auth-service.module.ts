@@ -22,7 +22,7 @@ import { RepositoryProviders } from './infrastructure/repositories';
     CommonModule,
 
     // Import DatabaseModule for database access
-    DatabaseModule,
+    DatabaseModule.forAuth(),
 
     // Import LoggingModule with Auth Service specific configuration
     LoggingModule.registerAsync({
