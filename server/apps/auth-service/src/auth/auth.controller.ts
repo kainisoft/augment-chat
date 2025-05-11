@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
+import { CommandBus } from '@nestjs/cqrs';
 import { LoggingService } from '@app/logging';
-import { AuthService } from './auth.service';
 import { RateLimit, RateLimitGuard } from '../rate-limit';
 import {
   RegisterDto,
@@ -21,6 +21,14 @@ import {
   ResetPasswordDto,
   AuthResponseDto,
 } from './dto';
+import {
+  RegisterUserCommand,
+  LoginUserCommand,
+  LogoutUserCommand,
+  RefreshTokenCommand,
+  ForgotPasswordCommand,
+  ResetPasswordCommand,
+} from '../application/commands/impl';
 
 /**
  * Auth Controller
@@ -31,7 +39,7 @@ import {
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
+    private readonly commandBus: CommandBus,
     private readonly loggingService: LoggingService,
   ) {
     // Set context for all logs from this controller
@@ -73,7 +81,15 @@ export class AuthController {
     const ip = req.ip;
     const userAgent = req.headers['user-agent'];
 
-    return this.authService.register(registerDto, ip, userAgent);
+    // Create and execute the command
+    const command = new RegisterUserCommand(
+      registerDto.email,
+      registerDto.password,
+      ip,
+      userAgent,
+    );
+
+    return this.commandBus.execute(command);
   }
 
   /**
@@ -108,7 +124,15 @@ export class AuthController {
     const ip = req.ip;
     const userAgent = req.headers['user-agent'];
 
-    return this.authService.login(loginDto, ip, userAgent);
+    // Create and execute the command
+    const command = new LoginUserCommand(
+      loginDto.email,
+      loginDto.password,
+      ip,
+      userAgent,
+    );
+
+    return this.commandBus.execute(command);
   }
 
   /**
@@ -129,22 +153,24 @@ export class AuthController {
   })
   async logout(
     @Headers('authorization') authorization: string,
-    @Body('sessionId') sessionId: string,
+    @Body('refreshToken') refreshToken: string,
     @Body('userId') userId: string,
   ): Promise<{ success: boolean }> {
     this.loggingService.debug('Processing logout request', 'logout', {
       userId,
-      sessionId,
     });
 
-    // Extract token from Authorization header
-    const token = authorization?.replace('Bearer ', '');
+    // Use refresh token from body or extract from Authorization header
+    const token = refreshToken || authorization?.replace('Bearer ', '');
 
-    if (!token || !sessionId || !userId) {
+    if (!token) {
       return { success: false };
     }
 
-    const success = await this.authService.logout(userId, sessionId, token);
+    // Create and execute the command
+    const command = new LogoutUserCommand(token, userId);
+    const success = await this.commandBus.execute(command);
+
     return { success };
   }
 
@@ -168,13 +194,24 @@ export class AuthController {
   })
   async refreshToken(
     @Body() refreshTokenDto: RefreshTokenDto,
+    @Req() req: FastifyRequest,
   ): Promise<AuthResponseDto> {
     this.loggingService.debug(
       'Processing token refresh request',
       'refreshToken',
     );
 
-    return this.authService.refreshToken(refreshTokenDto);
+    const ip = req.ip;
+    const userAgent = req.headers['user-agent'];
+
+    // Create and execute the command
+    const command = new RefreshTokenCommand(
+      refreshTokenDto.refreshToken,
+      ip,
+      userAgent,
+    );
+
+    return this.commandBus.execute(command);
   }
 
   /**
@@ -201,7 +238,10 @@ export class AuthController {
       { email: forgotPasswordDto.email },
     );
 
-    const success = await this.authService.forgotPassword(forgotPasswordDto);
+    // Create and execute the command
+    const command = new ForgotPasswordCommand(forgotPasswordDto.email);
+
+    const success = await this.commandBus.execute(command);
     return { success };
   }
 
@@ -230,7 +270,13 @@ export class AuthController {
       'resetPassword',
     );
 
-    const success = await this.authService.resetPassword(resetPasswordDto);
+    // Create and execute the command
+    const command = new ResetPasswordCommand(
+      resetPasswordDto.token,
+      resetPasswordDto.password,
+    );
+
+    const success = await this.commandBus.execute(command);
     return { success };
   }
 }

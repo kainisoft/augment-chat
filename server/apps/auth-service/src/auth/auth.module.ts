@@ -7,6 +7,7 @@ import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { RateLimitService, RateLimitGuard } from '../rate-limit';
 import { RepositoryProviders } from '../infrastructure/repositories';
+import { AuthCqrsModule } from '../auth-cqrs.module';
 
 @Module({
   imports: [
@@ -24,6 +25,8 @@ import { RepositoryProviders } from '../infrastructure/repositories';
       }),
       inject: [ConfigService],
     }),
+    // Import CQRS Module
+    AuthCqrsModule,
   ],
   controllers: [AuthController],
   providers: [
