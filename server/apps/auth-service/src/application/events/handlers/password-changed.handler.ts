@@ -17,7 +17,7 @@ export class PasswordChangedHandler
   }
 
   async handle(event: PasswordChangedEvent): Promise<void> {
-    this.loggingService.info(`Password changed for user`, 'handle', {
+    this.loggingService.log(`Password changed for user`, 'handle', {
       userId: event.userId,
       timestamp: event.timestamp,
     });

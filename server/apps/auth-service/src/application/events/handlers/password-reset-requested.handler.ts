@@ -17,7 +17,7 @@ export class PasswordResetRequestedHandler
   }
 
   async handle(event: PasswordResetRequestedEvent): Promise<void> {
-    this.loggingService.info(
+    this.loggingService.log(
       `Password reset requested for user: ${event.email}`,
       'handle',
       {

@@ -1,10 +1,11 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Inject } from '@nestjs/common';
 import { LoggingService } from '@app/logging';
 
 import { ValidateTokenQuery } from '../impl/validate-token.query';
-import { TokenService } from '../../../token/token.service';
 import { TokenType } from '../../../token/enums/token-type.enum';
+import { TokenValidationReadRepository } from '../../../domain/repositories/token-validation-read.repository.interface';
+import { TokenValidationReadModel } from '../../../domain/read-models/token-validation.read-model';
 
 /**
  * Validate Token Query Handler
@@ -12,36 +13,39 @@ import { TokenType } from '../../../token/enums/token-type.enum';
  * Handles token validation and returns the token payload
  */
 @QueryHandler(ValidateTokenQuery)
-export class ValidateTokenHandler implements IQueryHandler<ValidateTokenQuery> {
+export class ValidateTokenHandler
+  implements IQueryHandler<ValidateTokenQuery, TokenValidationReadModel>
+{
   constructor(
-    private readonly tokenService: TokenService,
+    @Inject('TokenValidationReadRepository')
+    private readonly tokenValidationRepository: TokenValidationReadRepository,
     private readonly loggingService: LoggingService,
   ) {
     this.loggingService.setContext(ValidateTokenHandler.name);
   }
 
-  async execute(query: ValidateTokenQuery): Promise<any> {
+  async execute(query: ValidateTokenQuery): Promise<TokenValidationReadModel> {
     try {
       const { token, tokenType } = query;
 
-      let payload;
+      let result: TokenValidationReadModel;
       if (tokenType === TokenType.ACCESS) {
-        payload = await this.tokenService.verifyToken(token, TokenType.ACCESS);
+        result =
+          await this.tokenValidationRepository.validateAccessToken(token);
       } else if (tokenType === TokenType.REFRESH) {
-        payload = await this.tokenService.verifyToken(token, TokenType.REFRESH);
+        result =
+          await this.tokenValidationRepository.validateRefreshToken(token);
       } else {
         throw new BadRequestException('Invalid token type');
       }
 
       this.loggingService.debug(`Token validated successfully`, 'execute', {
         tokenType,
+        valid: result.valid,
       });
 
-      return {
-        valid: true,
-        payload,
-      };
-    } catch (error) {
+      return result;
+    } catch (error: any) {
       this.loggingService.debug(
         `Token validation failed: ${error.message}`,
         'execute',

@@ -450,7 +450,12 @@ services:
         condition: service_healthy
     command: >
       sh -c "sleep 5 &&
-             redis-cli --cluster create redis-node-1:6379 redis-node-2:6379 redis-node-3:6379 --cluster-yes"
+             REDIS_NODE_1_IP=$$(getent hosts redis-node-1 | awk '{ print $$1 }') &&
+             REDIS_NODE_2_IP=$$(getent hosts redis-node-2 | awk '{ print $$1 }') &&
+             REDIS_NODE_3_IP=$$(getent hosts redis-node-3 | awk '{ print $$1 }') &&
+             echo 'Creating Redis Cluster with IPs:' &&
+             echo $$REDIS_NODE_1_IP $$REDIS_NODE_2_IP $$REDIS_NODE_3_IP &&
+             redis-cli --cluster create $$REDIS_NODE_1_IP:6379 $$REDIS_NODE_2_IP:6379 $$REDIS_NODE_3_IP:6379 --cluster-yes"
     networks:
       - chat-network
     profiles: [ "redis", "all" ]

@@ -11,6 +11,7 @@ import { Email } from '../../../domain/models/value-objects/email.value-object';
 import { Password } from '../../../domain/models/value-objects/password.value-object';
 import { TokenService } from '../../../token/token.service';
 import { SessionService } from '../../../session/session.service';
+import { createErrorMetadata } from '../../../utils/logging.utils';
 
 /**
  * Register User Command Handler
@@ -100,11 +101,12 @@ export class RegisterUserHandler
         sessionId,
         expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
       };
-    } catch (error) {
+    } catch (error: any) {
       this.loggingService.error(
-        `Registration failed: ${error.message}`,
+        `Login failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
         'execute',
-        { error: error.message, email: command.email },
+        createErrorMetadata(error, { email: command.email }),
       );
       throw error;
     }

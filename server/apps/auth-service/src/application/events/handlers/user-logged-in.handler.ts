@@ -15,7 +15,7 @@ export class UserLoggedInHandler implements IEventHandler<UserLoggedInEvent> {
   }
 
   async handle(event: UserLoggedInEvent): Promise<void> {
-    this.loggingService.info(`User logged in: ${event.email}`, 'handle', {
+    this.loggingService.log(`User logged in: ${event.email}`, 'handle', {
       userId: event.userId,
       ip: event.ip,
       userAgent: event.userAgent,

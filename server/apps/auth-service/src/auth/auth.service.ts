@@ -1,20 +1,22 @@
-import {
-  Injectable,
-  Inject,
-  UnauthorizedException,
-  BadRequestException,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService } from '@app/logging';
+import {
+  ValidationError,
+  InvalidCredentialsError,
+  InvalidTokenError,
+  AccountInactiveError,
+} from '@app/common/errors';
+import { createErrorMetadata } from '../utils/logging.utils';
 import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { UserRepository } from '../domain/repositories/user.repository.interface';
 import { User } from '../domain/models/user.entity';
 import { Email } from '../domain/models/value-objects/email.value-object';
 import { Password } from '../domain/models/value-objects/password.value-object';
+import { UserId } from '../domain/models/value-objects/user-id.value-object';
 import { TokenType } from '../token/enums/token-type.enum';
+import { UserNotFoundError, UserAlreadyExistsError } from '../domain/errors';
 import {
   RegisterDto,
   LoginDto,
@@ -61,7 +63,7 @@ export class AuthService {
       // Check if user already exists
       const existingUser = await this.userRepository.findByEmail(email);
       if (existingUser) {
-        throw new ConflictException('User with this email already exists');
+        throw new UserAlreadyExistsError();
       }
 
       // Create password object and hash it
@@ -78,18 +80,19 @@ export class AuthService {
 
       // Generate tokens and create session
       return this.generateAuthResponse(user, ip, userAgent);
-    } catch (error) {
-      if (error instanceof ConflictException) {
+    } catch (error: any) {
+      if (error instanceof UserAlreadyExistsError) {
         throw error;
       }
 
       this.loggingService.error(
-        `Registration failed: ${error.message}`,
+        `Registration failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
         'register',
-        { error: error.message },
+        createErrorMetadata(error),
       );
 
-      throw new BadRequestException(error.message || 'Failed to register user');
+      throw new ValidationError(error.message || 'Failed to register user');
     }
   }
 
@@ -111,7 +114,7 @@ export class AuthService {
       // Find user by email
       const user = await this.userRepository.findByEmail(email);
       if (!user) {
-        throw new UnauthorizedException('Invalid email or password');
+        throw new InvalidCredentialsError();
       }
 
       // Verify password
@@ -119,12 +122,12 @@ export class AuthService {
         .getPassword()
         .compare(loginDto.password);
       if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid email or password');
+        throw new InvalidCredentialsError();
       }
 
       // Check if user is active
       if (!user.getIsActive()) {
-        throw new UnauthorizedException('Account is inactive');
+        throw new AccountInactiveError();
       }
 
       // Update last login time
@@ -133,16 +136,22 @@ export class AuthService {
 
       // Generate tokens and create session
       return this.generateAuthResponse(user, ip, userAgent);
-    } catch (error) {
-      if (error instanceof UnauthorizedException) {
+    } catch (error: any) {
+      if (
+        error instanceof InvalidCredentialsError ||
+        error instanceof AccountInactiveError
+      ) {
         throw error;
       }
 
-      this.loggingService.error(`Login failed: ${error.message}`, 'login', {
-        error: error.message,
-      });
+      this.loggingService.error(
+        `Login failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
+        'login',
+        createErrorMetadata(error),
+      );
 
-      throw new UnauthorizedException('Invalid credentials');
+      throw new InvalidCredentialsError();
     }
   }
 
@@ -171,12 +180,13 @@ export class AuthService {
       });
 
       return true;
-    } catch (error) {
-      this.loggingService.error(`Logout failed: ${error.message}`, 'logout', {
-        error: error.message,
-        userId,
-        sessionId,
-      });
+    } catch (error: any) {
+      this.loggingService.error(
+        `Logout failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
+        'logout',
+        createErrorMetadata(error, { userId, sessionId }),
+      );
 
       return false;
     }
@@ -199,15 +209,15 @@ export class AuthService {
 
       // Get user by ID
       const userId = payload.sub;
-      const user = await this.userRepository.findById(userId);
+      const user = await this.userRepository.findById(new UserId(userId));
 
       if (!user) {
-        throw new UnauthorizedException('Invalid refresh token');
+        throw new InvalidTokenError();
       }
 
       // Check if user is active
       if (!user.getIsActive()) {
-        throw new UnauthorizedException('Account is inactive');
+        throw new AccountInactiveError();
       }
 
       // Revoke the old refresh token
@@ -238,14 +248,22 @@ export class AuthService {
         sessionId,
         expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
       };
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error instanceof InvalidTokenError ||
+        error instanceof AccountInactiveError
+      ) {
+        throw error;
+      }
+
       this.loggingService.error(
-        `Token refresh failed: ${error.message}`,
+        `Token refresh failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
         'refreshToken',
-        { error: error.message },
+        createErrorMetadata(error),
       );
 
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new InvalidTokenError('Invalid or expired refresh token');
     }
   }
 
@@ -266,12 +284,11 @@ export class AuthService {
       }
 
       // Generate password reset token
-      const resetToken = await this.tokenService.generateAccessToken(
-        user.getId().toString(),
-        {
-          purpose: 'password-reset',
-        },
-      );
+      await this.tokenService.generateAccessToken(user.getId().toString(), {
+        purpose: 'password-reset',
+      });
+
+      // TODO: Store the token or send it via email
 
       // TODO: Send password reset email with token
       // This would typically involve an email service
@@ -283,11 +300,12 @@ export class AuthService {
       );
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       this.loggingService.error(
-        `Password reset initiation failed: ${error.message}`,
+        `Password reset initiation failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
         'forgotPassword',
-        { error: error.message },
+        createErrorMetadata(error),
       );
 
       // Don't reveal errors to the client
@@ -310,15 +328,15 @@ export class AuthService {
 
       // Check if token was issued for password reset
       if (payload.purpose !== 'password-reset') {
-        throw new UnauthorizedException('Invalid reset token');
+        throw new InvalidTokenError('Invalid reset token');
       }
 
       // Get user by ID
       const userId = payload.sub;
-      const user = await this.userRepository.findById(userId);
+      const user = await this.userRepository.findById(new UserId(userId));
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new UserNotFoundError();
       }
 
       // Update password
@@ -341,14 +359,22 @@ export class AuthService {
       );
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error instanceof InvalidTokenError ||
+        error instanceof UserNotFoundError
+      ) {
+        throw error;
+      }
+
       this.loggingService.error(
-        `Password reset failed: ${error.message}`,
+        `Password reset failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
         'resetPassword',
-        { error: error.message },
+        createErrorMetadata(error),
       );
 
-      throw new UnauthorizedException('Invalid or expired reset token');
+      throw new InvalidTokenError('Invalid or expired reset token');
     }
   }
 

@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { UnauthorizedException } from '@nestjs/common';
 import { LoggingService } from '@app/logging';
+import { createErrorMetadata } from '../../../utils/logging.utils';
 
 import { LogoutUserCommand } from '../impl/logout-user.command';
 import { UserLoggedOutEvent } from '../../events/impl/user-logged-out.event';
@@ -56,10 +57,13 @@ export class LogoutUserHandler implements ICommandHandler<LogoutUserCommand> {
       });
 
       return true;
-    } catch (error) {
-      this.loggingService.error(`Logout failed: ${error.message}`, 'execute', {
-        error: error.message,
-      });
+    } catch (error: any) {
+      this.loggingService.error(
+        `Logout failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
+        'execute',
+        createErrorMetadata(error)
+      );
 
       // Even if token validation fails, we want to return success
       // as the end result is the same - user is logged out

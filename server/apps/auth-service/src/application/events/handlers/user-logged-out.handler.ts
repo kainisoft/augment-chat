@@ -15,7 +15,7 @@ export class UserLoggedOutHandler implements IEventHandler<UserLoggedOutEvent> {
   }
 
   async handle(event: UserLoggedOutEvent): Promise<void> {
-    this.loggingService.info(`User logged out`, 'handle', {
+    this.loggingService.log(`User logged out`, 'handle', {
       userId: event.userId,
       sessionId: event.sessionId,
       timestamp: event.timestamp,

@@ -151,7 +151,7 @@ export class TokenService {
       // Calculate remaining time until token expiry
       const currentTime = Math.floor(Date.now() / 1000);
       const expiryTime = payload.exp;
-      const ttl = expiryTime - currentTime;
+      const ttl = (expiryTime || 0) - currentTime;
 
       if (ttl <= 0) {
         // Token already expired, no need to blacklist
@@ -212,7 +212,7 @@ export class TokenService {
         metadataKey,
         JSON.stringify({
           userId: payload.sub,
-          type: payload.type,
+          tokenType: payload.type,
           createdAt: new Date().toISOString(),
           expiresAt: new Date(payload.iat * 1000 + ttl * 1000).toISOString(),
           ...payload,
@@ -251,7 +251,7 @@ export class TokenService {
       // Extract tokens and add them to blacklist
       const blacklistPipeline = this.redisService.getClient().pipeline();
 
-      results.forEach(([err, value], index) => {
+      results?.forEach(([err, value], index) => {
         if (err) {
           this.loggingService.error(
             `Error getting token metadata: ${err.message}`,
@@ -262,7 +262,7 @@ export class TokenService {
         }
 
         try {
-          const metadata = JSON.parse(value);
+          const metadata = JSON.parse(value as string);
           const token = keys[index].split(':').pop();
           const ttl = Math.floor(
             (new Date(metadata.expiresAt).getTime() - Date.now()) / 1000,

@@ -43,7 +43,7 @@ export abstract class AbstractDrizzleReadRepository<
 
     const result = await this.drizzle.db
       .select()
-      .from(this.table)
+      .from(this.table as any)
       .where(eq(this.idField, idValue))
       .limit(1);
 
@@ -82,7 +82,7 @@ export abstract class AbstractDrizzleReadRepository<
   ): Promise<T[]> {
     const query = this.drizzle.db
       .select()
-      .from(this.table)
+      .from(this.table as any)
       .where(eq(this.table[field], value));
 
     this.applyQueryOptions(query, options);
@@ -108,7 +108,7 @@ export abstract class AbstractDrizzleReadRepository<
 
     const query = this.drizzle.db
       .select()
-      .from(this.table)
+      .from(this.table as any)
       .where(or(...searchConditions));
 
     this.applyQueryOptions(query, options);
@@ -125,7 +125,7 @@ export abstract class AbstractDrizzleReadRepository<
   async count(filter?: SQL<unknown>): Promise<number> {
     const query = this.drizzle.db
       .select({ count: sql`count(*)` })
-      .from(this.table);
+      .from(this.table as any);
 
     if (filter) {
       query.where(filter);

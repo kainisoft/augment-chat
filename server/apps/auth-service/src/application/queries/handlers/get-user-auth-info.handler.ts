@@ -3,8 +3,8 @@ import { Inject, NotFoundException } from '@nestjs/common';
 import { LoggingService } from '@app/logging';
 
 import { GetUserAuthInfoQuery } from '../impl/get-user-auth-info.query';
-import { UserRepository } from '../../../domain/repositories/user.repository.interface';
-import { UserId } from '../../../domain/models/value-objects/user-id.value-object';
+import { UserAuthReadRepository } from '../../../domain/repositories/user-auth-read.repository.interface';
+import { UserAuthInfoReadModel } from '../../../domain/read-models/user-auth-info.read-model';
 
 /**
  * Get User Auth Info Query Handler
@@ -13,22 +13,20 @@ import { UserId } from '../../../domain/models/value-objects/user-id.value-objec
  */
 @QueryHandler(GetUserAuthInfoQuery)
 export class GetUserAuthInfoHandler
-  implements IQueryHandler<GetUserAuthInfoQuery>
+  implements IQueryHandler<GetUserAuthInfoQuery, UserAuthInfoReadModel>
 {
   constructor(
-    @Inject('UserRepository')
-    private readonly userRepository: UserRepository,
+    @Inject('UserAuthReadRepository')
+    private readonly userAuthReadRepository: UserAuthReadRepository,
     private readonly loggingService: LoggingService,
   ) {
     this.loggingService.setContext(GetUserAuthInfoHandler.name);
   }
 
-  async execute(query: GetUserAuthInfoQuery): Promise<any> {
+  async execute(query: GetUserAuthInfoQuery): Promise<UserAuthInfoReadModel> {
     try {
-      const userId = new UserId(query.userId);
-
-      const user = await this.userRepository.findById(userId);
-      if (!user) {
+      const userAuthInfo = await this.userAuthReadRepository.findById(query.userId);
+      if (!userAuthInfo) {
         throw new NotFoundException(`User with ID ${query.userId} not found`);
       }
 
@@ -36,13 +34,7 @@ export class GetUserAuthInfoHandler
         userId: query.userId,
       });
 
-      return {
-        id: user.getId().toString(),
-        email: user.getEmail().toString(),
-        isActive: user.getIsActive(),
-        isVerified: user.getIsVerified(),
-        lastLoginAt: user.getLastLoginAt(),
-      };
+      return userAuthInfo;
     } catch (error) {
       this.loggingService.error(
         `Failed to get user auth info: ${error.message}`,

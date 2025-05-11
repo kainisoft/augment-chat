@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService } from '@app/logging';
+import { createErrorMetadata } from '../../../utils/logging.utils';
 
 import { LoginUserCommand } from '../impl/login-user.command';
 import { UserLoggedInEvent } from '../../events/impl/user-logged-in.event';
@@ -105,11 +106,13 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
         sessionId,
         expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
       };
-    } catch (error) {
-      this.loggingService.error(`Login failed: ${error.message}`, 'execute', {
-        error: error.message,
-        email: command.email,
-      });
+    } catch (error: any) {
+      this.loggingService.error(
+        `Login failed: ${error.message || 'Unknown error'}`,
+        error.stack || '',
+        'execute',
+        createErrorMetadata(error, { email: command.email }),
+      );
       throw error;
     }
   }
