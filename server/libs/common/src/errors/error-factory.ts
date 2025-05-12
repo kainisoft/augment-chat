@@ -7,18 +7,6 @@ import {
   UnauthorizedError,
   ForbiddenError,
 } from './domain-error';
-import {
-  InvalidCredentialsError,
-  InvalidTokenError,
-  ExpiredTokenError,
-  AccountInactiveError,
-} from './auth-error';
-import {
-  DatabaseError,
-  RedisError,
-  NetworkError,
-  ExternalServiceError,
-} from './infrastructure-error';
 
 /**
  * Error factory for creating application errors

@@ -14,9 +14,14 @@ export class ExampleService {
   /**
    * Example method that logs messages at different levels
    */
-  async doSomething(userId: string): Promise<void> {
+  async doSomething(userId: string, correlationId?: string): Promise<void> {
     // Set user ID for tracking
     this.loggingService.setUserId(userId);
+
+    // Set correlation ID for distributed tracing if provided
+    if (correlationId) {
+      this.loggingService.setCorrelationId(correlationId);
+    }
 
     // Log at info level
     this.loggingService.log('Starting operation', 'doSomething', {

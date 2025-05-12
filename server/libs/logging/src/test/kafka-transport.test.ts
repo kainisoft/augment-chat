@@ -20,6 +20,7 @@ async function testKafkaTransport() {
   transport.setContext('TestContext');
   transport.setRequestId('req-123');
   transport.setUserId('user-456');
+  transport.setCorrelationId('corr-789');
 
   // Log a message
   await new Promise<void>((resolve) => {

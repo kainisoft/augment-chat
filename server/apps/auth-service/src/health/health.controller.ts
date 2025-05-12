@@ -1,11 +1,8 @@
 import { Controller, Injectable } from '@nestjs/common';
 import { BaseHealthController } from '@app/common';
-import {
-  LoggingService,
-  DatabaseLogMetadata,
-  ErrorLogMetadata,
-} from '@app/logging';
+import { LoggingService, DatabaseLogMetadata } from '@app/logging';
 import { RedisHealthIndicator } from '@app/redis/health/redis-health.indicator';
+import { ErrorLoggerService } from '@app/common/errors';
 
 /**
  * Service to check auth service dependencies
@@ -15,6 +12,7 @@ export class AuthServiceHealthService {
   constructor(
     private readonly loggingService: LoggingService,
     private readonly redisHealthIndicator: RedisHealthIndicator,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(AuthServiceHealthService.name);
@@ -60,19 +58,15 @@ export class AuthServiceHealthService {
           ? error.stack
           : undefined;
 
-      // Create error metadata
-      const errorMetadata: ErrorLogMetadata = {
-        errorName: error instanceof Error ? error.name : 'UnknownError',
-        errorCode: 'REDIS_CONN_ERROR',
-        stack: errorStack,
-      };
-
-      // Log the error with type-safe metadata
-      this.loggingService.error<ErrorLogMetadata>(
-        `Redis connectivity check failed: ${errorMessage}`,
-        errorStack,
-        'checkRedis',
-        errorMetadata,
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(errorMessage),
+        'Redis connectivity check failed',
+        {
+          source: AuthServiceHealthService.name,
+          method: 'checkRedis',
+          errorCode: 'REDIS_CONN_ERROR',
+        },
       );
 
       return {
@@ -142,19 +136,15 @@ export class AuthServiceHealthService {
           ? error.stack
           : undefined;
 
-      // Create error metadata
-      const errorMetadata: ErrorLogMetadata = {
-        errorName: error instanceof Error ? error.name : 'UnknownError',
-        errorCode: 'DB_CONN_ERROR',
-        stack: errorStack,
-      };
-
-      // Log the error with type-safe metadata
-      this.loggingService.error<ErrorLogMetadata>(
-        `Database connectivity check failed: ${errorMessage}`,
-        errorStack,
-        'checkDatabase',
-        errorMetadata,
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(errorMessage),
+        'Database connectivity check failed',
+        {
+          source: AuthServiceHealthService.name,
+          method: 'checkDatabase',
+          errorCode: 'DB_CONN_ERROR',
+        },
       );
 
       return {

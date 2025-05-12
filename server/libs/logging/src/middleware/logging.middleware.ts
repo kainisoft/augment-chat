@@ -3,17 +3,18 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
 import { RedactionUtil } from '../utils/redaction.util';
-import {
-  HttpLogMetadata,
-  ErrorLogMetadata,
-} from '../interfaces/log-message.interface';
+import { HttpLogMetadata } from '../interfaces/log-message.interface';
+import { ErrorLoggerService } from '@app/common/errors';
 
 /**
  * Middleware for logging HTTP requests
  */
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
-  constructor(private readonly loggingService: LoggingService) {}
+  constructor(
+    private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
+  ) {}
 
   /**
    * Process the request
@@ -33,8 +34,18 @@ export class LoggingMiddleware implements NestMiddleware {
     // Set request ID in logging service
     this.loggingService.setRequestId(requestId);
 
-    // Set request ID in response headers
+    // Extract correlation ID (or use request ID as fallback)
+    const correlationId = RequestIdUtil.extractCorrelationId(
+      req.headers as Record<string, any>,
+      requestId,
+    );
+
+    // Set correlation ID in logging service
+    this.loggingService.setCorrelationId(correlationId);
+
+    // Set request ID and correlation ID in response headers
     res.header('X-Request-ID', requestId);
+    res.header('X-Correlation-ID', correlationId);
 
     // Extract request information
     const method = req.method;
@@ -122,34 +133,20 @@ export class LoggingMiddleware implements NestMiddleware {
 
     // Handle error
     const handleError = (error: Error) => {
-      // Create type-safe error metadata
-      const errorMetadata: ErrorLogMetadata = {
-        errorName: error.name,
-        errorCode: 'HTTP_REQUEST_ERROR',
-        stack: error.stack,
+      const duration = Date.now() - startTime;
+
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, `Request error: ${method} ${url}`, {
+        source: 'LoggingMiddleware',
+        method: 'handleError',
         requestId,
-        duration: Date.now() - startTime, // Include duration in error metadata
-      };
-
-      // We could also log with HTTP metadata if needed
-      // const httpMetadata = LogHelpers.createHttpLogMetadata(
-      //   String(method),
-      //   String(url),
-      //   {
-      //     ip: String(this.getClientIp(req)),
-      //     userAgent: String(req.headers['user-agent'] || 'unknown'),
-      //     duration,
-      //     requestId,
-      //   }
-      // );
-
-      // Log error with type-safe metadata
-      this.loggingService.error<ErrorLogMetadata>(
-        `Request error: ${method} ${url} - ${error.message}`,
-        error.stack,
-        'LoggingMiddleware',
-        errorMetadata,
-      );
+        correlationId,
+        ip: this.getClientIp(req),
+        userAgent: req.headers['user-agent'] || 'unknown',
+        url,
+        httpMethod: method,
+        duration,
+      });
 
       // Clean up event listeners
       res.raw.removeListener('finish', handleResponse);

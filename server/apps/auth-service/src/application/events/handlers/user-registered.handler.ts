@@ -1,6 +1,7 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { LoggingService } from '@app/logging';
+import { ErrorLoggerService } from '@app/common/errors/services/error-logger.service';
 
 import { UserRegisteredEvent } from '../impl/user-registered.event';
 import { UserAuthReadRepository } from '../../../domain/repositories/user-auth-read.repository.interface';
@@ -18,6 +19,7 @@ export class UserRegisteredHandler
     @Inject('UserAuthReadRepository')
     private readonly userAuthReadRepository: UserAuthReadRepository,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     this.loggingService.setContext(UserRegisteredHandler.name);
   }
@@ -50,11 +52,14 @@ export class UserRegisteredHandler
       // Additional side effects like sending welcome email, etc.
       // would be implemented here
     } catch (error: any) {
-      this.loggingService.error(
-        `Error handling user registered event: ${error.message}`,
-        'handle',
-        { error: error.message, userId: event.userId },
-      );
+      // Use the ErrorLoggerService to log the error with context
+      this.errorLogger.error(error, 'Error handling user registered event', {
+        source: UserRegisteredHandler.name,
+        method: 'handle',
+        userId: event.userId,
+      });
+
+      throw error;
     }
   }
 }

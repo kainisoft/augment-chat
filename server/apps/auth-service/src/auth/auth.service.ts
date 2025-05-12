@@ -6,8 +6,8 @@ import {
   InvalidCredentialsError,
   InvalidTokenError,
   AccountInactiveError,
+  ErrorLoggerService,
 } from '@app/common/errors';
-import { createErrorMetadata } from '../utils/logging.utils';
 import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { UserRepository } from '../domain/repositories/user.repository.interface';
@@ -40,6 +40,7 @@ export class AuthService {
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(AuthService.name);
@@ -85,12 +86,12 @@ export class AuthService {
         throw error;
       }
 
-      this.loggingService.error(
-        `Registration failed: ${error.message || 'Unknown error'}`,
-        error.stack || '',
-        'register',
-        createErrorMetadata(error),
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Registration failed', {
+        source: AuthService.name,
+        method: 'register',
+        email: registerDto.email,
+      });
 
       throw new ValidationError(error.message || 'Failed to register user');
     }
@@ -144,12 +145,12 @@ export class AuthService {
         throw error;
       }
 
-      this.loggingService.error(
-        `Login failed: ${error.message || 'Unknown error'}`,
-        error.stack || '',
-        'login',
-        createErrorMetadata(error),
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Login failed', {
+        source: AuthService.name,
+        method: 'login',
+        email: loginDto.email,
+      });
 
       throw new InvalidCredentialsError();
     }
@@ -181,14 +182,15 @@ export class AuthService {
 
       return true;
     } catch (error: any) {
-      this.loggingService.error(
-        `Logout failed: ${error.message || 'Unknown error'}`,
-        error.stack || '',
-        'logout',
-        createErrorMetadata(error, { userId, sessionId }),
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Logout failed', {
+        source: AuthService.name,
+        method: 'logout',
+        userId,
+        sessionId,
+      });
 
-      return false;
+      return true;
     }
   }
 
@@ -256,12 +258,11 @@ export class AuthService {
         throw error;
       }
 
-      this.loggingService.error(
-        `Token refresh failed: ${error.message || 'Unknown error'}`,
-        error.stack || '',
-        'refreshToken',
-        createErrorMetadata(error),
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Token refresh failed', {
+        source: AuthService.name,
+        method: 'refreshToken',
+      });
 
       throw new InvalidTokenError('Invalid or expired refresh token');
     }
@@ -301,12 +302,11 @@ export class AuthService {
 
       return true;
     } catch (error: any) {
-      this.loggingService.error(
-        `Password reset initiation failed: ${error.message || 'Unknown error'}`,
-        error.stack || '',
-        'forgotPassword',
-        createErrorMetadata(error),
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Password reset initiation failed', {
+        source: AuthService.name,
+        method: 'forgotPassword',
+      });
 
       // Don't reveal errors to the client
       return true;
@@ -367,12 +367,11 @@ export class AuthService {
         throw error;
       }
 
-      this.loggingService.error(
-        `Password reset failed: ${error.message || 'Unknown error'}`,
-        error.stack || '',
-        'resetPassword',
-        createErrorMetadata(error),
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Password reset failed', {
+        source: AuthService.name,
+        method: 'resetPassword',
+      });
 
       throw new InvalidTokenError('Invalid or expired reset token');
     }

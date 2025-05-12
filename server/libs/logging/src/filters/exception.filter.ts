@@ -8,14 +8,17 @@ import {
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
-import { ErrorLogMetadata } from '../interfaces/log-message.interface';
+import { ErrorLoggerService } from '@app/common/errors';
 
 /**
  * Filter for logging and handling exceptions
  */
 @Catch()
 export class LoggingExceptionFilter implements ExceptionFilter {
-  constructor(private readonly loggingService: LoggingService) {}
+  constructor(
+    private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
+  ) {}
 
   /**
    * Catch and handle exceptions
@@ -34,6 +37,15 @@ export class LoggingExceptionFilter implements ExceptionFilter {
 
     // Set request ID in logging service
     this.loggingService.setRequestId(requestId);
+
+    // Extract correlation ID (or use request ID as fallback)
+    const correlationId = RequestIdUtil.extractCorrelationId(
+      request.headers as Record<string, any>,
+      requestId,
+    );
+
+    // Set correlation ID in logging service
+    this.loggingService.setCorrelationId(correlationId);
 
     // Get status code
     const status =
@@ -61,21 +73,17 @@ export class LoggingExceptionFilter implements ExceptionFilter {
     //   requestId,
     // };
 
-    // Create type-safe error metadata
-    const errorMetadata: ErrorLogMetadata = {
-      errorName: exception.name || 'HttpException',
-      errorCode: String(status),
-      stack,
+    // Use ErrorLoggerService for structured error logging
+    this.errorLogger.error(exception, `Exception: ${method} ${url}`, {
+      source: 'ExceptionFilter',
+      method: 'catch',
       requestId,
-    };
-
-    // Log error with type-safe metadata
-    this.loggingService.error<ErrorLogMetadata>(
-      `Exception: ${status} ${method} ${url} - ${message}`,
-      stack,
-      'ExceptionFilter',
-      errorMetadata,
-    );
+      correlationId,
+      url,
+      httpMethod: method,
+      statusCode: status,
+      httpStatus: status,
+    });
 
     // Also log with HTTP metadata if needed
     // this.loggingService.error<HttpLogMetadata>(

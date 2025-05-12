@@ -69,6 +69,7 @@ export class KafkaTransport extends Transport {
   private context?: string;
   private requestId?: string;
   private userId?: string;
+  private correlationId?: string;
 
   constructor(options: KafkaTransportOptions) {
     super(options);
@@ -149,6 +150,14 @@ export class KafkaTransport extends Transport {
   }
 
   /**
+   * Set the correlation ID for log messages
+   * @param correlationId The correlation ID to set
+   */
+  setCorrelationId(correlationId: string): void {
+    this.correlationId = correlationId;
+  }
+
+  /**
    * Log method called by Winston
    * @param info The log information
    * @param callback Callback function
@@ -218,6 +227,11 @@ export class KafkaTransport extends Transport {
     // Add user ID if available
     if (this.userId || info.userId) {
       logMessage.userId = this.userId || String(info.userId);
+    }
+
+    // Add correlation ID if available
+    if (this.correlationId || info.correlationId) {
+      logMessage.traceId = this.correlationId || String(info.correlationId);
     }
 
     // Add stack trace if available

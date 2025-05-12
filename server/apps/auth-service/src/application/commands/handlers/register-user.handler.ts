@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, ConflictException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService } from '@app/logging';
+import { ErrorLoggerService } from '@app/common/errors';
 
 import { RegisterUserCommand } from '../impl/register-user.command';
 import { UserRegisteredEvent } from '../../events/impl/user-registered.event';
@@ -11,7 +12,6 @@ import { Email } from '../../../domain/models/value-objects/email.value-object';
 import { Password } from '../../../domain/models/value-objects/password.value-object';
 import { TokenService } from '../../../token/token.service';
 import { SessionService } from '../../../session/session.service';
-import { createErrorMetadata } from '../../../utils/logging.utils';
 
 /**
  * Register User Command Handler
@@ -30,6 +30,7 @@ export class RegisterUserHandler
     private readonly configService: ConfigService,
     private readonly eventBus: EventBus,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     this.loggingService.setContext(RegisterUserHandler.name);
   }
@@ -102,12 +103,13 @@ export class RegisterUserHandler
         expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
       };
     } catch (error: any) {
-      this.loggingService.error(
-        `Login failed: ${error.message || 'Unknown error'}`,
-        error.stack || '',
-        'execute',
-        createErrorMetadata(error, { email: command.email }),
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Registration failed', {
+        source: RegisterUserHandler.name,
+        method: 'execute',
+        email: command.email,
+      });
+
       throw error;
     }
   }

@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService } from '@app/logging';
-import { createErrorMetadata } from '../../../utils/logging.utils';
+import { ErrorLoggerService } from '@app/common/errors';
 
 import { LoginUserCommand } from '../impl/login-user.command';
 import { UserLoggedInEvent } from '../../events/impl/user-logged-in.event';
@@ -26,6 +26,7 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
     private readonly configService: ConfigService,
     private readonly eventBus: EventBus,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     this.loggingService.setContext(LoginUserHandler.name);
   }
@@ -107,12 +108,13 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
         expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
       };
     } catch (error: any) {
-      this.loggingService.error(
-        `Login failed: ${error.message || 'Unknown error'}`,
-        error.stack || '',
-        'execute',
-        createErrorMetadata(error, { email: command.email }),
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Login failed', {
+        source: LoginUserHandler.name,
+        method: 'execute',
+        email: command.email,
+      });
+
       throw error;
     }
   }

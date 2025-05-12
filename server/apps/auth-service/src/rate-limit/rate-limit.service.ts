@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '@app/redis';
 import { LoggingService } from '@app/logging';
+import { ErrorLoggerService } from '@app/common/errors';
 
 /**
  * Rate limit options
@@ -49,6 +50,7 @@ export class RateLimitService {
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(RateLimitService.name);
@@ -146,11 +148,13 @@ export class RateLimitService {
 
       return false;
     } catch (error) {
-      this.loggingService.error(
-        `Error checking rate limit: ${error.message}`,
-        'isRateLimited',
-        { error: error.message, key, action },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Error checking rate limit', {
+        source: RateLimitService.name,
+        method: 'isRateLimited',
+        key,
+        action,
+      });
 
       // In case of error, allow the request to proceed
       return false;
@@ -187,11 +191,13 @@ export class RateLimitService {
 
       return count;
     } catch (error) {
-      this.loggingService.error(
-        `Error incrementing rate limit counter: ${error.message}`,
-        'increment',
-        { error: error.message, key, action },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Error incrementing rate limit counter', {
+        source: RateLimitService.name,
+        method: 'increment',
+        key,
+        action,
+      });
 
       return 0;
     }
@@ -222,11 +228,13 @@ export class RateLimitService {
 
       return true;
     } catch (error) {
-      this.loggingService.error(
-        `Error resetting rate limit: ${error.message}`,
-        'reset',
-        { error: error.message, key, action },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Error resetting rate limit', {
+        source: RateLimitService.name,
+        method: 'reset',
+        key,
+        action,
+      });
 
       return false;
     }

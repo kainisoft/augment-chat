@@ -8,17 +8,18 @@ import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
-import {
-  HttpLogMetadata,
-  ErrorLogMetadata,
-} from '../interfaces/log-message.interface';
+import { HttpLogMetadata } from '../interfaces/log-message.interface';
+import { ErrorLoggerService } from '@app/common/errors';
 
 /**
  * Interceptor for logging method execution and performance metrics
  */
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(private readonly loggingService: LoggingService) {}
+  constructor(
+    private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
+  ) {}
 
   /**
    * Intercept method execution
@@ -41,6 +42,15 @@ export class LoggingInterceptor implements NestInterceptor {
 
     // Set request ID in logging service
     this.loggingService.setRequestId(requestId);
+
+    // Extract correlation ID (or use request ID as fallback)
+    const correlationId = RequestIdUtil.extractCorrelationId(
+      request.headers,
+      requestId,
+    );
+
+    // Set correlation ID in logging service
+    this.loggingService.setCorrelationId(correlationId);
 
     // Get context information
     const contextType = context.getType();
@@ -90,20 +100,20 @@ export class LoggingInterceptor implements NestInterceptor {
         // Calculate duration
         const duration = Date.now() - startTime;
 
-        // Create type-safe error metadata
-        const errorMetadata: ErrorLogMetadata = {
-          errorName: error.name || 'Error',
-          errorCode: 'EXECUTION_ERROR',
-          stack: error.stack,
-          requestId,
-        };
-
-        // Log error with type-safe metadata
-        this.loggingService.error<ErrorLogMetadata>(
-          `${contextType} | ${controllerName}.${handlerName} | Execution failed (${duration}ms): ${error.message}`,
-          error.stack,
-          undefined,
-          errorMetadata,
+        // Use ErrorLoggerService for structured error logging
+        this.errorLogger.error(
+          error,
+          `${contextType} execution failed: ${controllerName}.${handlerName}`,
+          {
+            source: 'LoggingInterceptor',
+            method: 'intercept',
+            requestId,
+            correlationId,
+            controller: controllerName,
+            handler: handlerName,
+            contextType,
+            duration,
+          },
         );
 
         // Re-throw the error

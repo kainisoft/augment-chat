@@ -72,6 +72,7 @@ export class LoggingService {
   private context?: string;
   private requestId?: string;
   private userId?: string;
+  private correlationId?: string;
 
   constructor(
     @Optional() private readonly configService?: ConfigService,
@@ -199,6 +200,17 @@ export class LoggingService {
   }
 
   /**
+   * Set the correlation ID for log messages
+   * @param correlationId The correlation ID to set
+   */
+  setCorrelationId(correlationId: string): void {
+    this.correlationId = correlationId;
+    if (this.kafkaTransport) {
+      this.kafkaTransport.setCorrelationId(correlationId);
+    }
+  }
+
+  /**
    * Log a message at the 'info' level
    * @param message The message to log
    * @param context The context of the message
@@ -213,6 +225,7 @@ export class LoggingService {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
+      correlationId: this.correlationId,
       ...(metadata || {}),
     });
   }
@@ -235,6 +248,7 @@ export class LoggingService {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
+      correlationId: this.correlationId,
       ...(metadata || {}),
     });
   }
@@ -254,6 +268,7 @@ export class LoggingService {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
+      correlationId: this.correlationId,
       ...(metadata || {}),
     });
   }
@@ -273,6 +288,7 @@ export class LoggingService {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
+      correlationId: this.correlationId,
       ...(metadata || {}),
     });
   }
@@ -292,6 +308,7 @@ export class LoggingService {
       context: context || this.context,
       requestId: this.requestId,
       userId: this.userId,
+      correlationId: this.correlationId,
       ...(metadata || {}),
     });
   }
