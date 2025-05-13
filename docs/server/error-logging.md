@@ -19,7 +19,7 @@ The `ErrorLoggerService` is a common method for recording logs across the applic
 1. **Inject the ErrorLoggerService**:
 
 ```typescript
-import { ErrorLoggerService } from '@app/common/errors';
+import { ErrorLoggerService } from '@app/logging';
 
 @Injectable()
 export class YourService {
@@ -41,7 +41,7 @@ try {
     userId: user.id,
     // Add any other context information
   });
-  
+
   // Re-throw or handle the error
   throw new CustomError('Friendly error message');
 }
@@ -112,7 +112,7 @@ try {
     },
     ErrorSeverity.ERROR // Optional, defaults to ERROR
   );
-  
+
   throw new CustomError('Friendly error message');
 }
 ```
@@ -133,7 +133,7 @@ try {
     'methodName',
     createErrorMetadata(error, { userId: user.id }),
   );
-  
+
   throw new CustomError('Friendly error message');
 }
 ```
@@ -149,7 +149,7 @@ try {
     method: 'methodName',
     userId: user.id,
   });
-  
+
   throw new CustomError('Friendly error message');
 }
 ```
@@ -166,4 +166,4 @@ try {
 
 ## Implementation Details
 
-The `ErrorLoggerService` is implemented in the common library and is automatically registered in the `CommonModule`. It uses the `LoggingService` internally but provides a more structured approach to error logging.
+The `ErrorLoggerService` is implemented in the logging library and is automatically registered in the `LoggingModule`. It uses the `LoggingService` internally but provides a more structured approach to error logging.

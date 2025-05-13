@@ -10,11 +10,12 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggingService, LoggingModuleOptions } from './logging.service';
 // import { LoggingMiddleware } from './middleware/logging.middleware';
 import { LoggingProviders } from './providers/logging.providers';
+import { ErrorLoggerService } from './errors/error-logger.service';
 
 @Module({
   imports: [ConfigModule],
-  providers: [LoggingService, ...LoggingProviders],
-  exports: [LoggingService],
+  providers: [LoggingService, ErrorLoggerService, ...LoggingProviders],
+  exports: [LoggingService, ErrorLoggerService],
 })
 export class LoggingModule {
   // Middleware temporarily disabled
@@ -41,9 +42,10 @@ export class LoggingModule {
           useValue: options,
         },
         LoggingService,
+        ErrorLoggerService,
         ...LoggingProviders,
       ],
-      exports: [LoggingService],
+      exports: [LoggingService, ErrorLoggerService],
     };
   }
 
@@ -62,9 +64,10 @@ export class LoggingModule {
           useValue: options,
         },
         LoggingService,
+        ErrorLoggerService,
         ...LoggingProviders,
       ],
-      exports: [LoggingService],
+      exports: [LoggingService, ErrorLoggerService],
       global: true,
     };
   }
@@ -81,10 +84,11 @@ export class LoggingModule {
       providers: [
         ...this.createAsyncProviders(options),
         LoggingService,
+        ErrorLoggerService,
         ...LoggingProviders,
         ...(options.providers || []),
       ],
-      exports: [LoggingService],
+      exports: [LoggingService, ErrorLoggerService],
       global: options.isGlobal,
     };
   }

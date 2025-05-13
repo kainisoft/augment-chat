@@ -1,13 +1,16 @@
 import { Controller, Injectable } from '@nestjs/common';
 import { BaseHealthController } from '@app/common';
-import { LoggingService } from '@app/logging';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
 
 /**
  * Service to check API Gateway dependencies
  */
 @Injectable()
 export class ApiGatewayHealthService {
-  constructor(private readonly loggingService: LoggingService) {
+  constructor(
+    private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
+  ) {
     // Set context for all logs from this service
     this.loggingService.setContext(ApiGatewayHealthService.name);
   }
@@ -36,9 +39,12 @@ export class ApiGatewayHealthService {
         },
       };
 
-      this.loggingService.debug('Service connectivity check successful', 'checkServices');
+      this.loggingService.debug(
+        'Service connectivity check successful',
+        'checkServices',
+      );
       return result;
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       const errorStack =
@@ -46,12 +52,12 @@ export class ApiGatewayHealthService {
           ? error.stack
           : undefined;
 
-      // Log the error
-      this.loggingService.error(
-        `Service connectivity check failed: ${errorMessage}`,
-        errorStack,
-        'checkServices'
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Service connectivity check failed', {
+        source: ApiGatewayHealthService.name,
+        method: 'checkServices',
+        errorCode: 'SERVICE_CONN_ERROR',
+      });
 
       return {
         status: 'error' as const,
@@ -68,7 +74,8 @@ export class ApiGatewayHealthService {
 export class ApiGatewayHealthController extends BaseHealthController {
   constructor(
     private readonly healthService: ApiGatewayHealthService,
-    private readonly loggingService: LoggingService
+    private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     super();
     // Set context for all logs from this controller
@@ -96,7 +103,9 @@ export class ApiGatewayHealthController extends BaseHealthController {
     };
 
     this.loggingService.debug('Health check completed', 'checkComponents', {
-      status: Object.values(result).every(comp => comp.status === 'ok') ? 'ok' : 'error'
+      status: Object.values(result).every((comp) => comp.status === 'ok')
+        ? 'ok'
+        : 'error',
     });
 
     return result;

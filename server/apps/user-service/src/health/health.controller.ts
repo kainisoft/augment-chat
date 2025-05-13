@@ -1,13 +1,16 @@
 import { Controller, Injectable } from '@nestjs/common';
 import { BaseHealthController } from '@app/common';
-import { LoggingService } from '@app/logging';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
 
 /**
  * Service to check database connectivity for the user service
  */
 @Injectable()
 export class UserServiceHealthService {
-  constructor(private readonly loggingService: LoggingService) {
+  constructor(
+    private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
+  ) {
     // Set context for all logs from this service
     this.loggingService.setContext(UserServiceHealthService.name);
   }
@@ -18,7 +21,10 @@ export class UserServiceHealthService {
    */
   async checkDatabase(): Promise<{ status: 'ok' | 'error'; details?: any }> {
     // Simulate database check - in a real app, this would be an actual DB connection check
-    this.loggingService.debug('Checking database connectivity', 'checkDatabase');
+    this.loggingService.debug(
+      'Checking database connectivity',
+      'checkDatabase',
+    );
 
     try {
       // Simulate a database query
@@ -32,9 +38,12 @@ export class UserServiceHealthService {
         },
       };
 
-      this.loggingService.debug('Database connectivity check successful', 'checkDatabase');
+      this.loggingService.debug(
+        'Database connectivity check successful',
+        'checkDatabase',
+      );
       return result;
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       const errorStack =
@@ -42,12 +51,12 @@ export class UserServiceHealthService {
           ? error.stack
           : undefined;
 
-      // Log the error
-      this.loggingService.error(
-        `Database connectivity check failed: ${errorMessage}`,
-        errorStack,
-        'checkDatabase'
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Database connectivity check failed', {
+        source: UserServiceHealthService.name,
+        method: 'checkDatabase',
+        errorCode: 'DB_CONN_ERROR',
+      });
 
       return {
         status: 'error' as const,
@@ -64,7 +73,7 @@ export class UserServiceHealthService {
 export class UserServiceHealthController extends BaseHealthController {
   constructor(
     private readonly healthService: UserServiceHealthService,
-    private readonly loggingService: LoggingService
+    private readonly loggingService: LoggingService,
   ) {
     super();
     // Set context for all logs from this controller
@@ -92,7 +101,9 @@ export class UserServiceHealthController extends BaseHealthController {
     };
 
     this.loggingService.debug('Health check completed', 'checkComponents', {
-      status: Object.values(result).every(comp => comp.status === 'ok') ? 'ok' : 'error'
+      status: Object.values(result).every((comp) => comp.status === 'ok')
+        ? 'ok'
+        : 'error',
     });
 
     return result;

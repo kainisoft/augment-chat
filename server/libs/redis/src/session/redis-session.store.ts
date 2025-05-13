@@ -44,7 +44,7 @@ export class RedisSessionStore implements SessionStore {
       const sessionData: SessionData = {
         createdAt: now,
         lastAccessedAt: now,
-        expiresAt: now + this.options.ttl * 1000,
+        expiresAt: now + this.options.ttl! * 1000,
         data: {},
         ...data,
       };
@@ -52,7 +52,11 @@ export class RedisSessionStore implements SessionStore {
       const serialized = this.serializeSession(sessionData);
       const key = this.getSessionKey(sessionId);
 
-      await this.redisService.set(key, serialized, this.options.ttl);
+      await this.redisService.set(
+        key,
+        serialized,
+        this.options.ttl || defaultSessionOptions.ttl,
+      );
 
       // If userId is provided, create a reference for lookup
       if (sessionData.userId) {
@@ -100,7 +104,7 @@ export class RedisSessionStore implements SessionStore {
 
         // Update last accessed time in the returned data
         sessionData.lastAccessedAt = Date.now();
-        sessionData.expiresAt = Date.now() + this.options.ttl * 1000;
+        sessionData.expiresAt = Date.now() + this.options.ttl! * 1000;
       }
 
       return sessionData;
@@ -135,7 +139,7 @@ export class RedisSessionStore implements SessionStore {
         ...sessionData,
         ...data,
         lastAccessedAt: now,
-        expiresAt: now + this.options.ttl * 1000,
+        expiresAt: now + this.options.ttl! * 1000,
       };
 
       // If userId is changing, update references
@@ -150,7 +154,11 @@ export class RedisSessionStore implements SessionStore {
       }
 
       const serialized = this.serializeSession(updatedData);
-      await this.redisService.set(key, serialized, this.options.ttl);
+      await this.redisService.set(
+        key,
+        serialized,
+        this.options.ttl || defaultSessionOptions.ttl,
+      );
 
       if (this.options.enableLogs) {
         this.logger.log(`Session updated: ${id}`);
@@ -220,10 +228,14 @@ export class RedisSessionStore implements SessionStore {
 
       // Update timestamps
       sessionData.lastAccessedAt = now;
-      sessionData.expiresAt = now + this.options.ttl * 1000;
+      sessionData.expiresAt = now + this.options.ttl! * 1000;
 
       const serialized = this.serializeSession(sessionData);
-      await this.redisService.set(key, serialized, this.options.ttl);
+      await this.redisService.set(
+        key,
+        serialized,
+        this.options.ttl || defaultSessionOptions.ttl,
+      );
 
       if (this.options.enableLogs) {
         this.logger.log(`Session touched: ${id}`);
@@ -307,6 +319,45 @@ export class RedisSessionStore implements SessionStore {
   }
 
   /**
+   * Get all sessions for a user
+   * @param userId User ID
+   * @returns Promise resolving to an array of session data
+   */
+  async getUserSessions(userId: string): Promise<SessionData[]> {
+    try {
+      const sessionIds = await this.findByUserId(userId);
+
+      if (sessionIds.length === 0) {
+        return [];
+      }
+
+      // Get all session data
+      const promises = sessionIds.map((id) => this.get(id));
+      const sessions = await Promise.all(promises);
+
+      // Filter out null sessions (they might have expired)
+      const validSessions = sessions.filter(
+        (session): session is SessionData => session !== null,
+      );
+
+      if (this.options.enableLogs) {
+        this.logger.log(
+          `Retrieved ${validSessions.length} sessions for user ${userId}`,
+        );
+      }
+
+      return validSessions;
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(
+        `Error getting sessions for user ${userId}: ${errorMessage}`,
+      );
+      throw error;
+    }
+  }
+
+  /**
    * Get the Redis key for a session
    * @param id Session ID
    * @returns Redis key
@@ -358,7 +409,7 @@ export class RedisSessionStore implements SessionStore {
   private serializeSession(data: SessionData): string {
     const serialized = JSON.stringify(data);
 
-    if (this.options.encrypt) {
+    if (this.options.encrypt && this.options.encryptionKey) {
       return this.encryptionService.encrypt(
         serialized,
         this.options.encryptionKey,
@@ -376,7 +427,7 @@ export class RedisSessionStore implements SessionStore {
   private deserializeSession(data: string): SessionData {
     let serialized = data;
 
-    if (this.options.encrypt) {
+    if (this.options.encrypt && this.options.encryptionKey) {
       serialized = this.encryptionService.decrypt(
         data,
         this.options.encryptionKey,

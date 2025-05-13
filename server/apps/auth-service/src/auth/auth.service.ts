@@ -6,8 +6,8 @@ import {
   InvalidCredentialsError,
   InvalidTokenError,
   AccountInactiveError,
-  ErrorLoggerService,
 } from '@app/common/errors';
+import { ErrorLoggerService } from '@app/logging';
 import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { UserRepository } from '../domain/repositories/user.repository.interface';

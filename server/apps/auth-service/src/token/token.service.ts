@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RedisService } from '@app/redis';
-import { LoggingService } from '@app/logging';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { TokenPayload } from './interfaces/token-payload.interface';
 import { TokenType } from './enums/token-type.enum';
 
@@ -23,6 +23,7 @@ export class TokenService {
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(TokenService.name);
@@ -129,10 +130,15 @@ export class TokenService {
 
       return payload;
     } catch (error) {
-      this.loggingService.warn(
-        `Token validation failed: ${error.message}`,
-        'validateToken',
-        { error: error.message, tokenType: type },
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.warning(
+        error instanceof Error ? error : new Error('Unknown error'),
+        'Token validation failed',
+        {
+          source: TokenService.name,
+          method: 'validateToken',
+          tokenType: type,
+        },
       );
       throw new UnauthorizedException('Invalid token');
     }
@@ -170,10 +176,14 @@ export class TokenService {
 
       return true;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to revoke token: ${error.message}`,
-        'revokeToken',
-        { error: error.message },
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error('Unknown error'),
+        'Failed to revoke token',
+        {
+          source: TokenService.name,
+          method: 'revokeToken',
+        },
       );
       return false;
     }
@@ -220,10 +230,15 @@ export class TokenService {
         ttl,
       );
     } catch (error) {
-      this.loggingService.error(
-        `Failed to store token metadata: ${error.message}`,
-        'storeTokenMetadata',
-        { error: error.message, userId: payload.sub },
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error('Unknown error'),
+        'Failed to store token metadata',
+        {
+          source: TokenService.name,
+          method: 'storeTokenMetadata',
+          userId: payload.sub,
+        },
       );
     }
   }
@@ -253,11 +268,12 @@ export class TokenService {
 
       results?.forEach(([err, value], index) => {
         if (err) {
-          this.loggingService.error(
-            `Error getting token metadata: ${err.message}`,
-            'revokeAllUserTokens',
-            { error: err.message, userId },
-          );
+          // Use ErrorLoggerService for structured error logging
+          this.errorLogger.error(err, 'Error getting token metadata', {
+            source: TokenService.name,
+            method: 'revokeAllUserTokens',
+            userId,
+          });
           return;
         }
 
@@ -272,12 +288,13 @@ export class TokenService {
             const blacklistKey = `${this.tokenBlacklistPrefix}${token}`;
             blacklistPipeline.set(blacklistKey, '1', 'EX', ttl);
           }
-        } catch (parseError) {
-          this.loggingService.error(
-            `Error parsing token metadata: ${parseError.message}`,
-            'revokeAllUserTokens',
-            { error: parseError.message, userId },
-          );
+        } catch (error) {
+          // Use ErrorLoggerService for structured error logging
+          this.errorLogger.error(error, 'Error parsing token metadata', {
+            source: TokenService.name,
+            method: 'revokeAllUserTokens',
+            userId,
+          });
         }
       });
 
@@ -291,11 +308,12 @@ export class TokenService {
 
       return true;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to revoke all user tokens: ${error.message}`,
-        'revokeAllUserTokens',
-        { error: error.message, userId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to revoke all user tokens', {
+        source: TokenService.name,
+        method: 'revokeAllUserTokens',
+        userId,
+      });
       return false;
     }
   }

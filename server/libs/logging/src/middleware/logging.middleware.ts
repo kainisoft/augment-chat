@@ -4,7 +4,7 @@ import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
 import { RedactionUtil } from '../utils/redaction.util';
 import { HttpLogMetadata } from '../interfaces/log-message.interface';
-import { ErrorLoggerService } from '@app/common/errors';
+import { ErrorLoggerService } from '../errors/error-logger.service';
 
 /**
  * Middleware for logging HTTP requests

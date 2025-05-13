@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '@app/database';
 import { RedisModule } from '@app/redis';
+import { CommonModule } from '@app/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { TokenService } from '../token/token.service';
@@ -13,6 +14,8 @@ import { AuthCqrsModule } from '../auth-cqrs.module';
 
 @Module({
   imports: [
+    // Import CommonModule for common services including ErrorLoggerService
+    CommonModule,
     // Import JWT Module for token generation and validation
     JwtModule.registerAsync({
       imports: [ConfigModule],

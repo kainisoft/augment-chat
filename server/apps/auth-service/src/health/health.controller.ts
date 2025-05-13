@@ -1,8 +1,11 @@
 import { Controller, Injectable } from '@nestjs/common';
 import { BaseHealthController } from '@app/common';
-import { LoggingService, DatabaseLogMetadata } from '@app/logging';
+import {
+  LoggingService,
+  DatabaseLogMetadata,
+  ErrorLoggerService,
+} from '@app/logging';
 import { RedisHealthIndicator } from '@app/redis/health/redis-health.indicator';
-import { ErrorLoggerService } from '@app/common/errors';
 
 /**
  * Service to check auth service dependencies

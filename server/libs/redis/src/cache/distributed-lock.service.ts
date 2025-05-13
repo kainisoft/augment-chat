@@ -67,14 +67,18 @@ export class DistributedLockService {
     const lockKey = this.getLockKey(lockName);
     const lockToken = uuidv4();
 
-    for (let attempt = 0; attempt <= mergedOptions.maxRetries; attempt++) {
+    for (let attempt = 0; attempt <= mergedOptions.maxRetries!; attempt++) {
       try {
         // Try to set the lock key with NX option (only if it doesn't exist)
-        const result = await this.redisService
-          .getClient()
-          .set(lockKey, lockToken, 'NX', 'EX', mergedOptions.ttl);
+        const client = this.redisService.getClient();
 
-        if (result === 'OK') {
+        // Use setnx to set the key only if it doesn't exist
+        const result = await client.setnx(lockKey, lockToken);
+
+        // If the key was set, set its expiration
+        if (result === 1) {
+          await client.expire(lockKey, mergedOptions.ttl!);
+
           // Lock acquired
           if (mergedOptions.enableLogs) {
             this.logger.log(`Lock acquired: ${lockName} (token: ${lockToken})`);
@@ -84,8 +88,8 @@ export class DistributedLockService {
         }
 
         // Lock not acquired, wait and retry
-        if (attempt < mergedOptions.maxRetries) {
-          await this.delay(mergedOptions.retryDelay);
+        if (attempt < mergedOptions.maxRetries!) {
+          await this.delay(mergedOptions.retryDelay!);
         }
       } catch (error: unknown) {
         const errorMessage =
@@ -93,8 +97,8 @@ export class DistributedLockService {
         this.logger.error(`Error acquiring lock ${lockName}: ${errorMessage}`);
 
         // Wait and retry
-        if (attempt < mergedOptions.maxRetries) {
-          await this.delay(mergedOptions.retryDelay);
+        if (attempt < mergedOptions.maxRetries!) {
+          await this.delay(mergedOptions.retryDelay!);
         }
       }
     }

@@ -20,6 +20,3 @@ export * from './recovery/circuit-breaker';
 
 // Error filters
 export * from './filters/app-exception.filter';
-
-// Error services
-export * from './services/error-logger.service';

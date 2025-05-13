@@ -57,7 +57,7 @@ export class CacheInvalidationService {
   async invalidateKey(
     key: string,
     options: CacheInvalidationOptions = {},
-  ): Promise<boolean> {
+  ): Promise<number> {
     try {
       const result = await this.redisService.del(key);
 
@@ -65,12 +65,12 @@ export class CacheInvalidationService {
         this.logger.log(`Invalidated cache key: ${key}`);
       }
 
-      return result === 1;
+      return result;
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Error invalidating cache key ${key}: ${errorMessage}`);
-      return false;
+      return 0;
     }
   }
 
@@ -181,7 +181,7 @@ export class CacheInvalidationService {
   ): Promise<number> {
     switch (strategy) {
       case CacheInvalidationStrategy.KEY:
-        return this.invalidateKey(key, options) ? 1 : 0;
+        return this.invalidateKey(key, options);
 
       case CacheInvalidationStrategy.PREFIX:
         return this.invalidateByPrefix(key, options);

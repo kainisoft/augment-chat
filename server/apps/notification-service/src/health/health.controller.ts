@@ -3,8 +3,8 @@ import { BaseHealthController } from '@app/common';
 import {
   LoggingService,
   DatabaseLogMetadata,
-  ErrorLogMetadata,
   NotificationLogMetadata,
+  ErrorLoggerService,
 } from '@app/logging';
 
 /**
@@ -12,7 +12,10 @@ import {
  */
 @Injectable()
 export class NotificationServiceHealthService {
-  constructor(private readonly loggingService: LoggingService) {
+  constructor(
+    private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
+  ) {
     // Set context for all logs from this service
     this.loggingService.setContext(NotificationServiceHealthService.name);
   }
@@ -66,7 +69,7 @@ export class NotificationServiceHealthService {
       );
 
       return result;
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       const errorStack =
@@ -74,20 +77,12 @@ export class NotificationServiceHealthService {
           ? error.stack
           : undefined;
 
-      // Create error metadata
-      const errorMetadata: ErrorLogMetadata = {
-        errorName: error instanceof Error ? error.name : 'UnknownError',
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Database connectivity check failed', {
+        source: NotificationServiceHealthService.name,
+        method: 'checkDatabase',
         errorCode: 'DB_CONN_ERROR',
-        stack: errorStack,
-      };
-
-      // Log the error with type-safe metadata
-      this.loggingService.error<ErrorLogMetadata>(
-        `Database connectivity check failed: ${errorMessage}`,
-        errorStack,
-        'checkDatabase',
-        errorMetadata,
-      );
+      });
 
       return {
         status: 'error' as const,

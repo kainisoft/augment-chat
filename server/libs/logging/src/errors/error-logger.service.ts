@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggingService } from '@app/logging';
-import { AppError } from '../app-error';
-import { ErrorFactory } from '../error-factory';
+import { LoggingService } from '../logging.service';
+import { AppError } from '@app/common/errors/app-error';
+import { ErrorFactory } from '@app/common/errors/error-factory';
 
 /**
  * Error severity levels

@@ -9,7 +9,7 @@ import { tap, catchError } from 'rxjs/operators';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
 import { HttpLogMetadata } from '../interfaces/log-message.interface';
-import { ErrorLoggerService } from '@app/common/errors';
+import { ErrorLoggerService } from '../errors/error-logger.service';
 
 /**
  * Interceptor for logging method execution and performance metrics

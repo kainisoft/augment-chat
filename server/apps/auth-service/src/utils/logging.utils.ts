@@ -1,8 +1,4 @@
-import {
-  ErrorLoggerService,
-  ErrorContext,
-  ErrorSeverity,
-} from '@app/common/errors/services/error-logger.service';
+import { ErrorLoggerService, ErrorContext, ErrorSeverity } from '@app/logging';
 
 /**
  * Helper function to log errors with the ErrorLoggerService

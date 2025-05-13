@@ -5,11 +5,10 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { LoggingService } from '@app/logging';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { RequestIdUtil } from '@app/logging/utils/request-id.util';
 import { AppError, ErrorCode } from '../app-error';
 import { ErrorFactory } from '../error-factory';
-import { ErrorLoggerService } from '../services/error-logger.service';
 
 /**
  * Standard error response format

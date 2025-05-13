@@ -1,7 +1,6 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { LoggingService } from '@app/logging';
-import { ErrorLoggerService } from '@app/common/errors/services/error-logger.service';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
 
 import { UserRegisteredEvent } from '../impl/user-registered.event';
 import { UserAuthReadRepository } from '../../../domain/repositories/user-auth-read.repository.interface';

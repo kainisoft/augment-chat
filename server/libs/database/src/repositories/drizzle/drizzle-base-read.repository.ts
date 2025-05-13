@@ -60,7 +60,7 @@ export abstract class AbstractDrizzleReadRepository<
    * @returns Array of entities
    */
   async findAll(options?: QueryOptions): Promise<T[]> {
-    const query = this.drizzle.db.select().from(this.table);
+    const query = this.drizzle.db.select().from(this.table as any);
 
     this.applyQueryOptions(query, options);
 

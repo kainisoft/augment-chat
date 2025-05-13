@@ -8,3 +8,4 @@ export * from './filters/exception.filter';
 export * from './utils/request-id.util';
 export * from './utils/redaction.util';
 export * from './utils/log-helpers';
+export * from './errors/error-logger.service';

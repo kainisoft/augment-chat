@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { RedisSessionStore } from '@app/redis/session';
-import { LoggingService } from '@app/logging';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { SessionData } from './interfaces/session-data.interface';
 
 /**
@@ -11,11 +10,10 @@ import { SessionData } from './interfaces/session-data.interface';
  */
 @Injectable()
 export class SessionService {
-
   constructor(
     private readonly sessionStore: RedisSessionStore,
-    private readonly configService: ConfigService,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(SessionService.name);
@@ -51,11 +49,12 @@ export class SessionService {
 
       return sessionId;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to create session: ${error.message}`,
-        'createSession',
-        { error: error.message, userId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to create session', {
+        source: SessionService.name,
+        method: 'createSession',
+        userId,
+      });
       throw error;
     }
   }
@@ -76,11 +75,12 @@ export class SessionService {
 
       return session;
     } catch (error) {
-      this.loggingService.warn(
-        `Session retrieval failed: ${error.message}`,
-        'getSession',
-        { error: error.message, sessionId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.warning(error, 'Session retrieval failed', {
+        source: SessionService.name,
+        method: 'getSession',
+        sessionId,
+      });
       throw new UnauthorizedException('Invalid session');
     }
   }
@@ -114,11 +114,12 @@ export class SessionService {
 
       return updated;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to update session: ${error.message}`,
-        'updateSession',
-        { error: error.message, sessionId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to update session', {
+        source: SessionService.name,
+        method: 'updateSession',
+        sessionId,
+      });
       return false;
     }
   }
@@ -148,11 +149,12 @@ export class SessionService {
 
       return deleted;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to delete session: ${error.message}`,
-        'deleteSession',
-        { error: error.message, sessionId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to delete session', {
+        source: SessionService.name,
+        method: 'deleteSession',
+        sessionId,
+      });
       return false;
     }
   }
@@ -164,7 +166,7 @@ export class SessionService {
    */
   async deleteUserSessions(userId: string): Promise<boolean> {
     try {
-      const deleted = await this.sessionStore.deleteUserSessions(userId);
+      const deleted = await this.sessionStore.deleteByUserId(userId);
 
       this.loggingService.debug(
         `Deleted all sessions for user ${userId}`,
@@ -174,11 +176,12 @@ export class SessionService {
 
       return true;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to delete user sessions: ${error.message}`,
-        'deleteUserSessions',
-        { error: error.message, userId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to delete user sessions', {
+        source: SessionService.name,
+        method: 'deleteUserSessions',
+        userId,
+      });
       return false;
     }
   }
@@ -190,7 +193,19 @@ export class SessionService {
    */
   async getUserSessions(userId: string): Promise<SessionData[]> {
     try {
-      const sessions = await this.sessionStore.getUserSessions(userId);
+      // Find all session IDs for the user
+      const sessionIds = await this.sessionStore.findByUserId(userId);
+
+      // Get all session data
+      const sessionsPromises = sessionIds.map((id) =>
+        this.sessionStore.get(id),
+      );
+      const sessionsWithNull = await Promise.all(sessionsPromises);
+
+      // Filter out null sessions (they might have expired)
+      const sessions = sessionsWithNull.filter(
+        (session) => session !== null,
+      ) as SessionData[];
 
       this.loggingService.debug(
         `Retrieved ${sessions.length} sessions for user ${userId}`,
@@ -199,12 +214,13 @@ export class SessionService {
       );
 
       return sessions;
-    } catch (error) {
-      this.loggingService.error(
-        `Failed to get user sessions: ${error.message}`,
-        'getUserSessions',
-        { error: error.message, userId },
-      );
+    } catch (error: any) {
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to get user sessions', {
+        source: SessionService.name,
+        method: 'getUserSessions',
+        userId,
+      });
       return [];
     }
   }

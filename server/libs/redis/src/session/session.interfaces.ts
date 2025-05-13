@@ -149,4 +149,11 @@ export interface SessionStore {
    * @returns Promise resolving to the number of sessions deleted
    */
   deleteByUserId(userId: string): Promise<number>;
+
+  /**
+   * Get all sessions for a user
+   * @param userId User ID
+   * @returns Promise resolving to an array of session data
+   */
+  getUserSessions(userId: string): Promise<SessionData[]>;
 }

@@ -7,7 +7,7 @@ import {
   EventSubscriberOptions,
   defaultEventSubscriberOptions,
 } from './event.interfaces';
-import { Redis } from 'ioredis';
+import { Cluster, Redis } from 'ioredis';
 
 /**
  * Redis Event Subscriber
@@ -18,8 +18,8 @@ import { Redis } from 'ioredis';
 export class RedisEventSubscriber implements EventSubscriber, OnModuleDestroy {
   private readonly logger = new Logger(RedisEventSubscriber.name);
   private readonly options: EventSubscriberOptions;
-  private readonly subscriberClient: Redis;
-  private readonly psubscriberClient: Redis;
+  private readonly subscriberClient: Redis | Cluster;
+  private readonly psubscriberClient: Redis | Cluster;
   private readonly handlers: Map<string, EventHandler<any>[]> = new Map();
   private readonly patternHandlers: Map<string, EventHandler<any>[]> =
     new Map();
@@ -58,7 +58,7 @@ export class RedisEventSubscriber implements EventSubscriber, OnModuleDestroy {
         this.handlers.set(fullChannel, []);
       }
 
-      this.handlers.get(fullChannel).push(handler);
+      this.handlers.get(fullChannel)!.push(handler);
 
       // Subscribe to the channel
       await this.subscriberClient.subscribe(fullChannel);
@@ -99,7 +99,7 @@ export class RedisEventSubscriber implements EventSubscriber, OnModuleDestroy {
           this.handlers.set(channel, []);
         }
 
-        this.handlers.get(channel).push(handler);
+        this.handlers.get(channel)!.push(handler);
       }
 
       // Subscribe to all channels
@@ -138,7 +138,7 @@ export class RedisEventSubscriber implements EventSubscriber, OnModuleDestroy {
         this.patternHandlers.set(fullPattern, []);
       }
 
-      this.patternHandlers.get(fullPattern).push(handler);
+      this.patternHandlers.get(fullPattern)!.push(handler);
 
       // Subscribe to the pattern
       await this.psubscriberClient.psubscribe(fullPattern);
@@ -343,7 +343,7 @@ export class RedisEventSubscriber implements EventSubscriber, OnModuleDestroy {
   ) {
     let retries = 0;
 
-    while (retries <= this.options.maxRetries) {
+    while (retries <= this.options.maxRetries!) {
       try {
         await handler(event);
         return;

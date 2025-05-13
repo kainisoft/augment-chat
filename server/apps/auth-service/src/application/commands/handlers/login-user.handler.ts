@@ -1,8 +1,7 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { LoggingService } from '@app/logging';
-import { ErrorLoggerService } from '@app/common/errors';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
 
 import { LoginUserCommand } from '../impl/login-user.command';
 import { UserLoggedInEvent } from '../../events/impl/user-logged-in.event';

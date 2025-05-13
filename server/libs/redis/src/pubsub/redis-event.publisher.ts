@@ -100,6 +100,10 @@ export class RedisEventPublisher implements EventPublisher {
       // Execute pipeline
       const results = await pipeline.exec();
 
+      if (!Array.isArray(results)) {
+        return 0;
+      }
+
       // Count total number of clients that received the event
       const totalReceivers = results.reduce((total, [err, count]) => {
         if (err) {

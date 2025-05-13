@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '@app/redis';
-import { LoggingService } from '@app/logging';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
 
 /**
  * User permission data
@@ -42,6 +42,7 @@ export class PermissionCacheService {
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(PermissionCacheService.name);
@@ -90,11 +91,14 @@ export class PermissionCacheService {
 
       return true;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to cache permissions: ${error.message}`,
-        'cachePermissions',
-        { error: error.message, userId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to cache permissions', {
+        source: PermissionCacheService.name,
+        method: 'cachePermissions',
+        userId,
+        roleCount: roles.length,
+        permissionCount: permissions.length,
+      });
       return false;
     }
   }
@@ -123,11 +127,12 @@ export class PermissionCacheService {
 
       return permissionData;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to get permissions from cache: ${error.message}`,
-        'getPermissions',
-        { error: error.message, userId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to get permissions from cache', {
+        source: PermissionCacheService.name,
+        method: 'getPermissions',
+        userId,
+      });
       return null;
     }
   }
@@ -148,11 +153,13 @@ export class PermissionCacheService {
 
       return permissions.roles.includes(role);
     } catch (error) {
-      this.loggingService.error(
-        `Failed to check role: ${error.message}`,
-        'hasRole',
-        { error: error.message, userId, role },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to check role', {
+        source: PermissionCacheService.name,
+        method: 'hasRole',
+        userId,
+        role,
+      });
       return false;
     }
   }
@@ -173,11 +180,13 @@ export class PermissionCacheService {
 
       return permissions.permissions.includes(permission);
     } catch (error) {
-      this.loggingService.error(
-        `Failed to check permission: ${error.message}`,
-        'hasPermission',
-        { error: error.message, userId, permission },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to check permission', {
+        source: PermissionCacheService.name,
+        method: 'hasPermission',
+        userId,
+        permission,
+      });
       return false;
     }
   }
@@ -200,11 +209,12 @@ export class PermissionCacheService {
 
       return true;
     } catch (error) {
-      this.loggingService.error(
-        `Failed to invalidate permissions cache: ${error.message}`,
-        'invalidatePermissions',
-        { error: error.message, userId },
-      );
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(error, 'Failed to invalidate permissions cache', {
+        source: PermissionCacheService.name,
+        method: 'invalidatePermissions',
+        userId,
+      });
       return false;
     }
   }

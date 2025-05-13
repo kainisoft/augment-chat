@@ -8,7 +8,7 @@ import {
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { LoggingService } from '../logging.service';
 import { RequestIdUtil } from '../utils/request-id.util';
-import { ErrorLoggerService } from '@app/common/errors';
+import { ErrorLoggerService } from '../errors/error-logger.service';
 
 /**
  * Filter for logging and handling exceptions
