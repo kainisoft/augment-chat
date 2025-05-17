@@ -4,3 +4,6 @@ export * from './logout-user.command';
 export * from './refresh-token.command';
 export * from './reset-password.command';
 export * from './forgot-password.command';
+export * from './get-user-sessions.command';
+export * from './terminate-session.command';
+export * from './terminate-all-sessions.command';

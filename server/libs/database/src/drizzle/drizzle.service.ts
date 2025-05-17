@@ -65,7 +65,7 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
     // Initialize the appropriate schema based on database type
     switch (dbType) {
       case DatabaseType.AUTH:
-        db = drizzle({ client: pool, schema: schema.auth });
+        db = drizzle({ client: pool, schema: schema.auth, logger: true });
         break;
       case DatabaseType.USER:
         db = drizzle({ client: pool, schema: schema.user });

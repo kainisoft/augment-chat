@@ -54,7 +54,8 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
         .compare(command.password);
       if (!isPasswordValid) {
         // Handle failed login attempt
-        const isLocked = this.accountLockoutService.handleFailedLoginAttempt(user);
+        const isLocked =
+          this.accountLockoutService.handleFailedLoginAttempt(user);
         await this.userRepository.save(user);
 
         if (isLocked) {

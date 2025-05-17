@@ -26,7 +26,7 @@ The Authentication Service handles user registration, login, and token managemen
 
 ### Phase 3: Advanced Features
 - [x] Add account lockout after failed attempts
-- [ ] Create session management
+- [x] Create session management
 - [ ] Implement comprehensive security logging
 - [ ] Implement OAuth integration (Google, GitHub)
 - [ ] Add two-factor authentication
@@ -41,13 +41,13 @@ The Authentication Service handles user registration, login, and token managemen
 - [x] Add automatic account unlocking after configurable time period
 
 ##### 2. Enhanced Session Management
-- [ ] Create endpoints to list active sessions for a user
-- [ ] Add endpoint to terminate specific sessions
-- [ ] Add endpoint to terminate all sessions except the current one
-- [ ] Implement session activity tracking (last activity time)
-- [ ] Add automatic session expiration based on inactivity
-- [ ] Store additional session metadata (device info, location, etc.)
-- [ ] Implement session history for security auditing
+- [x] Create endpoints to list active sessions for a user
+- [x] Add endpoint to terminate specific sessions
+- [x] Add endpoint to terminate all sessions except the current one
+- [x] Implement session activity tracking (last activity time)
+- [x] Add automatic session expiration based on inactivity
+- [x] Store additional session metadata (device info, location, etc.)
+- [x] Implement session history for security auditing
 
 ##### 3. Comprehensive Security Logging
 - [ ] Define comprehensive list of security events to log
@@ -162,9 +162,9 @@ The Authentication Service handles user registration, login, and token managemen
 - Password reset functionality
 - Rate limiting for login, registration, and password reset
 - Account lockout after failed login attempts
+- Enhanced session management with activity tracking and metadata
 
 ### In Progress
-- Enhanced session management
 - Comprehensive security logging
 
 ### Upcoming
@@ -172,8 +172,7 @@ The Authentication Service handles user registration, login, and token managemen
 - Two-factor authentication
 
 ## Next Steps
-1. Implement session management endpoints
-2. Add security logging for authentication events
-3. Create security dashboard
-4. Integrate OAuth providers
-5. Implement two-factor authentication
+1. Add security logging for authentication events
+2. Create security dashboard
+3. Integrate OAuth providers
+4. Implement two-factor authentication

@@ -16,6 +16,7 @@ import {
 import { RepositoryProviders } from './infrastructure/repositories';
 import { TokenService } from './token/token.service';
 import { SessionService } from './session/session.service';
+import { SessionController } from './session/session.controller';
 import { RateLimitService, RateLimitGuard } from './rate-limit';
 import { PermissionCacheService } from './permission/permission-cache.service';
 import { AuthModule } from './auth/auth.module';
@@ -128,7 +129,11 @@ import { AuthModule } from './auth/auth.module';
       global: true,
     }),
   ],
-  controllers: [AuthServiceController, AuthServiceHealthController],
+  controllers: [
+    AuthServiceController,
+    AuthServiceHealthController,
+    SessionController,
+  ],
   providers: [
     AuthServiceService,
     AuthServiceHealthService,

@@ -68,46 +68,33 @@ export class DrizzleUserRepository
   protected mapToDomain(data: Record<string, any>): User {
     // Handle dates safely
     const createdAt =
-      data.created_at instanceof Date
-        ? data.created_at
-        : new Date(data.created_at as string);
+      data.createdAt instanceof Date
+        ? data.createdAt
+        : new Date(data.createdAt);
 
     const updatedAt =
-      data.updated_at instanceof Date
-        ? data.updated_at
-        : new Date(data.updated_at as string);
+      data.updatedAt instanceof Date
+        ? data.updatedAt
+        : new Date(data.updatedAt);
 
-    const lastLoginAt = data.last_login_at
-      ? data.last_login_at instanceof Date
-        ? data.last_login_at
-        : new Date(data.last_login_at as string)
+    const lastLoginAt = data.lastLoginAt
+      ? data.lastLoginAt instanceof Date
+        ? data.lastLoginAt
+        : new Date(data.lastLoginAt)
       : null;
 
-    // Handle boolean fields with defaults
-    // If is_active is explicitly false, use false; otherwise default to true
-    const isActive = data.is_active === false ? false : true;
-
-    // If is_verified is explicitly true, use true; otherwise default to false
-    const isVerified = data.is_verified === true ? true : false;
-
-    // Handle failed login attempts and locked until
-    const failedLoginAttempts = typeof data.failed_login_attempts === 'number'
-      ? data.failed_login_attempts
-      : 0;
-    const lockedUntil = data.locked_until
-      ? new Date(data.locked_until as string)
-      : null;
+    const lockedUntil = data.lockedUntil ? new Date(data.lockedUntil) : null;
 
     return new User({
-      id: new UserId(data.id as string),
-      email: new Email(data.email as string),
-      password: new Password(data.password as string, true),
-      isActive,
-      isVerified,
+      id: new UserId(data.id),
+      email: new Email(data.email),
+      password: new Password(data.password, true),
+      isActive: !!data.isActive,
+      isVerified: !!data.isVerified,
       createdAt,
       updatedAt,
       lastLoginAt,
-      failedLoginAttempts,
+      failedLoginAttempts: parseInt(data.failedLoginAttempts || 0),
       lockedUntil,
     });
   }
@@ -122,11 +109,12 @@ export class DrizzleUserRepository
       id: entity.getId().toString(),
       email: entity.getEmail().toString(),
       password: entity.getPassword().toString(),
-      is_active: entity.getIsActive(),
-      is_verified: entity.getIsVerified(),
-      updated_at: entity.getUpdatedAt(),
-      failed_login_attempts: entity.getFailedLoginAttempts(),
-      locked_until: entity.getLockedUntil(),
+      isActive: entity.getIsActive(),
+      isVerified: entity.getIsVerified(),
+      updatedAt: entity.getUpdatedAt(),
+      lastLoginAt: entity.getLastLoginAt(),
+      failedLoginAttempts: entity.getFailedLoginAttempts(),
+      lockedUntil: entity.getLockedUntil(),
     };
   }
 }
