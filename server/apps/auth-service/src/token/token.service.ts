@@ -1,10 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { RedisService } from '@app/redis';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { IamService, TokenType } from '@app/iam';
 import { TokenPayload } from './interfaces/token-payload.interface';
-import { TokenType } from './enums/token-type.enum';
 
 /**
  * Token Service
@@ -19,7 +18,7 @@ export class TokenService {
   private readonly tokenMetadataPrefix = 'token:metadata:';
 
   constructor(
-    private readonly jwtService: JwtService,
+    private readonly iamService: IamService,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly loggingService: LoggingService,
@@ -49,18 +48,18 @@ export class TokenService {
     userId: string,
     additionalData: Record<string, any> = {},
   ): Promise<string> {
+    const token = await this.iamService.generateAccessToken(
+      userId,
+      additionalData,
+    );
+
+    // Store token metadata in Redis
     const payload: TokenPayload = {
       sub: userId,
       type: TokenType.ACCESS,
       iat: Math.floor(Date.now() / 1000),
       ...additionalData,
     };
-
-    const token = this.jwtService.sign(payload, {
-      expiresIn: this.accessTokenExpiry,
-    });
-
-    // Store token metadata in Redis
     await this.storeTokenMetadata(token, payload);
 
     this.loggingService.debug(
@@ -82,18 +81,18 @@ export class TokenService {
     userId: string,
     additionalData: Record<string, any> = {},
   ): Promise<string> {
+    const token = await this.iamService.generateRefreshToken(
+      userId,
+      additionalData,
+    );
+
+    // Store token metadata in Redis
     const payload: TokenPayload = {
       sub: userId,
       type: TokenType.REFRESH,
       iat: Math.floor(Date.now() / 1000),
       ...additionalData,
     };
-
-    const token = this.jwtService.sign(payload, {
-      expiresIn: this.refreshTokenExpiry,
-    });
-
-    // Store token metadata in Redis
     await this.storeTokenMetadata(token, payload);
 
     this.loggingService.debug(
@@ -114,13 +113,11 @@ export class TokenService {
    */
   async validateToken(token: string, type: TokenType): Promise<TokenPayload> {
     try {
-      // Verify the token signature
-      const payload = await this.jwtService.verifyAsync<TokenPayload>(token);
-
-      // Check if token is of the expected type
-      if (payload.type !== type) {
-        throw new UnauthorizedException('Invalid token type');
-      }
+      // Verify the token using IAM service
+      const payload = (await this.iamService.validateToken(
+        token,
+        type,
+      )) as TokenPayload;
 
       // Check if token is blacklisted
       const isBlacklisted = await this.isTokenBlacklisted(token);
@@ -152,7 +149,10 @@ export class TokenService {
   async revokeToken(token: string): Promise<boolean> {
     try {
       // Verify the token first
-      const payload = await this.jwtService.verifyAsync<TokenPayload>(token);
+      const payload = (await this.iamService.validateToken(
+        token,
+        TokenType.ACCESS,
+      )) as TokenPayload;
 
       // Calculate remaining time until token expiry
       const currentTime = Math.floor(Date.now() / 1000);
@@ -167,6 +167,9 @@ export class TokenService {
       // Add token to blacklist with TTL
       const blacklistKey = `${this.tokenBlacklistPrefix}${token}`;
       await this.redisService.set(blacklistKey, '1', ttl);
+
+      // Also revoke the token in IAM service
+      await this.iamService.revokeToken(payload.sub, payload.sessionId);
 
       this.loggingService.debug(
         `Revoked token for user ${payload.sub}`,
@@ -212,7 +215,7 @@ export class TokenService {
     try {
       // Calculate TTL based on token type
       const ttl =
-        payload.type === TokenType.ACCESS
+        payload.type === 'access'
           ? this.accessTokenExpiry
           : this.refreshTokenExpiry;
 

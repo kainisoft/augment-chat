@@ -3,10 +3,8 @@ import {
   Get,
   Delete,
   Param,
-  UseGuards,
   HttpCode,
   HttpStatus,
-  Req,
   Query,
 } from '@nestjs/common';
 import {
@@ -18,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoggingService } from '@app/logging';
+import { CurrentUser } from '@app/iam';
 import { SessionListDto } from './dto/session-list.dto';
 import { TerminateSessionResponseDto } from './dto/terminate-session.dto';
 import { SessionHistoryDto } from './dto/session-history.dto';
@@ -25,7 +24,6 @@ import { GetUserSessionsCommand } from '../application/commands/impl/get-user-se
 import { TerminateSessionCommand } from '../application/commands/impl/terminate-session.command';
 import { TerminateAllSessionsCommand } from '../application/commands/impl/terminate-all-sessions.command';
 import { GetSessionHistoryQuery } from '../application/queries/impl/get-session-history.query';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 /**
  * Session Controller
@@ -34,7 +32,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
  */
 @ApiTags('sessions')
 @Controller('auth/sessions')
-@UseGuards(JwtAuthGuard)
 export class SessionController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -58,9 +55,9 @@ export class SessionController {
     description: 'List of active sessions',
     type: SessionListDto,
   })
-  async getSessions(@Req() req: any): Promise<SessionListDto> {
-    const userId = req.user.sub;
-    const currentSessionId = req.user.sessionId;
+  async getSessions(@CurrentUser() user: any): Promise<SessionListDto> {
+    const userId = user.sub;
+    const currentSessionId = user.sessionId;
 
     this.loggingService.debug('Getting sessions for user', 'getSessions', {
       userId,
@@ -91,11 +88,11 @@ export class SessionController {
     type: TerminateSessionResponseDto,
   })
   async terminateSession(
-    @Req() req: any,
+    @CurrentUser() user: any,
     @Param('id') sessionId: string,
   ): Promise<TerminateSessionResponseDto> {
-    const userId = req.user.sub;
-    const currentSessionId = req.user.sessionId;
+    const userId = user.sub;
+    const currentSessionId = user.sessionId;
 
     this.loggingService.debug('Terminating session', 'terminateSession', {
       userId,
@@ -121,10 +118,10 @@ export class SessionController {
     type: TerminateSessionResponseDto,
   })
   async terminateAllSessions(
-    @Req() req: any,
+    @CurrentUser() user: any,
   ): Promise<TerminateSessionResponseDto> {
-    const userId = req.user.sub;
-    const currentSessionId = req.user.sessionId;
+    const userId = user.sub;
+    const currentSessionId = user.sessionId;
 
     this.loggingService.debug(
       'Terminating all sessions except current',
@@ -165,11 +162,11 @@ export class SessionController {
     type: SessionHistoryDto,
   })
   async getSessionHistory(
-    @Req() req: any,
+    @CurrentUser() user: any,
     @Query('limit') limit?: number,
     @Query('offset') offset?: number,
   ): Promise<SessionHistoryDto> {
-    const userId = req.user.sub;
+    const userId = user.sub;
 
     this.loggingService.debug('Getting session history', 'getSessionHistory', {
       userId,

@@ -5,6 +5,7 @@ import {
   DatabaseLogMetadata,
   ErrorLoggerService,
 } from '@app/logging';
+import { Public } from '@app/iam';
 import { RedisHealthIndicator } from '@app/redis/health/redis-health.indicator';
 import { DatabaseService } from '@app/database';
 
@@ -172,6 +173,7 @@ export class AuthServiceHealthService {
 }
 
 @Controller('health')
+@Public()
 export class AuthServiceHealthController extends BaseHealthController {
   constructor(
     private readonly healthService: AuthServiceHealthService,

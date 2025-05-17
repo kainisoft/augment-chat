@@ -12,6 +12,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoggingService } from '@app/logging';
+import { Public } from '@app/iam';
 import { RateLimit, RateLimitGuard } from '../rate-limit';
 import {
   RegisterDto,
@@ -53,6 +54,7 @@ export class AuthController {
    * @returns Authentication response with tokens
    */
   @Post('register')
+  @Public()
   @UseGuards(RateLimitGuard)
   @RateLimit('registration', (req) => req.ip)
   @ApiOperation({ summary: 'Register a new user' })
@@ -99,6 +101,7 @@ export class AuthController {
    * @returns Authentication response with tokens
    */
   @Post('login')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @UseGuards(RateLimitGuard)
   @RateLimit('login', (req) => req.ip)
@@ -180,6 +183,7 @@ export class AuthController {
    * @returns New authentication response with tokens
    */
   @Post('refresh')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh access token' })
   @ApiBody({ type: RefreshTokenDto })
@@ -220,6 +224,7 @@ export class AuthController {
    * @returns Success message
    */
   @Post('forgot-password')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @UseGuards(RateLimitGuard)
   @RateLimit('password-reset', (req) => req.ip)
@@ -251,6 +256,7 @@ export class AuthController {
    * @returns Success message
    */
   @Post('reset-password')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password' })
   @ApiBody({ type: ResetPasswordDto })

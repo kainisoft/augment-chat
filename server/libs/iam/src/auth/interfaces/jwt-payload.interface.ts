@@ -1,9 +1,15 @@
-import { TokenType } from '@app/iam';
+/**
+ * JWT token types
+ */
+export enum TokenType {
+  ACCESS = 'access',
+  REFRESH = 'refresh',
+}
 
 /**
- * Token payload interface
+ * JWT token payload
  */
-export interface TokenPayload {
+export interface JwtPayload {
   /**
    * Subject (user ID)
    */
@@ -21,7 +27,6 @@ export interface TokenPayload {
 
   /**
    * Expiration timestamp
-   * Added by JWT library
    */
   exp?: number;
 

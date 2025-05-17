@@ -55,6 +55,15 @@
         "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
     },
+    "iam": {
+      "type": "library",
+      "root": "libs/iam",
+      "entryFile": "index",
+      "sourceRoot": "libs/iam/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/iam/tsconfig.lib.json"
+      }
+    },
     "kafka": {
       "type": "library",
       "root": "libs/kafka",

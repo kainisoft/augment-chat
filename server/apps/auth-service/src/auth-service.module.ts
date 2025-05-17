@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
 import { DatabaseModule } from '@app/database';
 import { RedisModule } from '@app/redis';
 import { SessionModule } from '@app/redis/session';
 import { CacheModule } from '@app/redis/cache';
+import { IamModule } from '@app/iam';
 import { AuthServiceController } from './auth-service.controller';
 import { AuthServiceService } from './auth-service.service';
 import {
@@ -16,7 +16,6 @@ import {
 import { RepositoryProviders } from './infrastructure/repositories';
 import { TokenService } from './token/token.service';
 import { SessionService } from './session/session.service';
-import { SessionController } from './session/session.controller';
 import { RateLimitService, RateLimitGuard } from './rate-limit';
 import { PermissionCacheService } from './permission/permission-cache.service';
 import { AuthModule } from './auth/auth.module';
@@ -113,27 +112,25 @@ import { AuthModule } from './auth/auth.module';
       enableLogs: process.env.CACHE_LOGS === 'true',
     }),
 
-    // Import JWT Module for token generation and validation
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>(
-          'JWT_SECRET',
-          'change-me-in-production',
-        ),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '15m'),
-        },
-      }),
-      inject: [ConfigService],
-      global: true,
+    // Import IAM Module for authentication and authorization
+    IamModule.register({
+      jwtSecret: process.env.JWT_SECRET || 'change-me-in-production',
+      jwtExpiresIn: process.env.JWT_EXPIRES_IN || '15m',
+      refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
+      isGlobal: true,
+      globalGuards: {
+        jwt: true,
+        roles: false,
+      },
+      redis: {
+        host: process.env.REDIS_NODE_1 || 'redis-node-1',
+        port: +(process.env.REDIS_NODE_1_PORT || 6379),
+        password: process.env.REDIS_PASSWORD,
+        keyPrefix: 'auth:',
+      },
     }),
   ],
-  controllers: [
-    AuthServiceController,
-    AuthServiceHealthController,
-    SessionController,
-  ],
+  controllers: [AuthServiceController, AuthServiceHealthController],
   providers: [
     AuthServiceService,
     AuthServiceHealthService,
