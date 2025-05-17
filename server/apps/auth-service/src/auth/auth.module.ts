@@ -10,7 +10,6 @@ import { RateLimitService, RateLimitGuard } from '../rate-limit';
 import { RepositoryProviders } from '../infrastructure/repositories';
 import { AuthCqrsModule } from '../auth-cqrs.module';
 import { SessionController } from '../session/session.controller';
-import { SecurityLoggingModule } from '../security-logging/security-logging.module';
 
 @Module({
   imports: [
@@ -20,8 +19,6 @@ import { SecurityLoggingModule } from '../security-logging/security-logging.modu
     AuthCqrsModule,
     // Import DatabaseModule for database access
     DatabaseModule.forAuth(),
-    // Import SecurityLoggingModule for security logging
-    SecurityLoggingModule,
     // Import Redis Module for Redis connection
     RedisModule.register({
       nodes: [

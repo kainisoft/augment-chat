@@ -1,8 +1,7 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-import { SecurityLoggingService } from '../../../security-logging/security-logging.service';
-import { SecurityEventType } from '../../../security-logging/interfaces/security-event.interface';
+
 import { UserRegisteredEvent } from '../impl/user-registered.event';
 import { UserAuthReadRepository } from '../../../domain/repositories/user-auth-read.repository.interface';
 
@@ -20,7 +19,6 @@ export class UserRegisteredHandler
     private readonly userAuthReadRepository: UserAuthReadRepository,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
-    private readonly securityLoggingService: SecurityLoggingService,
   ) {
     this.loggingService.setContext(UserRegisteredHandler.name);
   }
@@ -32,16 +30,6 @@ export class UserRegisteredHandler
     });
 
     try {
-      // Security logging for account creation
-      await this.securityLoggingService.logAccountEvent(
-        SecurityEventType.ACCOUNT_CREATED,
-        {
-          userId: event.userId,
-          email: event.email,
-          timestamp: event.timestamp.getTime(),
-        },
-      );
-
       // In a real implementation, we might need to update or refresh the read model
       // For example, if we had a separate read database, we would update it here
       const userInfo = await this.userAuthReadRepository.findById(event.userId);

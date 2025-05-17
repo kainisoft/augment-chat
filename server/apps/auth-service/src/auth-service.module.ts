@@ -19,7 +19,6 @@ import { SessionService } from './session/session.service';
 import { RateLimitService, RateLimitGuard } from './rate-limit';
 import { PermissionCacheService } from './permission/permission-cache.service';
 import { AuthModule } from './auth/auth.module';
-import { SecurityLoggingModule } from './security-logging/security-logging.module';
 
 @Module({
   imports: [
@@ -36,9 +35,6 @@ import { SecurityLoggingModule } from './security-logging/security-logging.modul
 
     // Import AuthModule for authentication endpoints
     AuthModule,
-
-    // Import SecurityLoggingModule for security logging
-    SecurityLoggingModule,
 
     // Import LoggingModule with Auth Service specific configuration
     LoggingModule.registerAsync({
