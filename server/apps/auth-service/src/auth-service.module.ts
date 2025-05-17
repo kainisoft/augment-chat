@@ -19,6 +19,7 @@ import { SessionService } from './session/session.service';
 import { RateLimitService, RateLimitGuard } from './rate-limit';
 import { PermissionCacheService } from './permission/permission-cache.service';
 import { AuthModule } from './auth/auth.module';
+import { SecurityLoggingModule } from './security-logging/security-logging.module';
 
 @Module({
   imports: [
@@ -35,6 +36,9 @@ import { AuthModule } from './auth/auth.module';
 
     // Import AuthModule for authentication endpoints
     AuthModule,
+
+    // Import SecurityLoggingModule for security logging
+    SecurityLoggingModule,
 
     // Import LoggingModule with Auth Service specific configuration
     LoggingModule.registerAsync({
@@ -73,24 +77,8 @@ import { AuthModule } from './auth/auth.module';
     }),
 
     // Import Redis Module for Redis connection
-    RedisModule.register({
+    RedisModule.registerDefault({
       isGlobal: true,
-      // Use environment variables for Redis configuration
-      nodes: [
-        {
-          host: process.env.REDIS_NODE_1 || 'redis-node-1',
-          port: +(process.env.REDIS_NODE_1_PORT || 6379),
-        },
-        {
-          host: process.env.REDIS_NODE_2 || 'redis-node-2',
-          port: +(process.env.REDIS_NODE_2_PORT || 6380),
-        },
-        {
-          host: process.env.REDIS_NODE_3 || 'redis-node-3',
-          port: +(process.env.REDIS_NODE_3_PORT || 6381),
-        },
-      ],
-      password: process.env.REDIS_PASSWORD,
       keyPrefix: 'auth:',
     }),
 
@@ -118,16 +106,6 @@ import { AuthModule } from './auth/auth.module';
       jwtExpiresIn: process.env.JWT_EXPIRES_IN || '15m',
       refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
       isGlobal: true,
-      globalGuards: {
-        jwt: true,
-        roles: false,
-      },
-      redis: {
-        host: process.env.REDIS_NODE_1 || 'redis-node-1',
-        port: +(process.env.REDIS_NODE_1_PORT || 6379),
-        password: process.env.REDIS_PASSWORD,
-        keyPrefix: 'auth:',
-      },
     }),
   ],
   controllers: [AuthServiceController, AuthServiceHealthController],

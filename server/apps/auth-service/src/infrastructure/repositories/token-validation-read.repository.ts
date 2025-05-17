@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TokenService } from '../../token/token.service';
 import { TokenValidationReadRepository } from '../../domain/repositories/token-validation-read.repository.interface';
 import { TokenValidationReadModel } from '../../domain/read-models/token-validation.read-model';
-import { TokenType } from '../../token/enums/token-type.enum';
+import { TokenType } from '@app/iam';
 
 /**
  * Token Validation Read Repository

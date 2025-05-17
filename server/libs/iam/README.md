@@ -8,14 +8,14 @@ A centralized authentication and authorization library for NestJS microservices.
 - Role-based access control (RBAC)
 - Permission-based access control
 - Global authentication guard
-- Public route exemptions
+- Public route exemptions via `@Public()` decorator
 - Current user decorator
-- Token blacklisting
+- Token blacklisting using Redis
 - Configurable via environment variables or module options
 
 ## Installation
 
-The IAM library is included in the monorepo and doesn't require separate installation.
+The IAM library is included in the monorepo and doesn't require separate installation. It depends on the Redis library (@app/redis), which should be imported in your application module.
 
 ## Usage
 
@@ -24,11 +24,19 @@ The IAM library is included in the monorepo and doesn't require separate install
 ```typescript
 import { Module } from '@nestjs/common';
 import { IamModule } from '@app/iam';
+import { RedisModule } from '@app/redis';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    // Import Redis module first
+    RedisModule.registerDefault({
+      isGlobal: true,
+      keyPrefix: 'app:',
+      password: process.env.REDIS_PASSWORD,
+    }),
+    // Then import IAM module
     IamModule.register({
       jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
       jwtExpiresIn: process.env.JWT_EXPIRES_IN || '15m',

@@ -1,3 +1,5 @@
+import { TokenType } from '@app/iam';
+
 /**
  * Validate Token Query
  *
@@ -6,6 +8,6 @@
 export class ValidateTokenQuery {
   constructor(
     public readonly token: string,
-    public readonly tokenType: string,
+    public readonly tokenType: TokenType,
   ) {}
 }

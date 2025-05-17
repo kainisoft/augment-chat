@@ -47,12 +47,17 @@ export class RolesGuard implements CanActivate {
     const user = request.user as JwtPayload;
 
     // If no user or no roles, deny access
-    if (!user || !user.roles || user.roles.length === 0) {
+    if (
+      !user ||
+      !user.roles ||
+      !Array.isArray(user.roles) ||
+      user.roles.length === 0
+    ) {
       throw new ForbiddenException('Insufficient permissions');
     }
 
     // Check if user has any of the required roles
-    const hasRole = requiredRoles.some((role) => user.roles.includes(role));
+    const hasRole = requiredRoles.some((role) => user.roles!.includes(role));
 
     if (!hasRole) {
       throw new ForbiddenException('Insufficient permissions');

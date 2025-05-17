@@ -45,4 +45,28 @@ export class RedisModule {
       global: options.isGlobal,
     };
   }
+
+  static registerDefault(
+    options: Pick<RedisOptions, 'isGlobal' | 'keyPrefix' | 'password'>,
+  ): DynamicModule {
+    return this.register({
+      ...{
+        nodes: [
+          {
+            host: process.env.REDIS_NODE_1 || 'redis-node-1',
+            port: +(process.env.REDIS_NODE_1_PORT || 6379),
+          },
+          {
+            host: process.env.REDIS_NODE_2 || 'redis-node-2',
+            port: +(process.env.REDIS_NODE_2_PORT || 6380),
+          },
+          {
+            host: process.env.REDIS_NODE_3 || 'redis-node-3',
+            port: +(process.env.REDIS_NODE_3_PORT || 6381),
+          },
+        ],
+      },
+      ...options,
+    });
+  }
 }

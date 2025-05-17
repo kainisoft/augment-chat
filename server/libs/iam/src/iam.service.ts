@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { RedisService } from '@app/redis';
 import { IamConfigService } from './config/iam-config.service';
 import { JwtPayload, TokenType } from './auth/interfaces/jwt-payload.interface';
 import { IAM_OPTIONS } from './constants/iam.constants';
@@ -18,13 +19,16 @@ import { IamOptions } from './interfaces/iam-options.interface';
 @Injectable()
 export class IamService {
   private readonly logger = new Logger(IamService.name);
-  private readonly tokenBlacklist: Map<string, number> = new Map();
+  private readonly tokenBlacklistPrefix = 'iam:blacklist:';
 
   constructor(
     @Inject(IAM_OPTIONS) private readonly options: IamOptions,
     private readonly jwtService: JwtService,
     private readonly configService: IamConfigService,
-  ) {}
+    private readonly redisService: RedisService,
+  ) {
+    this.logger.log('IAM service initialized');
+  }
 
   /**
    * Generate an access token
@@ -112,14 +116,17 @@ export class IamService {
    */
   async revokeToken(userId: string, sessionId?: string): Promise<boolean> {
     try {
-      const key = sessionId ? `${userId}:${sessionId}` : userId;
-      const expiryTime = Math.floor(Date.now() / 1000) + 86400; // 24 hours
-      this.tokenBlacklist.set(key, expiryTime);
+      const key = `${this.tokenBlacklistPrefix}${userId}${sessionId ? `:${sessionId}` : ''}`;
+      const ttl = 86400; // 24 hours in seconds
+      await this.redisService.set(key, '1', ttl);
+      this.logger.debug(
+        `Revoked token for user ${userId}${sessionId ? ` with session ${sessionId}` : ''}`,
+      );
       return true;
     } catch (error) {
       this.logger.error(
-        `Failed to revoke token: ${error.message}`,
-        error.stack,
+        `Failed to revoke token: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        error instanceof Error ? error.stack : undefined,
       );
       return false;
     }
@@ -135,23 +142,15 @@ export class IamService {
     userId: string,
     sessionId?: string,
   ): Promise<boolean> {
-    // Clean up expired entries
-    this.cleanupBlacklist();
-
-    // Check if token is blacklisted
-    const key = sessionId ? `${userId}:${sessionId}` : userId;
-    return this.tokenBlacklist.has(key);
-  }
-
-  /**
-   * Clean up expired blacklist entries
-   */
-  private cleanupBlacklist(): void {
-    const now = Math.floor(Date.now() / 1000);
-    for (const [key, expiry] of this.tokenBlacklist.entries()) {
-      if (expiry < now) {
-        this.tokenBlacklist.delete(key);
-      }
+    try {
+      const key = `${this.tokenBlacklistPrefix}${userId}${sessionId ? `:${sessionId}` : ''}`;
+      return await this.redisService.exists(key);
+    } catch (error) {
+      this.logger.error(
+        `Failed to check if token is blacklisted: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      return false;
     }
   }
 

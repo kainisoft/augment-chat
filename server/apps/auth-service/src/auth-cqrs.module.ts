@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '@app/database';
 import { RedisModule } from '@app/redis';
 import { CommonModule } from '@app/common';
+import { SecurityLoggingModule } from './security-logging/security-logging.module';
 
 // Import handlers
 import { CommandHandlers } from './application/commands/handlers';
@@ -20,6 +21,8 @@ import { AccountLockoutService } from './domain/services/account-lockout.service
     CqrsModule,
     // Import CommonModule for common services including ErrorLoggerService
     CommonModule,
+    // Import SecurityLoggingModule for security logging
+    SecurityLoggingModule,
     // Import JWT Module for token generation and validation
     JwtModule.registerAsync({
       imports: [ConfigModule],

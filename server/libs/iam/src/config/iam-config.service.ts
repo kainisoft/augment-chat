@@ -32,18 +32,4 @@ export class IamConfigService {
   get refreshTokenExpiresIn(): string {
     return this.options.refreshTokenExpiresIn || '7d';
   }
-
-  /**
-   * Get Redis configuration
-   * @returns Redis configuration
-   */
-  get redisConfig(): IamOptions['redis'] {
-    return (
-      this.options.redis || {
-        host: 'localhost',
-        port: 6379,
-        keyPrefix: 'iam:',
-      }
-    );
-  }
 }

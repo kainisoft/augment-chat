@@ -15,7 +15,6 @@ import { User } from '../domain/models/user.entity';
 import { Email } from '../domain/models/value-objects/email.value-object';
 import { Password } from '../domain/models/value-objects/password.value-object';
 import { UserId } from '../domain/models/value-objects/user-id.value-object';
-import { TokenType } from '../token/enums/token-type.enum';
 import { UserNotFoundError, UserAlreadyExistsError } from '../domain/errors';
 import {
   RegisterDto,
@@ -25,6 +24,7 @@ import {
   ResetPasswordDto,
   AuthResponseDto,
 } from './dto';
+import { TokenType } from '@app/iam';
 
 /**
  * Auth Service
@@ -235,7 +235,7 @@ export class AuthService {
       );
 
       // Get session ID from payload
-      const sessionId = payload.sessionId;
+      const sessionId = payload.sessionId!;
 
       // Update session with new tokens
       await this.sessionService.updateSession(sessionId, {

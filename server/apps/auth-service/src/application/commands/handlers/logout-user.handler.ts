@@ -6,7 +6,7 @@ import { LogoutUserCommand } from '../impl/logout-user.command';
 import { UserLoggedOutEvent } from '../../events/impl/user-logged-out.event';
 import { TokenService } from '../../../token/token.service';
 import { SessionService } from '../../../session/session.service';
-import { TokenType } from '../../../token/enums/token-type.enum';
+import { TokenType } from '@app/iam';
 
 /**
  * Logout User Command Handler

@@ -1,6 +1,7 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { RedisModule } from '@app/redis';
 import { IamService } from './iam.service';
 import { IamConfigService } from './config/iam-config.service';
 import { IAM_OPTIONS } from './constants/iam.constants';
@@ -43,14 +44,18 @@ export class IamModule {
             expiresIn: options.jwtExpiresIn || '15m',
           },
         }),
+        RedisModule.registerDefault({
+          isGlobal: true,
+          keyPrefix: 'iam:',
+        }),
       ],
       providers: [
         iamOptionsProvider,
         IamService,
         IamConfigService,
         JwtStrategy,
-        ...(options.globalGuards?.jwt ? [jwtGuardProvider] : []),
-        ...(options.globalGuards?.roles ? [rolesGuardProvider] : []),
+        jwtGuardProvider,
+        rolesGuardProvider,
       ],
       exports: [IamService, IamConfigService, JwtModule],
       global: options.isGlobal,

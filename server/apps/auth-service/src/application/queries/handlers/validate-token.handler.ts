@@ -1,11 +1,11 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { BadRequestException, Inject } from '@nestjs/common';
-import { LoggingService } from '@app/logging';
+import { ErrorLoggerService, LoggingService } from '@app/logging';
 
 import { ValidateTokenQuery } from '../impl/validate-token.query';
-import { TokenType } from '../../../token/enums/token-type.enum';
 import { TokenValidationReadRepository } from '../../../domain/repositories/token-validation-read.repository.interface';
 import { TokenValidationReadModel } from '../../../domain/read-models/token-validation.read-model';
+import { TokenType } from '@app/iam';
 
 /**
  * Validate Token Query Handler
@@ -20,6 +20,7 @@ export class ValidateTokenHandler
     @Inject('TokenValidationReadRepository')
     private readonly tokenValidationRepository: TokenValidationReadRepository,
     private readonly loggingService: LoggingService,
+    private readonly errorLogger: ErrorLoggerService,
   ) {
     this.loggingService.setContext(ValidateTokenHandler.name);
   }
@@ -46,11 +47,12 @@ export class ValidateTokenHandler
 
       return result;
     } catch (error: any) {
-      this.loggingService.debug(
-        `Token validation failed: ${error.message}`,
-        'execute',
-        { error: error.message },
-      );
+      this.errorLogger.error(error, 'Failed to validate token', {
+        source: ValidateTokenHandler.name,
+        method: 'execute',
+        token: query.token ? '[REDACTED]' : undefined,
+        tokenType: query.tokenType,
+      });
 
       return {
         valid: false,

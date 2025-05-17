@@ -50,13 +50,18 @@ export class PermissionsGuard implements CanActivate {
     const user = request.user as JwtPayload;
 
     // If no user or no permissions, deny access
-    if (!user || !user.permissions || user.permissions.length === 0) {
+    if (
+      !user ||
+      !user.permissions ||
+      !Array.isArray(user.permissions) ||
+      user.permissions.length === 0
+    ) {
       throw new ForbiddenException('Insufficient permissions');
     }
 
     // Check if user has all required permissions
     const hasPermissions = requiredPermissions.every((permission) =>
-      user.permissions.includes(permission),
+      user.permissions!.includes(permission),
     );
 
     if (!hasPermissions) {
