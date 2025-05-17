@@ -76,8 +76,20 @@ import { AuthModule } from './auth/auth.module';
     RedisModule.register({
       isGlobal: true,
       // Use environment variables for Redis configuration
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+      nodes: [
+        {
+          host: process.env.REDIS_NODE_1 || 'redis-node-1',
+          port: +(process.env.REDIS_NODE_1_PORT || 6379),
+        },
+        {
+          host: process.env.REDIS_NODE_2 || 'redis-node-2',
+          port: +(process.env.REDIS_NODE_2_PORT || 6380),
+        },
+        {
+          host: process.env.REDIS_NODE_3 || 'redis-node-3',
+          port: +(process.env.REDIS_NODE_3_PORT || 6381),
+        },
+      ],
       password: process.env.REDIS_PASSWORD,
       keyPrefix: 'auth:',
     }),

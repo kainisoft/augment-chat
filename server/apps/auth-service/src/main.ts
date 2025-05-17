@@ -12,8 +12,8 @@ async function startApplication() {
 
     // Enable Hot Module Replacement (HMR)
     if (module.hot) {
-      module.hot.accept();
-      module.hot.dispose(() => app.close());
+      // module.hot.accept();
+      // module.hot.dispose(() => app.close());
     }
   } catch (error) {
     console.error('Error starting Auth Service:', error);

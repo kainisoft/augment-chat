@@ -1,15 +1,49 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthServiceHealthController, AuthServiceHealthService } from './health.controller';
 import { ServiceUnavailableException } from '@nestjs/common';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { RedisHealthIndicator } from '@app/redis/health/redis-health.indicator';
+import { DatabaseService } from '@app/database';
 
 describe('AuthServiceHealthController', () => {
   let controller: AuthServiceHealthController;
   let healthService: AuthServiceHealthService;
 
   beforeEach(async () => {
+    // Create mock services
+    const mockLoggingService = {
+      setContext: jest.fn(),
+      debug: jest.fn(),
+    };
+
+    const mockRedisHealthIndicator = {
+      check: jest.fn().mockResolvedValue({ redis: { status: 'up', responseTime: 5 } }),
+    };
+
+    const mockErrorLogger = {
+      error: jest.fn(),
+    };
+
+    const mockDatabaseService = {
+      drizzle: {
+        db: {
+          execute: jest.fn().mockResolvedValue({
+            rows: [{ connected: 1 }],
+          }),
+        },
+        sql: jest.fn().mockImplementation((strings) => strings),
+      },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthServiceHealthController],
-      providers: [AuthServiceHealthService],
+      providers: [
+        AuthServiceHealthService,
+        { provide: LoggingService, useValue: mockLoggingService },
+        { provide: RedisHealthIndicator, useValue: mockRedisHealthIndicator },
+        { provide: ErrorLoggerService, useValue: mockErrorLogger },
+        { provide: DatabaseService, useValue: mockDatabaseService },
+      ],
     }).compile();
 
     controller = module.get<AuthServiceHealthController>(AuthServiceHealthController);
@@ -76,7 +110,7 @@ describe('AuthServiceHealthController', () => {
       // Mock the checkComponents method
       jest.spyOn(controller as any, 'checkComponents').mockResolvedValue({
         system: { status: 'ok' },
-        database: { 
+        database: {
           status: 'ok',
           details: {
             responseTime: 10,
@@ -100,7 +134,7 @@ describe('AuthServiceHealthController', () => {
       // Mock the checkComponents method to return an error
       jest.spyOn(controller as any, 'checkComponents').mockResolvedValue({
         system: { status: 'ok' },
-        database: { 
+        database: {
           status: 'error',
           details: {
             message: 'Database connection failed',
@@ -152,9 +186,45 @@ describe('AuthServiceHealthController', () => {
 
 describe('AuthServiceHealthService', () => {
   let service: AuthServiceHealthService;
+  let mockDatabaseService: any;
 
-  beforeEach(() => {
-    service = new AuthServiceHealthService();
+  beforeEach(async () => {
+    // Create mock services
+    const mockLoggingService = {
+      setContext: jest.fn(),
+      debug: jest.fn(),
+    };
+
+    const mockRedisHealthIndicator = {
+      check: jest.fn().mockResolvedValue({ redis: { status: 'up', responseTime: 5 } }),
+    };
+
+    const mockErrorLogger = {
+      error: jest.fn(),
+    };
+
+    mockDatabaseService = {
+      drizzle: {
+        db: {
+          execute: jest.fn().mockResolvedValue({
+            rows: [{ connected: 1 }],
+          }),
+        },
+        sql: jest.fn().mockImplementation((strings) => strings),
+      },
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuthServiceHealthService,
+        { provide: LoggingService, useValue: mockLoggingService },
+        { provide: RedisHealthIndicator, useValue: mockRedisHealthIndicator },
+        { provide: ErrorLoggerService, useValue: mockErrorLogger },
+        { provide: DatabaseService, useValue: mockDatabaseService },
+      ],
+    }).compile();
+
+    service = module.get<AuthServiceHealthService>(AuthServiceHealthService);
   });
 
   it('should be defined', () => {
@@ -167,13 +237,22 @@ describe('AuthServiceHealthService', () => {
 
       expect(result).toHaveProperty('status', 'ok');
       expect(result).toHaveProperty('details');
-      expect(result.details).toHaveProperty('responseTime', 10);
       expect(result.details).toHaveProperty('connection', 'established');
+      expect(result.details).toHaveProperty('database', 'auth_db');
+      expect(mockDatabaseService.drizzle.db.execute).toHaveBeenCalled();
     });
 
-    // Skip this test for now as it's difficult to simulate the error condition
-    it.skip('should handle errors during database check', async () => {
-      // This is a placeholder for a future test that would verify error handling
+    it('should handle errors during database check', async () => {
+      // Mock a database error
+      mockDatabaseService.drizzle.db.execute.mockRejectedValueOnce(
+        new Error('Database connection error')
+      );
+
+      const result = await service.checkDatabase();
+
+      expect(result).toHaveProperty('status', 'error');
+      expect(result).toHaveProperty('details');
+      expect(result.details).toHaveProperty('message', 'Database connection error');
     });
   });
 });

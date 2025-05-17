@@ -83,15 +83,32 @@ export class DrizzleUserRepository
         : new Date(data.last_login_at as string)
       : null;
 
+    // Handle boolean fields with defaults
+    // If is_active is explicitly false, use false; otherwise default to true
+    const isActive = data.is_active === false ? false : true;
+
+    // If is_verified is explicitly true, use true; otherwise default to false
+    const isVerified = data.is_verified === true ? true : false;
+
+    // Handle failed login attempts and locked until
+    const failedLoginAttempts = typeof data.failed_login_attempts === 'number'
+      ? data.failed_login_attempts
+      : 0;
+    const lockedUntil = data.locked_until
+      ? new Date(data.locked_until as string)
+      : null;
+
     return new User({
       id: new UserId(data.id as string),
       email: new Email(data.email as string),
       password: new Password(data.password as string, true),
-      isActive: Boolean(data.is_active),
-      isVerified: Boolean(data.is_verified),
+      isActive,
+      isVerified,
       createdAt,
       updatedAt,
       lastLoginAt,
+      failedLoginAttempts,
+      lockedUntil,
     });
   }
 
@@ -108,6 +125,8 @@ export class DrizzleUserRepository
       is_active: entity.getIsActive(),
       is_verified: entity.getIsVerified(),
       updated_at: entity.getUpdatedAt(),
+      failed_login_attempts: entity.getFailedLoginAttempts(),
+      locked_until: entity.getLockedUntil(),
     };
   }
 }

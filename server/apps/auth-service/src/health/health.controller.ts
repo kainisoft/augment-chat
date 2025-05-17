@@ -6,6 +6,7 @@ import {
   ErrorLoggerService,
 } from '@app/logging';
 import { RedisHealthIndicator } from '@app/redis/health/redis-health.indicator';
+import { DatabaseService } from '@app/database';
 
 /**
  * Service to check auth service dependencies
@@ -16,6 +17,7 @@ export class AuthServiceHealthService {
     private readonly loggingService: LoggingService,
     private readonly redisHealthIndicator: RedisHealthIndicator,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly databaseService: DatabaseService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(AuthServiceHealthService.name);
@@ -84,10 +86,9 @@ export class AuthServiceHealthService {
 
   /**
    * Check database connectivity
-   * In a real implementation, this would check the actual database connection
+   * Performs a real database connection check using a simple SQL query
    */
   async checkDatabase(): Promise<{ status: 'ok' | 'error'; details?: any }> {
-    // Simulate database check
     const startTime = Date.now();
 
     // Create database metadata for logging
@@ -104,16 +105,25 @@ export class AuthServiceHealthService {
     );
 
     try {
-      // Simulate a database query
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      // Execute a simple SQL query to check database connectivity
+      const result = await this.databaseService.drizzle.db.execute(
+        this.databaseService.drizzle.sql`SELECT 1 as connected`,
+      );
 
       const duration = Date.now() - startTime;
+      const connected =
+        result.rows && result.rows.length > 0 && result.rows[0].connected === 1;
 
-      const result = {
+      if (!connected) {
+        throw new Error('Database connection check failed');
+      }
+
+      const successResult = {
         status: 'ok' as const,
         details: {
           responseTime: duration,
           connection: 'established',
+          database: 'auth_db',
         },
       };
 
@@ -130,7 +140,7 @@ export class AuthServiceHealthService {
         successMetadata,
       );
 
-      return result;
+      return successResult;
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';

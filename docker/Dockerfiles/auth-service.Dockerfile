@@ -24,4 +24,4 @@ COPY libs ./libs
 EXPOSE 4001
 
 # Start the application with Hot Module Replacement
-CMD ["pnpm", "run", "start:dev:hmr", "auth-service"]
+CMD ["pnpm", "run", "start:debug", "auth-service"]

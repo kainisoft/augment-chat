@@ -1,5 +1,4 @@
-import { AppError } from '../app-error';
-import { ErrorLoggerService } from '../services/error-logger.service';
+import { ErrorLoggerService } from '@app/logging';
 
 /**
  * Retry options

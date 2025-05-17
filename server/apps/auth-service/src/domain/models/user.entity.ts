@@ -16,6 +16,8 @@ export interface UserProps {
   createdAt?: Date;
   updatedAt?: Date;
   lastLoginAt?: Date | null;
+  failedLoginAttempts?: number;
+  lockedUntil?: Date | null;
 }
 
 /**
@@ -32,6 +34,8 @@ export class User {
   private readonly createdAt: Date;
   private updatedAt: Date;
   private lastLoginAt: Date | null;
+  private failedLoginAttempts: number;
+  private lockedUntil: Date | null;
 
   /**
    * Create a new User entity
@@ -46,6 +50,8 @@ export class User {
     this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt || new Date();
     this.lastLoginAt = props.lastLoginAt || null;
+    this.failedLoginAttempts = props.failedLoginAttempts ?? 0;
+    this.lockedUntil = props.lockedUntil || null;
   }
 
   /**
@@ -162,5 +168,66 @@ export class User {
    */
   updateLastLoginTime(): void {
     this.updateLastLogin();
+  }
+
+  /**
+   * Get the number of failed login attempts
+   * @returns The number of failed login attempts
+   */
+  getFailedLoginAttempts(): number {
+    return this.failedLoginAttempts;
+  }
+
+  /**
+   * Increment the failed login attempts counter
+   */
+  incrementFailedLoginAttempts(): void {
+    this.failedLoginAttempts += 1;
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Reset the failed login attempts counter
+   */
+  resetFailedLoginAttempts(): void {
+    this.failedLoginAttempts = 0;
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Get the date until which the account is locked
+   * @returns The lock expiration date or null if not locked
+   */
+  getLockedUntil(): Date | null {
+    return this.lockedUntil;
+  }
+
+  /**
+   * Check if the account is locked
+   * @returns True if the account is locked, false otherwise
+   */
+  isLocked(): boolean {
+    if (!this.lockedUntil) {
+      return false;
+    }
+    return this.lockedUntil > new Date();
+  }
+
+  /**
+   * Lock the account until the specified date
+   * @param until - The date until which to lock the account
+   */
+  lockUntil(until: Date): void {
+    this.lockedUntil = until;
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Unlock the account
+   */
+  unlock(): void {
+    this.lockedUntil = null;
+    this.resetFailedLoginAttempts();
+    this.updatedAt = new Date();
   }
 }

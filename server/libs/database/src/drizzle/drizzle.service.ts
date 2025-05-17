@@ -117,11 +117,11 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
     const defaultDbName = `${dbType}_db`;
 
     // Environment variable name for the database URL based on database type
-    const dbUrlEnvVar = `${dbType.toUpperCase()}_DATABASE_URL`;
+    const dbUrlEnvVar = `DATABASE_URL_${dbType.toUpperCase()}`;
 
     return (
       this.configService.get<string>(dbUrlEnvVar) ||
-      `postgres://${this.configService.get<string>('POSTGRES_USER', 'postgres')}:${this.configService.get<string>(
+      `postgresql://${this.configService.get<string>('POSTGRES_USER', 'postgres')}:${this.configService.get<string>(
         'POSTGRES_PASSWORD',
         'postgres',
       )}@${this.configService.get<string>('POSTGRES_HOST', 'localhost')}:${this.configService.get<string>(

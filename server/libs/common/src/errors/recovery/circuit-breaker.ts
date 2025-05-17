@@ -1,5 +1,5 @@
 import { AppError, ErrorCode } from '../app-error';
-import { ErrorLoggerService } from '../services/error-logger.service';
+import { ErrorLoggerService } from '@app/logging';
 
 /**
  * Circuit breaker states

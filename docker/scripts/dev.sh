@@ -103,11 +103,11 @@ case "$1" in
     ;;
   infra)
     echo "Starting all infrastructure services..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile db --profile redis --profile kafka --profile logging up -d --build --force-recreate
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile infra up -d --build --force-recreate
     ;;
   auth)
     echo "Starting auth service with dependencies..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile auth --profile redis up -d --build --force-recreate
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile auth up -d --build --force-recreate
     ;;
   user)
     echo "Starting user service with dependencies..."

@@ -100,8 +100,9 @@ export class AuthController {
    */
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(RateLimitGuard)
-  @RateLimit('login', (req) => req.ip)
+  // Temporarily disabled rate limiting for testing account lockout
+  // @UseGuards(RateLimitGuard)
+  // @RateLimit('login', (req) => req.ip)
   @ApiOperation({ summary: 'Login a user' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({

@@ -2,6 +2,8 @@ import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { AccountLockedError } from '../../../domain/errors/account-locked.error';
+import { AccountLockoutService } from '../../../domain/services/account-lockout.service';
 
 import { LoginUserCommand } from '../impl/login-user.command';
 import { UserLoggedInEvent } from '../../events/impl/user-logged-in.event';
@@ -26,6 +28,7 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
     private readonly eventBus: EventBus,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly accountLockoutService: AccountLockoutService,
   ) {
     this.loggingService.setContext(LoginUserHandler.name);
   }
@@ -40,18 +43,34 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
         throw new UnauthorizedException('Invalid email or password');
       }
 
+      // Check if account is locked
+      if (user.isLocked()) {
+        throw new AccountLockedError(user.getLockedUntil());
+      }
+
       // Verify password
       const isPasswordValid = await user
         .getPassword()
         .compare(command.password);
       if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid email or password');
+        // Handle failed login attempt
+        const isLocked = this.accountLockoutService.handleFailedLoginAttempt(user);
+        await this.userRepository.save(user);
+
+        if (isLocked) {
+          throw new AccountLockedError(user.getLockedUntil());
+        } else {
+          throw new UnauthorizedException('Invalid email or password');
+        }
       }
 
       // Check if user is active
       if (!user.getIsActive()) {
         throw new UnauthorizedException('Account is inactive');
       }
+
+      // Reset failed login attempts on successful login
+      this.accountLockoutService.handleSuccessfulLogin(user);
 
       // Update last login time
       user.updateLastLoginTime();
