@@ -1,5 +1,5 @@
+import { UserId } from '@app/domain';
 import {
-  UserId,
   Username,
   DisplayName,
   Bio,

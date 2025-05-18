@@ -4,6 +4,7 @@ import { InvalidEmailError } from '../../errors/invalid-email.error';
  * Email Value Object
  *
  * Represents a valid email address in the system.
+ * This is a shared implementation used across all services.
  */
 export class Email {
   private readonly value: string;

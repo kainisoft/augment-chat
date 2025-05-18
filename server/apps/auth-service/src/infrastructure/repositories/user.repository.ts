@@ -3,10 +3,9 @@ import { DrizzleService } from '@app/database/drizzle/drizzle.service';
 import { AbstractDrizzleWriteRepository } from '@app/database/repositories/drizzle/drizzle-base-write.repository';
 import { eq } from 'drizzle-orm';
 import * as schema from '@app/database/schemas';
+import { UserId, Email } from '@app/domain';
 import { User } from '../../domain/models/user.entity';
-import { Email } from '../../domain/models/value-objects/email.value-object';
 import { Password } from '../../domain/models/value-objects/password.value-object';
-import { UserId } from '../../domain/models/value-objects/user-id.value-object';
 import { UserRepository } from '../../domain/repositories/user.repository.interface';
 
 /**

@@ -1,6 +1,6 @@
 import { BaseWriteRepository } from '@app/database/repositories/base-write.repository';
+import { UserId } from '@app/domain';
 import { Relationship } from '../models/relationship.entity';
-import { UserId } from '../models/value-objects/user-id.value-object';
 import { RelationshipType } from '../models/value-objects/relationship-type.value-object';
 
 /**

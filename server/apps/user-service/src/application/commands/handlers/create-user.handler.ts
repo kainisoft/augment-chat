@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, ConflictException } from '@nestjs/common';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { UserId } from '@app/domain';
 
 import { CreateUserCommand } from '../impl/create-user.command';
 import { UserRepository } from '../../../domain/repositories/user.repository.interface';
 import { User } from '../../../domain/models/user.entity';
 import {
-  UserId,
   Username,
   DisplayName,
   AuthId,

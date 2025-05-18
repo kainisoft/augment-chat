@@ -2,13 +2,12 @@ import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { Email } from '@app/domain';
 import { AccountLockedError } from '../../../domain/errors/account-locked.error';
 import { AccountLockoutService } from '../../../domain/services/account-lockout.service';
-
 import { LoginUserCommand } from '../impl/login-user.command';
 import { UserLoggedInEvent } from '../../events/impl/user-logged-in.event';
 import { UserRepository } from '../../../domain/repositories/user.repository.interface';
-import { Email } from '../../../domain/models/value-objects/email.value-object';
 import { TokenService } from '../../../token/token.service';
 import { SessionService } from '../../../session/session.service';
 

@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
  * UserId Value Object
  *
  * Represents a unique identifier for a user in the system.
+ * This is a shared implementation used across all services.
  */
 export class UserId {
   private readonly value: string;

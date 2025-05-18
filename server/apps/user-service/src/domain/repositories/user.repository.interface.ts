@@ -1,6 +1,7 @@
 import { BaseWriteRepository } from '@app/database/repositories/base-write.repository';
+import { UserId } from '@app/domain';
 import { User } from '../models/user.entity';
-import { UserId, Username, AuthId } from '../models/value-objects';
+import { Username, AuthId } from '../models/value-objects';
 
 /**
  * User Repository Interface
