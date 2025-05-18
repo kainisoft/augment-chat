@@ -6,8 +6,10 @@ import { DatabaseModule } from '@app/database';
 // Import handlers
 import { CommandHandlers } from './application/commands/handlers';
 import { QueryHandlers } from './application/queries/handlers';
+import { EventHandlers } from './application/events/handlers';
 import { RepositoryModule } from './infrastructure/repositories/repository.module';
 import { CacheModule } from './cache/cache.module';
+import { KafkaProducerModule } from './kafka/kafka-producer.module';
 
 /**
  * User CQRS Module
@@ -21,8 +23,9 @@ import { CacheModule } from './cache/cache.module';
     DatabaseModule.forUser(),
     RepositoryModule,
     CacheModule,
+    KafkaProducerModule,
   ],
-  providers: [...CommandHandlers, ...QueryHandlers],
+  providers: [...CommandHandlers, ...QueryHandlers, ...EventHandlers],
   exports: [CqrsModule],
 })
 export class UserCqrsModule {}

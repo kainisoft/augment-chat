@@ -14,6 +14,7 @@ import { UserGraphQLModule } from './graphql/graphql.module';
 import { UserDatabaseModule } from './database/user-database.module';
 import { UserCqrsModule } from './user-cqrs.module';
 import { CacheModule } from './cache/cache.module';
+import { KafkaModule } from './kafka/kafka.module';
 
 @Module({
   imports: [
@@ -86,6 +87,9 @@ import { CacheModule } from './cache/cache.module';
 
     // Import GraphQL Module
     UserGraphQLModule,
+
+    // Import Kafka Module for event communication
+    KafkaModule,
   ],
   controllers: [UserServiceController, UserServiceHealthController],
   providers: [UserServiceService, UserServiceHealthService],

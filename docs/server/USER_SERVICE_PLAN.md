@@ -276,10 +276,10 @@ Before implementing the User Service, the following prerequisites need to be add
 - [x] Add user status management
 
 ### 6. Integrate with Auth Service
-- [ ] Set up Kafka event listeners for Auth Service events
-- [ ] Implement user creation on successful registration
-- [ ] Handle user deletion and updates
-- [ ] Create event publishers for User Service events
+- [x] Set up Kafka event listeners for Auth Service events
+- [x] Implement user creation on successful registration
+- [x] Handle user deletion and updates
+- [x] Create event publishers for User Service events
 
 ### 7. Add Security and Validation
 - [ ] Implement input validation using class-validator for GraphQL inputs
@@ -314,15 +314,16 @@ Before implementing the User Service, the following prerequisites need to be add
 - User profile GraphQL API
 - Relationship management GraphQL API
 - Redis caching implementation
+- Integration with Auth Service via Kafka
 
 ### In Progress
 - Advanced GraphQL features (subscriptions, DataLoader)
 - User settings and preferences
 
 ### Upcoming
-- Integration with Auth Service
 - Security and validation
 - Performance optimization
+- End-to-end testing
 
 ## Related Documents
 
@@ -335,9 +336,10 @@ Before implementing the User Service, the following prerequisites need to be add
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-06-01
-- **Last Updated**: 2023-07-20
-- **Version**: 1.4.0
+- **Last Updated**: 2023-07-25
+- **Version**: 1.5.0
 - **Change Log**:
+  - 1.5.0: Added Auth Service integration via Kafka
   - 1.4.0: Added relationship management GraphQL API and Redis caching
   - 1.3.0: Updated to use GraphQL instead of REST API
   - 1.2.0: Added detailed implementation plan and prerequisites
