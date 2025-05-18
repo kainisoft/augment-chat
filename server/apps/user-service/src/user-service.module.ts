@@ -9,6 +9,7 @@ import {
   UserServiceHealthService,
 } from './health/health.controller';
 import { UserGraphQLModule } from './graphql/graphql.module';
+import { UserDatabaseModule } from './database/user-database.module';
 
 @Module({
   imports: [
@@ -19,6 +20,9 @@ import { UserGraphQLModule } from './graphql/graphql.module';
 
     // Import CommonModule
     CommonModule,
+
+    // Import UserDatabaseModule for database access
+    UserDatabaseModule,
 
     // Import LoggingModule with User Service specific configuration
     LoggingModule.registerAsync({

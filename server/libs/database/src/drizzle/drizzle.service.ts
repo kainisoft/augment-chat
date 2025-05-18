@@ -68,7 +68,7 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
         db = drizzle({ client: pool, schema: schema.auth, logger: true });
         break;
       case DatabaseType.USER:
-        db = drizzle({ client: pool, schema: schema.user });
+        db = drizzle({ client: pool, schema: schema.user, logger: true });
         break;
       default:
         throw new Error(`Unsupported database type: ${dbType}`);

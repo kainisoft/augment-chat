@@ -18,8 +18,8 @@ The User Service manages user profiles, relationships, settings, and search func
 - [x] Configure Fastify adapter
 - [x] Set up GraphQL with Apollo Server
 - [x] Configure GraphQL Code Generator for type safety
-- [ ] Set up database connection using Database library
-- [ ] Create user domain models following DDD principles
+- [x] Set up database connection using Database library
+- [x] Create user domain models following DDD principles
 - [ ] Implement repository interfaces and implementations
 
 ### Phase 2: Core Features
@@ -241,16 +241,16 @@ Before implementing the User Service, the following prerequisites need to be add
 ## Detailed Implementation Plan
 
 ### 1. Set up Database Connection
-- [ ] Configure the Database module for the User Service
-- [ ] Define the user schema tables in Drizzle
-- [ ] Set up migrations for the User Service database
-- [ ] Create database health checks
+- [x] Configure the Database module for the User Service
+- [x] Define the user schema tables in Drizzle
+- [x] Set up migrations for the User Service database
+- [x] Create database health checks
 
 ### 2. Create Domain Models
-- [ ] Implement User entity with proper encapsulation
-- [ ] Create value objects for user properties (Email, Username, etc.)
-- [ ] Define domain events for user-related actions
-- [ ] Implement domain services for complex business logic
+- [x] Implement User entity with proper encapsulation
+- [x] Create value objects for user properties (Username, DisplayName, etc.)
+- [x] Define domain events for user-related actions
+- [x] Implement domain services for complex business logic
 
 ### 3. Implement Repositories
 - [ ] Create write repository for user operations

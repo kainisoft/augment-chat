@@ -92,7 +92,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4002
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/user_db
+      - DATABASE_URL_USER=postgresql://postgres:postgres@postgres:5432/user_db
       # Logging configuration
       - LOG_LEVEL=info
       - KAFKA_BROKERS=kafka:29092
