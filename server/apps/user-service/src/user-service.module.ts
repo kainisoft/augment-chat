@@ -8,6 +8,7 @@ import {
   UserServiceHealthController,
   UserServiceHealthService,
 } from './health/health.controller';
+import { UserGraphQLModule } from './graphql/graphql.module';
 
 @Module({
   imports: [
@@ -54,6 +55,9 @@ import {
       },
       inject: [ConfigService],
     }),
+
+    // Import GraphQL Module
+    UserGraphQLModule,
   ],
   controllers: [UserServiceController, UserServiceHealthController],
   providers: [UserServiceService, UserServiceHealthService],

@@ -56,7 +56,7 @@ services:
       dockerfile: ../docker/Dockerfiles/auth-service.Dockerfile
       args:
         - BUILDKIT_INLINE_CACHE=1
-    command: pnpm run start:debug:auth
+    command: pnpm run start:debug 0.0.0.0:9229 auth-service
     ports:
       - "4001:4001"
       - "9229:9229"
@@ -85,8 +85,10 @@ services:
       dockerfile: ../docker/Dockerfiles/user-service.Dockerfile
       args:
         - BUILDKIT_INLINE_CACHE=1
+    command: pnpm run start:debug 0.0.0.0:9229 user-service
     ports:
       - "4002:4002"
+      - "9230:9229"
     environment:
       - NODE_ENV=development
       - PORT=4002
@@ -96,18 +98,16 @@ services:
       - KAFKA_BROKERS=kafka:29092
       - KAFKA_LOGS_TOPIC=logs
       - LOG_CONSOLE=true
+      # GraphQL configuration
+      - GRAPHQL_PLAYGROUND=true
+      - GRAPHQL_DEBUG=true
+      - GRAPHQL_INTROSPECTION=true
     volumes:
       - ./server/apps/user-service:/app/apps/user-service:delegated
       - ./server/libs:/app/libs:delegated
       - ./server/nest-cli.json:/app/nest-cli.json:delegated
       - ./server/tsconfig.json:/app/tsconfig.json:delegated
-      - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
       - user-service-node-modules:/app/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
     networks:
       - chat-network
     profiles: [ "user" ]
@@ -117,11 +117,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
 
   # Chat Service
   chat-service:

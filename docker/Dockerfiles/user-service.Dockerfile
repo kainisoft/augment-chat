@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -23,5 +23,5 @@ COPY libs ./libs
 # Expose port
 EXPOSE 4002
 
-# Start the application with Hot Module Replacement
-CMD ["pnpm", "run", "start:dev:hmr", "user-service"]
+# Start the application
+CMD ["pnpm", "run", "start:debug", "user-service"]

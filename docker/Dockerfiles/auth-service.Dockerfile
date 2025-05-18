@@ -23,5 +23,5 @@ COPY libs ./libs
 # Expose port
 EXPOSE 4001
 
-# Start the application with Hot Module Replacement
+# Start the application
 CMD ["pnpm", "run", "start:debug", "auth-service"]
