@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from '@app/database';
 import { LoggingModule } from '@app/logging';
 import { RepositoryProviders } from './index';
+import { CacheModule } from '../../cache/cache.module';
 
 /**
  * Repository Module
@@ -9,7 +10,7 @@ import { RepositoryProviders } from './index';
  * Module for repository providers.
  */
 @Module({
-  imports: [DatabaseModule.forUser(), LoggingModule],
+  imports: [DatabaseModule.forUser(), LoggingModule, CacheModule],
   providers: [...RepositoryProviders],
   exports: [...RepositoryProviders],
 })

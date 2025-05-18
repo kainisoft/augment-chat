@@ -7,6 +7,7 @@ import { DatabaseModule } from '@app/database';
 import { CommandHandlers } from './application/commands/handlers';
 import { QueryHandlers } from './application/queries/handlers';
 import { RepositoryModule } from './infrastructure/repositories/repository.module';
+import { CacheModule } from './cache/cache.module';
 
 /**
  * User CQRS Module
@@ -19,6 +20,7 @@ import { RepositoryModule } from './infrastructure/repositories/repository.modul
     LoggingModule,
     DatabaseModule.forUser(),
     RepositoryModule,
+    CacheModule,
   ],
   providers: [...CommandHandlers, ...QueryHandlers],
   exports: [CqrsModule],

@@ -3,9 +3,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { resolvers } from './resolvers';
 import { LoggingService } from '@app/logging';
+import { UserCqrsModule } from '../user-cqrs.module';
 
 @Module({
   imports: [
+    UserCqrsModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       useFactory: (loggingService: LoggingService) => {

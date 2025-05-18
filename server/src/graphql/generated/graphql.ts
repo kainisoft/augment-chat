@@ -1,7 +1,8 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { UserModel, RelationshipModel, UserSettingModel, GraphQLContext } from '../types';
+import { UserProfileReadModel } from '../../domain/read-models/user-profile.read-model';
+import { GraphQLContext } from '../types/graphql-context';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -107,10 +108,10 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type QueryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  hello: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hello?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
-  Query: QueryResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
 }>;
 
