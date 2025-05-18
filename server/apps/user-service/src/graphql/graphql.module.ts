@@ -12,8 +12,8 @@ import { LoggingService } from '@app/logging';
         loggingService.setContext('GraphQLModule');
 
         return {
-          // Use code-first approach
-          autoSchemaFile: true, // Generate schema in memory instead of file
+          // Use code-first approach with schema file generation
+          autoSchemaFile: 'src/graphql/generated/schema.gql', // Generate schema to file for code generation
           sortSchema: true,
           debug: process.env.GRAPHQL_DEBUG === 'true',
           playground: process.env.GRAPHQL_PLAYGROUND === 'true',

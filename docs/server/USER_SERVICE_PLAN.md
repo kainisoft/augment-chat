@@ -16,8 +16,8 @@ The User Service manages user profiles, relationships, settings, and search func
 ### Phase 1: Basic Setup
 - [x] Initialize service with NestJS CLI
 - [x] Configure Fastify adapter
-- [ ] Set up GraphQL with Apollo Server
-- [ ] Configure GraphQL Code Generator for type safety
+- [x] Set up GraphQL with Apollo Server
+- [x] Configure GraphQL Code Generator for type safety
 - [ ] Set up database connection using Database library
 - [ ] Create user domain models following DDD principles
 - [ ] Implement repository interfaces and implementations
