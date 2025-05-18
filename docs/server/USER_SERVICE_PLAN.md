@@ -20,7 +20,7 @@ The User Service manages user profiles, relationships, settings, and search func
 - [x] Configure GraphQL Code Generator for type safety
 - [x] Set up database connection using Database library
 - [x] Create user domain models following DDD principles
-- [ ] Implement repository interfaces and implementations
+- [x] Implement repository interfaces and implementations
 
 ### Phase 2: Core Features
 - [ ] Implement user profile management
@@ -253,8 +253,8 @@ Before implementing the User Service, the following prerequisites need to be add
 - [x] Implement domain services for complex business logic
 
 ### 3. Implement Repositories
-- [ ] Create write repository for user operations
-- [ ] Implement read repositories for queries
+- [x] Create write repository for user operations
+- [x] Implement read repositories for queries
 - [ ] Set up CQRS pattern with command and query handlers
 - [ ] Add caching for frequently accessed data
 
