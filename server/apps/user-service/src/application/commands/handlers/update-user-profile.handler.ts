@@ -12,6 +12,7 @@ import {
 } from '../../../domain/models/value-objects';
 import { UserProfileUpdatedEvent } from '../../../domain/events/user-profile-updated.event';
 import { UserNotFoundError } from '../../../domain/errors/user.error';
+import { UserCacheService } from '../../../cache/user-cache.service';
 
 /**
  * Update User Profile Command Handler
@@ -28,6 +29,7 @@ export class UpdateUserProfileHandler
     private readonly eventBus: EventBus,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly userCacheService: UserCacheService,
   ) {
     this.loggingService.setContext(UpdateUserProfileHandler.name);
   }
@@ -41,8 +43,8 @@ export class UpdateUserProfileHandler
       );
 
       // Find user by ID
-      const userId = new UserId(command.userId);
-      const user = await this.userRepository.findById(userId);
+      const userIdObj = new UserId(command.userId);
+      const user = await this.userRepository.findById(userIdObj);
       if (!user) {
         throw new UserNotFoundError(command.userId);
       }
@@ -74,10 +76,23 @@ export class UpdateUserProfileHandler
       // Save user to database
       await this.userRepository.save(user);
 
+      // Invalidate cache
+      const userId = user.getId().toString();
+      await this.userCacheService.invalidateUserProfile(userId);
+
+      // Invalidate search results cache as profile data has changed
+      await this.userCacheService.invalidateSearchResults();
+
+      this.loggingService.debug(
+        `Invalidated cache for user ${userId}`,
+        'execute',
+        { userId, updatedFields },
+      );
+
       // Publish domain event if fields were updated
       if (updatedFields.length > 0) {
         this.eventBus.publish(
-          new UserProfileUpdatedEvent(user.getId().toString(), updatedFields),
+          new UserProfileUpdatedEvent(userId, updatedFields),
         );
       }
 

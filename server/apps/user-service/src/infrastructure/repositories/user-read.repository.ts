@@ -10,6 +10,7 @@ import { RepositoryError } from '@app/common/errors';
 
 import { UserProfileReadModel } from '../../domain/read-models/user-profile.read-model';
 import { UserReadRepository } from '../../domain/repositories/user-read.repository.interface';
+import { UserCacheService } from '../../cache/user-cache.service';
 
 /**
  * Drizzle User Read Repository
@@ -29,6 +30,7 @@ export class DrizzleUserReadRepository
     drizzle: DrizzleService,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly userCacheService: UserCacheService,
   ) {
     super(
       drizzle,
@@ -51,6 +53,30 @@ export class DrizzleUserReadRepository
         'findByUsername',
       );
 
+      // We don't have a direct cache for username lookups, but we can check
+      // if we have any search results that might contain this exact username
+      const cachedResults =
+        await this.userCacheService.getSearchResults(username);
+      if (cachedResults) {
+        // Look for exact match in cached results
+        const exactMatch = cachedResults.find(
+          (profile) =>
+            profile.username.toLowerCase() === username.toLowerCase(),
+        );
+
+        if (exactMatch) {
+          this.loggingService.debug(
+            `Found user by username in cache: ${username}`,
+            'findByUsername',
+            { username, userId: exactMatch.id, source: 'cache' },
+          );
+
+          // Get the full profile from cache using the ID
+          return this.findById(exactMatch.id);
+        }
+      }
+
+      // If not found in cache, get from database
       const result = await this.drizzle.db
         .select()
         .from(schema.user.profiles)
@@ -65,7 +91,18 @@ export class DrizzleUserReadRepository
         return null;
       }
 
-      return this.mapToDto(result[0]);
+      const profile = this.mapToDto(result[0]);
+
+      // Cache the profile by ID
+      await this.userCacheService.cacheUserProfile(profile.id, profile);
+
+      this.loggingService.debug(
+        `Found user by username in database: ${username}`,
+        'findByUsername',
+        { username, userId: profile.id, source: 'database' },
+      );
+
+      return profile;
     } catch (error) {
       this.errorLogger.error(
         error instanceof Error ? error : new Error(String(error)),
@@ -145,6 +182,37 @@ export class DrizzleUserReadRepository
         'searchUsers',
       );
 
+      // Try to get from cache first
+      // Only use cache for simple searches without complex options
+      const canUseCache =
+        !options || (options && !options.orderBy && !options.orderDirection);
+
+      if (canUseCache) {
+        const cachedResults =
+          await this.userCacheService.getSearchResults(searchTerm);
+        if (cachedResults) {
+          this.loggingService.debug(
+            `Retrieved search results from cache: ${searchTerm}`,
+            'searchUsers',
+            {
+              searchTerm,
+              resultCount: cachedResults.length,
+              source: 'cache',
+            },
+          );
+
+          // Apply pagination if needed
+          if (options?.limit || options?.offset) {
+            const offset = options.offset || 0;
+            const limit = options.limit || cachedResults.length;
+            return cachedResults.slice(offset, offset + limit);
+          }
+
+          return cachedResults;
+        }
+      }
+
+      // If not in cache or can't use cache, get from database
       const query = this.drizzle.db
         .select()
         .from(schema.user.profiles)
@@ -158,7 +226,24 @@ export class DrizzleUserReadRepository
       this.applyQueryOptions(query, options);
 
       const result = await query;
-      return result.map((item) => this.mapToDto(item));
+      const profiles = result.map((item) => this.mapToDto(item));
+
+      // Cache the results if appropriate
+      if (canUseCache) {
+        await this.userCacheService.cacheSearchResults(searchTerm, profiles);
+      }
+
+      this.loggingService.debug(
+        `Retrieved search results from database: ${searchTerm}`,
+        'searchUsers',
+        {
+          searchTerm,
+          resultCount: profiles.length,
+          source: 'database',
+        },
+      );
+
+      return profiles;
     } catch (error) {
       this.errorLogger.error(
         error instanceof Error ? error : new Error(String(error)),
@@ -264,6 +349,66 @@ export class DrizzleUserReadRepository
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     };
+  }
+
+  /**
+   * Find a user by ID
+   * @param id - The entity ID
+   * @returns The entity or null if not found
+   */
+  async findById(id: string): Promise<UserProfileReadModel | null> {
+    try {
+      // Try to get from cache first
+      const cachedProfile = await this.userCacheService.getUserProfile(id);
+      if (cachedProfile) {
+        this.loggingService.debug(
+          `Retrieved user profile from cache: ${id}`,
+          'findById',
+          { userId: id, source: 'cache' },
+        );
+        return cachedProfile;
+      }
+
+      // If not in cache, get from database
+      const idValue = this.getIdValue(id);
+
+      const result = await this.drizzle.db
+        .select()
+        .from(this.table as any)
+        .where(eq(this.idField, idValue))
+        .limit(1);
+
+      if (result.length === 0) {
+        return null;
+      }
+
+      const profile = this.mapToDto(result[0]);
+
+      // Cache the profile
+      await this.userCacheService.cacheUserProfile(id, profile);
+
+      this.loggingService.debug(
+        `Retrieved user profile from database: ${id}`,
+        'findById',
+        { userId: id, source: 'database' },
+      );
+
+      return profile;
+    } catch (error) {
+      // If there's an error with the cache, fall back to the database
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error in findById with cache: ${id}`,
+        {
+          source: DrizzleUserReadRepository.name,
+          method: 'findById',
+          userId: id,
+        },
+      );
+
+      // Fall back to original implementation
+      return super.findById(id);
+    }
   }
 
   /**

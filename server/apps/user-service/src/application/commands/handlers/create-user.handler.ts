@@ -14,6 +14,7 @@ import {
 } from '../../../domain/models/value-objects';
 import { UserCreatedEvent } from '../../../domain/events/user-created.event';
 import { UsernameAlreadyExistsError } from '../../../domain/errors/user.error';
+import { UserCacheService } from '../../../cache/user-cache.service';
 
 /**
  * Create User Command Handler
@@ -28,6 +29,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     private readonly eventBus: EventBus,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly userCacheService: UserCacheService,
   ) {
     this.loggingService.setContext(CreateUserHandler.name);
   }
@@ -56,6 +58,21 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 
       // Save user to database
       await this.userRepository.save(user);
+
+      // For a new user, we don't need to invalidate any existing cache entries
+      // But we might need to invalidate search results if they contain username searches
+      await this.userCacheService.invalidateSearchResults(
+        user.getUsername().toString(),
+      );
+
+      this.loggingService.debug(
+        `Invalidated search cache for new user with username: ${user.getUsername().toString()}`,
+        'execute',
+        {
+          userId: user.getId().toString(),
+          username: user.getUsername().toString(),
+        },
+      );
 
       // Publish domain event
       this.eventBus.publish(

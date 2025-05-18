@@ -256,7 +256,7 @@ Before implementing the User Service, the following prerequisites need to be add
 - [x] Create write repository for user operations
 - [x] Implement read repositories for queries
 - [x] Set up CQRS pattern with command and query handlers
-- [ ] Add caching for frequently accessed data
+- [x] Add caching for frequently accessed data
 
 ### 4. Develop GraphQL API
 - [ ] Define GraphQL schema using SDL (Schema Definition Language)

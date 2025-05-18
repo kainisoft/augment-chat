@@ -8,6 +8,7 @@ import { UserId, UserStatus } from '../../../domain/models/value-objects';
 import { UserStatusChangedEvent } from '../../../domain/events/user-status-changed.event';
 import { UserNotFoundError } from '../../../domain/errors/user.error';
 import { ValueObjectError } from '@app/common/errors/domain/business-error';
+import { UserCacheService } from '../../../cache/user-cache.service';
 
 /**
  * Update User Status Command Handler
@@ -24,6 +25,7 @@ export class UpdateUserStatusHandler
     private readonly eventBus: EventBus,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly userCacheService: UserCacheService,
   ) {
     this.loggingService.setContext(UpdateUserStatusHandler.name);
   }
@@ -37,8 +39,8 @@ export class UpdateUserStatusHandler
       );
 
       // Find user by ID
-      const userId = new UserId(command.userId);
-      const user = await this.userRepository.findById(userId);
+      const userIdObj = new UserId(command.userId);
+      const user = await this.userRepository.findById(userIdObj);
       if (!user) {
         throw new UserNotFoundError(command.userId);
       }
@@ -60,14 +62,22 @@ export class UpdateUserStatusHandler
       // Save user to database
       await this.userRepository.save(user);
 
+      // Invalidate cache
+      const userId = user.getId().toString();
+      await this.userCacheService.invalidateUserProfile(userId);
+
+      // No need to invalidate search results as status changes don't affect search
+
+      this.loggingService.debug(
+        `Invalidated cache for user ${userId}`,
+        'execute',
+        { userId, previousStatus: currentStatus, newStatus: command.status },
+      );
+
       // Publish domain event if status changed
       if (currentStatus !== command.status) {
         this.eventBus.publish(
-          new UserStatusChangedEvent(
-            user.getId().toString(),
-            currentStatus,
-            command.status,
-          ),
+          new UserStatusChangedEvent(userId, currentStatus, command.status),
         );
       }
 

@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
+import { RedisModule } from '@app/redis';
+import { CacheModule as RedisCacheModule } from '@app/redis/cache';
 import { UserServiceController } from './user-service.controller';
 import { UserServiceService } from './user-service.service';
 import {
@@ -10,6 +12,8 @@ import {
 } from './health/health.controller';
 import { UserGraphQLModule } from './graphql/graphql.module';
 import { UserDatabaseModule } from './database/user-database.module';
+import { UserCqrsModule } from './user-cqrs.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -59,6 +63,26 @@ import { UserDatabaseModule } from './database/user-database.module';
       },
       inject: [ConfigService],
     }),
+
+    // Import Redis Module for Redis connection
+    RedisModule.registerDefault({
+      isGlobal: true,
+      keyPrefix: 'user:',
+    }),
+
+    // Import Cache Module for caching
+    RedisCacheModule.register({
+      isGlobal: true,
+      ttl: 300, // 5 minutes default
+      prefix: 'user:cache',
+      enableLogs: process.env.CACHE_LOGS === 'true',
+    }),
+
+    // Import User Cache Module
+    CacheModule,
+
+    // Import CQRS Module
+    UserCqrsModule,
 
     // Import GraphQL Module
     UserGraphQLModule,
