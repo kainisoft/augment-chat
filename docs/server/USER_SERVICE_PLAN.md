@@ -259,9 +259,9 @@ Before implementing the User Service, the following prerequisites need to be add
 - [x] Add caching for frequently accessed data
 
 ### 4. Develop GraphQL API
-- [ ] Define GraphQL schema using SDL (Schema Definition Language)
-- [ ] Implement resolvers for user profile queries and mutations
-- [ ] Create resolvers for relationship operations
+- [x] Define GraphQL schema using SDL (Schema Definition Language)
+- [x] Implement resolvers for user profile queries and mutations
+- [x] Create resolvers for relationship operations
 - [ ] Add resolvers for user settings and preferences
 - [ ] Implement GraphQL subscriptions for real-time updates
 - [ ] Set up DataLoader for efficient query resolution
@@ -270,10 +270,10 @@ Before implementing the User Service, the following prerequisites need to be add
 
 ### 5. Add Business Logic
 - [ ] Implement user profile validation
-- [ ] Add relationship management logic
+- [x] Add relationship management logic
 - [ ] Create settings management functionality
 - [ ] Implement search algorithms
-- [ ] Add user status management
+- [x] Add user status management
 
 ### 6. Integrate with Auth Service
 - [ ] Set up Kafka event listeners for Auth Service events
@@ -311,14 +311,18 @@ Before implementing the User Service, the following prerequisites need to be add
 - Domain model definition
 - Repository implementation
 - CQRS pattern implementation
+- User profile GraphQL API
+- Relationship management GraphQL API
+- Redis caching implementation
 
 ### In Progress
-- GraphQL API development
+- Advanced GraphQL features (subscriptions, DataLoader)
+- User settings and preferences
 
 ### Upcoming
-- Business logic implementation
 - Integration with Auth Service
 - Security and validation
+- Performance optimization
 
 ## Related Documents
 
@@ -331,9 +335,10 @@ Before implementing the User Service, the following prerequisites need to be add
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-06-01
-- **Last Updated**: 2023-07-16
-- **Version**: 1.3.0
+- **Last Updated**: 2023-07-20
+- **Version**: 1.4.0
 - **Change Log**:
+  - 1.4.0: Added relationship management GraphQL API and Redis caching
   - 1.3.0: Updated to use GraphQL instead of REST API
   - 1.2.0: Added detailed implementation plan and prerequisites
   - 1.1.0: Added CQRS implementation details

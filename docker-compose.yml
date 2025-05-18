@@ -43,11 +43,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
 
   # Auth Service
   auth-service:
@@ -152,11 +147,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
 
   # Notification Service
   notification-service:
@@ -197,11 +187,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
 
   # Logging Service
   logging-service:
@@ -236,14 +221,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 512M
-        reservations:
-          cpus: '0.1'
-          memory: 128M
 
   # PostgreSQL
   postgres:
@@ -263,11 +240,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
 
   # MongoDB
   mongo:
@@ -288,11 +260,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
 
   zookeeper:
     image: bitnami/zookeeper:3.8
@@ -311,11 +278,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
 
   kafka:
     image: bitnami/kafka:3.4
@@ -346,11 +308,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
 
   # Redis Cluster (Simulating production setup)
   redis-node-1:
@@ -370,11 +327,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
 
   redis-node-2:
     image: redis:7.4-alpine
@@ -393,11 +345,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
 
   redis-node-3:
     image: redis:7.4-alpine
@@ -416,11 +363,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
 
   redis-cluster-init:
     image: redis:7.4-alpine
@@ -458,14 +400,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
-        reservations:
-          cpus: '0.1'
-          memory: 256M
 
   # Grafana (Visualization)
   grafana:
@@ -492,14 +426,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 512M
-        reservations:
-          cpus: '0.1'
-          memory: 128M
 
 networks:
   chat-network:
