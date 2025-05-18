@@ -5,20 +5,21 @@ import { LoggingModule, LogLevel } from '@app/logging';
 import { DatabaseModule } from '@app/database';
 import { RedisModule } from '@app/redis';
 import { SessionModule } from '@app/redis/session';
-import { CacheModule } from '@app/redis/cache';
+import { CacheModule as RedisCacheModule } from '@app/redis/cache';
 import { IamModule } from '@app/iam';
-import { AuthServiceController } from './auth-service.controller';
-import { AuthServiceService } from './auth-service.service';
 import {
   AuthServiceHealthController,
   AuthServiceHealthService,
 } from './health/health.controller';
-import { RepositoryProviders } from './infrastructure/repositories';
+import { RepositoryModule } from './infrastructure/repositories/repository.module';
 import { TokenService } from './token/token.service';
 import { SessionService } from './session/session.service';
 import { RateLimitService, RateLimitGuard } from './rate-limit';
 import { PermissionCacheService } from './permission/permission-cache.service';
 import { AuthModule } from './auth/auth.module';
+import { PresentationModule } from './presentation/presentation.module';
+import { CacheModule } from './cache/cache.module';
+import { KafkaModule } from './kafka/kafka.module';
 
 @Module({
   imports: [
@@ -89,12 +90,18 @@ import { AuthModule } from './auth/auth.module';
     }),
 
     // Import Cache Module for caching
-    CacheModule.register({
+    RedisCacheModule.register({
       isGlobal: true,
       ttl: 300, // 5 minutes default
       prefix: 'auth:cache',
       enableLogs: process.env.CACHE_LOGS === 'true',
     }),
+
+    // Import our custom modules
+    CacheModule,
+    PresentationModule,
+    KafkaModule,
+    RepositoryModule,
 
     // Import IAM Module for authentication and authorization
     IamModule.register({
@@ -104,11 +111,9 @@ import { AuthModule } from './auth/auth.module';
       isGlobal: true,
     }),
   ],
-  controllers: [AuthServiceController, AuthServiceHealthController],
+  controllers: [AuthServiceHealthController],
   providers: [
-    AuthServiceService,
     AuthServiceHealthService,
-    ...RepositoryProviders,
     // Add Redis-based services
     TokenService,
     SessionService,

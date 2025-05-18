@@ -150,6 +150,20 @@ The application is designed to be deployed on AWS using:
 - MSK for Kafka
 - EC2 instances for Redis Cluster
 
+## Current Initiatives
+
+### Service Standardization
+
+We are currently working on standardizing the architecture and patterns across our microservices. This initiative aims to create a more consistent, maintainable, and scalable codebase.
+
+**Progress:**
+- ✅ Phase 1: Extract common domain models (7.5% complete)
+- ⏳ Phase 2-9: Pending
+
+For detailed progress information, see:
+- [Service Standardization Plan](docs/server/SERVICE_STANDARDIZATION_PLAN.md)
+- [Service Standardization Progress](docs/server/SERVICE_STANDARDIZATION_PROGRESS.md)
+
 ## Documentation
 
 All project documentation is organized in the `docs/` directory:

@@ -163,6 +163,7 @@ The Authentication Service handles user registration, login, and token managemen
 - Rate limiting for login, registration, and password reset
 - Account lockout after failed login attempts
 - Enhanced session management with activity tracking and metadata
+- Kafka integration for event-driven communication (see [AUTH_SERVICE_KAFKA_INTEGRATION.md](AUTH_SERVICE_KAFKA_INTEGRATION.md))
 
 ### In Progress
 - Comprehensive security logging
@@ -176,3 +177,9 @@ The Authentication Service handles user registration, login, and token managemen
 2. Create security dashboard
 3. Integrate OAuth providers
 4. Implement two-factor authentication
+
+## Document Information
+- **Author**: Chat Application Team
+- **Created**: 2023-09-10
+- **Last Updated**: 2025-05-21
+- **Version**: 1.2.0

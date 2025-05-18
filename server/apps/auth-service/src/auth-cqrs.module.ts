@@ -37,22 +37,8 @@ import { AccountLockoutService } from './domain/services/account-lockout.service
     // Import DatabaseModule for database access
     DatabaseModule.forAuth(),
     // Import Redis Module for Redis connection
-    RedisModule.register({
-      nodes: [
-        {
-          host: process.env.REDIS_NODE_1 || 'redis-node-1',
-          port: +(process.env.REDIS_NODE_1_PORT || 6379),
-        },
-        {
-          host: process.env.REDIS_NODE_2 || 'redis-node-2',
-          port: +(process.env.REDIS_NODE_2_PORT || 6380),
-        },
-        {
-          host: process.env.REDIS_NODE_3 || 'redis-node-3',
-          port: +(process.env.REDIS_NODE_3_PORT || 6381),
-        },
-      ],
-      password: process.env.REDIS_PASSWORD,
+    RedisModule.registerDefault({
+      isGlobal: true,
       keyPrefix: 'auth:',
     }),
   ],
