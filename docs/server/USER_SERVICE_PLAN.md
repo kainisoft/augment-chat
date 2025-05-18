@@ -255,7 +255,7 @@ Before implementing the User Service, the following prerequisites need to be add
 ### 3. Implement Repositories
 - [x] Create write repository for user operations
 - [x] Implement read repositories for queries
-- [ ] Set up CQRS pattern with command and query handlers
+- [x] Set up CQRS pattern with command and query handlers
 - [ ] Add caching for frequently accessed data
 
 ### 4. Develop GraphQL API
@@ -307,15 +307,18 @@ Before implementing the User Service, the following prerequisites need to be add
 ### Completed
 - Basic service setup with NestJS CLI
 - Fastify adapter configuration
-
-### In Progress
 - Database connection setup
 - Domain model definition
+- Repository implementation
+- CQRS pattern implementation
+
+### In Progress
+- GraphQL API development
 
 ### Upcoming
-- Repository implementation
-- API endpoint development
 - Business logic implementation
+- Integration with Auth Service
+- Security and validation
 
 ## Related Documents
 
