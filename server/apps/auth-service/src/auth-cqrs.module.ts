@@ -1,60 +1,39 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LoggingModule } from '@app/logging';
 import { DatabaseModule } from '@app/database';
-import { RedisModule } from '@app/redis';
-import { CommonModule } from '@app/common';
 
 // Import handlers
 import { CommandHandlers } from './application/commands/handlers';
 import { QueryHandlers } from './application/queries/handlers';
 import { EventHandlers } from './application/events/handlers';
-import { TokenService } from './token/token.service';
-import { SessionService } from './session/session.service';
-import { AccountLockoutService } from './domain/services/account-lockout.service';
-import { CacheModule } from './cache/cache.module';
 import { RepositoryModule } from './infrastructure/repositories/repository.module';
+import { CacheModule } from './cache/cache.module';
+import { KafkaProducerModule } from './kafka/kafka-producer.module';
+import { JwtModule } from './infrastructure/jwt/jwt.module';
+import { TokenModule } from './token/token.module';
+import { SessionModule } from './session/session.module';
+import { AccountLockoutModule } from './domain/services/account-lockout.module';
 
+/**
+ * Auth CQRS Module
+ *
+ * Module for CQRS pattern implementation in the Auth Service.
+ */
 @Module({
   imports: [
     CqrsModule,
-    // Import CommonModule for common services including ErrorLoggerService
-    CommonModule,
-    // Import JWT Module for token generation and validation
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>(
-          'JWT_SECRET',
-          'change-me-in-production',
-        ),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '15m'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
-    // Import DatabaseModule for database access
+    LoggingModule,
     DatabaseModule.forAuth(),
-    // Import Redis Module for Redis connection
-    RedisModule.registerDefault({
-      isGlobal: true,
-      keyPrefix: 'auth:',
-    }),
-    // Import Cache Module for UserCacheService
-    CacheModule,
-    // Import Repository Module for repositories
     RepositoryModule,
+    CacheModule,
+    KafkaProducerModule,
+    JwtModule,
+    TokenModule,
+    SessionModule,
+    AccountLockoutModule,
   ],
-  providers: [
-    ...CommandHandlers,
-    ...QueryHandlers,
-    ...EventHandlers,
-    TokenService,
-    SessionService,
-    AccountLockoutService,
-  ],
+  providers: [...CommandHandlers, ...QueryHandlers, ...EventHandlers],
   exports: [CqrsModule],
 })
 export class AuthCqrsModule {}

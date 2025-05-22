@@ -4,7 +4,7 @@ import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
 import { DatabaseModule } from '@app/database';
 import { RedisModule } from '@app/redis';
-import { SessionModule } from '@app/redis/session';
+import { SessionModule as RedisSessionModule } from '@app/redis/session';
 import { CacheModule as RedisCacheModule } from '@app/redis/cache';
 import { IamModule } from '@app/iam';
 import {
@@ -12,14 +12,15 @@ import {
   AuthServiceHealthService,
 } from './health/health.controller';
 import { RepositoryModule } from './infrastructure/repositories/repository.module';
-import { TokenService } from './token/token.service';
-import { SessionService } from './session/session.service';
 import { RateLimitService, RateLimitGuard } from './rate-limit';
 import { PermissionCacheService } from './permission/permission-cache.service';
 import { AuthModule } from './auth/auth.module';
 import { PresentationModule } from './presentation/presentation.module';
 import { CacheModule } from './cache/cache.module';
 import { KafkaModule } from './kafka/kafka.module';
+import { TokenModule } from './token/token.module';
+import { SessionModule } from './session/session.module';
+import { AccountLockoutModule } from './domain/services/account-lockout.module';
 
 @Module({
   imports: [
@@ -80,7 +81,7 @@ import { KafkaModule } from './kafka/kafka.module';
     }),
 
     // Import Session Module for session management
-    SessionModule.register({
+    RedisSessionModule.register({
       isGlobal: true,
       ttl: parseInt(process.env.SESSION_TTL || '3600', 10), // 1 hour default
       prefix: 'auth:session',
@@ -102,6 +103,9 @@ import { KafkaModule } from './kafka/kafka.module';
     PresentationModule,
     KafkaModule,
     RepositoryModule,
+    TokenModule,
+    SessionModule,
+    AccountLockoutModule,
 
     // Import IAM Module for authentication and authorization
     IamModule.register({
@@ -115,8 +119,6 @@ import { KafkaModule } from './kafka/kafka.module';
   providers: [
     AuthServiceHealthService,
     // Add Redis-based services
-    TokenService,
-    SessionService,
     RateLimitService,
     RateLimitGuard,
     PermissionCacheService,

@@ -1,41 +1,29 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@app/database';
-import { RedisModule } from '@app/redis';
+import { LoggingModule } from '@app/logging';
 import { CommonModule } from '@app/common';
 import { AuthService } from './auth.service';
-import { TokenService } from '../token/token.service';
-import { SessionService } from '../session/session.service';
-import { RateLimitService, RateLimitGuard } from '../rate-limit';
 import { AuthCqrsModule } from '../auth-cqrs.module';
-import { CacheModule } from '../cache/cache.module';
+import { TokenModule } from '../token/token.module';
+import { SessionModule } from '../session/session.module';
+import { RateLimitService, RateLimitGuard } from '../rate-limit';
 import { RepositoryModule } from '../infrastructure/repositories/repository.module';
 
+/**
+ * Auth Module
+ *
+ * Module for authentication functionality in the Auth Service.
+ */
 @Module({
   imports: [
-    // Import CommonModule for common services including ErrorLoggerService
     CommonModule,
-    // Import CQRS Module
+    LoggingModule,
     AuthCqrsModule,
-    // Import DatabaseModule for database access
-    DatabaseModule.forAuth(),
-    // Import Redis Module for Redis connection
-    RedisModule.registerDefault({
-      isGlobal: true,
-      keyPrefix: 'auth:',
-    }),
-    // Import Cache Module for UserCacheService
-    CacheModule,
-    // Import Repository Module for repositories
+    TokenModule,
+    SessionModule,
     RepositoryModule,
   ],
   controllers: [],
-  providers: [
-    AuthService,
-    TokenService,
-    SessionService,
-    RateLimitService,
-    RateLimitGuard,
-  ],
+  providers: [AuthService, RateLimitService, RateLimitGuard],
   exports: [AuthService],
 })
 export class AuthModule {}
