@@ -5,9 +5,14 @@ import { RepositoryProviders } from './index';
 import { CacheModule } from '../../cache/cache.module';
 import { TokenService } from '../../token/token.service';
 
+/**
+ * Repository Module
+ *
+ * Module for repository providers.
+ */
 @Module({
   imports: [DatabaseModule.forAuth(), LoggingModule, CacheModule],
   providers: [...RepositoryProviders, TokenService],
-  exports: [...RepositoryProviders],
+  exports: [...RepositoryProviders, TokenService],
 })
 export class RepositoryModule {}

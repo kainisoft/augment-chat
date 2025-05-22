@@ -6,8 +6,9 @@ import { AuthService } from './auth.service';
 import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { RateLimitService, RateLimitGuard } from '../rate-limit';
-import { RepositoryProviders } from '../infrastructure/repositories';
 import { AuthCqrsModule } from '../auth-cqrs.module';
+import { CacheModule } from '../cache/cache.module';
+import { RepositoryModule } from '../infrastructure/repositories/repository.module';
 
 @Module({
   imports: [
@@ -22,6 +23,10 @@ import { AuthCqrsModule } from '../auth-cqrs.module';
       isGlobal: true,
       keyPrefix: 'auth:',
     }),
+    // Import Cache Module for UserCacheService
+    CacheModule,
+    // Import Repository Module for repositories
+    RepositoryModule,
   ],
   controllers: [],
   providers: [
@@ -30,7 +35,6 @@ import { AuthCqrsModule } from '../auth-cqrs.module';
     SessionService,
     RateLimitService,
     RateLimitGuard,
-    ...RepositoryProviders,
   ],
   exports: [AuthService],
 })

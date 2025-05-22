@@ -3,6 +3,11 @@ import { DrizzleUserRepository } from './user.repository';
 import { DrizzleUserAuthReadRepository } from './user-auth-read.repository';
 import { TokenValidationReadRepositoryImpl } from './token-validation-read.repository';
 
+// Export repository interfaces
+export * from '../../domain/repositories/user.repository.interface';
+export * from '../../domain/repositories/user-auth-read.repository.interface';
+export * from '../../domain/repositories/token-validation-read.repository.interface';
+
 /**
  * Repository providers for dependency injection
  */

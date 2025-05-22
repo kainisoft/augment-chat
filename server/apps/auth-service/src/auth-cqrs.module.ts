@@ -10,10 +10,11 @@ import { CommonModule } from '@app/common';
 import { CommandHandlers } from './application/commands/handlers';
 import { QueryHandlers } from './application/queries/handlers';
 import { EventHandlers } from './application/events/handlers';
-import { RepositoryProviders } from './infrastructure/repositories';
 import { TokenService } from './token/token.service';
 import { SessionService } from './session/session.service';
 import { AccountLockoutService } from './domain/services/account-lockout.service';
+import { CacheModule } from './cache/cache.module';
+import { RepositoryModule } from './infrastructure/repositories/repository.module';
 
 @Module({
   imports: [
@@ -41,12 +42,15 @@ import { AccountLockoutService } from './domain/services/account-lockout.service
       isGlobal: true,
       keyPrefix: 'auth:',
     }),
+    // Import Cache Module for UserCacheService
+    CacheModule,
+    // Import Repository Module for repositories
+    RepositoryModule,
   ],
   providers: [
     ...CommandHandlers,
     ...QueryHandlers,
     ...EventHandlers,
-    ...RepositoryProviders,
     TokenService,
     SessionService,
     AccountLockoutService,
