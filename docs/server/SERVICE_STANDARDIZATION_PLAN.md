@@ -589,7 +589,7 @@ export class UserCqrsModule {}
 2. ✅ Standardize folder structure in auth-service
 3. ✅ Implement Kafka modules in auth-service
 4. ✅ Create repository module in auth-service
-5. ⏳ Refactor CQRS module in auth-service
+5. ✅ Refactor CQRS module in auth-service
 6. ⏳ Update event handlers for consistent event communication
 7. ⏳ Implement user-service improvements
 8. ⏳ Standardize main module organization

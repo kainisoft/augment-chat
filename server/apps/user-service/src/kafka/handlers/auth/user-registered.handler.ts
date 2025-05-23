@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { UserRegisteredEvent } from '@app/events';
 
 import { CreateUserCommand } from '../../../application/commands/impl/create-user.command';
 
@@ -21,40 +22,40 @@ export class UserRegisteredHandler {
 
   /**
    * Handle the UserRegisteredEvent
-   * @param payload - The event payload
+   * @param event - The event
    */
-  async handle(payload: any): Promise<void> {
+  async handle(event: UserRegisteredEvent): Promise<void> {
     try {
       this.loggingService.debug(
-        `Handling UserRegisteredEvent for user: ${payload.userId}`,
+        `Handling UserRegisteredEvent for user: ${event.userId}`,
         'handle',
-        { userId: payload.userId, email: payload.email },
+        { userId: event.userId, email: event.email },
       );
 
       // Extract username from email (before the @ symbol)
-      const username = payload.email.split('@')[0];
+      const username = event.email.split('@')[0];
 
       // Create a new user profile
       await this.commandBus.execute(
         new CreateUserCommand(
-          payload.userId, // authId
+          event.userId, // authId
           username,
           username, // Default displayName to username
         ),
       );
 
       this.loggingService.log(
-        `User profile created for registered user: ${payload.userId}`,
+        `User profile created for registered user: ${event.userId}`,
         'handle',
-        { userId: payload.userId, username },
+        { userId: event.userId, username },
       );
     } catch (error) {
       this.errorLogger.error(
-        error,
-        `Error handling UserRegisteredEvent for user: ${payload.userId}`,
+        error instanceof Error ? error : new Error(String(error)),
+        `Error handling UserRegisteredEvent for user: ${event.userId}`,
         {
-          userId: payload.userId,
-          email: payload.email,
+          userId: event.userId,
+          email: event.email,
           error: error instanceof Error ? error.stack : String(error),
         },
       );

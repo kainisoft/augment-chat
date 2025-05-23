@@ -54,6 +54,12 @@
       "@app/logging/*": [
         "libs/logging/src/*"
       ],
+      "@app/events": [
+        "libs/events/src"
+      ],
+      "@app/events/*": [
+        "libs/events/src/*"
+      ],
       "@app/redis": [
         "libs/redis/src"
       ],

@@ -149,24 +149,24 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Handle user events
-   * @param message - The parsed message
+   * @param event - The parsed event
    */
-  private async handleUserEvent(message: any) {
+  private async handleUserEvent(event: any) {
     this.loggingService.debug(
-      `Handling user event: ${message.type}`,
+      `Handling user event: ${event.type}`,
       'handleUserEvent',
-      { eventType: message.type },
+      { eventType: event.type, userId: event.userId },
     );
 
     // Route the event to the appropriate handler based on the event type
     // This will be implemented when we add user event handlers
-    switch (message.type) {
+    switch (event.type) {
       // Add cases for user events as needed
       default:
         this.loggingService.warn(
-          `Unhandled user event type: ${message.type}`,
+          `Unhandled user event type: ${event.type}`,
           'handleUserEvent',
-          { eventType: message.type },
+          { eventType: event.type, userId: event.userId },
         );
     }
   }
