@@ -1,12 +1,21 @@
+import { UserUpdatedEvent } from '@app/events';
+
 /**
  * User Profile Updated Event
  *
  * Event emitted when a user's profile is updated.
  */
-export class UserProfileUpdatedEvent {
+export class UserProfileUpdatedEvent implements UserUpdatedEvent {
+  public readonly type = 'UserUpdated';
+  public readonly aggregateId: string;
+  public readonly timestamp: number;
+
   constructor(
     public readonly userId: string,
     public readonly updatedFields: string[],
-    public readonly timestamp: Date = new Date(),
-  ) {}
+    timestamp?: Date,
+  ) {
+    this.aggregateId = userId;
+    this.timestamp = timestamp ? timestamp.getTime() : Date.now();
+  }
 }

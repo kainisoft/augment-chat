@@ -35,16 +35,7 @@ export class UserProfileUpdatedHandler
       );
 
       // Publish event to Kafka
-      await this.kafkaProducerService.send(
-        'user-events',
-        {
-          type: 'UserProfileUpdated',
-          userId: event.userId,
-          updatedFields: event.updatedFields,
-          timestamp: event.timestamp,
-        },
-        event.userId,
-      );
+      await this.kafkaProducerService.send('user-events', event, event.userId);
 
       this.loggingService.debug(
         `Published UserProfileUpdatedEvent to Kafka: ${event.userId}`,

@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { Kafka, Producer } from 'kafkajs';
+import { BaseEvent } from '@app/events';
 
 /**
  * Kafka Producer Service
@@ -82,16 +83,20 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Send a message to a Kafka topic
    * @param topic - The topic to send the message to
-   * @param message - The message to send
+   * @param event - The event to send
    * @param key - Optional message key
    */
-  async send(topic: string, message: any, key?: string): Promise<void> {
+  async send<T extends BaseEvent>(
+    topic: string,
+    event: T,
+    key?: string,
+  ): Promise<void> {
     try {
       if (!this.isConnected) {
         await this.connect();
       }
 
-      const messageValue = JSON.stringify(message);
+      const messageValue = JSON.stringify(event);
 
       await this.producer.send({
         topic,
@@ -108,7 +113,7 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
         'send',
         {
           topic,
-          eventType: message.type,
+          eventType: event.type,
           key,
         },
       );
@@ -118,7 +123,7 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
         `Error sending message to Kafka topic: ${topic}`,
         {
           topic,
-          eventType: message.type,
+          eventType: event.type,
           key,
           error: error instanceof Error ? error.stack : String(error),
         },

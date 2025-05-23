@@ -503,80 +503,132 @@ export interface UserRegisteredEvent extends DomainEvent {
 
 ## User Service Improvements
 
-While the user-service has a better overall structure, there are still areas that need improvement to achieve full standardization:
+While the user-service has a better overall structure, there are still areas that need improvement to achieve full standardization. This section outlines a comprehensive plan for implementing these improvements.
 
-### 1. CQRS Module Refinement
+### Detailed User Service Improvement Plan
 
-**File**: `server/apps/user-service/src/user-cqrs.module.ts`
+#### Phase 1: Event Standardization
 
-**Current Implementation**:
-```typescript
-@Module({
-  imports: [
-    CqrsModule,
-    LoggingModule,
-    DatabaseModule.forUser(),
-    RepositoryModule,
-    CacheModule,
-    KafkaProducerModule,
-  ],
-  providers: [...CommandHandlers, ...QueryHandlers, ...EventHandlers],
-  exports: [CqrsModule],
-})
-export class UserCqrsModule {}
-```
+**Objective**: Standardize event handling in the user-service to match the auth-service implementation.
 
-**Changes Required**:
-- Add documentation comments for clarity
-- Consider separating event handlers that publish to Kafka from those that don't
-- Ensure consistent error handling across all handlers
+**Files to Update**:
+- Domain Events:
+  - `server/apps/user-service/src/domain/events/user-created.event.ts`
+  - `server/apps/user-service/src/domain/events/user-deleted.event.ts`
+  - `server/apps/user-service/src/domain/events/user-profile-updated.event.ts`
+  - `server/apps/user-service/src/domain/events/user-status-changed.event.ts`
+- Event Handlers:
+  - `server/apps/user-service/src/application/events/handlers/user-created.handler.ts`
+  - `server/apps/user-service/src/application/events/handlers/user-deleted.handler.ts`
+  - `server/apps/user-service/src/application/events/handlers/user-profile-updated.handler.ts`
+  - `server/apps/user-service/src/application/events/handlers/user-status-changed.handler.ts`
+- Kafka Producer:
+  - `server/apps/user-service/src/kafka/kafka-producer.service.ts`
 
 **Implementation Steps**:
-1. Add JSDoc comments to the module
-2. Review event handlers for consistency
-3. Standardize error handling patterns
+1. Update domain events to implement shared interfaces from `@app/events`:
+   - Add `type`, `aggregateId`, and `timestamp` properties
+   - Update constructors to handle timestamp conversion
+   - Ensure consistent event structure
+2. Update event handlers to use standardized event format:
+   - Remove payload wrappers when publishing to Kafka
+   - Ensure consistent error handling
+   - Improve logging
+3. Update Kafka producer service:
+   - Add type parameters for better type safety
+   - Improve error handling
+   - Add better documentation
 
-### 2. GraphQL Implementation Documentation
+#### Phase 2: Cache Improvements
 
-**File**: `server/apps/user-service/src/graphql/graphql.module.ts`
+**Objective**: Improve cache implementation with better documentation and standardized patterns.
 
-**Changes Required**:
-- Add better documentation for GraphQL implementation
-- Create a standard pattern that could be applied to other services if they adopt GraphQL
-- Ensure consistent error handling for GraphQL resolvers
-
-**Implementation Steps**:
-1. Add comprehensive documentation
-2. Create reusable patterns for GraphQL error handling
-3. Extract common GraphQL utilities to a shared library
-
-### 3. Kafka Event Standardization
-
-**Files**: Various event handlers in `server/apps/user-service/src/application/events/handlers/`
-
-**Changes Required**:
-- Standardize event formats for Kafka messages
-- Ensure consistent error handling for Kafka publishing
-- Add better typing for Kafka messages
+**Files to Update**:
+- `server/apps/user-service/src/cache/user-cache.service.ts`
+- `server/apps/user-service/src/cache/cache.module.ts`
+- Repository implementations that use caching
 
 **Implementation Steps**:
-1. Create standard interfaces for Kafka messages
-2. Update event handlers to use these interfaces
-3. Implement consistent error handling for Kafka operations
+1. Document cache strategies:
+   - Add comprehensive JSDoc comments to cache methods
+   - Document TTL strategies
+   - Document cache key generation
+2. Standardize cache invalidation:
+   - Create consistent patterns for cache invalidation
+   - Ensure all repositories follow the same pattern
+   - Add better error handling
+3. Extract common cache patterns:
+   - Identify common cache operations
+   - Create utility methods for common operations
+   - Consider moving to a shared library
 
-### 4. Cache Implementation Improvements
+#### Phase 3: GraphQL Enhancements
 
-**File**: `server/apps/user-service/src/cache/cache.module.ts`
+**Objective**: Enhance GraphQL implementation with better documentation and error handling.
 
-**Changes Required**:
-- Better documentation for cache strategies
-- More consistent cache invalidation patterns
-- Extract common cache patterns to a shared library
+**Files to Update**:
+- `server/apps/user-service/src/graphql/graphql.module.ts`
+- `server/apps/user-service/src/graphql/resolvers/*.resolver.ts`
+- `server/apps/user-service/src/graphql/README.md`
 
 **Implementation Steps**:
-1. Document cache strategies
-2. Standardize cache invalidation approaches
-3. Consider moving common cache code to a shared library
+1. Improve GraphQL documentation:
+   - Add comprehensive JSDoc comments to resolvers
+   - Update README with best practices
+   - Document resolver patterns
+2. Standardize error handling:
+   - Create consistent error handling for resolvers
+   - Improve error logging
+   - Add better error messages for clients
+3. Extract common utilities:
+   - Identify common GraphQL operations
+   - Create utility methods for common operations
+   - Consider moving to a shared library
+
+#### Phase 4: Repository Improvements
+
+**Objective**: Improve repository implementations with better type safety and error handling.
+
+**Files to Update**:
+- `server/apps/user-service/src/infrastructure/repositories/*.repository.ts`
+- `server/apps/user-service/src/infrastructure/repositories/repository.module.ts`
+
+**Implementation Steps**:
+1. Enhance type safety:
+   - Add better type annotations to repository methods
+   - Use generics consistently
+   - Document repository patterns
+2. Standardize error handling:
+   - Create consistent error handling for repositories
+   - Improve error logging
+   - Add better error messages
+3. Improve cache integration:
+   - Standardize how repositories interact with cache
+   - Ensure consistent cache invalidation
+   - Document cache integration patterns
+
+#### Phase 5: CQRS Module Improvements
+
+**Objective**: Enhance CQRS module with better documentation and error handling.
+
+**Files to Update**:
+- `server/apps/user-service/src/user-cqrs.module.ts`
+- `server/apps/user-service/src/application/commands/handlers/*.handler.ts`
+- `server/apps/user-service/src/application/queries/handlers/*.handler.ts`
+
+**Implementation Steps**:
+1. Add better documentation:
+   - Add comprehensive JSDoc comments to the module
+   - Document command and query patterns
+   - Document event handling patterns
+2. Standardize error handling:
+   - Create consistent error handling for command handlers
+   - Create consistent error handling for query handlers
+   - Improve error logging
+3. Improve module organization:
+   - Consider separating event handlers that publish to Kafka
+   - Ensure consistent imports
+   - Document module organization patterns
 
 ## Implementation Sequence
 
@@ -590,8 +642,28 @@ export class UserCqrsModule {}
 3. ✅ Implement Kafka modules in auth-service
 4. ✅ Create repository module in auth-service
 5. ✅ Refactor CQRS module in auth-service
-6. ⏳ Update event handlers for consistent event communication
+6. ✅ Update event handlers for consistent event communication
 7. ⏳ Implement user-service improvements
+   - ⏳ Phase 1: Event Standardization
+     - ⏳ Update domain events to implement shared interfaces
+     - ⏳ Update event handlers to use standardized event format
+     - ⏳ Update Kafka producer service with type parameters
+   - ⏳ Phase 2: Cache Improvements
+     - ⏳ Document cache strategies
+     - ⏳ Standardize cache invalidation
+     - ⏳ Extract common cache patterns
+   - ⏳ Phase 3: GraphQL Enhancements
+     - ⏳ Improve GraphQL documentation
+     - ⏳ Standardize error handling
+     - ⏳ Extract common utilities
+   - ⏳ Phase 4: Repository Improvements
+     - ⏳ Enhance type safety
+     - ⏳ Standardize error handling
+     - ⏳ Improve cache integration
+   - ⏳ Phase 5: CQRS Module Improvements
+     - ⏳ Add better documentation
+     - ⏳ Standardize error handling
+     - ⏳ Improve module organization
 8. ⏳ Standardize main module organization
 9. ⏳ Create additional shared infrastructure modules as needed
 
@@ -646,5 +718,5 @@ To maintain consistency in future development:
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-09-10
-- **Last Updated**: 2025-05-21
-- **Version**: 1.4.0
+- **Last Updated**: 2023-06-05
+- **Version**: 1.5.0

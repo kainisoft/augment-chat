@@ -36,17 +36,7 @@ export class UserStatusChangedHandler
       );
 
       // Publish event to Kafka
-      await this.kafkaProducerService.send(
-        'user-events',
-        {
-          type: 'UserStatusChanged',
-          userId: event.userId,
-          previousStatus: event.previousStatus,
-          newStatus: event.newStatus,
-          timestamp: event.timestamp,
-        },
-        event.userId,
-      );
+      await this.kafkaProducerService.send('user-events', event, event.userId);
 
       this.loggingService.debug(
         `Published UserStatusChangedEvent to Kafka: ${event.userId}`,

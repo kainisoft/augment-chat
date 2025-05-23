@@ -33,16 +33,7 @@ export class UserDeletedHandler implements IEventHandler<UserDeletedEvent> {
       );
 
       // Publish event to Kafka
-      await this.kafkaProducerService.send(
-        'user-events',
-        {
-          type: 'UserDeleted',
-          userId: event.userId,
-          authId: event.authId,
-          timestamp: event.timestamp,
-        },
-        event.userId,
-      );
+      await this.kafkaProducerService.send('user-events', event, event.userId);
 
       this.loggingService.debug(
         `Published UserDeletedEvent to Kafka: ${event.userId}`,
