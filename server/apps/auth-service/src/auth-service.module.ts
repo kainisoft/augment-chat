@@ -13,7 +13,7 @@ import {
 } from './health/health.controller';
 import { RepositoryModule } from './infrastructure/repositories/repository.module';
 import { RateLimitService, RateLimitGuard } from './rate-limit';
-import { PermissionCacheService } from './permission/permission-cache.service';
+import { PermissionModule } from './permission/permission.module';
 import { AuthModule } from './auth/auth.module';
 import { PresentationModule } from './presentation/presentation.module';
 import { CacheModule } from './cache/cache.module';
@@ -106,6 +106,7 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
     TokenModule,
     SessionModule,
     AccountLockoutModule,
+    PermissionModule,
 
     // Import IAM Module for authentication and authorization
     IamModule.register({
@@ -121,7 +122,6 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
     // Add Redis-based services
     RateLimitService,
     RateLimitGuard,
-    PermissionCacheService,
   ],
 })
 export class AuthServiceModule {}

@@ -4,18 +4,18 @@ import { RedisModule } from '@app/redis';
 import { CacheModule as RedisCacheModule } from '@app/redis/cache';
 import { RedisRepositoryFactory } from '@app/redis/repositories/redis-repository.factory';
 import { LoggingModule } from '@app/logging';
-import { UserCacheService } from './user-cache.service';
+import { PermissionCacheService } from './permission-cache.service';
 
 /**
- * Cache Module
+ * Permission Module
  *
- * Module for caching services in the Auth Service.
- * This module provides the UserCacheService for caching user authentication data
+ * Module for permission-related services in the Auth Service.
+ * This module provides the PermissionCacheService for caching user permissions
  * and follows the standardized caching pattern across services.
  */
 @Module({
   imports: [RedisModule, RedisCacheModule, LoggingModule, ConfigModule],
-  providers: [UserCacheService, RedisRepositoryFactory],
-  exports: [RedisModule, RedisCacheModule, UserCacheService],
+  providers: [PermissionCacheService, RedisRepositoryFactory],
+  exports: [PermissionCacheService],
 })
-export class CacheModule {}
+export class PermissionModule {}
