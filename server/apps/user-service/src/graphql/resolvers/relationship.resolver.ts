@@ -33,7 +33,18 @@ import { GetUserProfileQuery } from '../../application/queries/impl/get-user-pro
 /**
  * Relationship Resolver
  *
- * GraphQL resolver for relationship-related operations.
+ * GraphQL resolver for user relationship operations including creating, updating,
+ * deleting, and querying relationships between users.
+ *
+ * This resolver handles:
+ * - Creating new relationships (friend requests, contacts, etc.)
+ * - Updating relationship status (accepting/rejecting friend requests)
+ * - Deleting relationships (removing friends, blocking users)
+ * - Querying user relationships and friends
+ * - Resolving nested user data for relationships
+ *
+ * All operations include comprehensive error handling, logging, and validation
+ * following the standardized GraphQL patterns.
  */
 @Resolver(() => UserRelationship)
 export class RelationshipResolver {
@@ -48,6 +59,14 @@ export class RelationshipResolver {
 
   /**
    * Resolve user field for relationship
+   *
+   * This field resolver fetches the complete user profile for the 'user' side
+   * of a relationship. It's called automatically by GraphQL when the 'user'
+   * field is requested in a relationship query.
+   *
+   * @param relationship - The parent relationship object
+   * @returns The complete user profile for the relationship's user
+   * @throws Error if the user profile cannot be retrieved
    */
   @ResolveField('user', () => UserType)
   async getUser(@Parent() relationship: UserRelationship): Promise<UserType> {
@@ -73,6 +92,14 @@ export class RelationshipResolver {
 
   /**
    * Resolve target field for relationship
+   *
+   * This field resolver fetches the complete user profile for the 'target' side
+   * of a relationship. It's called automatically by GraphQL when the 'target'
+   * field is requested in a relationship query.
+   *
+   * @param relationship - The parent relationship object
+   * @returns The complete user profile for the relationship's target user
+   * @throws Error if the target user profile cannot be retrieved
    */
   @ResolveField('target', () => UserType)
   async getTarget(@Parent() relationship: UserRelationship): Promise<UserType> {
@@ -98,10 +125,19 @@ export class RelationshipResolver {
 
   /**
    * Get a relationship by ID
+   *
+   * Retrieves a specific relationship by its unique identifier.
+   * This query is useful for fetching detailed information about
+   * a particular relationship between two users.
+   *
+   * @param id - The unique identifier of the relationship
+   * @returns The relationship object with user and target information
+   * @throws NotFoundException if the relationship doesn't exist
+   * @throws Error for other database or system errors
    */
   @Query(() => UserRelationship, {
     name: 'relationship',
-    description: 'Get a relationship by ID',
+    description: 'Get a relationship by its unique identifier',
     nullable: true,
   })
   async getRelationship(@Args('id') id: string): Promise<UserRelationship> {

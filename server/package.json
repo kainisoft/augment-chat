@@ -156,7 +156,8 @@
       "^@app/iam(|/.*)$": "<rootDir>/libs/iam/src/$1",
       "^@app/kafka(|/.*)$": "<rootDir>/libs/kafka/src/$1",
       "^@app/logging(|/.*)$": "<rootDir>/libs/logging/src/$1",
-      "^@app/redis(|/.*)$": "<rootDir>/libs/redis/src/$1"
+      "^@app/redis(|/.*)$": "<rootDir>/libs/redis/src/$1",
+      "^@app/graphql(|/.*)$": "<rootDir>/libs/graphql/src/$1"
     }
   }
 }

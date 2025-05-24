@@ -65,6 +65,12 @@
       ],
       "@app/redis/*": [
         "libs/redis/src/*"
+      ],
+      "@app/graphql": [
+        "libs/graphql/src"
+      ],
+      "@app/graphql/*": [
+        "libs/graphql/src/*"
       ]
     }
   }
