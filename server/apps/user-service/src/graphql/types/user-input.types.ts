@@ -1,10 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { UserStatusEnum } from '../../domain/models/value-objects/user-status.value-object';
-import { IsString, IsOptional, IsEnum, MaxLength } from 'class-validator';
+import { IsOptional, IsEnum } from 'class-validator';
 import {
   IsUUIDField,
   IsUsernameField,
   IsDisplayNameField,
+  IsBioField,
+  IsAvatarUrlField,
 } from '@app/validation';
 import { GraphQLSearchPaginationInput } from '@app/dtos';
 
@@ -69,18 +71,23 @@ export class UpdateUserProfileInput {
   displayName?: string;
 
   @Field(() => String, { nullable: true, description: 'User biography' })
-  @IsString()
-  @IsOptional()
-  @MaxLength(500)
+  @IsBioField({
+    description: 'User biography',
+    example:
+      'Software developer passionate about creating amazing user experiences.',
+    required: false,
+  })
   bio?: string;
 
   @Field(() => String, {
     nullable: true,
     description: 'URL to user avatar image',
   })
-  @IsString()
-  @IsOptional()
-  @MaxLength(255)
+  @IsAvatarUrlField({
+    description: 'URL to user avatar image',
+    example: 'https://example.com/avatar.jpg',
+    required: false,
+  })
   avatarUrl?: string;
 }
 

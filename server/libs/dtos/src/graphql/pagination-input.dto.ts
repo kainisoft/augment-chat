@@ -1,5 +1,14 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
+import {
+  IsOptional,
+  IsInt,
+  Min,
+  Max,
+  IsString,
+  IsNotEmpty,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 /**
@@ -42,6 +51,10 @@ export class GraphQLPaginationInput {
 @InputType({ description: 'Search pagination input for GraphQL queries' })
 export class GraphQLSearchPaginationInput extends GraphQLPaginationInput {
   @Field(() => String, { description: 'Search term to filter results' })
+  @IsString()
+  @IsNotEmpty({ message: 'Search term cannot be empty' })
+  @MinLength(1, { message: 'Search term must be at least 1 character long' })
+  @MaxLength(100, { message: 'Search term cannot exceed 100 characters' })
   searchTerm: string;
 }
 

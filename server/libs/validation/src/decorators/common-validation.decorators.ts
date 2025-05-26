@@ -9,6 +9,9 @@ import {
   MinLength,
   MaxLength,
   Matches,
+  IsUrl,
+  IsISO8601,
+  IsOptional,
 } from 'class-validator';
 import { applyDecorators } from '@nestjs/common';
 import {
@@ -212,6 +215,155 @@ export function IsJWTTokenField(options?: ApiPropertyOptions) {
     IsString(),
     IsNotEmpty(),
     IsJWTToken(),
+  );
+}
+
+/**
+ * Validates a bio field with Swagger documentation
+ *
+ * @param options - Swagger API property options
+ * @returns Combined decorator for bio validation and documentation
+ */
+export function IsBioField(options?: ApiPropertyOptions) {
+  return applyDecorators(
+    ApiPropertyOptional({
+      description: 'User biography (max 500 characters)',
+      example:
+        'Software developer passionate about creating amazing user experiences.',
+      maxLength: 500,
+      ...options,
+    }),
+    IsOptional(),
+    IsString(),
+    MaxLength(500, { message: 'Bio cannot exceed 500 characters' }),
+  );
+}
+
+/**
+ * Validates an avatar URL field with Swagger documentation
+ *
+ * @param options - Swagger API property options
+ * @returns Combined decorator for avatar URL validation and documentation
+ */
+export function IsAvatarUrlField(options?: ApiPropertyOptions) {
+  return applyDecorators(
+    ApiPropertyOptional({
+      description: 'Avatar URL (max 255 characters)',
+      example: 'https://example.com/avatar.jpg',
+      maxLength: 255,
+      format: 'uri',
+      ...options,
+    }),
+    IsOptional(),
+    IsString(),
+    MaxLength(255, { message: 'Avatar URL cannot exceed 255 characters' }),
+    IsUrl({}, { message: 'Avatar URL must be a valid URL' }),
+  );
+}
+
+/**
+ * Validates a search term field with Swagger documentation
+ *
+ * @param options - Swagger API property options
+ * @returns Combined decorator for search term validation and documentation
+ */
+export function IsSearchTermField(options?: ApiPropertyOptions) {
+  return applyDecorators(
+    ApiProperty({
+      description: 'Search term (1-100 characters)',
+      example: 'john doe',
+      minLength: 1,
+      maxLength: 100,
+      ...options,
+    }),
+    IsString(),
+    IsNotEmpty({ message: 'Search term cannot be empty' }),
+    MinLength(1, { message: 'Search term must be at least 1 character long' }),
+    MaxLength(100, { message: 'Search term cannot exceed 100 characters' }),
+  );
+}
+
+/**
+ * Validates an ISO 8601 date field with Swagger documentation
+ *
+ * @param options - Swagger API property options
+ * @returns Combined decorator for ISO date validation and documentation
+ */
+export function IsISODateField(options?: ApiPropertyOptions) {
+  return applyDecorators(
+    ApiPropertyOptional({
+      description: 'ISO 8601 date string',
+      example: '2023-07-19T00:00:00.000Z',
+      format: 'date-time',
+      ...options,
+    }),
+    IsOptional(),
+    IsISO8601({}, { message: 'Date must be a valid ISO 8601 date string' }),
+  );
+}
+
+/**
+ * Validates a date range with from and to dates
+ *
+ * @param fromField - Name of the from date field
+ * @param toField - Name of the to date field
+ * @param validationOptions - Validation options
+ * @returns Validation decorator
+ */
+export function IsValidDateRange(
+  fromField: string,
+  toField: string,
+  validationOptions?: ValidationOptions,
+) {
+  return function (object: object, propertyName: string) {
+    registerDecorator({
+      name: 'isValidDateRange',
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          const obj = args.object as any;
+          const fromDate = obj[fromField];
+          const toDate = obj[toField];
+
+          if (!fromDate || !toDate) {
+            return true; // Let individual field validation handle required checks
+          }
+
+          const from = new Date(fromDate);
+          const to = new Date(toDate);
+
+          return from <= to;
+        },
+        defaultMessage(args: ValidationArguments) {
+          return `${toField} must be after ${fromField}`;
+        },
+      },
+    });
+  };
+}
+
+/**
+ * Validates a log level enum field with Swagger documentation
+ *
+ * @param logLevelEnum - The log level enum object
+ * @param options - Swagger API property options
+ * @returns Combined decorator for log level validation and documentation
+ */
+export function IsLogLevelField(
+  logLevelEnum: any,
+  options?: ApiPropertyOptions,
+) {
+  return applyDecorators(
+    ApiPropertyOptional({
+      description: 'Log level filter',
+      example: 'info',
+      enum: logLevelEnum,
+      ...options,
+    }),
+    IsOptional(),
+    IsString(),
   );
 }
 

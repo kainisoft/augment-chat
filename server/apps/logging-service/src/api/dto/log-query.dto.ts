@@ -1,7 +1,12 @@
-import { IsEnum, IsISO8601, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { LogLevel } from '../../kafka/log-message.interface';
 import { PaginationQueryDto, SearchResponseDto } from '@app/dtos';
+import {
+  IsISODateField,
+  IsLogLevelField,
+  IsValidDateRange,
+} from '@app/validation';
 
 /**
  * DTO for log query requests
@@ -31,18 +36,21 @@ export class LogQueryDto extends PaginationQueryDto {
 
   /**
    * Start timestamp for log query (ISO format)
-   * @example "2023-07-19T00:00:00.000Z"
    */
-  @IsOptional()
-  @IsISO8601({}, { message: 'From date must be a valid ISO 8601 date string' })
+  @IsISODateField({
+    description: 'Start timestamp for log query (ISO format)',
+    example: '2023-07-19T00:00:00.000Z',
+  })
   from?: string;
 
   /**
    * End timestamp for log query (ISO format)
-   * @example "2023-07-19T23:59:59.999Z"
    */
-  @IsOptional()
-  @IsISO8601({}, { message: 'To date must be a valid ISO 8601 date string' })
+  @IsISODateField({
+    description: 'End timestamp for log query (ISO format)',
+    example: '2023-07-19T23:59:59.999Z',
+  })
+  @IsValidDateRange('from', 'to')
   to?: string;
 
   /**
