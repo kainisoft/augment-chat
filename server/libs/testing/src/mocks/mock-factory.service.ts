@@ -37,16 +37,18 @@ export class MockFactoryService {
    * @param overrides - Optional overrides for specific fields
    * @returns Mock user data object
    */
-  createMockUser(overrides: Partial<{
-    id: string;
-    email: string;
-    username: string;
-    displayName: string;
-    isActive: boolean;
-    isVerified: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  }> = {}) {
+  createMockUser(
+    overrides: Partial<{
+      id: string;
+      email: string;
+      username: string;
+      displayName: string;
+      isActive: boolean;
+      isVerified: boolean;
+      createdAt: Date;
+      updatedAt: Date;
+    }> = {},
+  ) {
     const now = new Date();
     return {
       id: overrides.id || this.generateUUID(),
@@ -66,14 +68,16 @@ export class MockFactoryService {
    * @param overrides - Optional overrides for specific fields
    * @returns Mock auth data object
    */
-  createMockAuthData(overrides: Partial<{
-    userId: string;
-    email: string;
-    sessionId: string;
-    accessToken: string;
-    refreshToken: string;
-    expiresIn: number;
-  }> = {}) {
+  createMockAuthData(
+    overrides: Partial<{
+      userId: string;
+      email: string;
+      sessionId: string;
+      accessToken: string;
+      refreshToken: string;
+      expiresIn: number;
+    }> = {},
+  ) {
     return {
       userId: overrides.userId || this.generateUUID(),
       email: overrides.email || `test${Date.now()}@example.com`,
@@ -100,8 +104,12 @@ export class MockFactoryService {
       ...payload,
     };
 
-    const encodedHeader = Buffer.from(JSON.stringify(header)).toString('base64url');
-    const encodedPayload = Buffer.from(JSON.stringify(defaultPayload)).toString('base64url');
+    const encodedHeader = Buffer.from(JSON.stringify(header)).toString(
+      'base64url',
+    );
+    const encodedPayload = Buffer.from(JSON.stringify(defaultPayload)).toString(
+      'base64url',
+    );
     const signature = this.generateRandomString(43); // Mock signature
 
     return `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -113,14 +121,16 @@ export class MockFactoryService {
    * @param overrides - Optional overrides for specific fields
    * @returns Mock request object
    */
-  createMockRequest(overrides: Partial<{
-    ip: string;
-    user: any;
-    headers: Record<string, string>;
-    body: any;
-    params: Record<string, string>;
-    query: Record<string, string>;
-  }> = {}) {
+  createMockRequest(
+    overrides: Partial<{
+      ip: string;
+      user: any;
+      headers: Record<string, string>;
+      body: any;
+      params: Record<string, string>;
+      query: Record<string, string>;
+    }> = {},
+  ) {
     return {
       ip: overrides.ip || '127.0.0.1',
       user: overrides.user || null,
@@ -252,7 +262,8 @@ export class MockFactoryService {
    * @returns Random string
    */
   private generateRandomString(length: number): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -322,19 +333,34 @@ export class MockFactoryService {
    * @param overrides - Optional method overrides
    * @returns Mock TokenService with jest spies
    */
-  createMockTokenService(overrides: Partial<{
-    generateAccessToken: string;
-    generateRefreshToken: string;
-    validateToken: any;
-    revokeToken: boolean;
-    revokeAllUserTokens: boolean;
-  }> = {}) {
+  createMockTokenService(
+    overrides: Partial<{
+      generateAccessToken: string;
+      generateRefreshToken: string;
+      validateToken: any;
+      revokeToken: boolean;
+      revokeAllUserTokens: boolean;
+    }> = {},
+  ) {
     return {
-      generateAccessToken: jest.fn().mockResolvedValue(overrides.generateAccessToken || 'access-token'),
-      generateRefreshToken: jest.fn().mockResolvedValue(overrides.generateRefreshToken || 'refresh-token'),
-      validateToken: jest.fn().mockResolvedValue(overrides.validateToken || { sub: 'user-id', sessionId: 'session-id' }),
+      generateAccessToken: jest
+        .fn()
+        .mockResolvedValue(overrides.generateAccessToken || 'access-token'),
+      generateRefreshToken: jest
+        .fn()
+        .mockResolvedValue(overrides.generateRefreshToken || 'refresh-token'),
+      validateToken: jest
+        .fn()
+        .mockResolvedValue(
+          overrides.validateToken || {
+            sub: 'user-id',
+            sessionId: 'session-id',
+          },
+        ),
       revokeToken: jest.fn().mockResolvedValue(overrides.revokeToken ?? true),
-      revokeAllUserTokens: jest.fn().mockResolvedValue(overrides.revokeAllUserTokens ?? true),
+      revokeAllUserTokens: jest
+        .fn()
+        .mockResolvedValue(overrides.revokeAllUserTokens ?? true),
     };
   }
 
@@ -344,19 +370,29 @@ export class MockFactoryService {
    * @param overrides - Optional method overrides
    * @returns Mock SessionService with jest spies
    */
-  createMockSessionService(overrides: Partial<{
-    createSession: string;
-    getSession: any;
-    updateSession: boolean;
-    deleteSession: boolean;
-    deleteUserSessions: boolean;
-  }> = {}) {
+  createMockSessionService(
+    overrides: Partial<{
+      createSession: string;
+      getSession: any;
+      updateSession: boolean;
+      deleteSession: boolean;
+      deleteUserSessions: boolean;
+    }> = {},
+  ) {
     return {
-      createSession: jest.fn().mockResolvedValue(overrides.createSession || 'session-id'),
+      createSession: jest
+        .fn()
+        .mockResolvedValue(overrides.createSession || 'session-id'),
       getSession: jest.fn().mockResolvedValue(overrides.getSession || null),
-      updateSession: jest.fn().mockResolvedValue(overrides.updateSession ?? true),
-      deleteSession: jest.fn().mockResolvedValue(overrides.deleteSession ?? true),
-      deleteUserSessions: jest.fn().mockResolvedValue(overrides.deleteUserSessions ?? true),
+      updateSession: jest
+        .fn()
+        .mockResolvedValue(overrides.updateSession ?? true),
+      deleteSession: jest
+        .fn()
+        .mockResolvedValue(overrides.deleteSession ?? true),
+      deleteUserSessions: jest
+        .fn()
+        .mockResolvedValue(overrides.deleteUserSessions ?? true),
     };
   }
 
@@ -404,19 +440,25 @@ export class MockFactoryService {
    * @param overrides - Optional method overrides
    * @returns Mock DatabaseService with jest spies
    */
-  createMockDatabaseService(overrides: Partial<{
-    executeResult: any;
-    shouldThrow: boolean;
-    errorMessage: string;
-  }> = {}) {
+  createMockDatabaseService(
+    overrides: Partial<{
+      executeResult: any;
+      shouldThrow: boolean;
+      errorMessage: string;
+    }> = {},
+  ) {
     const mockExecute = jest.fn();
 
     if (overrides.shouldThrow) {
-      mockExecute.mockRejectedValue(new Error(overrides.errorMessage || 'Database connection error'));
+      mockExecute.mockRejectedValue(
+        new Error(overrides.errorMessage || 'Database connection error'),
+      );
     } else {
-      mockExecute.mockResolvedValue(overrides.executeResult || {
-        rows: [{ connected: 1 }],
-      });
+      mockExecute.mockResolvedValue(
+        overrides.executeResult || {
+          rows: [{ connected: 1 }],
+        },
+      );
     }
 
     return {
@@ -435,16 +477,20 @@ export class MockFactoryService {
    * @param overrides - Optional method overrides
    * @returns Mock RedisHealthIndicator with jest spies
    */
-  createMockRedisHealthIndicator(overrides: Partial<{
-    status: string;
-    responseTime: number;
-    shouldThrow: boolean;
-    errorMessage: string;
-  }> = {}) {
+  createMockRedisHealthIndicator(
+    overrides: Partial<{
+      status: string;
+      responseTime: number;
+      shouldThrow: boolean;
+      errorMessage: string;
+    }> = {},
+  ) {
     const mockCheck = jest.fn();
 
     if (overrides.shouldThrow) {
-      mockCheck.mockRejectedValue(new Error(overrides.errorMessage || 'Redis connection error'));
+      mockCheck.mockRejectedValue(
+        new Error(overrides.errorMessage || 'Redis connection error'),
+      );
     } else {
       mockCheck.mockResolvedValue({
         redis: {
@@ -465,15 +511,31 @@ export class MockFactoryService {
    * @param overrides - Optional method overrides
    * @returns Mock UserRepository with jest spies
    */
-  createMockUserRepository(overrides: Partial<{
-    findByEmail: any;
-    findById: any;
-    save: any;
-  }> = {}) {
+  createMockUserRepository(
+    overrides: Partial<{
+      findByEmail: any;
+      findById: any;
+      save: any;
+      searchByUsernameOrDisplayName: any;
+      findByUsername: any;
+      create: any;
+      update: any;
+      delete: any;
+    }> = {},
+  ) {
     return {
       findByEmail: jest.fn().mockResolvedValue(overrides.findByEmail || null),
       findById: jest.fn().mockResolvedValue(overrides.findById || null),
       save: jest.fn().mockResolvedValue(overrides.save || null),
+      searchByUsernameOrDisplayName: jest
+        .fn()
+        .mockResolvedValue(overrides.searchByUsernameOrDisplayName || []),
+      findByUsername: jest
+        .fn()
+        .mockResolvedValue(overrides.findByUsername || null),
+      create: jest.fn().mockResolvedValue(overrides.create || null),
+      update: jest.fn().mockResolvedValue(overrides.update || null),
+      delete: jest.fn().mockResolvedValue(overrides.delete || true),
     };
   }
 
@@ -483,11 +545,92 @@ export class MockFactoryService {
    * @param overrides - Optional method overrides
    * @returns Mock UserServiceService with jest spies
    */
-  createMockUserServiceService(overrides: Partial<{
-    getHello: string;
-  }> = {}) {
+  createMockUserServiceService(
+    overrides: Partial<{
+      getHello: string;
+    }> = {},
+  ) {
     return {
       getHello: jest.fn().mockReturnValue(overrides.getHello || 'Hello World!'),
+    };
+  }
+
+  /**
+   * Create mock EventBus for CQRS testing
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock EventBus with jest spies
+   */
+  createMockEventBus(
+    overrides: {
+      publish?: any;
+      publishAll?: any;
+    } = {},
+  ) {
+    return {
+      publish: jest.fn().mockResolvedValue(overrides.publish || undefined),
+      publishAll: jest
+        .fn()
+        .mockResolvedValue(overrides.publishAll || undefined),
+    };
+  }
+
+  /**
+   * Create mock LogQueryService for logging service testing
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock LogQueryService with jest spies
+   */
+  createMockLogQueryService(
+    overrides: {
+      queryLogs?: any;
+      getLogById?: any;
+      getLogStats?: any;
+    } = {},
+  ) {
+    return {
+      queryLogs: jest.fn().mockResolvedValue(
+        overrides.queryLogs || {
+          logs: [],
+          total: 0,
+          page: 1,
+          limit: 10,
+          totalPages: 0,
+        },
+      ),
+      getLogById: jest.fn().mockResolvedValue(overrides.getLogById || null),
+      getLogStats: jest.fn().mockResolvedValue(
+        overrides.getLogStats || {
+          totalLogs: 0,
+          errorCount: 0,
+          warningCount: 0,
+          infoCount: 0,
+        },
+      ),
+    };
+  }
+
+  /**
+   * Create mock LogStorageService for logging service testing
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock LogStorageService with jest spies
+   */
+  createMockLogStorageService(
+    overrides: {
+      storeLogs?: any;
+      storeLog?: any;
+      deleteLogs?: any;
+    } = {},
+  ) {
+    return {
+      storeLogs: jest
+        .fn()
+        .mockResolvedValue(overrides.storeLogs || { stored: 1 }),
+      storeLog: jest.fn().mockResolvedValue(overrides.storeLog || true),
+      deleteLogs: jest
+        .fn()
+        .mockResolvedValue(overrides.deleteLogs || { deleted: 0 }),
     };
   }
 }
