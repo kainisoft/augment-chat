@@ -6,6 +6,7 @@ import {
   IsUsernameField,
   IsDisplayNameField,
 } from '@app/validation';
+import { GraphQLSearchPaginationInput } from '@app/dtos';
 
 /**
  * Create User Input
@@ -106,26 +107,10 @@ export class UpdateUserStatusInput {
  * Search Users Input
  *
  * Input type for searching users.
+ * Extends the shared GraphQL search pagination input for consistency.
  */
 @InputType({ description: 'Input for searching users' })
-export class SearchUsersInput {
-  @Field(() => String, { description: 'Search term' })
-  @IsString()
-  searchTerm: string;
-
-  @Field(() => Number, {
-    nullable: true,
-    description: 'Maximum number of results to return',
-    defaultValue: 10,
-  })
-  @IsOptional()
-  limit?: number;
-
-  @Field(() => Number, {
-    nullable: true,
-    description: 'Number of results to skip',
-    defaultValue: 0,
-  })
-  @IsOptional()
-  offset?: number;
+export class SearchUsersInput extends GraphQLSearchPaginationInput {
+  // searchTerm is inherited from GraphQLSearchPaginationInput
+  // limit and offset are inherited with proper validation
 }

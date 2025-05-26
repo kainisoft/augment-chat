@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { HistoryResponseDto } from '@app/dtos';
 
 /**
  * Session History Entry DTO
@@ -74,18 +75,13 @@ export class SessionHistoryEntryDto {
 /**
  * Session History DTO
  *
- * Contains a list of historical sessions
+ * Contains a list of historical sessions.
+ * Extends the shared history response DTO for consistent pagination behavior.
  */
-export class SessionHistoryDto {
+export class SessionHistoryDto extends HistoryResponseDto<SessionHistoryEntryDto> {
   @ApiProperty({
     description: 'List of historical sessions',
     type: [SessionHistoryEntryDto],
   })
-  sessions: SessionHistoryEntryDto[];
-
-  @ApiProperty({
-    description: 'Total number of historical sessions',
-    example: 10,
-  })
-  totalCount: number;
+  declare items: SessionHistoryEntryDto[];
 }

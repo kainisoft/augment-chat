@@ -1,19 +1,14 @@
-import {
-  IsEnum,
-  IsInt,
-  IsISO8601,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { IsEnum, IsISO8601, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { LogLevel } from '../../kafka/log-message.interface';
+import { PaginationQueryDto, SearchResponseDto } from '@app/dtos';
 
 /**
  * DTO for log query requests
+ *
+ * Extends the shared pagination query DTO for consistent pagination behavior.
  */
-export class LogQueryDto {
+export class LogQueryDto extends PaginationQueryDto {
   /**
    * Service name to filter logs by
    * @example "auth-service"
@@ -59,71 +54,42 @@ export class LogQueryDto {
   @Transform(({ value }: { value: string }) => value?.trim())
   query?: string;
 
-  /**
-   * Maximum number of logs to return
-   * @example 100
-   */
-  @IsOptional()
-  @IsInt({ message: 'Limit must be an integer' })
-  @Min(1, { message: 'Limit must be at least 1' })
-  @Max(1000, { message: 'Limit cannot exceed 1000' })
-  @Type(() => Number)
-  limit?: number;
-
-  /**
-   * Number of logs to skip (for pagination)
-   * @example 0
-   */
-  @IsOptional()
-  @IsInt({ message: 'Offset must be an integer' })
-  @Min(0, { message: 'Offset must be at least 0' })
-  @Type(() => Number)
-  offset?: number;
+  // limit and offset are inherited from PaginationQueryDto with proper validation
 }
 
 /**
  * DTO for log query response
+ *
+ * Extends the shared search response DTO for consistent pagination behavior.
  */
-export class LogQueryResponseDto {
-  /**
-   * Array of log messages
-   */
-  logs: Record<string, any>[];
-
-  /**
-   * Total number of logs matching the query
-   */
-  total: number;
-
-  /**
-   * Maximum number of logs returned
-   */
-  limit: number;
-
-  /**
-   * Number of logs skipped
-   */
-  offset: number;
-
+export class LogQueryResponseDto extends SearchResponseDto<
+  Record<string, any>
+> {
   /**
    * Create a new log query response
    * @param logs Array of log messages
    * @param total Total number of logs matching the query
    * @param limit Maximum number of logs returned
    * @param offset Number of logs skipped
+   * @param searchTerm Search term used (optional)
+   * @param searchTime Time taken for search in milliseconds
    * @returns Log query response
    */
-  static create(
+  static createLogResponse(
     logs: Record<string, any>[],
     total: number,
     limit: number,
     offset: number,
+    searchTerm?: string,
+    searchTime: number = 0,
   ): LogQueryResponseDto {
-    const response = new LogQueryResponseDto();
-    response.logs = logs;
-    response.total = total;
-    response.limit = limit;
-    response.offset = offset;
-    return response;
+    return SearchResponseDto.createSearch(
+      logs,
+      total,
+      limit,
+      offset,
+      searchTerm || '',
+      searchTime,
+    ) as LogQueryResponseDto;
   }
 }

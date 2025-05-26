@@ -98,11 +98,19 @@ mutation AddFriend($targetUserId: ID!) {
 ## Dependencies
 
 ### Shared Modules
-- `@app/dtos` - Shared data transfer objects
+- `@app/dtos` - Shared data transfer objects (GraphQL pagination, error responses)
 - `@app/validation` - Shared validation decorators
 - `@app/security` - Security utilities and guards
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities
+
+#### DTO Standardization
+The User Service uses standardized DTOs from `@app/dtos` for consistent pagination and response patterns:
+
+- **GraphQL Pagination**: `SearchUsersInput` extends `GraphQLSearchPaginationInput`
+- **List Responses**: `UserConnection` extends `GraphQLListResponse<UserType>`
+- **Search Responses**: `UserSearchResult` extends `GraphQLSearchResponse<UserType>`
+- **Error Handling**: Consistent error response format across all operations
 
 ### External Dependencies
 - **PostgreSQL**: User data storage via Drizzle ORM
@@ -215,7 +223,7 @@ describe('UserResolver', () => {
 
   beforeEach(async () => {
     mockFactory = new MockFactoryService();
-    
+
     const module = await Test.createTestingModule({
       providers: [
         UserResolver,
@@ -282,7 +290,7 @@ export class UpdateUserProfileHandler {
     const user = await this.userRepository.findById(command.userId);
     user.updateProfile(command.profileData);
     await this.userRepository.save(user);
-    
+
     // Publish domain event
     await this.eventBus.publish(new UserProfileUpdatedEvent(user));
   }

@@ -49,6 +49,14 @@ The service follows Domain-Driven Design (DDD) and CQRS patterns:
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities
 
+#### DTO Standardization
+The Auth Service uses standardized DTOs from `@app/dtos` for consistent response patterns:
+
+- **Session Lists**: `SessionListDto` extends `ListResponseDto<SessionInfoDto>`
+- **Session History**: `SessionHistoryDto` extends `HistoryResponseDto<SessionHistoryEntryDto>`
+- **Error Handling**: Consistent error response format across all operations
+- **Pagination**: Standardized pagination metadata for session management
+
 ### External Dependencies
 - **PostgreSQL**: User data storage via Drizzle ORM
 - **Redis**: Session storage and caching

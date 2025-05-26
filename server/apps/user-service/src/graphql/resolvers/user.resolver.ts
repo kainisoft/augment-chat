@@ -126,8 +126,14 @@ export class UserResolver {
       );
 
       return {
-        users: users as UserType[],
+        items: users as UserType[],
         totalCount: users.length,
+        count: users.length,
+        hasMore: false,
+        offset: 0,
+        limit: input.limit || 10,
+        searchTerm: input.searchTerm,
+        searchTime: 0,
       };
     } catch (error) {
       this.errorLogger.error(
