@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LoggingService } from '@app/logging';
-import { RateLimitGuard } from '../rate-limit';
+import { RateLimitGuard } from '@app/security';
 import {
   RegisterDto,
   LoginDto,

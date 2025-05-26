@@ -9,13 +9,13 @@ import { RedisModule } from '@app/redis';
 import { SessionModule as RedisSessionModule } from '@app/redis/session';
 import { CacheModule as RedisCacheModule } from '@app/redis/cache';
 import { IamModule } from '@app/iam';
+import { SecurityModule } from '@app/security';
 
 // Service Controllers and Services
 import {
   AuthServiceHealthController,
   AuthServiceHealthService,
 } from './health/health.controller';
-import { RateLimitService, RateLimitGuard } from './rate-limit';
 
 // Infrastructure Modules
 import { RepositoryModule } from './infrastructure/repositories/repository.module';
@@ -247,6 +247,9 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
       refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
       isGlobal: true,
     }),
+
+    // Import SecurityModule for shared security utilities
+    SecurityModule,
   ],
   controllers: [
     // Health monitoring controller
@@ -255,15 +258,6 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
   providers: [
     // Health monitoring service
     AuthServiceHealthService,
-
-    // Security services
-    RateLimitService,
-    RateLimitGuard,
-  ],
-  exports: [
-    // Export security services for potential use by other modules
-    RateLimitService,
-    RateLimitGuard,
   ],
 })
 export class AuthServiceModule {}

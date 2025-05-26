@@ -13,7 +13,7 @@ import { FastifyRequest } from 'fastify';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoggingService } from '@app/logging';
 import { Public } from '@app/iam';
-import { RateLimit, RateLimitGuard } from '../rate-limit';
+import { RateLimit, RateLimitGuard } from '@app/security';
 import {
   RegisterDto,
   LoginDto,
@@ -56,7 +56,7 @@ export class AuthController {
   @Post('register')
   @Public()
   @UseGuards(RateLimitGuard)
-  @RateLimit('registration', (req) => req.ip)
+  @RateLimit('registration')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiBody({ type: RegisterDto })
   @ApiResponse({
@@ -104,7 +104,7 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @UseGuards(RateLimitGuard)
-  @RateLimit('login', (req) => req.ip)
+  @RateLimit('login')
   @ApiOperation({ summary: 'Login a user' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({
@@ -227,7 +227,7 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @UseGuards(RateLimitGuard)
-  @RateLimit('password-reset', (req) => req.ip)
+  @RateLimit('password-reset')
   @ApiOperation({ summary: 'Initiate password reset' })
   @ApiBody({ type: ForgotPasswordDto })
   @ApiResponse({

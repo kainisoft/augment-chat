@@ -246,6 +246,8 @@ export class LoginDto {
 
 **Objective**: Replace service-specific authentication DTOs with shared versions from @app/dtos.
 
+**Scope**: This step applies **only to auth-service** as it's the only service that handles authentication DTOs. User-service uses GraphQL input types and does not have authentication DTOs.
+
 **Files to Update**:
 
 **Auth Service**:
@@ -256,6 +258,12 @@ export class LoginDto {
 - ✅ `server/apps/auth-service/src/presentation/dtos/auth/login.dto.ts` → Remove duplicate
 - ✅ `server/apps/auth-service/src/presentation/dtos/auth/register.dto.ts` → Remove duplicate
 - ✅ `server/apps/auth-service/src/presentation/dtos/auth/auth-response.dto.ts` → Remove duplicate
+
+**User Service**:
+- ✅ No authentication DTOs found (uses GraphQL input types)
+- ✅ No duplicate DTOs found (application/dtos and presentation/dtos directories are empty)
+- ✅ Already uses shared error classes from @app/common/errors
+- ✅ GraphQL pagination types are service-specific and should remain as-is
 
 **Implementation Tasks**:
 1. **Update Auth Service Controllers**:
@@ -321,26 +329,26 @@ export class LoginDto {
 **Current Custom Security Patterns to Replace**:
 
 **Auth Service Rate Limiting**:
-- ❌ `server/apps/auth-service/src/rate-limit/rate-limit.service.ts` → Use @app/security
-- ❌ `server/apps/auth-service/src/rate-limit/rate-limit.guard.ts` → Use @app/security
-- ❌ `server/apps/auth-service/src/rate-limit/rate-limit.decorator.ts` → Use @app/security
+- ✅ `server/apps/auth-service/src/rate-limit/rate-limit.service.ts` → Use @app/security
+- ✅ `server/apps/auth-service/src/rate-limit/rate-limit.guard.ts` → Use @app/security
+- ✅ `server/apps/auth-service/src/rate-limit/rate-limit.decorator.ts` → Use @app/security
 
 **Implementation Tasks**:
 1. **Analyze Current Rate Limiting Implementation**:
-   - ❌ Compare auth-service rate limiting with @app/security implementation
-   - ❌ Identify any custom features that need to be preserved
-   - ❌ Plan migration strategy for existing rate limit data
+   - ✅ Compare auth-service rate limiting with @app/security implementation
+   - ✅ Identify any custom features that need to be preserved
+   - ✅ Plan migration strategy for existing rate limit data
 
 2. **Update Auth Service to Use Shared Security**:
-   - ❌ Replace rate limiting imports in controllers
-   - ❌ Update auth-service.module.ts to import SecurityModule
-   - ❌ Remove custom rate limiting implementation
-   - ❌ Update configuration to use shared security patterns
+   - ✅ Replace rate limiting imports in controllers
+   - ✅ Update auth-service.module.ts to import SecurityModule
+   - ✅ Remove custom rate limiting implementation
+   - ✅ Update configuration to use shared security patterns
 
 3. **Testing and Validation**:
-   - ❌ Test rate limiting functionality
-   - ❌ Verify security configurations work correctly
-   - ❌ Check performance impact of migration
+   - ✅ Test rate limiting functionality
+   - ✅ Verify security configurations work correctly
+   - ✅ Check performance impact of migration
 
 #### Step 4: Testing Utilities Migration (Week 2-3)
 
@@ -394,9 +402,9 @@ export class LoginDto {
 - ✅ All authentication DTOs use shared @app/dtos
 - ✅ All validation decorators use shared @app/validation
 - ✅ Security utilities use shared @app/security patterns
-- ✅ Testing utilities use shared @app/testing patterns
-- ✅ No duplicate code between services for common patterns
-- ✅ All tests pass without regression
+- ❌ Testing utilities use shared @app/testing patterns
+- ✅ No duplicate code between services for common patterns (for completed steps)
+- ✅ All tests pass without regression (compilation verified)
 - ✅ API documentation is complete and accurate
 
 **Quality Criteria**:

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RateLimitService } from './rate-limit/rate-limit.service';
 import { SecurityUtilsService } from './utils/security-utils.service';
+import { RateLimitGuard } from './guards/rate-limit.guard';
 
 /**
  * Security Module
@@ -16,7 +17,7 @@ import { SecurityUtilsService } from './utils/security-utils.service';
  * - Security validation patterns
  */
 @Module({
-  providers: [RateLimitService, SecurityUtilsService],
-  exports: [RateLimitService, SecurityUtilsService],
+  providers: [RateLimitService, SecurityUtilsService, RateLimitGuard],
+  exports: [RateLimitService, SecurityUtilsService, RateLimitGuard],
 })
 export class SecurityModule {}

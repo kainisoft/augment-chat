@@ -9,3 +9,4 @@ export * from './security.module';
 export * from './decorators/rate-limit.decorator';
 export * from './rate-limit/rate-limit.service';
 export * from './utils/security-utils.service';
+export * from './guards';

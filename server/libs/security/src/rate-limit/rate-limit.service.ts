@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RedisService } from '@app/redis';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { RateLimitConfig } from '../decorators/rate-limit.decorator';
+import { FastifyRequest } from 'fastify';
 
 /**
  * Rate Limit Service
@@ -148,7 +149,7 @@ export class RateLimitService {
         this.redisService.del(blockKey),
       ]);
 
-      this.loggingService.info(`Reset rate limit for ${key}`, 'reset', { key });
+      this.loggingService.log(`Reset rate limit for ${key}`, 'reset', { key });
     } catch (error) {
       this.errorLogger.error(
         error instanceof Error ? error : new Error(String(error)),
@@ -234,7 +235,7 @@ export class RateLimitService {
    * @param action - The action being rate limited
    * @returns Generated key
    */
-  generateKey(req: any, action: string): string {
+  generateKey(req: FastifyRequest, action: string): string {
     // Try to get user ID first, fallback to IP
     const userId = req.user?.id || req.user?.sub;
     if (userId) {
@@ -242,7 +243,7 @@ export class RateLimitService {
     }
 
     // Fallback to IP address
-    const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+    const ip = req.ip || 'unknown';
     return `ip:${ip}:${action}`;
   }
 }

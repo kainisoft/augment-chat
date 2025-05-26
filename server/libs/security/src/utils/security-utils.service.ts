@@ -241,17 +241,19 @@ export class SecurityUtilsService {
     const forwarded = req.headers['x-forwarded-for'];
     if (forwarded) {
       // Take the first IP if multiple are present
-      return forwarded.split(',')[0].trim();
+      const forwardedStr = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+      return forwardedStr.split(',')[0].trim();
     }
 
     // Check for real IP header
     const realIP = req.headers['x-real-ip'];
     if (realIP) {
-      return realIP;
+      const realIPStr = Array.isArray(realIP) ? realIP[0] : realIP;
+      return realIPStr;
     }
 
-    // Fallback to connection remote address
-    return req.connection?.remoteAddress || req.ip || 'unknown';
+    // Fallback to request IP or unknown
+    return req.ip || 'unknown';
   }
 
   /**

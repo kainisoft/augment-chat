@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { AuthCqrsModule } from '../auth-cqrs.module';
 import { TokenModule } from '../token/token.module';
 import { SessionModule } from '../session/session.module';
-import { RateLimitService, RateLimitGuard } from '../rate-limit';
+
 import { RepositoryModule } from '../infrastructure/repositories/repository.module';
 
 /**
@@ -23,7 +23,7 @@ import { RepositoryModule } from '../infrastructure/repositories/repository.modu
     RepositoryModule,
   ],
   controllers: [],
-  providers: [AuthService, RateLimitService, RateLimitGuard],
+  providers: [AuthService],
   exports: [AuthService],
 })
 export class AuthModule {}

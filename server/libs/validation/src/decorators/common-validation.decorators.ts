@@ -11,7 +11,11 @@ import {
   Matches,
 } from 'class-validator';
 import { applyDecorators } from '@nestjs/common';
-import { ApiProperty, ApiPropertyOptions } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  ApiPropertyOptions,
+} from '@nestjs/swagger';
 
 /**
  * Common Validation Decorators
@@ -149,9 +153,8 @@ export function IsOptionalStringField(
   options?: ApiPropertyOptions,
 ) {
   return applyDecorators(
-    ApiProperty({
+    ApiPropertyOptional({
       description: `Optional string field (max ${maxLength} characters)`,
-      required: false,
       maxLength,
       ...options,
     }),
