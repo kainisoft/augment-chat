@@ -4,6 +4,14 @@ import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { RateLimitConfig } from '../decorators/rate-limit.decorator';
 import { FastifyRequest } from 'fastify';
 
+// Extend FastifyRequest to include user property
+interface AuthenticatedRequest extends FastifyRequest {
+  user?: {
+    id?: string;
+    sub?: string;
+  };
+}
+
 /**
  * Rate Limit Service
  *
@@ -235,7 +243,7 @@ export class RateLimitService {
    * @param action - The action being rate limited
    * @returns Generated key
    */
-  generateKey(req: FastifyRequest, action: string): string {
+  generateKey(req: AuthenticatedRequest, action: string): string {
     // Try to get user ID first, fallback to IP
     const userId = req.user?.id || req.user?.sub;
     if (userId) {
