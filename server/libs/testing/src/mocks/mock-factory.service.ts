@@ -159,6 +159,7 @@ export class MockFactoryService {
     return {
       setContext: jest.fn(),
       debug: jest.fn(),
+      log: jest.fn(),
       info: jest.fn(),
       warn: jest.fn(),
       error: jest.fn(),
@@ -276,14 +277,16 @@ export class MockFactoryService {
    * @param overrides - Optional overrides for specific fields
    * @returns Mock pagination metadata
    */
-  createMockPaginationMeta(overrides: Partial<{
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  }> = {}) {
+  createMockPaginationMeta(
+    overrides: Partial<{
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    }> = {},
+  ) {
     const page = overrides.page || 1;
     const limit = overrides.limit || 10;
     const total = overrides.total || 100;
@@ -296,6 +299,195 @@ export class MockFactoryService {
       totalPages,
       hasNext: overrides.hasNext ?? page < totalPages,
       hasPrev: overrides.hasPrev ?? page > 1,
+    };
+  }
+
+  /**
+   * Create mock ConfigService
+   *
+   * @param overrides - Optional configuration overrides
+   * @returns Mock ConfigService with jest spies
+   */
+  createMockConfigService(overrides: Record<string, any> = {}) {
+    return {
+      get: jest.fn().mockImplementation((key: string) => {
+        return overrides[key] ?? 900; // Default value for auth service
+      }),
+    };
+  }
+
+  /**
+   * Create mock TokenService (Auth Service specific)
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock TokenService with jest spies
+   */
+  createMockTokenService(overrides: Partial<{
+    generateAccessToken: string;
+    generateRefreshToken: string;
+    validateToken: any;
+    revokeToken: boolean;
+    revokeAllUserTokens: boolean;
+  }> = {}) {
+    return {
+      generateAccessToken: jest.fn().mockResolvedValue(overrides.generateAccessToken || 'access-token'),
+      generateRefreshToken: jest.fn().mockResolvedValue(overrides.generateRefreshToken || 'refresh-token'),
+      validateToken: jest.fn().mockResolvedValue(overrides.validateToken || { sub: 'user-id', sessionId: 'session-id' }),
+      revokeToken: jest.fn().mockResolvedValue(overrides.revokeToken ?? true),
+      revokeAllUserTokens: jest.fn().mockResolvedValue(overrides.revokeAllUserTokens ?? true),
+    };
+  }
+
+  /**
+   * Create mock SessionService (Auth Service specific)
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock SessionService with jest spies
+   */
+  createMockSessionService(overrides: Partial<{
+    createSession: string;
+    getSession: any;
+    updateSession: boolean;
+    deleteSession: boolean;
+    deleteUserSessions: boolean;
+  }> = {}) {
+    return {
+      createSession: jest.fn().mockResolvedValue(overrides.createSession || 'session-id'),
+      getSession: jest.fn().mockResolvedValue(overrides.getSession || null),
+      updateSession: jest.fn().mockResolvedValue(overrides.updateSession ?? true),
+      deleteSession: jest.fn().mockResolvedValue(overrides.deleteSession ?? true),
+      deleteUserSessions: jest.fn().mockResolvedValue(overrides.deleteUserSessions ?? true),
+    };
+  }
+
+  /**
+   * Create mock AuthService (for controller tests)
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock AuthService with jest spies
+   */
+  createMockAuthService(
+    overrides: Partial<{
+      register: any;
+      login: any;
+      logout: boolean;
+      refreshToken: any;
+      forgotPassword: boolean;
+      resetPassword: boolean;
+    }> = {},
+  ) {
+    const defaultAuthResponse = this.createMockAuthData();
+
+    return {
+      register: jest
+        .fn()
+        .mockResolvedValue(overrides.register || defaultAuthResponse),
+      login: jest
+        .fn()
+        .mockResolvedValue(overrides.login || defaultAuthResponse),
+      logout: jest.fn().mockResolvedValue(overrides.logout ?? true),
+      refreshToken: jest
+        .fn()
+        .mockResolvedValue(overrides.refreshToken || defaultAuthResponse),
+      forgotPassword: jest
+        .fn()
+        .mockResolvedValue(overrides.forgotPassword ?? true),
+      resetPassword: jest
+        .fn()
+        .mockResolvedValue(overrides.resetPassword ?? true),
+    };
+  }
+
+  /**
+   * Create mock DatabaseService (for health checks)
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock DatabaseService with jest spies
+   */
+  createMockDatabaseService(overrides: Partial<{
+    executeResult: any;
+    shouldThrow: boolean;
+    errorMessage: string;
+  }> = {}) {
+    const mockExecute = jest.fn();
+
+    if (overrides.shouldThrow) {
+      mockExecute.mockRejectedValue(new Error(overrides.errorMessage || 'Database connection error'));
+    } else {
+      mockExecute.mockResolvedValue(overrides.executeResult || {
+        rows: [{ connected: 1 }],
+      });
+    }
+
+    return {
+      drizzle: {
+        db: {
+          execute: mockExecute,
+        },
+        sql: jest.fn().mockImplementation((strings) => strings),
+      },
+    };
+  }
+
+  /**
+   * Create mock RedisHealthIndicator
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock RedisHealthIndicator with jest spies
+   */
+  createMockRedisHealthIndicator(overrides: Partial<{
+    status: string;
+    responseTime: number;
+    shouldThrow: boolean;
+    errorMessage: string;
+  }> = {}) {
+    const mockCheck = jest.fn();
+
+    if (overrides.shouldThrow) {
+      mockCheck.mockRejectedValue(new Error(overrides.errorMessage || 'Redis connection error'));
+    } else {
+      mockCheck.mockResolvedValue({
+        redis: {
+          status: overrides.status || 'up',
+          responseTime: overrides.responseTime || 5,
+        },
+      });
+    }
+
+    return {
+      check: mockCheck,
+    };
+  }
+
+  /**
+   * Create mock UserRepository (Auth Service specific)
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock UserRepository with jest spies
+   */
+  createMockUserRepository(overrides: Partial<{
+    findByEmail: any;
+    findById: any;
+    save: any;
+  }> = {}) {
+    return {
+      findByEmail: jest.fn().mockResolvedValue(overrides.findByEmail || null),
+      findById: jest.fn().mockResolvedValue(overrides.findById || null),
+      save: jest.fn().mockResolvedValue(overrides.save || null),
+    };
+  }
+
+  /**
+   * Create mock UserServiceService (for controller tests)
+   *
+   * @param overrides - Optional method overrides
+   * @returns Mock UserServiceService with jest spies
+   */
+  createMockUserServiceService(overrides: Partial<{
+    getHello: string;
+  }> = {}) {
+    return {
+      getHello: jest.fn().mockReturnValue(overrides.getHello || 'Hello World!'),
     };
   }
 }

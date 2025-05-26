@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TestDatabaseService } from './database/test-database.service';
 import { MockFactoryService } from './mocks/mock-factory.service';
+import { TestSetupService } from './builders/test-setup.service';
+import { ControllerTestBuilder } from './builders/controller-test.builder';
+import { ServiceTestBuilder } from './builders/service-test.builder';
+import { E2ETestSetupService } from './e2e/e2e-test-setup.service';
 
 /**
  * Testing Module
@@ -39,7 +43,21 @@ import { MockFactoryService } from './mocks/mock-factory.service';
  * ```
  */
 @Module({
-  providers: [TestDatabaseService, MockFactoryService],
-  exports: [TestDatabaseService, MockFactoryService],
+  providers: [
+    TestDatabaseService,
+    MockFactoryService,
+    TestSetupService,
+    ControllerTestBuilder,
+    ServiceTestBuilder,
+    E2ETestSetupService,
+  ],
+  exports: [
+    TestDatabaseService,
+    MockFactoryService,
+    TestSetupService,
+    ControllerTestBuilder,
+    ServiceTestBuilder,
+    E2ETestSetupService,
+  ],
 })
 export class TestingModule {}
