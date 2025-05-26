@@ -157,7 +157,10 @@
       "^@app/kafka(|/.*)$": "<rootDir>/libs/kafka/src/$1",
       "^@app/logging(|/.*)$": "<rootDir>/libs/logging/src/$1",
       "^@app/redis(|/.*)$": "<rootDir>/libs/redis/src/$1",
-      "^@app/graphql(|/.*)$": "<rootDir>/libs/graphql/src/$1"
+      "^@app/graphql(|/.*)$": "<rootDir>/libs/graphql/src/$1",
+      "^@app/validation(|/.*)$": "<rootDir>/libs/validation/src/$1",
+      "^@app/security(|/.*)$": "<rootDir>/libs/security/src/$1",
+      "^@app/dtos(|/.*)$": "<rootDir>/libs/dtos/src/$1"
     }
   }
 }
