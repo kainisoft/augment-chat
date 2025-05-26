@@ -249,36 +249,37 @@ export class LoginDto {
 **Files to Update**:
 
 **Auth Service**:
-- ❌ `server/apps/auth-service/src/auth/dto/login.dto.ts` → Replace with @app/dtos
-- ❌ `server/apps/auth-service/src/auth/dto/register.dto.ts` → Replace with @app/dtos
-- ❌ `server/apps/auth-service/src/auth/dto/refresh-token.dto.ts` → Replace with @app/dtos
-- ❌ `server/apps/auth-service/src/auth/dto/auth-response.dto.ts` → Replace with @app/dtos
-- ❌ `server/apps/auth-service/src/presentation/dtos/auth/login.dto.ts` → Remove duplicate
-- ❌ `server/apps/auth-service/src/presentation/dtos/auth/register.dto.ts` → Remove duplicate
-- ❌ `server/apps/auth-service/src/presentation/dtos/auth/auth-response.dto.ts` → Remove duplicate
+- ✅ `server/apps/auth-service/src/auth/dto/login.dto.ts` → Replace with @app/dtos
+- ✅ `server/apps/auth-service/src/auth/dto/register.dto.ts` → Replace with @app/dtos
+- ✅ `server/apps/auth-service/src/auth/dto/refresh-token.dto.ts` → Replace with @app/dtos
+- ✅ `server/apps/auth-service/src/auth/dto/auth-response.dto.ts` → Replace with @app/dtos
+- ✅ `server/apps/auth-service/src/presentation/dtos/auth/login.dto.ts` → Remove duplicate
+- ✅ `server/apps/auth-service/src/presentation/dtos/auth/register.dto.ts` → Remove duplicate
+- ✅ `server/apps/auth-service/src/presentation/dtos/auth/auth-response.dto.ts` → Remove duplicate
 
 **Implementation Tasks**:
 1. **Update Auth Service Controllers**:
-   - ❌ Replace imports in `server/apps/auth-service/src/auth/auth.controller.ts`
-   - ❌ Replace imports in `server/apps/auth-service/src/presentation/controllers/auth.controller.ts`
-   - ❌ Update import statements to use `@app/dtos`
-   - ❌ Verify API documentation still works correctly
+   - ✅ Replace imports in `server/apps/auth-service/src/auth/auth.controller.ts`
+   - ✅ Replace imports in `server/apps/auth-service/src/presentation/controllers/auth.controller.ts`
+   - ✅ Update import statements to use `@app/dtos`
+   - ✅ Verify API documentation still works correctly
 
 2. **Update Auth Service Services**:
-   - ❌ Replace imports in `server/apps/auth-service/src/auth/auth.service.ts`
-   - ❌ Update command handlers to use shared DTOs
-   - ❌ Verify type compatibility with existing code
+   - ✅ Replace imports in `server/apps/auth-service/src/auth/auth.service.ts`
+   - ✅ Update command handlers to use shared DTOs
+   - ✅ Verify type compatibility with existing code
+   - ✅ Added `tokenType: 'Bearer'` field to AuthResponseDto objects
 
 3. **Remove Duplicate Files**:
-   - ❌ Delete `server/apps/auth-service/src/auth/dto/` directory
-   - ❌ Delete `server/apps/auth-service/src/presentation/dtos/auth/` directory
-   - ❌ Update index files to remove exports
+   - ✅ Delete `server/apps/auth-service/src/auth/dto/` directory
+   - ✅ Delete `server/apps/auth-service/src/presentation/dtos/auth/` directory
+   - ✅ Update index files to remove exports
 
 4. **Testing and Validation**:
-   - ❌ Run auth-service unit tests
-   - ❌ Run auth-service integration tests
-   - ❌ Verify API endpoints still work correctly
-   - ❌ Check Swagger documentation generation
+   - ✅ Run auth-service unit tests (DTO imports working correctly)
+   - ✅ Run auth-service integration tests (DTO migration successful)
+   - ✅ Verify API endpoints still work correctly
+   - ✅ Check Swagger documentation generation
 
 #### Step 2: Validation Decorators Migration (Week 1-2)
 

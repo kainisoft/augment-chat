@@ -91,7 +91,7 @@ export class ResetPasswordDto {
     description: 'New password (min 8 chars, uppercase, lowercase, number)',
     example: 'NewPassword123',
   })
-  newPassword: string;
+  password: string;
 }
 
 /**

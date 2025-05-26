@@ -10,7 +10,7 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   AuthResponseDto,
-} from './dto';
+} from '@app/dtos';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -23,6 +23,7 @@ describe('AuthController', () => {
     email: 'test@example.com',
     sessionId: 'session-id',
     expiresIn: 900,
+    tokenType: 'Bearer',
   };
 
   const mockRequest = {
@@ -124,7 +125,7 @@ describe('AuthController', () => {
     });
 
     it('should return success: false if token, sessionId, or userId is missing', async () => {
-      const result = await controller.logout(undefined, undefined, undefined);
+      const result = await controller.logout('', '', '');
 
       expect(result).toEqual({ success: false });
       expect(authService.logout).not.toHaveBeenCalled();
@@ -137,7 +138,7 @@ describe('AuthController', () => {
         refreshToken: 'refresh-token',
       };
 
-      const result = await controller.refreshToken(refreshTokenDto);
+      const result = await controller.refreshToken(refreshTokenDto, mockRequest as any);
 
       expect(result).toEqual(mockAuthResponse);
       expect(authService.refreshToken).toHaveBeenCalledWith(refreshTokenDto);

@@ -21,7 +21,7 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   AuthResponseDto,
-} from './dto';
+} from '@app/dtos';
 import {
   RegisterUserCommand,
   LoginUserCommand,

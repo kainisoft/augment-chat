@@ -22,7 +22,7 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   AuthResponseDto,
-} from './dto';
+} from '@app/dtos';
 import { TokenType } from '@app/iam';
 
 /**
@@ -248,6 +248,7 @@ export class AuthService {
         email: user.getEmail().toString(),
         sessionId,
         expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
+        tokenType: 'Bearer',
       };
     } catch (error: any) {
       if (
@@ -417,6 +418,7 @@ export class AuthService {
       email: user.getEmail().toString(),
       sessionId,
       expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
+      tokenType: 'Bearer',
     };
   }
 }

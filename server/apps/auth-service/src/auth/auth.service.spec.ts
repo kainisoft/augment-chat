@@ -10,17 +10,16 @@ import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { LoggingService } from '@app/logging';
 import { User } from '../domain/models/user.entity';
-import { Email } from '../domain/models/value-objects/email.value-object';
+import { Email, UserId } from '@app/domain';
 import { Password } from '../domain/models/value-objects/password.value-object';
-import { UserId } from '../domain/models/value-objects/user-id.value-object';
-import { TokenType } from '../token/enums/token-type.enum';
+import { TokenType } from '@app/iam';
 import {
   RegisterDto,
   LoginDto,
   RefreshTokenDto,
   ForgotPasswordDto,
   ResetPasswordDto,
-} from './dto';
+} from '@app/dtos';
 
 describe('AuthService', () => {
   let service: AuthService;
