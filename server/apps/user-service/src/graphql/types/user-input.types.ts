@@ -1,13 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { UserStatusEnum } from '../../domain/models/value-objects/user-status.value-object';
+import { IsString, IsOptional, IsEnum, MaxLength } from 'class-validator';
 import {
-  IsString,
-  IsOptional,
-  IsUUID,
-  IsEnum,
-  MaxLength,
-  Matches,
-} from 'class-validator';
+  IsUUIDField,
+  IsUsernameField,
+  IsDisplayNameField,
+} from '@app/validation';
 
 /**
  * Create User Input
@@ -17,26 +15,29 @@ import {
 @InputType({ description: 'Input for creating a new user' })
 export class CreateUserInput {
   @Field(() => String, { description: 'Authentication ID from Auth Service' })
-  @IsString()
-  @IsUUID('4')
+  @IsUUIDField({
+    description: 'Authentication ID from Auth Service',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   authId: string;
 
   @Field(() => String, { description: 'Unique username' })
-  @IsString()
-  @Matches(/^[a-zA-Z0-9_-]+$/, {
-    message:
-      'Username can only contain letters, numbers, underscores, and hyphens',
+  @IsUsernameField({
+    description: 'Unique username',
+    example: 'john_doe',
   })
-  @MaxLength(50)
   username: string;
 
   @Field(() => String, {
     nullable: true,
     description: 'Display name shown to other users',
   })
-  @IsString()
   @IsOptional()
-  @MaxLength(100)
+  @IsDisplayNameField({
+    description: 'Display name shown to other users',
+    example: 'John Doe',
+    required: false,
+  })
   displayName?: string;
 }
 
@@ -48,17 +49,22 @@ export class CreateUserInput {
 @InputType({ description: 'Input for updating a user profile' })
 export class UpdateUserProfileInput {
   @Field(() => String, { description: 'User ID' })
-  @IsString()
-  @IsUUID('4')
+  @IsUUIDField({
+    description: 'User ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   userId: string;
 
   @Field(() => String, {
     nullable: true,
     description: 'Display name shown to other users',
   })
-  @IsString()
   @IsOptional()
-  @MaxLength(100)
+  @IsDisplayNameField({
+    description: 'Display name shown to other users',
+    example: 'John Doe',
+    required: false,
+  })
   displayName?: string;
 
   @Field(() => String, { nullable: true, description: 'User biography' })
@@ -85,8 +91,10 @@ export class UpdateUserProfileInput {
 @InputType({ description: 'Input for updating a user status' })
 export class UpdateUserStatusInput {
   @Field(() => String, { description: 'User ID' })
-  @IsString()
-  @IsUUID('4')
+  @IsUUIDField({
+    description: 'User ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   userId: string;
 
   @Field(() => UserStatusEnum, { description: 'New user status' })

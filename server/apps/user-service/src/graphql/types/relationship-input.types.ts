@@ -1,12 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsString,
-  IsUUID,
-  IsEnum,
-  IsOptional,
-  IsInt,
-  Min,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsInt, Min } from 'class-validator';
+import { IsUUIDField } from '@app/validation';
 import { RelationshipTypeEnum } from '../../domain/models/value-objects/relationship-type.value-object';
 import { RelationshipStatusEnum } from '../../domain/models/value-objects/relationship-status.value-object';
 
@@ -18,8 +12,10 @@ import { RelationshipStatusEnum } from '../../domain/models/value-objects/relati
 @InputType({ description: 'Input for creating a new relationship' })
 export class CreateRelationshipInput {
   @Field(() => String, { description: 'Target user ID' })
-  @IsString()
-  @IsUUID('4')
+  @IsUUIDField({
+    description: 'Target user ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   targetId: string;
 
   @Field(() => RelationshipTypeEnum, { description: 'Type of relationship' })
@@ -49,8 +45,10 @@ export class UpdateRelationshipInput {
 @InputType({ description: 'Input for getting user relationships' })
 export class GetUserRelationshipsInput {
   @Field(() => String, { description: 'User ID' })
-  @IsString()
-  @IsUUID('4')
+  @IsUUIDField({
+    description: 'User ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   userId: string;
 
   @Field(() => RelationshipTypeEnum, {

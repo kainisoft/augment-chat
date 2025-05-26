@@ -288,30 +288,31 @@ export class LoginDto {
 **Current Custom Validation Patterns to Replace**:
 
 **Auth Service**:
-- ❌ Email validation: `@IsEmail()` + `@ApiProperty()` → `@IsEmailField()`
-- ❌ Password validation: `@IsString()` + `@MinLength()` + `@Matches()` → `@IsStrongPasswordField()`
-- ❌ UUID validation: `@IsUUID()` → `@IsUUIDField()`
+- ✅ Email validation: `@IsEmail()` + `@ApiProperty()` → `@IsEmailField()` (Already using shared DTOs)
+- ✅ Password validation: `@IsString()` + `@MinLength()` + `@Matches()` → `@IsStrongPasswordField()` (Already using shared DTOs)
+- ✅ UUID validation: `@IsUUID()` → `@IsUUIDField()` (Already using shared DTOs)
 
 **User Service**:
-- ❌ Username validation: `@Matches(/^[a-zA-Z0-9_-]+$/)` → `@IsUsernameField()`
-- ❌ Display name validation: `@MaxLength(100)` → `@IsDisplayNameField()`
-- ❌ UUID validation: `@IsUUID('4')` → `@IsUUIDField()`
+- ✅ Username validation: `@Matches(/^[a-zA-Z0-9_-]+$/)` → `@IsUsernameField()`
+- ✅ Display name validation: `@MaxLength(100)` → `@IsDisplayNameField()`
+- ✅ UUID validation: `@IsUUID('4')` → `@IsUUIDField()`
 
 **Implementation Tasks**:
 1. **Update User Service GraphQL Types**:
-   - ❌ Replace validation in `server/apps/user-service/src/graphql/types/user-input.types.ts`
-   - ❌ Update imports to use `@app/validation`
-   - ❌ Verify GraphQL schema generation still works
+   - ✅ Replace validation in `server/apps/user-service/src/graphql/types/user-input.types.ts`
+   - ✅ Replace validation in `server/apps/user-service/src/graphql/types/relationship-input.types.ts`
+   - ✅ Update imports to use `@app/validation`
+   - ✅ Verify GraphQL schema generation still works
 
 2. **Update Any Remaining Custom DTOs**:
-   - ❌ Scan for remaining custom validation patterns
-   - ❌ Replace with shared decorators
-   - ❌ Update imports and remove unused dependencies
+   - ✅ Scan for remaining custom validation patterns (None found - auth-service uses shared DTOs)
+   - ✅ Replace with shared decorators (All user-service GraphQL types updated)
+   - ✅ Update imports and remove unused dependencies
 
 3. **Testing and Validation**:
-   - ❌ Run validation tests for both services
-   - ❌ Verify error messages are consistent
-   - ❌ Check API documentation reflects new validation rules
+   - ✅ Run validation tests for both services (No validation-related errors)
+   - ✅ Verify error messages are consistent (Using shared validation decorators)
+   - ✅ Check API documentation reflects new validation rules (GraphQL schema generation successful)
 
 #### Step 3: Security Utilities Migration (Week 2)
 
