@@ -48,12 +48,7 @@ export {
 } from './common/list-response.dto';
 
 // GraphQL DTOs (less frequently used)
-export {
-  GraphQLPaginationInput,
-  GraphQLSearchPaginationInput,
-  GraphQLCursorPaginationInput,
-  GraphQLFilterPaginationInput,
-} from './graphql/pagination-input.dto';
+export { GraphQLSearchPaginationInput } from './graphql/pagination-input.dto';
 
 export {
   GraphQLPageInfo,

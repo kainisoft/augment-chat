@@ -1,0 +1,518 @@
+{
+  "timestamp": "2025-05-27T17:54:37.140Z",
+  "totalDependencies": 35,
+  "totalSize": 33657114,
+  "totalSizeFormatted": "32.1 MB",
+  "unusedDependencies": [
+    {
+      "name": "@apollo/server",
+      "version": "4.12.1",
+      "size": 2000232,
+      "sizeFormatted": "1.91 MB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": true,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency",
+        "Consider code splitting for GraphQL server"
+      ]
+    },
+    {
+      "name": "@as-integrations/fastify",
+      "version": "2.1.1",
+      "size": 31265,
+      "sizeFormatted": "30.53 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "graphql-subscriptions",
+      "version": "3.0.0",
+      "size": 61019,
+      "sizeFormatted": "59.59 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "graphql-tools",
+      "version": "9.0.18",
+      "size": 2725,
+      "sizeFormatted": "2.66 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [
+        "@graphql-tools/schema",
+        "@graphql-tools/utils"
+      ],
+      "optimizationRecommendations": [
+        "Remove unused dependency",
+        "Use specific @graphql-tools packages instead of full suite"
+      ]
+    },
+    {
+      "name": "passport",
+      "version": "0.7.0",
+      "size": 156687,
+      "sizeFormatted": "153.01 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "passport-headerapikey",
+      "version": "1.2.2",
+      "size": 9623,
+      "sizeFormatted": "9.4 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "reflect-metadata",
+      "version": "0.2.2",
+      "size": 241158,
+      "sizeFormatted": "235.51 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "ts-morph",
+      "version": "25.0.1",
+      "size": 1427243,
+      "sizeFormatted": "1.36 MB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": true,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency",
+        "Remove ts-morph if not used for code generation"
+      ]
+    }
+  ],
+  "heavyDependencies": [
+    {
+      "name": "@apollo/server",
+      "version": "4.12.1",
+      "size": 2000232,
+      "sizeFormatted": "1.91 MB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": true,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency",
+        "Consider code splitting for GraphQL server"
+      ]
+    },
+    {
+      "name": "class-validator",
+      "version": "0.14.1",
+      "size": 5123729,
+      "sizeFormatted": "4.89 MB",
+      "usageCount": 11,
+      "usedInServices": [
+        "user-service",
+        "logging-service"
+      ],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "drizzle-orm",
+      "version": "0.43.1",
+      "size": 10067053,
+      "sizeFormatted": "9.6 MB",
+      "usageCount": 8,
+      "usedInServices": [
+        "auth-service",
+        "user-service"
+      ],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "fastify",
+      "version": "5.3.2",
+      "size": 2599964,
+      "sizeFormatted": "2.48 MB",
+      "usageCount": 12,
+      "usedInServices": [
+        "api-gateway",
+        "auth-service",
+        "user-service",
+        "notification-service"
+      ],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "graphql",
+      "version": "16.11.0",
+      "size": 1365791,
+      "sizeFormatted": "1.3 MB",
+      "usageCount": 2,
+      "usedInServices": [
+        "user-service"
+      ],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "rxjs",
+      "version": "7.8.1",
+      "size": 4501327,
+      "sizeFormatted": "4.29 MB",
+      "usageCount": 2,
+      "usedInServices": [],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "ts-morph",
+      "version": "25.0.1",
+      "size": 1427243,
+      "sizeFormatted": "1.36 MB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": true,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency",
+        "Remove ts-morph if not used for code generation"
+      ]
+    }
+  ],
+  "optimizationOpportunities": [
+    {
+      "name": "@apollo/server",
+      "version": "4.12.1",
+      "size": 2000232,
+      "sizeFormatted": "1.91 MB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": true,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency",
+        "Consider code splitting for GraphQL server"
+      ]
+    },
+    {
+      "name": "@as-integrations/fastify",
+      "version": "2.1.1",
+      "size": 31265,
+      "sizeFormatted": "30.53 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "bcryptjs",
+      "version": "3.0.2",
+      "size": 113426,
+      "sizeFormatted": "110.77 KB",
+      "usageCount": 1,
+      "usedInServices": [
+        "auth-service"
+      ],
+      "isHeavy": false,
+      "isUnused": false,
+      "alternatives": [
+        "bcrypt",
+        "argon2"
+      ],
+      "optimizationRecommendations": [
+        "Consider native bcrypt for better performance"
+      ]
+    },
+    {
+      "name": "class-validator",
+      "version": "0.14.1",
+      "size": 5123729,
+      "sizeFormatted": "4.89 MB",
+      "usageCount": 11,
+      "usedInServices": [
+        "user-service",
+        "logging-service"
+      ],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "drizzle-orm",
+      "version": "0.43.1",
+      "size": 10067053,
+      "sizeFormatted": "9.6 MB",
+      "usageCount": 8,
+      "usedInServices": [
+        "auth-service",
+        "user-service"
+      ],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "fastify",
+      "version": "5.3.2",
+      "size": 2599964,
+      "sizeFormatted": "2.48 MB",
+      "usageCount": 12,
+      "usedInServices": [
+        "api-gateway",
+        "auth-service",
+        "user-service",
+        "notification-service"
+      ],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "graphql",
+      "version": "16.11.0",
+      "size": 1365791,
+      "sizeFormatted": "1.3 MB",
+      "usageCount": 2,
+      "usedInServices": [
+        "user-service"
+      ],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "graphql-subscriptions",
+      "version": "3.0.0",
+      "size": 61019,
+      "sizeFormatted": "59.59 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "graphql-tools",
+      "version": "9.0.18",
+      "size": 2725,
+      "sizeFormatted": "2.66 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [
+        "@graphql-tools/schema",
+        "@graphql-tools/utils"
+      ],
+      "optimizationRecommendations": [
+        "Remove unused dependency",
+        "Use specific @graphql-tools packages instead of full suite"
+      ]
+    },
+    {
+      "name": "passport",
+      "version": "0.7.0",
+      "size": 156687,
+      "sizeFormatted": "153.01 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "passport-headerapikey",
+      "version": "1.2.2",
+      "size": 9623,
+      "sizeFormatted": "9.4 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "reflect-metadata",
+      "version": "0.2.2",
+      "size": 241158,
+      "sizeFormatted": "235.51 KB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency"
+      ]
+    },
+    {
+      "name": "rxjs",
+      "version": "7.8.1",
+      "size": 4501327,
+      "sizeFormatted": "4.29 MB",
+      "usageCount": 2,
+      "usedInServices": [],
+      "isHeavy": true,
+      "isUnused": false,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Consider lighter alternatives",
+        "Implement lazy loading"
+      ]
+    },
+    {
+      "name": "ts-morph",
+      "version": "25.0.1",
+      "size": 1427243,
+      "sizeFormatted": "1.36 MB",
+      "usageCount": 0,
+      "usedInServices": [],
+      "isHeavy": true,
+      "isUnused": true,
+      "alternatives": [],
+      "optimizationRecommendations": [
+        "Remove unused dependency",
+        "Remove ts-morph if not used for code generation"
+      ]
+    },
+    {
+      "name": "winston",
+      "version": "3.17.0",
+      "size": 271047,
+      "sizeFormatted": "264.69 KB",
+      "usageCount": 1,
+      "usedInServices": [],
+      "isHeavy": false,
+      "isUnused": false,
+      "alternatives": [
+        "pino",
+        "bunyan"
+      ],
+      "optimizationRecommendations": [
+        "Consider pino for better performance"
+      ]
+    }
+  ],
+  "recommendations": {
+    "immediate": [
+      "Remove 8 unused dependencies",
+      "Remove unused dependency: @apollo/server",
+      "Remove unused dependency: @as-integrations/fastify",
+      "Remove unused dependency: graphql-subscriptions",
+      "Remove unused dependency: graphql-tools",
+      "Remove unused dependency: passport",
+      "Remove unused dependency: passport-headerapikey",
+      "Remove unused dependency: reflect-metadata",
+      "Remove unused dependency: ts-morph"
+    ],
+    "shortTerm": [
+      "Remove heavy unused dependencies first",
+      "Implement lazy loading for heavy dependencies",
+      "Consider lighter alternatives for heavy dependencies"
+    ],
+    "longTerm": [
+      "Implement dynamic imports for optional features",
+      "Consider micro-frontend architecture for large dependencies",
+      "Implement dependency monitoring in CI/CD"
+    ]
+  },
+  "potentialSavings": {
+    "bundleSize": 11142653.1,
+    "bundleSizeFormatted": "10.63 MB",
+    "percentage": 33.10638309630469
+  }
+}

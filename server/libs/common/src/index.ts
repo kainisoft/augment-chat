@@ -4,6 +4,3 @@ export * from './health/health.controller';
 export * from './bootstrap/bootstrap.service';
 export * from './config';
 export * from './errors';
-export * from './utils/memoization.util';
-export * from './utils/memory-optimization.util';
-export * from './performance/performance-integration.service';

@@ -8,19 +8,22 @@
  * Note: Currently unused in production (0 usages) - consider lazy loading.
  */
 
-// Core module
+// Core module (only export module for tree-shaking in production)
 export { TestingModule } from './testing.module';
 
-// Database testing utilities (lazy-loaded)
-export { TestDatabaseService } from './database/test-database.service';
+// Lazy loading utilities for testing (tree-shakable in production)
+export {
+  LazyTestingUtils,
+  lazyLoadMockFactory,
+  lazyLoadControllerTestBuilder,
+  lazyLoadServiceTestBuilder,
+  lazyLoadTestSetup,
+} from './lazy-testing.util';
 
-// Mock factories (lazy-loaded)
+// Legacy exports for backward compatibility (will be tree-shaken in production)
 export { MockFactoryService } from './mocks/mock-factory.service';
-
-// Test builders (lazy-loaded)
-export { TestSetupService } from './builders/test-setup.service';
 export { ControllerTestBuilder } from './builders/controller-test.builder';
 export { ServiceTestBuilder } from './builders/service-test.builder';
-
-// E2E testing utilities (lazy-loaded)
+export { TestSetupService } from './builders/test-setup.service';
+export { TestDatabaseService } from './database/test-database.service';
 export { E2ETestSetupService } from './e2e/e2e-test-setup.service';
