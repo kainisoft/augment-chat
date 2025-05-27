@@ -56,7 +56,12 @@
     "db:up": "pnpm db:create-databases && pnpm db:create-schemas && pnpm db:migrate",
     "db:studio": "SERVICE=auth drizzle-kit studio",
     "db:studio:auth": "SERVICE=auth drizzle-kit studio",
-    "db:studio:user": "SERVICE=user drizzle-kit studio"
+    "db:studio:user": "SERVICE=user drizzle-kit studio",
+    "perf:baseline": "ts-node -r tsconfig-paths/register ./scripts/performance/establish-baseline.ts",
+    "perf:monitor": "ts-node -r tsconfig-paths/register ./scripts/performance/performance-monitor.ts",
+    "perf:bundle": "ts-node -r tsconfig-paths/register ./scripts/performance/bundle-analyzer.ts",
+    "perf:memory": "ts-node -r tsconfig-paths/register ./scripts/performance/memory-tracker.ts",
+    "perf:response": "ts-node -r tsconfig-paths/register ./scripts/performance/response-time-analyzer.ts"
   },
   "dependencies": {
     "@apollo/server": "4.12.1",
