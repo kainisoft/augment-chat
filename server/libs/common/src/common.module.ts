@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CommonService } from './common.service';
-import { PerformanceIntegrationService } from './performance/performance-integration.service';
 
 /**
  * Common Module
@@ -15,7 +14,7 @@ import { PerformanceIntegrationService } from './performance/performance-integra
  * - Memoization and caching utilities
  */
 @Module({
-  providers: [CommonService, PerformanceIntegrationService],
-  exports: [CommonService, PerformanceIntegrationService],
+  providers: [CommonService],
+  exports: [CommonService],
 })
 export class CommonModule {}

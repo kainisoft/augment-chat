@@ -1,11 +1,16 @@
 /**
  * Lazy Testing Utilities
- * 
+ *
  * Provides dynamic imports for testing utilities to prevent inclusion in production bundles.
  * All testing utilities are lazy-loaded to improve tree-shaking effectiveness.
  */
 
-import { codeSplittingManager } from '@app/common';
+// Mock code splitting manager for testing
+const mockCodeSplittingManager = {
+  lazyLoad: async (moduleId: string, importFn: () => Promise<any>, options?: any) => {
+    return importFn();
+  }
+};
 
 /**
  * Lazy load testing utilities
@@ -15,7 +20,7 @@ export class LazyTestingUtils {
    * Lazy load MockFactoryService
    */
   static async getMockFactoryService() {
-    return codeSplittingManager.lazyLoad(
+    return mockCodeSplittingManager.lazyLoad(
       'mock-factory-service',
       async () => {
         const module = await import('./mocks/mock-factory.service');
@@ -32,7 +37,7 @@ export class LazyTestingUtils {
    * Lazy load ControllerTestBuilder
    */
   static async getControllerTestBuilder() {
-    return codeSplittingManager.lazyLoad(
+    return mockCodeSplittingManager.lazyLoad(
       'controller-test-builder',
       async () => {
         const module = await import('./builders/controller-test.builder');
@@ -49,7 +54,7 @@ export class LazyTestingUtils {
    * Lazy load ServiceTestBuilder
    */
   static async getServiceTestBuilder() {
-    return codeSplittingManager.lazyLoad(
+    return mockCodeSplittingManager.lazyLoad(
       'service-test-builder',
       async () => {
         const module = await import('./builders/service-test.builder');
@@ -66,7 +71,7 @@ export class LazyTestingUtils {
    * Lazy load TestSetupService
    */
   static async getTestSetupService() {
-    return codeSplittingManager.lazyLoad(
+    return mockCodeSplittingManager.lazyLoad(
       'test-setup-service',
       async () => {
         const module = await import('./builders/test-setup.service');
@@ -83,7 +88,7 @@ export class LazyTestingUtils {
    * Lazy load TestDatabaseService
    */
   static async getTestDatabaseService() {
-    return codeSplittingManager.lazyLoad(
+    return mockCodeSplittingManager.lazyLoad(
       'test-database-service',
       async () => {
         const module = await import('./database/test-database.service');
@@ -100,7 +105,7 @@ export class LazyTestingUtils {
    * Lazy load E2ETestSetupService
    */
   static async getE2ETestSetupService() {
-    return codeSplittingManager.lazyLoad(
+    return mockCodeSplittingManager.lazyLoad(
       'e2e-test-setup-service',
       async () => {
         const module = await import('./e2e/e2e-test-setup.service');
@@ -119,7 +124,7 @@ export class LazyTestingUtils {
   static async preloadAllTestingUtils() {
     if (process.env.NODE_ENV === 'test') {
       console.log('🧪 Preloading testing utilities...');
-      
+
       await Promise.all([
         this.getMockFactoryService(),
         this.getControllerTestBuilder(),
@@ -128,7 +133,7 @@ export class LazyTestingUtils {
         this.getTestDatabaseService(),
         this.getE2ETestSetupService(),
       ]);
-      
+
       console.log('✅ Testing utilities preloaded');
     }
   }
