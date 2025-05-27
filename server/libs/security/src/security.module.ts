@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { RateLimitService } from './rate-limit/rate-limit.service';
 import { SecurityUtilsService } from './utils/security-utils.service';
 import { RateLimitGuard } from './guards/rate-limit.guard';
+import { LazySecurityService } from './lazy/lazy-security.service';
 
 /**
  * Security Module
@@ -15,9 +16,21 @@ import { RateLimitGuard } from './guards/rate-limit.guard';
  * - Common security patterns and helpers
  * - Input sanitization utilities
  * - Security validation patterns
+ * - Lazy-loaded heavy security operations
+ * - Performance-optimized security utilities
  */
 @Module({
-  providers: [RateLimitService, SecurityUtilsService, RateLimitGuard],
-  exports: [RateLimitService, SecurityUtilsService, RateLimitGuard],
+  providers: [
+    RateLimitService,
+    SecurityUtilsService,
+    RateLimitGuard,
+    LazySecurityService,
+  ],
+  exports: [
+    RateLimitService,
+    SecurityUtilsService,
+    RateLimitGuard,
+    LazySecurityService,
+  ],
 })
 export class SecurityModule {}
