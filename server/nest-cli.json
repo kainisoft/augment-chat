@@ -9,6 +9,7 @@
   },
   "monorepo": true,
   "root": ".",
+  "defaultProject": "api-gateway",
   "projects": {
     "api-gateway": {
       "type": "application",
@@ -170,6 +171,15 @@
       "sourceRoot": "apps/user-service/src",
       "compilerOptions": {
         "tsConfigPath": "apps/user-service/tsconfig.app.json"
+      }
+    },
+    "testing": {
+      "type": "library",
+      "root": "libs/testing",
+      "entryFile": "index",
+      "sourceRoot": "libs/testing/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/testing/tsconfig.lib.json"
       }
     }
   }

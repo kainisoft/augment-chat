@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LogApiController } from './log-api.controller';
-import { LogQueryService } from '../services/log-query.service';
-import { LogStorageService } from '../services/log-storage.service';
+import { LogQueryService } from './log-query.service';
+import { LogProcessorService } from '../processing/log-processor.service';
 import {
   MockFactoryService,
   ControllerTestBuilder,

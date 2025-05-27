@@ -171,7 +171,19 @@ describe('NotificationServiceHealthService', () => {
   let service: NotificationServiceHealthService;
 
   beforeEach(() => {
-    service = new NotificationServiceHealthService();
+    const mockLoggingService = {
+      setContext: jest.fn(),
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    };
+
+    const mockErrorLogger = {
+      error: jest.fn(),
+    };
+
+    service = new NotificationServiceHealthService(mockLoggingService, mockErrorLogger);
   });
 
   it('should be defined', () => {

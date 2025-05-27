@@ -160,9 +160,23 @@ describe('ApiGatewayHealthController', () => {
 
 describe('ApiGatewayHealthService', () => {
   let service: ApiGatewayHealthService;
+  let mockLoggingService: any;
+  let mockErrorLogger: any;
 
   beforeEach(() => {
-    service = new ApiGatewayHealthService();
+    mockLoggingService = {
+      setContext: jest.fn(),
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    };
+
+    mockErrorLogger = {
+      error: jest.fn(),
+    };
+
+    service = new ApiGatewayHealthService(mockLoggingService, mockErrorLogger);
   });
 
   it('should be defined', () => {

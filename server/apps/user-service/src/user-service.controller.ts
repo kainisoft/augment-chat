@@ -1,6 +1,7 @@
 import { Controller, Get, Req } from '@nestjs/common';
 import { LoggingService } from '@app/logging';
 import { UserServiceService } from './user-service.service';
+import { FastifyRequest } from 'fastify';
 
 @Controller()
 export class UserServiceController {
@@ -13,7 +14,7 @@ export class UserServiceController {
   }
 
   @Get()
-  getHello(@Req() request: any): string {
+  getHello(@Req() request: FastifyRequest): string {
     // Log the request
     this.loggingService.log('Processing getHello request', 'getHello', {
       path: request.url,

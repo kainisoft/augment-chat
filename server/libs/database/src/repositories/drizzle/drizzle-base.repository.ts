@@ -1,6 +1,7 @@
 import { AbstractBaseRepository } from '../base.repository';
 import { DrizzleService } from '../../drizzle/drizzle.service';
 import { SQL, eq } from 'drizzle-orm';
+import { PgTable, TableConfig } from 'drizzle-orm/pg-core';
 
 /**
  * Abstract Drizzle Base Repository
@@ -14,7 +15,7 @@ import { SQL, eq } from 'drizzle-orm';
 export abstract class AbstractDrizzleRepository<
   T,
   TId,
-  TTable extends Record<string, any>,
+  TTable extends PgTable<TableConfig>,
 > extends AbstractBaseRepository<T, TId> {
   /**
    * Constructor
@@ -40,7 +41,7 @@ export abstract class AbstractDrizzleRepository<
 
     const result = await this.drizzle.db
       .select()
-      .from(this.table)
+      .from(this.table as any)
       .where(eq(this.idField, idValue))
       .limit(1);
 
@@ -59,7 +60,7 @@ export abstract class AbstractDrizzleRepository<
   async count(filter?: SQL<unknown>): Promise<number> {
     const query = this.drizzle.db
       .select({ count: this.drizzle.sql`count(*)` })
-      .from(this.table);
+      .from(this.table as any);
 
     if (filter) {
       query.where(filter);
