@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
+import { MetricsModule } from '@app/metrics';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 import {
@@ -27,17 +28,24 @@ import {
         // Get log level from environment or use default
         const logLevelStr = configService.get<string>('LOG_LEVEL', 'info');
         // Map string to LogLevel enum
-        const level = logLevelStr === 'error' ? LogLevel.ERROR :
-                      logLevelStr === 'warn' ? LogLevel.WARN :
-                      logLevelStr === 'debug' ? LogLevel.DEBUG :
-                      logLevelStr === 'verbose' ? LogLevel.VERBOSE :
-                      LogLevel.INFO;
+        const level =
+          logLevelStr === 'error'
+            ? LogLevel.ERROR
+            : logLevelStr === 'warn'
+              ? LogLevel.WARN
+              : logLevelStr === 'debug'
+                ? LogLevel.DEBUG
+                : logLevelStr === 'verbose'
+                  ? LogLevel.VERBOSE
+                  : LogLevel.INFO;
 
         return {
           service: 'api-gateway',
           level,
           kafka: {
-            brokers: configService.get<string>('KAFKA_BROKERS', 'kafka:29092').split(','),
+            brokers: configService
+              .get<string>('KAFKA_BROKERS', 'kafka:29092')
+              .split(','),
             topic: configService.get<string>('KAFKA_LOGS_TOPIC', 'logs'),
             clientId: 'api-gateway',
           },
@@ -46,6 +54,15 @@ import {
         };
       },
       inject: [ConfigService],
+    }),
+
+    // Import MetricsModule for comprehensive monitoring
+    MetricsModule.forRoot({
+      serviceName: 'API Gateway',
+      enablePerformanceMonitoring: true,
+      enableHealthMetrics: true,
+      enableBusinessMetrics: true,
+      collectionInterval: 60000, // 1 minute
     }),
   ],
   controllers: [ApiGatewayController, ApiGatewayHealthController],

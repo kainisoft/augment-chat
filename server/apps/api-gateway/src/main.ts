@@ -1,4 +1,4 @@
-import { bootstrap } from '@app/common';
+import { bootstrap } from '@app/bootstrap';
 import { ApiGatewayModule } from './api-gateway.module';
 
 declare const module: any;
@@ -8,13 +8,12 @@ async function startApplication() {
     const app = await bootstrap(ApiGatewayModule, {
       port: 4000,
       serviceName: 'API Gateway',
+      enableValidation: true,
+      enableCors: true,
+      enableHmr: process.env.NODE_ENV === 'development',
     });
 
-    // Enable Hot Module Replacement (HMR)
-    if (module.hot) {
-      module.hot.accept();
-      module.hot.dispose(() => app.close());
-    }
+    // HMR is now handled automatically by the bootstrap service
   } catch (error) {
     console.error('Error starting API Gateway:', error);
     process.exit(1);

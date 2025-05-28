@@ -95,6 +95,24 @@
       ],
       "@app/testing/*": [
         "libs/testing/src/*"
+      ],
+      "@app/bootstrap": [
+        "libs/bootstrap/src"
+      ],
+      "@app/bootstrap/*": [
+        "libs/bootstrap/src/*"
+      ],
+      "@app/config": [
+        "libs/config/src"
+      ],
+      "@app/config/*": [
+        "libs/config/src/*"
+      ],
+      "@app/metrics": [
+        "libs/metrics/src"
+      ],
+      "@app/metrics/*": [
+        "libs/metrics/src/*"
       ]
     }
   }

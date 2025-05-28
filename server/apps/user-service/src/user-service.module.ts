@@ -6,6 +6,7 @@ import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
 import { RedisModule } from '@app/redis';
 import { CacheModule as RedisCacheModule } from '@app/redis/cache';
+import { MetricsModule } from '@app/metrics';
 
 // Service Controllers and Services
 import { UserServiceController } from './user-service.controller';
@@ -183,6 +184,15 @@ import { KafkaModule } from './kafka/kafka.module';
 
     // Import Kafka Module for event communication
     KafkaModule,
+
+    // Import MetricsModule for comprehensive monitoring
+    MetricsModule.forRoot({
+      serviceName: 'User Service',
+      enablePerformanceMonitoring: true,
+      enableHealthMetrics: true,
+      enableBusinessMetrics: true,
+      collectionInterval: 60000, // 1 minute
+    }),
   ],
   controllers: [
     // Main service controller

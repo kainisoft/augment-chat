@@ -172,7 +172,10 @@
       "^@app/validation(|/.*)$": "<rootDir>/libs/validation/src/$1",
       "^@app/security(|/.*)$": "<rootDir>/libs/security/src/$1",
       "^@app/dtos(|/.*)$": "<rootDir>/libs/dtos/src/$1",
-      "^@app/testing(|/.*)$": "<rootDir>/libs/testing/src/$1"
+      "^@app/testing(|/.*)$": "<rootDir>/libs/testing/src/$1",
+      "^@app/bootstrap(|/.*)$": "<rootDir>/libs/bootstrap/src/$1",
+      "^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
+      "^@app/metrics(|/.*)$": "<rootDir>/libs/metrics/src/$1"
     }
   }
 }
