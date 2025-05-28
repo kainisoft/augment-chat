@@ -5,9 +5,23 @@ import {
   RedisOptions as IoRedisOptions,
 } from 'ioredis';
 import { Logger } from '@nestjs/common';
-import { RedisOptions } from '../interfaces/redis-options.interface';
+import {
+  RedisOptions,
+  RedisClusterOptions,
+} from '../interfaces/redis-options.interface';
 
 const logger = new Logger('RedisProvider');
+
+/**
+ * Type guard to check if options are for Redis cluster
+ * @param options Redis connection options
+ * @returns True if options are for cluster configuration
+ */
+function isClusterOptions(
+  options: RedisOptions,
+): options is RedisClusterOptions {
+  return 'nodes' in options && Array.isArray(options.nodes);
+}
 
 /**
  * Create a Redis client based on the provided options
@@ -15,12 +29,12 @@ const logger = new Logger('RedisProvider');
  * @returns Redis client instance
  */
 export function createRedisClient(options: RedisOptions): Redis | Cluster {
-  const { nodes, clusterOptions, singleNodeOptions } = options;
-
   try {
     // Create a cluster client if nodes are provided
-    if (nodes && nodes.length > 0) {
-      logger.log(`Creating Redis Cluster client with ${nodes.length} nodes`);
+    if (isClusterOptions(options)) {
+      logger.log(
+        `Creating Redis Cluster client with ${options.nodes.length} nodes`,
+      );
 
       const clusterConfig: ClusterOptions = {
         redisOptions: {
@@ -31,19 +45,19 @@ export function createRedisClient(options: RedisOptions): Redis | Cluster {
             );
             return delay;
           },
-          ...singleNodeOptions,
+          ...options.singleNodeOptions,
         },
-        ...clusterOptions,
+        ...options.clusterOptions,
       };
 
-      return new Cluster(nodes, clusterConfig);
+      return new Cluster(options.nodes, clusterConfig);
     }
 
     // Create a single node client
     logger.log('Creating single Redis client');
 
     const singleNodeConfig: IoRedisOptions = {
-      host: options.host || 'localhost',
+      host: options.host,
       port: options.port || 6379,
       password: options.password,
       db: options.db || 0,
@@ -54,7 +68,7 @@ export function createRedisClient(options: RedisOptions): Redis | Cluster {
         );
         return delay;
       },
-      ...singleNodeOptions,
+      ...options.singleNodeOptions,
     };
 
     return new Redis(singleNodeConfig);
