@@ -61,7 +61,8 @@
     "perf:monitor": "ts-node -r tsconfig-paths/register ./scripts/performance/performance-monitor.ts",
     "perf:bundle": "ts-node -r tsconfig-paths/register ./scripts/performance/bundle-analyzer.ts",
     "perf:memory": "ts-node -r tsconfig-paths/register ./scripts/performance/memory-tracker.ts",
-    "perf:response": "ts-node -r tsconfig-paths/register ./scripts/performance/response-time-analyzer.ts"
+    "perf:response": "ts-node -r tsconfig-paths/register ./scripts/performance/response-time-analyzer.ts",
+    "optimize:imports": "ts-node -r tsconfig-paths/register ./scripts/optimization/import-export-optimizer.ts"
   },
   "dependencies": {
     "@apollo/server": "4.12.1",

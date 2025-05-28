@@ -16,6 +16,7 @@ export enum ErrorCode {
   INVALID_TOKEN = 'INVALID_TOKEN',
   EXPIRED_TOKEN = 'EXPIRED_TOKEN',
   ACCOUNT_INACTIVE = 'ACCOUNT_INACTIVE',
+  ACCOUNT_LOCKED = 'ACCOUNT_LOCKED',
 
   // Domain-specific errors
   INVALID_EMAIL = 'INVALID_EMAIL',
@@ -40,6 +41,15 @@ export enum ErrorCode {
   REDIS_ERROR = 'REDIS_ERROR',
   NETWORK_ERROR = 'NETWORK_ERROR',
   EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR',
+
+  // Rate limiting and throttling
+  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
+
+  // Input validation
+  INVALID_INPUT = 'INVALID_INPUT',
+
+  // Server errors
+  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
 
   // Recovery errors
   CIRCUIT_OPEN = 'CIRCUIT_OPEN',

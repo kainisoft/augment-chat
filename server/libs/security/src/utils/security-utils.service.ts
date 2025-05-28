@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { StringValidator, StringManipulator } from '@app/common';
 import { FastifyRequest } from 'fastify';
 
 /**
@@ -77,15 +78,7 @@ export class SecurityUtilsService {
    * @returns Sanitized string
    */
   sanitizeInput(input: string): string {
-    if (!input) return '';
-
-    return input
-      .trim()
-      .replace(/[<>]/g, '') // Remove potential HTML tags
-      .replace(/['"]/g, '') // Remove quotes
-      .replace(/[\\]/g, '') // Remove backslashes
-      .replace(/javascript:/gi, '') // Remove javascript: protocol
-      .replace(/on\w+=/gi, ''); // Remove event handlers
+    return StringManipulator.sanitizeInput(input);
   }
 
   /**
@@ -95,16 +88,7 @@ export class SecurityUtilsService {
    * @returns Sanitized email or null if invalid
    */
   validateAndSanitizeEmail(email: string): string | null {
-    if (!email) return null;
-
-    const sanitized = this.sanitizeInput(email).toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(sanitized)) {
-      return null;
-    }
-
-    return sanitized;
+    return StringManipulator.validateAndSanitizeEmail(email);
   }
 
   /**
@@ -124,7 +108,7 @@ export class SecurityUtilsService {
    * @returns SHA256 hash of the data
    */
   createDataHash(data: string): string {
-    return crypto.createHash('sha256').update(data).digest('hex');
+    return StringManipulator.createHash(data);
   }
 
   /**
@@ -135,15 +119,7 @@ export class SecurityUtilsService {
    * @returns Masked data
    */
   maskSensitiveData(data: string, visibleChars: number = 2): string {
-    if (!data || data.length <= visibleChars * 2) {
-      return '*'.repeat(data?.length || 0);
-    }
-
-    const start = data.slice(0, visibleChars);
-    const end = data.slice(-visibleChars);
-    const middle = '*'.repeat(data.length - visibleChars * 2);
-
-    return `${start}${middle}${end}`;
+    return StringManipulator.maskSensitiveData(data, visibleChars);
   }
 
   /**
@@ -153,22 +129,7 @@ export class SecurityUtilsService {
    * @returns True if potentially malicious, false otherwise
    */
   containsMaliciousContent(input: string): boolean {
-    if (!input) return false;
-
-    const maliciousPatterns = [
-      /<script/i,
-      /javascript:/i,
-      /on\w+=/i,
-      /<iframe/i,
-      /<object/i,
-      /<embed/i,
-      /eval\(/i,
-      /expression\(/i,
-      /vbscript:/i,
-      /data:text\/html/i,
-    ];
-
-    return maliciousPatterns.some((pattern) => pattern.test(input));
+    return StringValidator.containsMaliciousContent(input);
   }
 
   /**

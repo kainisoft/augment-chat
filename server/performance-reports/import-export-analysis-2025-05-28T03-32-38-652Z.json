@@ -1,0 +1,354 @@
+{
+  "timestamp": "2025-05-28T03:32:38.647Z",
+  "modules": [
+    {
+      "module": "@app/common",
+      "importedBy": [
+        "api-gateway",
+        "auth-service",
+        "user-service",
+        "chat-service",
+        "notification-service",
+        "logging-service"
+      ],
+      "exports": [
+        "* from ./common.module",
+        "* from ./common.service",
+        "* from ./health/health.controller",
+        "* from ./bootstrap/bootstrap.service",
+        "* from ./config",
+        "* from ./errors",
+        "* from ./utils/string.util",
+        "* from ./utils/date.util",
+        "* from ./utils/validation.util",
+        "* from ./utils/error-handling.util",
+        "* from ./utils/type-safety.util"
+      ],
+      "unusedExports": [],
+      "circularDependencies": [],
+      "optimizationOpportunities": [
+        "Consider replacing barrel exports with selective exports"
+      ]
+    },
+    {
+      "module": "@app/validation",
+      "importedBy": [
+        "user-service",
+        "logging-service"
+      ],
+      "exports": [
+        "IsUUIDField",
+        "IsEmailField",
+        "IsUsernameField",
+        "IsStrongPasswordField",
+        "IsDisplayNameField",
+        "IsBioField",
+        "IsAvatarUrlField",
+        "IsJWTTokenField",
+        "IsRefreshTokenField",
+        "IsISODateField",
+        "IsLogLevelField",
+        "IsValidDateRange",
+        "",
+        "LazyValidationUtils"
+      ],
+      "unusedExports": [
+        "IsEmailField",
+        "IsStrongPasswordField",
+        "IsJWTTokenField",
+        "IsRefreshTokenField",
+        "LazyValidationUtils"
+      ],
+      "circularDependencies": [],
+      "optimizationOpportunities": [
+        "Remove 5 unused exports"
+      ]
+    },
+    {
+      "module": "@app/dtos",
+      "importedBy": [
+        "auth-service",
+        "user-service",
+        "logging-service"
+      ],
+      "exports": [
+        "LoginDto",
+        "RegisterDto",
+        "RefreshTokenDto",
+        "ForgotPasswordDto",
+        "ResetPasswordDto",
+        "",
+        "AuthResponseDto",
+        "",
+        "PaginationQueryDto",
+        "PaginatedResponseDto",
+        "PaginationMetaDto",
+        "",
+        "ListResponseDto",
+        "SearchResponseDto",
+        "HistoryResponseDto",
+        "PaginationMetadata",
+        "createPaginationMetadata",
+        "",
+        "GraphQLSearchPaginationInput",
+        "GraphQLListResponse",
+        "GraphQLSearchResponse",
+        "",
+        "LazyDtoUtils"
+      ],
+      "unusedExports": [
+        "PaginatedResponseDto",
+        "PaginationMetaDto",
+        "PaginationMetadata",
+        "createPaginationMetadata",
+        "LazyDtoUtils"
+      ],
+      "circularDependencies": [],
+      "optimizationOpportunities": [
+        "Remove 5 unused exports",
+        "Large number of exports - consider module splitting"
+      ]
+    },
+    {
+      "module": "@app/security",
+      "importedBy": [
+        "auth-service",
+        "user-service",
+        "logging-service"
+      ],
+      "exports": [
+        "SecurityModule",
+        "RateLimit",
+        "RateLimitService",
+        "SecurityUtilsService",
+        "RateLimitGuard",
+        "LazySecurityService",
+        "LazySecurityOperation",
+        "MemoizedSecurityOperation",
+        ""
+      ],
+      "unusedExports": [
+        "RateLimitService",
+        "SecurityUtilsService",
+        "LazySecurityService",
+        "LazySecurityOperation",
+        "MemoizedSecurityOperation"
+      ],
+      "circularDependencies": [],
+      "optimizationOpportunities": [
+        "Remove 5 unused exports"
+      ]
+    },
+    {
+      "module": "@app/testing",
+      "importedBy": [],
+      "exports": [
+        "TestingModule",
+        "MockFactoryService",
+        "ControllerTestBuilder",
+        "ServiceTestBuilder",
+        "TestSetupService",
+        "TestDatabaseService",
+        "E2ETestSetupService",
+        "LazyTestingUtils",
+        "lazyLoadMockFactory",
+        "lazyLoadControllerTestBuilder",
+        "lazyLoadServiceTestBuilder",
+        "lazyLoadTestSetup",
+        ""
+      ],
+      "unusedExports": [
+        "TestingModule",
+        "MockFactoryService",
+        "ControllerTestBuilder",
+        "ServiceTestBuilder",
+        "TestSetupService",
+        "TestDatabaseService",
+        "E2ETestSetupService",
+        "LazyTestingUtils",
+        "lazyLoadMockFactory",
+        "lazyLoadControllerTestBuilder",
+        "lazyLoadServiceTestBuilder",
+        "lazyLoadTestSetup",
+        ""
+      ],
+      "circularDependencies": [],
+      "optimizationOpportunities": [
+        "Remove 13 unused exports",
+        "Module is not imported by any service - consider removal"
+      ]
+    },
+    {
+      "module": "@app/domain",
+      "importedBy": [
+        "auth-service",
+        "user-service"
+      ],
+      "exports": [
+        "* from ./domain.module",
+        "* from ./domain.service",
+        "* from ./models",
+        "* from ./errors"
+      ],
+      "unusedExports": [],
+      "circularDependencies": [],
+      "optimizationOpportunities": [
+        "Consider replacing barrel exports with selective exports"
+      ]
+    },
+    {
+      "module": "@app/logging",
+      "importedBy": [
+        "api-gateway",
+        "auth-service",
+        "user-service",
+        "chat-service",
+        "notification-service"
+      ],
+      "exports": [
+        "* from ./logging.module",
+        "* from ./logging.service",
+        "* from ./interfaces/log-message.interface",
+        "* from ./transports/kafka.transport",
+        "* from ./middleware/logging.middleware",
+        "* from ./interceptors/logging.interceptor",
+        "* from ./filters/exception.filter",
+        "* from ./utils/request-id.util",
+        "* from ./utils/redaction.util",
+        "* from ./utils/log-helpers",
+        "* from ./errors/error-logger.service"
+      ],
+      "unusedExports": [],
+      "circularDependencies": [],
+      "optimizationOpportunities": [
+        "Consider replacing barrel exports with selective exports"
+      ]
+    },
+    {
+      "module": "@app/redis",
+      "importedBy": [
+        "auth-service",
+        "user-service"
+      ],
+      "exports": [
+        "* from ./redis.module",
+        "* from ./redis.service",
+        "* from ./interfaces/redis-options.interface",
+        "* from ./interfaces/redis-client.interface",
+        "* from ./constants/redis.constants",
+        "* from ./health/redis-health.indicator",
+        "* from ./repositories",
+        "* from ./cache",
+        "* from ./session",
+        "* from ./pubsub"
+      ],
+      "unusedExports": [],
+      "circularDependencies": [],
+      "optimizationOpportunities": [
+        "Consider replacing barrel exports with selective exports"
+      ]
+    }
+  ],
+  "optimizations": [
+    {
+      "module": "@app/common",
+      "currentPattern": "barrel",
+      "recommendedPattern": "selective",
+      "treeshakingEffectiveness": 100,
+      "bundleImpact": 104514,
+      "recommendations": [
+        "Switch from barrel to selective exports"
+      ]
+    },
+    {
+      "module": "@app/validation",
+      "currentPattern": "selective",
+      "recommendedPattern": "selective",
+      "treeshakingEffectiveness": 64.28571428571429,
+      "bundleImpact": 38697,
+      "recommendations": []
+    },
+    {
+      "module": "@app/dtos",
+      "currentPattern": "selective",
+      "recommendedPattern": "selective",
+      "treeshakingEffectiveness": 78.26086956521739,
+      "bundleImpact": 32637,
+      "recommendations": []
+    },
+    {
+      "module": "@app/security",
+      "currentPattern": "selective",
+      "recommendedPattern": "selective",
+      "treeshakingEffectiveness": 44.44444444444444,
+      "bundleImpact": 35372,
+      "recommendations": [
+        "Improve tree-shaking by using selective exports"
+      ]
+    },
+    {
+      "module": "@app/testing",
+      "currentPattern": "selective",
+      "recommendedPattern": "selective",
+      "treeshakingEffectiveness": 0,
+      "bundleImpact": 63437,
+      "recommendations": [
+        "Improve tree-shaking by using selective exports",
+        "Testing module should be fully tree-shakable in production"
+      ]
+    },
+    {
+      "module": "@app/domain",
+      "currentPattern": "barrel",
+      "recommendedPattern": "barrel",
+      "treeshakingEffectiveness": 100,
+      "bundleImpact": 3327,
+      "recommendations": []
+    },
+    {
+      "module": "@app/logging",
+      "currentPattern": "barrel",
+      "recommendedPattern": "selective",
+      "treeshakingEffectiveness": 100,
+      "bundleImpact": 74319,
+      "recommendations": [
+        "Switch from barrel to selective exports"
+      ]
+    },
+    {
+      "module": "@app/redis",
+      "currentPattern": "barrel",
+      "recommendedPattern": "selective",
+      "treeshakingEffectiveness": 100,
+      "bundleImpact": 110416,
+      "recommendations": [
+        "Switch from barrel to selective exports"
+      ]
+    }
+  ],
+  "circularDependencies": [],
+  "recommendations": {
+    "immediate": [
+      "Remove unused exports from shared modules",
+      "@app/validation: Remove 5 unused exports",
+      "@app/dtos: Remove 5 unused exports",
+      "@app/security: Remove 5 unused exports",
+      "@app/testing: Remove 13 unused exports"
+    ],
+    "shortTerm": [
+      "Improve tree-shaking effectiveness for low-performing modules",
+      "Switch to selective exports for better optimization"
+    ],
+    "longTerm": [
+      "Implement automated import/export analysis in CI/CD",
+      "Consider micro-module architecture for large modules",
+      "Implement dynamic imports for optional features"
+    ]
+  },
+  "summary": {
+    "totalModules": 8,
+    "modulesWithIssues": 8,
+    "circularDependencyCount": 0,
+    "optimizationOpportunities": 10
+  }
+}

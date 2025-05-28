@@ -1,4 +1,5 @@
 import { InvalidEmailError } from '../../errors/invalid-email.error';
+import { StringValidator } from '@app/common';
 
 /**
  * Email Value Object
@@ -29,8 +30,7 @@ export class Email {
       throw new InvalidEmailError('Email cannot be empty');
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!StringValidator.isValidEmail(email)) {
       throw new InvalidEmailError(`Invalid email format: ${email}`);
     }
   }

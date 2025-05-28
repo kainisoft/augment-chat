@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { StringValidator, StringManipulator, DateValidator } from '@app/common';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 
@@ -56,9 +57,7 @@ export class ValidationService {
    * @returns True if valid UUID v4, false otherwise
    */
   isValidUUIDv4(uuid: string): boolean {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(uuid);
+    return StringValidator.isValidUUID(uuid);
   }
 
   /**
@@ -68,8 +67,7 @@ export class ValidationService {
    * @returns True if valid email format, false otherwise
    */
   isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return StringValidator.isValidEmail(email);
   }
 
   /**
@@ -82,8 +80,7 @@ export class ValidationService {
     if (!username || username.length < 3 || username.length > 50) {
       return false;
     }
-    const usernameRegex = /^[a-zA-Z0-9_-]+$/;
-    return usernameRegex.test(username);
+    return StringValidator.isValidUsername(username);
   }
 
   /**
@@ -93,26 +90,7 @@ export class ValidationService {
    * @returns True if valid strong password, false otherwise
    */
   isValidStrongPassword(password: string): boolean {
-    if (!password || password.length < 8) {
-      return false;
-    }
-
-    // Check for at least one uppercase letter
-    if (!/[A-Z]/.test(password)) {
-      return false;
-    }
-
-    // Check for at least one lowercase letter
-    if (!/[a-z]/.test(password)) {
-      return false;
-    }
-
-    // Check for at least one number
-    if (!/\d/.test(password)) {
-      return false;
-    }
-
-    return true;
+    return StringValidator.isStrongPassword(password);
   }
 
   /**
@@ -122,15 +100,7 @@ export class ValidationService {
    * @returns True if valid JWT format, false otherwise
    */
   isValidJWTFormat(token: string): boolean {
-    if (typeof token !== 'string') return false;
-
-    // Basic JWT format validation (3 parts separated by dots)
-    const parts = token.split('.');
-    if (parts.length !== 3) return false;
-
-    // Check if each part is base64url encoded
-    const base64UrlRegex = /^[A-Za-z0-9_-]+$/;
-    return parts.every((part) => base64UrlRegex.test(part));
+    return StringValidator.isValidJWT(token);
   }
 
   /**
@@ -140,13 +110,7 @@ export class ValidationService {
    * @returns Sanitized string
    */
   sanitizeString(input: string): string {
-    if (!input) return '';
-
-    return input
-      .trim()
-      .replace(/[<>]/g, '') // Remove potential HTML tags
-      .replace(/['"]/g, '') // Remove quotes
-      .replace(/[\\]/g, ''); // Remove backslashes
+    return StringManipulator.sanitizeInput(input);
   }
 
   /**
