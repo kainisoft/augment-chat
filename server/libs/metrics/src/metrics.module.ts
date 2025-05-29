@@ -80,7 +80,7 @@ export class MetricsModule {
       enableExport = false,
     } = options;
 
-    const providers = [
+    const providers: any[] = [
       {
         provide: 'METRICS_OPTIONS',
         useValue: options,
@@ -89,23 +89,53 @@ export class MetricsModule {
       MetricsCollectorService,
     ];
 
-    const exports = [MetricsService, MetricsCollectorService];
+    const exports: any[] = [MetricsService, MetricsCollectorService];
 
     // Add performance monitoring if enabled
     if (enablePerformanceMonitoring) {
-      providers.push(PerformanceMonitorService);
+      providers.push({
+        provide: 'PERFORMANCE_MONITOR_SERVICE',
+        useFactory: (metricsService: MetricsService, options: MetricsModuleOptions) => {
+          return new PerformanceMonitorService(metricsService, options);
+        },
+        inject: [MetricsService, 'METRICS_OPTIONS'],
+      });
+      providers.push({
+        provide: PerformanceMonitorService,
+        useExisting: 'PERFORMANCE_MONITOR_SERVICE',
+      });
       exports.push(PerformanceMonitorService);
     }
 
     // Add health metrics if enabled
     if (enableHealthMetrics) {
-      providers.push(HealthMetricsService);
+      providers.push({
+        provide: 'HEALTH_METRICS_SERVICE',
+        useFactory: (metricsService: MetricsService, options: MetricsModuleOptions) => {
+          return new HealthMetricsService(metricsService, options);
+        },
+        inject: [MetricsService, 'METRICS_OPTIONS'],
+      });
+      providers.push({
+        provide: HealthMetricsService,
+        useExisting: 'HEALTH_METRICS_SERVICE',
+      });
       exports.push(HealthMetricsService);
     }
 
     // Add business metrics if enabled
     if (enableBusinessMetrics) {
-      providers.push(BusinessMetricsService);
+      providers.push({
+        provide: 'BUSINESS_METRICS_SERVICE',
+        useFactory: (metricsService: MetricsService, options: MetricsModuleOptions) => {
+          return new BusinessMetricsService(metricsService, options);
+        },
+        inject: [MetricsService, 'METRICS_OPTIONS'],
+      });
+      providers.push({
+        provide: BusinessMetricsService,
+        useExisting: 'BUSINESS_METRICS_SERVICE',
+      });
       exports.push(BusinessMetricsService);
     }
 

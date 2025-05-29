@@ -232,7 +232,10 @@ export class MetricsCollectorService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (this.healthMetrics) {
-      this.healthMetrics.resetMetrics?.();
+      // Reset health metrics if method exists
+      if ('resetMetrics' in this.healthMetrics && typeof this.healthMetrics.resetMetrics === 'function') {
+        this.healthMetrics.resetMetrics();
+      }
     }
 
     if (this.businessMetrics) {

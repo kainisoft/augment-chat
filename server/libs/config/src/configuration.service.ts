@@ -187,7 +187,7 @@ export class ConfigurationService {
    * Get a string configuration value
    */
   getString(key: string, defaultValue?: string): string {
-    return this.configService.get<string>(key, defaultValue);
+    return this.configService.get<string>(key) || defaultValue || '';
   }
 
   /**
@@ -197,9 +197,9 @@ export class ConfigurationService {
     const value = this.configService.get<string>(key);
     if (value) {
       const parsed = parseInt(value, 10);
-      return isNaN(parsed) ? defaultValue : parsed;
+      return isNaN(parsed) ? (defaultValue || 0) : parsed;
     }
-    return defaultValue;
+    return defaultValue || 0;
   }
 
   /**
@@ -210,7 +210,7 @@ export class ConfigurationService {
     if (value) {
       return value.toLowerCase() === 'true';
     }
-    return defaultValue;
+    return defaultValue || false;
   }
 
   /**
@@ -252,7 +252,7 @@ export class ConfigurationService {
    */
   private getDatabaseUrl(serviceKey: string, dbName: string): string {
     const envVar = `DATABASE_URL_${serviceKey.toUpperCase().replace('-', '_')}`;
-    
+
     return (
       this.getString(envVar) ||
       this.getString('DATABASE_URL') ||

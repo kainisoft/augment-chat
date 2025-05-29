@@ -220,9 +220,9 @@ export class ServiceConfigurationService {
    */
   private getString(key: string, defaultValue?: string): string {
     if (this.configService) {
-      return this.configService.get<string>(key, defaultValue);
+      return this.configService.get<string>(key) || defaultValue || '';
     }
-    return process.env[key] || defaultValue;
+    return process.env[key] || defaultValue || '';
   }
 
   /**
@@ -232,9 +232,9 @@ export class ServiceConfigurationService {
     const value = this.getString(key);
     if (value) {
       const parsed = parseInt(value, 10);
-      return isNaN(parsed) ? defaultValue : parsed;
+      return isNaN(parsed) ? (defaultValue || 0) : parsed;
     }
-    return defaultValue;
+    return defaultValue || 0;
   }
 
   /**
@@ -245,6 +245,6 @@ export class ServiceConfigurationService {
     if (value) {
       return value.toLowerCase() === 'true';
     }
-    return defaultValue;
+    return defaultValue || false;
   }
 }
