@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { BootstrapService } from './bootstrap.service';
 import { ServiceConfigurationService } from './service-configuration.service';
-import { HotReloadService } from './hot-reload.service';
 
 /**
  * Bootstrap Module
@@ -19,7 +18,7 @@ import { HotReloadService } from './hot-reload.service';
  */
 @Module({
   imports: [ConfigModule],
-  providers: [BootstrapService, ServiceConfigurationService, HotReloadService],
-  exports: [BootstrapService, ServiceConfigurationService, HotReloadService],
+  providers: [BootstrapService, ServiceConfigurationService],
+  exports: [BootstrapService, ServiceConfigurationService],
 })
 export class BootstrapModule {}

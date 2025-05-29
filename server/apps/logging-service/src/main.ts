@@ -10,7 +10,6 @@ async function startApplication() {
       serviceName: 'Logging Service',
       enableValidation: true,
       enableCors: true,
-      enableHmr: false,
       // Custom validation options for logging service
       validationOptions: {
         transform: true,

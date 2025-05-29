@@ -5,7 +5,6 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { ServiceConfigurationService } from './service-configuration.service';
-import { HotReloadService } from './hot-reload.service';
 
 export interface BootstrapOptions {
   /**
@@ -38,12 +37,6 @@ export interface BootstrapOptions {
   enableCors?: boolean;
 
   /**
-   * Enable Hot Module Replacement
-   * @default true in development
-   */
-  enableHmr?: boolean;
-
-  /**
    * Additional setup function to configure the application
    * @param app The NestJS application instance
    */
@@ -67,10 +60,7 @@ export interface BootstrapOptions {
  * and patterns used across all microservices.
  */
 export class BootstrapService {
-  constructor(
-    private readonly configService: ServiceConfigurationService,
-    private readonly hotReloadService: HotReloadService,
-  ) {}
+  constructor(private readonly configService: ServiceConfigurationService) {}
 
   /**
    * Bootstrap a NestJS microservice with enhanced configuration
@@ -87,7 +77,6 @@ export class BootstrapService {
       serviceName,
       enableValidation = true,
       enableCors = true,
-      enableHmr = process.env.NODE_ENV === 'development',
       setup,
       validationOptions = {},
     } = options;
@@ -118,11 +107,6 @@ export class BootstrapService {
       // Log the URL
       const url = await app.getUrl();
       console.log(`${serviceName} is running on: ${url}`);
-
-      // Setup Hot Module Replacement if enabled
-      if (enableHmr) {
-        this.hotReloadService.setup(app);
-      }
 
       return app;
     } catch (error) {
@@ -200,7 +184,6 @@ export async function bootstrap(
 ): Promise<INestApplication> {
   const bootstrapService = new BootstrapService(
     new ServiceConfigurationService(),
-    new HotReloadService(),
   );
   return bootstrapService.bootstrap(module, options);
 }

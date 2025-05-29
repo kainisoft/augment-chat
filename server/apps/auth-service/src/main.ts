@@ -10,7 +10,6 @@ async function startApplication() {
       serviceName: 'Auth Service',
       enableValidation: true,
       enableCors: true,
-      enableHmr: process.env.NODE_ENV === 'development',
     });
 
     // HMR is now handled automatically by the bootstrap service

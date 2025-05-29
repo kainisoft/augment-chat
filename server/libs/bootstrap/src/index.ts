@@ -27,6 +27,3 @@ export {
   ServiceConfigurationService,
   ServiceConfiguration,
 } from './service-configuration.service';
-
-// Hot reload utilities
-export { HotReloadService } from './hot-reload.service';
