@@ -34,13 +34,9 @@ export {
   createPaginationMetadata,
 } from './common/list-response.dto';
 
-// GraphQL DTOs (used by user-service)
-export { GraphQLSearchPaginationInput } from './graphql/pagination-input.dto';
-
-export {
-  GraphQLListResponse,
-  GraphQLSearchResponse,
-} from './graphql/pagination-response.dto';
+// GraphQL DTOs (lazy-loaded to prevent bundling in non-GraphQL services)
+// These are moved to lazy loading to avoid @nestjs/graphql dependency issues
+// in services that don't use GraphQL (like logging-service)
 
 // Lazy-loaded exports for optional features (tree-shakable in production)
 export const LazyDtoUtils = {
@@ -81,7 +77,13 @@ export const LazyDtoUtils = {
       createGraphQLConnection,
       createGraphQLListResponse,
       createGraphQLSearchResponse,
+      GraphQLListResponse,
+      GraphQLSearchResponse,
     } = await import('./graphql/pagination-response.dto');
+
+    const { GraphQLSearchPaginationInput } = await import(
+      './graphql/pagination-input.dto'
+    );
 
     // Note: GraphQLConnection and GraphQLEdge are interfaces and must be imported directly
     return {
@@ -89,6 +91,9 @@ export const LazyDtoUtils = {
       createGraphQLConnection,
       createGraphQLListResponse,
       createGraphQLSearchResponse,
+      GraphQLListResponse,
+      GraphQLSearchResponse,
+      GraphQLSearchPaginationInput,
     };
   },
 };

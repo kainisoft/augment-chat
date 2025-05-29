@@ -10,7 +10,7 @@ async function startApplication() {
       serviceName: 'Logging Service',
       enableValidation: true,
       enableCors: true,
-      enableHmr: process.env.NODE_ENV === 'development',
+      enableHmr: false,
       // Custom validation options for logging service
       validationOptions: {
         transform: true,

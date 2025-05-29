@@ -39,6 +39,24 @@
                 "${workspaceFolder}/server/**",
                 "!**/node_modules/**"
             ]
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Logging Service",
+            "port": 9231,
+            "remoteRoot": "/app",
+            "restart": true,
+            "trace": true,
+            "localRoot": "${workspaceFolder}/server",
+            "sourceMaps": true,
+            "protocol": "inspector",
+            "address": "0.0.0.0",
+            "skipFiles": ["<node_internals>/**"],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/server/**",
+                "!**/node_modules/**"
+            ]
         }
     ]
 }

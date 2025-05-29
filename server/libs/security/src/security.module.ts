@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { RedisModule } from '@app/redis';
+import { LoggingModule } from '@app/logging';
 import { RateLimitService } from './rate-limit/rate-limit.service';
 import { SecurityUtilsService } from './utils/security-utils.service';
 import { RateLimitGuard } from './guards/rate-limit.guard';
@@ -20,6 +22,13 @@ import { LazySecurityService } from './lazy/lazy-security.service';
  * - Performance-optimized security utilities
  */
 @Module({
+  imports: [
+    RedisModule.registerDefault({
+      isGlobal: false,
+      keyPrefix: 'security:',
+    }),
+    LoggingModule,
+  ],
   providers: [
     RateLimitService,
     SecurityUtilsService,

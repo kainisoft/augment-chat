@@ -1,6 +1,9 @@
-import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { UserStatusEnum } from '../../domain/models/value-objects/user-status.value-object';
-import { GraphQLListResponse, GraphQLSearchResponse } from '@app/dtos';
+import {
+  GraphQLListResponse,
+  GraphQLSearchResponse,
+} from '@app/dtos/graphql/pagination-response.dto';
 
 /**
  * Register the UserStatus enum for GraphQL

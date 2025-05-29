@@ -1,12 +1,9 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { LogLevel } from '../../kafka/log-message.interface';
-import { PaginationQueryDto, SearchResponseDto } from '@app/dtos';
-import {
-  IsISODateField,
-  IsLogLevelField,
-  IsValidDateRange,
-} from '@app/validation';
+import { PaginationQueryDto } from '@app/dtos/common/pagination.dto';
+import { SearchResponseDto } from '@app/dtos/common/list-response.dto';
+import { IsISODateField, IsValidDateRange } from '@app/validation';
 
 /**
  * DTO for log query requests

@@ -8,7 +8,7 @@ import {
   IsBioField,
   IsAvatarUrlField,
 } from '@app/validation';
-import { GraphQLSearchPaginationInput } from '@app/dtos';
+import { GraphQLSearchPaginationInput } from '@app/dtos/graphql/pagination-input.dto';
 
 /**
  * Create User Input

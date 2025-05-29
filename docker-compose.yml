@@ -193,8 +193,12 @@ services:
     build:
       context: ./server
       dockerfile: ../docker/Dockerfiles/logging-service.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    command: pnpm run start:debug 0.0.0.0:9229 logging-service
     ports:
       - "4005:4005"
+      - "9231:9229"
     env_file:
       - ./docker/config/logging/logging-config.env
     environment:
@@ -205,7 +209,6 @@ services:
       - ./server/libs:/app/libs:delegated
       - ./server/nest-cli.json:/app/nest-cli.json:delegated
       - ./server/tsconfig.json:/app/tsconfig.json:delegated
-      - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
       - logging-service-node-modules:/app/node_modules
     depends_on:
       kafka:
