@@ -141,6 +141,7 @@ subscription TypingStatus($conversationId: ID!) {
 - `@app/dtos` - Shared data transfer objects for messaging and GraphQL responses
 - `@app/validation` - Shared validation decorators for GraphQL inputs
 - `@app/security` - Security utilities and guards
+- `@app/iam` - Identity and Access Management for authentication and authorization
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities and GraphQL test builders
 - `@app/domain` - Shared domain models (UserId, MessageId, ConversationId, etc.)
@@ -243,6 +244,67 @@ export class MessageResolver {
       { conversationId },
       context,
     );
+  }
+}
+```
+
+**Using IAM Authentication and Authorization:**
+```typescript
+import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/iam';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+
+@Resolver(() => MessageType)
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class MessageResolver {
+  @Query(() => [MessageType])
+  @Roles('user', 'admin')
+  async messages(
+    @Args('conversationId') conversationId: string,
+    @Context() context: any,
+  ) {
+    // Only authenticated users with 'user' or 'admin' roles can access
+    return this.messageService.getMessages(conversationId, context.user);
+  }
+
+  @Mutation(() => MessageType)
+  @Roles('user')
+  async sendMessage(
+    @Args('input') input: SendMessageInput,
+    @Context() context: any,
+  ) {
+    // Only authenticated users with 'user' role can send messages
+    return this.messageService.sendMessage(input, context.user);
+  }
+
+  @Query(() => [ConversationType])
+  @Public() // Public endpoint, no authentication required
+  async publicConversations() {
+    return this.conversationService.getPublicConversations();
+  }
+}
+```
+
+**Using IAM Guards in Controllers:**
+```typescript
+import { JwtAuthGuard, RolesGuard, Roles } from '@app/iam';
+import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
+
+@Controller('chat')
+@UseGuards(JwtAuthGuard)
+export class ChatController {
+  @Get('health')
+  @Public() // Override global auth guard for health check
+  getHealth() {
+    return { status: 'ok' };
+  }
+
+  @Post('admin/cleanup')
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  async adminCleanup(@Request() req) {
+    // Only admin users can access this endpoint
+    return this.chatService.performCleanup(req.user);
   }
 }
 ```
@@ -601,18 +663,70 @@ For detailed performance documentation, see [Performance Documentation Index](..
 
 ## Security
 
+### Centralized IAM Integration
+
+The Chat Service uses the centralized `@app/iam` module for all authentication and authorization:
+
+- **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
+- **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
+- **Public Endpoints**: Selective public access using `@Public()` decorator
+- **GraphQL Security**: Integrated authentication for GraphQL resolvers and subscriptions
+
 ### Message Security
 
-- **Authentication**: JWT token validation for all operations
-- **Authorization**: User can only access own conversations
+- **Conversation Access Control**: Users can only access conversations they participate in
+- **Message Ownership**: Users can only modify/delete their own messages
+- **Real-time Authorization**: WebSocket subscriptions validate user permissions
 - **Message Encryption**: Optional end-to-end encryption support
-- **Rate Limiting**: Message sending rate limits per user
+- **Rate Limiting**: Message sending rate limits per user using `@app/security`
 
 ### WebSocket Security
 
-- **Connection Authentication**: Token-based WebSocket authentication
-- **Room Authorization**: Users can only join authorized conversation rooms
+- **Connection Authentication**: JWT token validation for WebSocket connections
+- **Subscription Authorization**: Users can only subscribe to authorized conversation events
+- **Room-Based Security**: Conversation-specific access control for real-time events
 - **Message Validation**: All incoming messages validated before processing
+
+### IAM Integration Examples
+
+```typescript
+// GraphQL resolver with IAM protection
+@Resolver(() => ConversationType)
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class ConversationResolver {
+  @Query(() => [ConversationType])
+  @Roles('user')
+  async myConversations(@Context() context: any) {
+    // Automatically gets user from JWT token via IAM
+    return this.conversationService.getUserConversations(context.user.id);
+  }
+
+  @Mutation(() => ConversationType)
+  @Roles('user', 'moderator')
+  async createConversation(
+    @Args('input') input: CreateConversationInput,
+    @Context() context: any,
+  ) {
+    // Role-based access: users and moderators can create conversations
+    return this.conversationService.create(input, context.user);
+  }
+}
+
+// WebSocket gateway with IAM integration
+@WebSocketGateway()
+export class ChatGateway {
+  @UseGuards(WsJwtAuthGuard) // WebSocket-specific IAM guard
+  @SubscribeMessage('joinConversation')
+  async handleJoinConversation(
+    @MessageBody() data: { conversationId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    // User context automatically injected by IAM
+    const user = client.handshake.user;
+    await this.chatService.joinConversation(data.conversationId, user);
+  }
+}
+```
 
 ## Troubleshooting
 
@@ -643,8 +757,28 @@ WEBSOCKET_DEBUG=true pnpm run start:dev chat-service
 
 ## Related Documentation
 
+### Core Planning Documents
 - [Chat Service Plan](../../docs/server/CHAT_SERVICE_PLAN.md)
 - [Service Standardization Plan](../../docs/server/SERVICE_STANDARDIZATION_PLAN.md)
 - [Shared Infrastructure Modules](../../docs/server/SHARED_INFRASTRUCTURE_MODULES.md)
-- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+
+### Architecture and Implementation Guides
+- [DDD Implementation Guide](../../docs/server/DDD_IMPLEMENTATION_GUIDE.md)
+- [CQRS Implementation Plan](../../docs/server/CQRS_IMPLEMENTATION_PLAN.md)
+- [GraphQL Best Practices](../../docs/server/GRAPHQL_GUIDELINES.md)
 - [WebSocket Implementation Guide](../../docs/server/WEBSOCKET_GUIDE.md)
+
+### Standards and Guidelines
+- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+- [Validation Standards Guide](../../docs/server/VALIDATION_STANDARDS_GUIDE.md)
+- [Security Standards Guide](../../docs/server/SECURITY_STANDARDS_GUIDE.md)
+
+### Performance and Monitoring
+- [Performance Documentation Index](../../docs/server/performance/README.md)
+- [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
+
+### Shared Module Documentation
+- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Testing Library](../../libs/testing/README.md)
+- [GraphQL Library](../../libs/graphql/README.md)
+- [Security Library](../../libs/security/README.md)

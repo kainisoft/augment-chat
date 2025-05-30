@@ -56,6 +56,7 @@ The service follows Domain-Driven Design (DDD) patterns and integrates with shar
 - `@app/dtos` - Shared data transfer objects for notifications
 - `@app/validation` - Shared validation decorators
 - `@app/security` - Security utilities and guards
+- `@app/iam` - Identity and Access Management for authentication and authorization
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities
 - `@app/domain` - Shared domain models (UserId, NotificationId, etc.)
@@ -114,6 +115,58 @@ export class Notification {
     private readonly content: string,
     private readonly type: NotificationType,
   ) {}
+}
+```
+
+**Using IAM Authentication and Authorization:**
+```typescript
+import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/iam';
+import { Controller, Get, Post, Put, Delete, UseGuards, Request, Body, Param } from '@nestjs/common';
+
+@Controller('notifications')
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class NotificationController {
+  @Get()
+  @Roles('user', 'admin')
+  async getNotifications(@Request() req) {
+    // Users can only see their own notifications
+    return this.notificationService.getUserNotifications(req.user.id);
+  }
+
+  @Put(':id/read')
+  @Roles('user')
+  async markAsRead(@Param('id') id: string, @Request() req) {
+    // Users can only mark their own notifications as read
+    return this.notificationService.markAsRead(id, req.user.id);
+  }
+
+  @Post('send')
+  @Roles('admin', 'system')
+  async sendNotification(@Body() notificationDto: SendNotificationDto) {
+    // Only admins and system can send notifications
+    return this.notificationService.sendNotification(notificationDto);
+  }
+
+  @Post('broadcast')
+  @Roles('admin')
+  async broadcastNotification(@Body() notificationDto: BroadcastNotificationDto) {
+    // Only admins can broadcast to all users
+    return this.notificationService.broadcastNotification(notificationDto);
+  }
+
+  @Get('preferences')
+  @Roles('user')
+  async getPreferences(@Request() req) {
+    // Users can only access their own preferences
+    return this.notificationService.getUserPreferences(req.user.id);
+  }
+
+  @Put('preferences')
+  @Roles('user')
+  async updatePreferences(@Body() preferences: NotificationPreferencesDto, @Request() req) {
+    // Users can only update their own preferences
+    return this.notificationService.updatePreferences(req.user.id, preferences);
+  }
 }
 ```
 
@@ -406,18 +459,63 @@ For detailed performance documentation, see [Performance Documentation Index](..
 
 ## Security
 
+### Centralized IAM Integration
+
+The Notification Service uses the centralized `@app/iam` module for all authentication and authorization:
+
+- **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
+- **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
+- **Admin Operations**: Restricted admin-only operations for system notifications
+- **User Privacy**: Users can only access their own notifications and preferences
+
 ### Notification Security
 
-- **Authentication**: JWT token validation for all operations
-- **Authorization**: Users can only access own notifications
+- **Authentication**: Centralized JWT token validation via `@app/iam`
+- **Authorization**: Role-based access control for notification operations
 - **Content Validation**: All notification content validated and sanitized
-- **Rate Limiting**: Notification sending rate limits per user
+- **Rate Limiting**: Notification sending rate limits per user using `@app/security`
 
 ### Privacy Protection
 
 - **Data Encryption**: Sensitive notification data encrypted at rest
-- **Preference Privacy**: User preferences securely stored
+- **Preference Privacy**: User preferences securely stored and access-controlled
 - **Audit Logging**: All notification operations logged for compliance
+- **User Consent**: Notification preferences respect user consent and privacy settings
+
+### IAM Integration Examples
+
+```typescript
+// Event handler with IAM context
+@EventsHandler(UserRegisteredEvent)
+export class UserRegisteredHandler {
+  async handle(event: UserRegisteredEvent) {
+    // System-level operation, no user context needed
+    await this.notificationService.sendWelcomeNotification(event.userId);
+  }
+}
+
+// Service method with user context validation
+@Injectable()
+export class NotificationService {
+  async getUserNotifications(userId: string, requestingUser: User) {
+    // Validate user can only access their own notifications
+    if (userId !== requestingUser.id && !requestingUser.hasRole('admin')) {
+      throw new ForbiddenException('Cannot access other user notifications');
+    }
+
+    return this.notificationRepository.findByUserId(userId);
+  }
+
+  async sendAdminNotification(notification: NotificationDto, adminUser: User) {
+    // Validate admin permissions
+    if (!adminUser.hasRole('admin')) {
+      throw new ForbiddenException('Admin role required');
+    }
+
+    return this.processNotification(notification);
+  }
+}
+```
 
 ## Troubleshooting
 
@@ -448,8 +546,26 @@ EMAIL_DEBUG=true pnpm run start:dev notification-service
 
 ## Related Documentation
 
+### Core Planning Documents
 - [Notification Service Plan](../../docs/server/NOTIFICATION_SERVICE_PLAN.md)
 - [Service Standardization Plan](../../docs/server/SERVICE_STANDARDIZATION_PLAN.md)
 - [Shared Infrastructure Modules](../../docs/server/SHARED_INFRASTRUCTURE_MODULES.md)
-- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+
+### Architecture and Implementation Guides
+- [DDD Implementation Guide](../../docs/server/DDD_IMPLEMENTATION_GUIDE.md)
 - [Event Communication Guide](../../docs/server/EVENT_COMMUNICATION_GUIDE.md)
+- [Security Standards Guide](../../docs/server/SECURITY_STANDARDS_GUIDE.md)
+
+### Standards and Guidelines
+- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+- [Validation Standards Guide](../../docs/server/VALIDATION_STANDARDS_GUIDE.md)
+
+### Performance and Monitoring
+- [Performance Documentation Index](../../docs/server/performance/README.md)
+- [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
+
+### Shared Module Documentation
+- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Testing Library](../../libs/testing/README.md)
+- [Validation Library](../../libs/validation/README.md)
+- [Security Library](../../libs/security/README.md)

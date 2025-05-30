@@ -57,6 +57,7 @@ The service follows Domain-Driven Design (DDD) patterns and integrates with shar
 - `@app/dtos` - Shared data transfer objects for logging
 - `@app/validation` - Shared validation decorators
 - `@app/security` - Security utilities and guards
+- `@app/iam` - Identity and Access Management for authentication and authorization
 - `@app/logging` - Core logging utilities (self-hosted)
 - `@app/testing` - Shared testing utilities
 - `@app/domain` - Shared domain models (ServiceId, LogLevel, etc.)
@@ -117,6 +118,57 @@ export class LogEntry {
     private readonly timestamp: Date,
     private readonly metadata: Record<string, any>,
   ) {}
+}
+```
+
+**Using IAM Authentication and Authorization:**
+```typescript
+import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/iam';
+import { Controller, Get, Post, Delete, UseGuards, Request, Body, Query } from '@nestjs/common';
+
+@Controller('logs')
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class LoggingController {
+  @Get()
+  @Roles('admin', 'developer')
+  async queryLogs(@Query() query: LogQueryDto, @Request() req) {
+    // Only admins and developers can query logs
+    return this.loggingService.queryLogs(query, req.user);
+  }
+
+  @Get('search')
+  @Roles('admin', 'developer')
+  async searchLogs(@Query() searchDto: LogSearchDto, @Request() req) {
+    // Only admins and developers can search logs
+    return this.loggingService.searchLogs(searchDto, req.user);
+  }
+
+  @Get('stats')
+  @Roles('admin', 'developer', 'operator')
+  async getLogStats(@Request() req) {
+    // Admins, developers, and operators can view log statistics
+    return this.loggingService.getLogStatistics(req.user);
+  }
+
+  @Delete('cleanup')
+  @Roles('admin')
+  async triggerCleanup(@Request() req) {
+    // Only admins can trigger manual log cleanup
+    return this.loggingService.triggerManualCleanup(req.user);
+  }
+
+  @Post('retention/configure')
+  @Roles('admin')
+  async configureRetention(@Body() config: RetentionConfigDto, @Request() req) {
+    // Only admins can configure retention policies
+    return this.loggingService.configureRetention(config, req.user);
+  }
+
+  @Get('health/loki')
+  @Public() // Public health check for monitoring systems
+  async checkLokiHealth() {
+    return this.loggingService.checkLokiConnectivity();
+  }
 }
 ```
 
@@ -417,18 +469,90 @@ For detailed performance documentation, see [Performance Documentation Index](..
 
 ## Security
 
+### Centralized IAM Integration
+
+The Logging Service uses the centralized `@app/iam` module for all authentication and authorization:
+
+- **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
+- **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
+- **Developer Access**: Developers can query and search logs for debugging
+- **Admin Operations**: Admins have full access including retention configuration
+- **Operator Access**: Operators can view statistics and health information
+
 ### Log Security
 
-- **Authentication**: JWT token validation for log access
-- **Authorization**: Role-based access to log data
+- **Authentication**: Centralized JWT token validation via `@app/iam`
+- **Authorization**: Role-based access to log data (admin, developer, operator)
 - **Data Sanitization**: Sensitive data filtering and masking
-- **Audit Logging**: All log access operations logged
+- **Audit Logging**: All log access operations logged with user context
 
 ### Privacy Protection
 
 - **PII Filtering**: Automatic detection and masking of personal information
 - **Data Retention**: Compliance with data retention policies
-- **Access Control**: Granular permissions for log access
+- **Access Control**: Granular permissions for log access based on user roles
+- **Query Auditing**: All log queries tracked with user identification
+
+### IAM Integration Examples
+
+```typescript
+// Service method with role-based access control
+@Injectable()
+export class LoggingService {
+  async queryLogs(query: LogQueryDto, user: User): Promise<LogEntry[]> {
+    // Validate user has appropriate role
+    if (!user.hasAnyRole(['admin', 'developer'])) {
+      throw new ForbiddenException('Insufficient permissions to query logs');
+    }
+
+    // Log the access for audit purposes
+    await this.auditLogger.logAccess({
+      userId: user.id,
+      action: 'QUERY_LOGS',
+      query: query,
+      timestamp: new Date(),
+    });
+
+    return this.logRepository.query(query);
+  }
+
+  async configureRetention(config: RetentionConfigDto, user: User): Promise<void> {
+    // Only admins can configure retention
+    if (!user.hasRole('admin')) {
+      throw new ForbiddenException('Admin role required for retention configuration');
+    }
+
+    // Log the configuration change
+    await this.auditLogger.logConfigChange({
+      userId: user.id,
+      action: 'CONFIGURE_RETENTION',
+      oldConfig: await this.getRetentionConfig(),
+      newConfig: config,
+      timestamp: new Date(),
+    });
+
+    await this.retentionService.updateConfiguration(config);
+  }
+
+  async getLogStatistics(user: User): Promise<LogStatistics> {
+    // Multiple roles can access statistics
+    if (!user.hasAnyRole(['admin', 'developer', 'operator'])) {
+      throw new ForbiddenException('Insufficient permissions to view log statistics');
+    }
+
+    // Filter statistics based on user role
+    const stats = await this.statisticsService.getStatistics();
+
+    if (user.hasRole('admin')) {
+      return stats; // Full access
+    } else if (user.hasRole('developer')) {
+      return this.filterDeveloperStats(stats); // Limited access
+    } else {
+      return this.filterOperatorStats(stats); // Basic access
+    }
+  }
+}
+```
 
 ## Troubleshooting
 
@@ -459,8 +583,26 @@ LOKI_DEBUG=true pnpm run start:dev logging-service
 
 ## Related Documentation
 
+### Core Planning Documents
 - [Logging Service Plan](../../docs/server/LOGGING_SERVICE_PLAN.md)
 - [Service Standardization Plan](../../docs/server/SERVICE_STANDARDIZATION_PLAN.md)
 - [Shared Infrastructure Modules](../../docs/server/SHARED_INFRASTRUCTURE_MODULES.md)
-- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+
+### Architecture and Implementation Guides
+- [DDD Implementation Guide](../../docs/server/DDD_IMPLEMENTATION_GUIDE.md)
+- [Security Standards Guide](../../docs/server/SECURITY_STANDARDS_GUIDE.md)
 - [Loki Configuration Guide](../../docs/logging/LOKI_SETUP.md)
+
+### Standards and Guidelines
+- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+- [Validation Standards Guide](../../docs/server/VALIDATION_STANDARDS_GUIDE.md)
+
+### Performance and Monitoring
+- [Performance Documentation Index](../../docs/server/performance/README.md)
+- [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
+
+### Shared Module Documentation
+- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Testing Library](../../libs/testing/README.md)
+- [Validation Library](../../libs/validation/README.md)
+- [Security Library](../../libs/security/README.md)

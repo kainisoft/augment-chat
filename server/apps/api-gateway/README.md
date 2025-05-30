@@ -55,25 +55,41 @@ The service follows Domain-Driven Design (DDD) patterns and integrates with shar
 - `@app/dtos` - Shared data transfer objects for API responses
 - `@app/validation` - Shared validation decorators
 - `@app/security` - Security utilities, guards, and rate limiting
+- `@app/iam` - Identity and Access Management for centralized authentication
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities
 - `@app/domain` - Shared domain models (UserId, etc.)
-- `@app/iam` - Identity and Access Management
 - `@app/graphql` - GraphQL utilities and federation helpers
 
 #### Shared Module Integration Examples
 
-**Using Security Guards:**
+**Using IAM Authentication Guards:**
 ```typescript
-import { JwtAuthGuard, RateLimitGuard } from '@app/security';
+import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/iam';
+import { RateLimitGuard } from '@app/security';
 
 @Controller('api')
-@UseGuards(JwtAuthGuard, RateLimitGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, RateLimitGuard)
 export class GatewayController {
   @Post('protected-endpoint')
+  @Roles('user', 'admin')
   @RateLimit({ points: 10, duration: 60 })
   async protectedEndpoint(@Request() req) {
-    return this.processRequest(req);
+    // User context automatically injected by IAM
+    return this.processRequest(req.user);
+  }
+
+  @Get('public-endpoint')
+  @Public() // Override global auth guard
+  async publicEndpoint() {
+    return this.getPublicData();
+  }
+
+  @Post('admin-only')
+  @Roles('admin')
+  async adminEndpoint(@Request() req) {
+    // Only admin users can access
+    return this.adminOperation(req.user);
   }
 }
 ```
@@ -419,12 +435,61 @@ For detailed performance documentation, see [Performance Documentation Index](..
 
 ## Security
 
+### Centralized IAM Integration
+
+The API Gateway uses the centralized `@app/iam` module as the primary authentication and authorization layer:
+
+- **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
+- **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
+- **Public Endpoints**: Selective public access using `@Public()` decorator
+- **Gateway-Level Security**: Authentication enforcement for all downstream services
+
 ### Authentication & Authorization
 
-- **JWT Validation**: Token verification for all protected endpoints
+- **JWT Validation**: Centralized token verification via `@app/iam`
 - **User Context**: Automatic user context injection for downstream services
-- **Role-Based Access**: Fine-grained permissions based on user roles
+- **Role-Based Access**: Admin, user, and moderator role distinctions
 - **API Key Support**: Optional API key authentication for service-to-service calls
+
+### IAM Integration Examples
+
+```typescript
+// GraphQL gateway with IAM protection
+@Resolver()
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class GatewayResolver {
+  @Query(() => String)
+  @Public() // Public GraphQL endpoint
+  async publicQuery() {
+    return 'This is a public query';
+  }
+
+  @Query(() => UserType)
+  @Roles('user', 'admin')
+  async protectedQuery(@Context() context: any) {
+    // User context automatically available
+    return this.userService.getUser(context.user.id);
+  }
+
+  @Mutation(() => Boolean)
+  @Roles('admin')
+  async adminMutation(@Context() context: any) {
+    // Only admin users can access
+    return this.adminService.performAction(context.user);
+  }
+}
+
+// Gateway middleware with IAM
+@Injectable()
+export class GatewayAuthMiddleware implements NestMiddleware {
+  constructor(private readonly iamService: IAMService) {}
+
+  use(req: Request, res: Response, next: NextFunction) {
+    // IAM handles token validation and user context injection
+    this.iamService.validateAndInjectUser(req, res, next);
+  }
+}
+```
 
 ### Rate Limiting
 
@@ -462,9 +527,26 @@ GRAPHQL_DEBUG=true pnpm run start:dev api-gateway
 
 ## Related Documentation
 
+### Core Planning Documents
 - [API Gateway Plan](../../docs/server/API_GATEWAY_PLAN.md)
 - [Service Standardization Plan](../../docs/server/SERVICE_STANDARDIZATION_PLAN.md)
 - [Shared Infrastructure Modules](../../docs/server/SHARED_INFRASTRUCTURE_MODULES.md)
-- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+
+### Architecture and Implementation Guides
 - [GraphQL Federation Guide](../../docs/server/GRAPHQL_FEDERATION_GUIDE.md)
 - [Security Standards Guide](../../docs/server/SECURITY_STANDARDS_GUIDE.md)
+- [DDD Implementation Guide](../../docs/server/DDD_IMPLEMENTATION_GUIDE.md)
+
+### Standards and Guidelines
+- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+- [Validation Standards Guide](../../docs/server/VALIDATION_STANDARDS_GUIDE.md)
+
+### Performance and Monitoring
+- [Performance Documentation Index](../../docs/server/performance/README.md)
+- [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
+
+### Shared Module Documentation
+- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Testing Library](../../libs/testing/README.md)
+- [GraphQL Library](../../libs/graphql/README.md)
+- [Security Library](../../libs/security/README.md)

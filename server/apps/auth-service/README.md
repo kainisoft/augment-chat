@@ -353,6 +353,16 @@ During the service standardization process, the Auth Service underwent significa
 - **After**: Shared testing patterns using `@app/testing`
 - **Benefits**: Consistent test structure, reusable mock factories, better coverage
 
+#### 7. IAM Integration
+- **Before**: Service-specific authentication and authorization logic
+- **After**: Centralized IAM using `@app/iam` module
+- **Changes**:
+  - Replaced custom JWT guards with `JwtAuthGuard` from IAM
+  - Implemented role-based access control using `@Roles()` decorator
+  - Added `@Public()` decorator for public endpoints
+  - Centralized user context injection across all endpoints
+- **Benefits**: Consistent authentication across all services, centralized security policies
+
 ### Performance Optimizations
 
 #### Database Optimizations
@@ -543,7 +553,30 @@ docker-compose logs -f auth-service
 
 ## Related Documentation
 
+### Core Planning Documents
+- [Auth Service Plan](../../docs/server/AUTH_SERVICE_PLAN.md)
 - [Service Standardization Plan](../../docs/server/SERVICE_STANDARDIZATION_PLAN.md)
 - [Shared Infrastructure Modules](../../docs/server/SHARED_INFRASTRUCTURE_MODULES.md)
-- [Testing Guidelines](../../libs/testing/README.md)
-- [Security Guidelines](../../libs/security/README.md)
+
+### Architecture and Implementation Guides
+- [DDD Implementation Guide](../../docs/server/DDD_IMPLEMENTATION_GUIDE.md)
+- [CQRS Implementation Plan](../../docs/server/CQRS_IMPLEMENTATION_PLAN.md)
+- [Security Standards Guide](../../docs/server/SECURITY_STANDARDS_GUIDE.md)
+
+### Standards and Guidelines
+- [Testing Standards Guide](../../docs/server/TESTING_STANDARDS_GUIDE.md)
+- [Validation Standards Guide](../../docs/server/VALIDATION_STANDARDS_GUIDE.md)
+
+### Performance and Monitoring
+- [Performance Documentation Index](../../docs/server/performance/README.md)
+- [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
+
+### Service Integration
+- [Auth Service Kafka Integration](../../docs/server/AUTH_SERVICE_KAFKA_INTEGRATION.md)
+- [User Service Plan](../../docs/server/USER_SERVICE_PLAN.md)
+
+### Shared Module Documentation
+- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Testing Library](../../libs/testing/README.md)
+- [Validation Library](../../libs/validation/README.md)
+- [Security Library](../../libs/security/README.md)

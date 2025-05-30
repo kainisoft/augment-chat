@@ -101,6 +101,7 @@ mutation AddFriend($targetUserId: ID!) {
 - `@app/dtos` - Shared data transfer objects (GraphQL pagination, error responses)
 - `@app/validation` - Shared validation decorators
 - `@app/security` - Security utilities and guards
+- `@app/iam` - Identity and Access Management for authentication and authorization
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities
 
@@ -426,17 +427,88 @@ For detailed performance documentation, see [Performance Documentation Index](..
 
 ## Security
 
+### Centralized IAM Integration
+
+The User Service uses the centralized `@app/iam` module for all authentication and authorization:
+
+- **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
+- **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
+- **Public Endpoints**: Selective public access using `@Public()` decorator
+- **GraphQL Security**: Integrated authentication for GraphQL resolvers
+
 ### Authentication
 
-- **JWT Validation**: Token verification for protected operations
-- **GraphQL Context**: User context injection for resolvers
-- **Rate Limiting**: Query complexity and request rate limits
+- **JWT Validation**: Centralized token verification via `@app/iam`
+- **GraphQL Context**: Automatic user context injection for resolvers
+- **Rate Limiting**: Query complexity and request rate limits using `@app/security`
 
 ### Authorization
 
-- **Field-Level Security**: GraphQL field access control
-- **Resource Ownership**: User can only access own data
+- **Field-Level Security**: GraphQL field access control via IAM guards
+- **Resource Ownership**: Users can only access their own data
 - **Relationship Permissions**: Friend-based access controls
+- **Role-Based Access**: Admin, user, and moderator role distinctions
+
+### IAM Integration Examples
+
+```typescript
+// GraphQL resolver with IAM protection
+@Resolver(() => UserType)
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class UserResolver {
+  @Query(() => UserType)
+  @Roles('user', 'admin')
+  async me(@Context() context: any) {
+    // User automatically injected by IAM
+    return this.userService.findById(context.user.id);
+  }
+
+  @Mutation(() => UserType)
+  @Roles('user')
+  async updateProfile(
+    @Args('input') input: UpdateProfileInput,
+    @Context() context: any,
+  ) {
+    // Only authenticated users can update their own profile
+    return this.userService.updateProfile(context.user.id, input);
+  }
+
+  @Query(() => [UserType])
+  @Public() // Public endpoint for user search
+  async searchUsers(@Args('query') query: string) {
+    return this.userService.searchPublicProfiles(query);
+  }
+
+  @Mutation(() => Boolean)
+  @Roles('admin')
+  async deleteUser(@Args('userId') userId: string) {
+    // Only admins can delete users
+    return this.userService.deleteUser(userId);
+  }
+}
+
+// Relationship resolver with permission checks
+@Resolver(() => UserRelationshipType)
+@UseGuards(JwtAuthGuard)
+export class RelationshipResolver {
+  @Mutation(() => UserRelationshipType)
+  @Roles('user')
+  async addFriend(
+    @Args('targetUserId') targetUserId: string,
+    @Context() context: any,
+  ) {
+    // Users can only manage their own relationships
+    return this.relationshipService.addFriend(context.user.id, targetUserId);
+  }
+
+  @Query(() => [UserRelationshipType])
+  @Roles('user')
+  async myRelationships(@Context() context: any) {
+    // Users can only view their own relationships
+    return this.relationshipService.getUserRelationships(context.user.id);
+  }
+}
+```
 
 ## Troubleshooting
 
@@ -497,6 +569,7 @@ When contributing:
 - [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
 
 ### Shared Module Documentation
+- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
 - [Testing Library](../../libs/testing/README.md)
 - [Validation Library](../../libs/validation/README.md)
 - [Security Library](../../libs/security/README.md)
