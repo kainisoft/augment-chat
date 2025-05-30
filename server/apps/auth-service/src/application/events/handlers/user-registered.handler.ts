@@ -4,11 +4,12 @@ import { LoggingService, ErrorLoggerService } from '@app/logging';
 
 import { UserRegisteredEvent } from '../impl/user-registered.event';
 import { UserAuthReadRepository } from '../../../domain/repositories/user-auth-read.repository.interface';
+import { KafkaProducerService } from '../../../kafka/kafka-producer.service';
 
 /**
  * User Registered Event Handler
  *
- * Handles side effects when a user is registered
+ * Handles side effects when a user is registered and publishes the event to Kafka
  */
 @EventsHandler(UserRegisteredEvent)
 export class UserRegisteredHandler
@@ -17,6 +18,7 @@ export class UserRegisteredHandler
   constructor(
     @Inject('UserAuthReadRepository')
     private readonly userAuthReadRepository: UserAuthReadRepository,
+    private readonly kafkaProducerService: KafkaProducerService,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
   ) {
@@ -50,13 +52,34 @@ export class UserRegisteredHandler
 
       // Additional side effects like sending welcome email, etc.
       // would be implemented here
-    } catch (error: any) {
+
+      // Publish event to Kafka
+      this.loggingService.debug(
+        `Publishing UserRegisteredEvent to Kafka: ${event.userId}`,
+        'handle',
+        {
+          userId: event.userId,
+          email: event.email,
+        },
+      );
+
+      await this.kafkaProducerService.send('auth-events', event, event.userId);
+
+      this.loggingService.debug(
+        `Published UserRegisteredEvent to Kafka: ${event.userId}`,
+        'handle',
+        { userId: event.userId },
+      );
+    } catch (error) {
       // Use the ErrorLoggerService to log the error with context
-      this.errorLogger.error(error, 'Error handling user registered event', {
-        source: UserRegisteredHandler.name,
-        method: 'handle',
-        userId: event.userId,
-      });
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error handling UserRegisteredEvent for user: ${event.userId}`,
+        {
+          userId: event.userId,
+          error: error instanceof Error ? error.stack : String(error),
+        },
+      );
 
       throw error;
     }

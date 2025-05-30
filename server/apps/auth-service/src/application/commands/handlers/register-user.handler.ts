@@ -2,12 +2,11 @@ import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, ConflictException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-
+import { Email } from '@app/domain';
 import { RegisterUserCommand } from '../impl/register-user.command';
 import { UserRegisteredEvent } from '../../events/impl/user-registered.event';
 import { UserRepository } from '../../../domain/repositories/user.repository.interface';
 import { User } from '../../../domain/models/user.entity';
-import { Email } from '../../../domain/models/value-objects/email.value-object';
 import { Password } from '../../../domain/models/value-objects/password.value-object';
 import { TokenService } from '../../../token/token.service';
 import { SessionService } from '../../../session/session.service';

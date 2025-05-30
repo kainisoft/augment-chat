@@ -34,17 +34,7 @@ export class UserCreatedHandler implements IEventHandler<UserCreatedEvent> {
       );
 
       // Publish event to Kafka
-      await this.kafkaProducerService.send(
-        'user-events',
-        {
-          type: 'UserCreated',
-          userId: event.userId,
-          authId: event.authId,
-          username: event.username,
-          timestamp: event.timestamp,
-        },
-        event.userId,
-      );
+      await this.kafkaProducerService.send('user-events', event, event.userId);
 
       this.loggingService.debug(
         `Published UserCreatedEvent to Kafka: ${event.userId}`,

@@ -31,10 +31,11 @@ describe('ApiGatewayController', () => {
     it('should return the string from the service', () => {
       // Arrange
       const expectedResult = 'Hello World!';
+      const mockRequest = { url: '/test' } as any;
       jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
 
       // Act
-      const result = controller.getHello();
+      const result = controller.getHello(mockRequest);
 
       // Assert
       expect(result).toBe(expectedResult);
@@ -44,10 +45,11 @@ describe('ApiGatewayController', () => {
     it('should handle different return values from the service', () => {
       // Arrange
       const expectedResult = 'Different greeting';
+      const mockRequest = { url: '/test' };
       jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
 
       // Act
-      const result = controller.getHello();
+      const result = controller.getHello(mockRequest);
 
       // Assert
       expect(result).toBe(expectedResult);

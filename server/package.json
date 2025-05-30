@@ -7,6 +7,13 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "build:all": "pnpm build:api-gateway && pnpm build:auth-service && pnpm build:user-service && pnpm build:chat-service && pnpm build:notification-service && pnpm build:logging-service",
+    "build:api-gateway": "nest build api-gateway",
+    "build:auth-service": "nest build auth-service",
+    "build:user-service": "nest build user-service",
+    "build:chat-service": "nest build chat-service",
+    "build:notification-service": "nest build notification-service",
+    "build:logging-service": "nest build logging-service",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -25,8 +32,6 @@
     "migration:up": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run",
     "migration:down": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:revert",
     "migration:status": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:show",
-    "seed:run": "ts-node -r tsconfig-paths/register ./libs/database/src/seeds/seed.ts",
-    "seed:clear": "ts-node -r tsconfig-paths/register ./libs/database/src/seeds/clear.ts",
     "db:create-database:auth": "SERVICE=auth ts-node -r tsconfig-paths/register ./libs/database/src/migrations/create-database.ts",
     "db:create-database:user": "SERVICE=user ts-node -r tsconfig-paths/register ./libs/database/src/migrations/create-database.ts",
     "db:create-databases": "pnpm db:create-database:auth && pnpm db:create-database:user",
@@ -51,7 +56,13 @@
     "db:up": "pnpm db:create-databases && pnpm db:create-schemas && pnpm db:migrate",
     "db:studio": "SERVICE=auth drizzle-kit studio",
     "db:studio:auth": "SERVICE=auth drizzle-kit studio",
-    "db:studio:user": "SERVICE=user drizzle-kit studio"
+    "db:studio:user": "SERVICE=user drizzle-kit studio",
+    "perf:baseline": "ts-node -r tsconfig-paths/register ./scripts/performance/establish-baseline.ts",
+    "perf:monitor": "ts-node -r tsconfig-paths/register ./scripts/performance/performance-monitor.ts",
+    "perf:bundle": "ts-node -r tsconfig-paths/register ./scripts/performance/bundle-analyzer.ts",
+    "perf:memory": "ts-node -r tsconfig-paths/register ./scripts/performance/memory-tracker.ts",
+    "perf:response": "ts-node -r tsconfig-paths/register ./scripts/performance/response-time-analyzer.ts",
+    "optimize:imports": "ts-node -r tsconfig-paths/register ./scripts/optimization/import-export-optimizer.ts"
   },
   "dependencies": {
     "@apollo/server": "4.12.1",
@@ -151,10 +162,20 @@
     "moduleNameMapper": {
       "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
       "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
+      "^@app/domain(|/.*)$": "<rootDir>/libs/domain/src/$1",
+      "^@app/events(|/.*)$": "<rootDir>/libs/events/src/$1",
       "^@app/iam(|/.*)$": "<rootDir>/libs/iam/src/$1",
       "^@app/kafka(|/.*)$": "<rootDir>/libs/kafka/src/$1",
       "^@app/logging(|/.*)$": "<rootDir>/libs/logging/src/$1",
-      "^@app/redis(|/.*)$": "<rootDir>/libs/redis/src/$1"
+      "^@app/redis(|/.*)$": "<rootDir>/libs/redis/src/$1",
+      "^@app/graphql(|/.*)$": "<rootDir>/libs/graphql/src/$1",
+      "^@app/validation(|/.*)$": "<rootDir>/libs/validation/src/$1",
+      "^@app/security(|/.*)$": "<rootDir>/libs/security/src/$1",
+      "^@app/dtos(|/.*)$": "<rootDir>/libs/dtos/src/$1",
+      "^@app/testing(|/.*)$": "<rootDir>/libs/testing/src/$1",
+      "^@app/bootstrap(|/.*)$": "<rootDir>/libs/bootstrap/src/$1",
+      "^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
+      "^@app/metrics(|/.*)$": "<rootDir>/libs/metrics/src/$1"
     }
   }
 }

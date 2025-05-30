@@ -1,11 +1,10 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-
+import { UserId } from '@app/domain';
 import { UpdateUserProfileCommand } from '../impl/update-user-profile.command';
 import { UserRepository } from '../../../domain/repositories/user.repository.interface';
 import {
-  UserId,
   DisplayName,
   Bio,
   AvatarUrl,

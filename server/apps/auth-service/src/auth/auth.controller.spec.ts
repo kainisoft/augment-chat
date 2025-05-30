@@ -1,70 +1,44 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { LoggingService } from '@app/logging';
-import { RateLimitGuard } from '../rate-limit';
+import { RateLimitGuard } from '@app/security';
 import {
   RegisterDto,
   LoginDto,
   RefreshTokenDto,
   ForgotPasswordDto,
   ResetPasswordDto,
-  AuthResponseDto,
-} from './dto';
+} from '@app/dtos';
+import { ControllerTestBuilder, MockFactoryService, TestSetupService } from '@app/testing';
 
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: AuthService;
-
-  const mockAuthResponse: AuthResponseDto = {
-    accessToken: 'access-token',
-    refreshToken: 'refresh-token',
-    userId: 'user-id',
-    email: 'test@example.com',
-    sessionId: 'session-id',
-    expiresIn: 900,
-  };
-
-  const mockRequest = {
-    ip: '127.0.0.1',
-    headers: {
-      'user-agent': 'test-agent',
-    },
-  };
+  let mockRequest: any;
+  let mockAuthResponse: any;
+  let testData: any;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthController],
-      providers: [
-        {
-          provide: AuthService,
-          useValue: {
-            register: jest.fn().mockResolvedValue(mockAuthResponse),
-            login: jest.fn().mockResolvedValue(mockAuthResponse),
-            logout: jest.fn().mockResolvedValue(true),
-            refreshToken: jest.fn().mockResolvedValue(mockAuthResponse),
-            forgotPassword: jest.fn().mockResolvedValue(true),
-            resetPassword: jest.fn().mockResolvedValue(true),
-          },
-        },
-        {
-          provide: LoggingService,
-          useValue: {
-            setContext: jest.fn(),
-            debug: jest.fn(),
-            log: jest.fn(),
-            error: jest.fn(),
-            warn: jest.fn(),
-          },
-        },
-      ],
-    })
-      .overrideGuard(RateLimitGuard)
-      .useValue({ canActivate: () => true })
-      .compile();
+    const mockFactory = new MockFactoryService();
+    const testSetup = new TestSetupService(mockFactory);
+    const controllerTestBuilder = new ControllerTestBuilder(testSetup, mockFactory);
 
-    controller = module.get<AuthController>(AuthController);
-    authService = module.get<AuthService>(AuthService);
+    const setup = await controllerTestBuilder.createAuthControllerTestSetup(
+      AuthController,
+      {
+        guards: [
+          {
+            guard: RateLimitGuard,
+            mockValue: { canActivate: () => true },
+          },
+        ],
+      },
+    );
+
+    controller = setup.controller;
+    authService = setup.authService;
+    mockRequest = setup.mockRequest;
+    testData = setup.testData;
+    mockAuthResponse = testData.authResponse;
   });
 
   it('should be defined', () => {
@@ -124,7 +98,7 @@ describe('AuthController', () => {
     });
 
     it('should return success: false if token, sessionId, or userId is missing', async () => {
-      const result = await controller.logout(undefined, undefined, undefined);
+      const result = await controller.logout('', '', '');
 
       expect(result).toEqual({ success: false });
       expect(authService.logout).not.toHaveBeenCalled();
@@ -137,7 +111,7 @@ describe('AuthController', () => {
         refreshToken: 'refresh-token',
       };
 
-      const result = await controller.refreshToken(refreshTokenDto);
+      const result = await controller.refreshToken(refreshTokenDto, mockRequest as any);
 
       expect(result).toEqual(mockAuthResponse);
       expect(authService.refreshToken).toHaveBeenCalledWith(refreshTokenDto);

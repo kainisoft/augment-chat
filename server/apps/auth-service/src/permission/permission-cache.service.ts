@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '@app/redis';
+import { RedisRepositoryFactory } from '@app/redis/repositories/redis-repository.factory';
+import { CacheInvalidationService } from '@app/redis/cache';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 
 /**
@@ -31,21 +33,31 @@ export interface UserPermissionData {
 /**
  * Permission Cache Service
  *
- * Handles caching of user permissions in Redis
+ * Handles caching of user permissions in Redis.
+ * This service uses Redis repositories for type-safe caching operations
+ * and follows the standardized caching pattern across services.
  */
 @Injectable()
 export class PermissionCacheService {
-  private readonly keyPrefix = 'permissions:user:';
+  private readonly permissionRepository;
   private readonly defaultTtl: number;
 
   constructor(
     private readonly redisService: RedisService,
+    private readonly repositoryFactory: RedisRepositoryFactory,
+    private readonly cacheInvalidation: CacheInvalidationService,
     private readonly configService: ConfigService,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(PermissionCacheService.name);
+
+    // Create repository
+    this.permissionRepository = this.repositoryFactory.create<
+      UserPermissionData,
+      string
+    >('permissions:user');
 
     // Get default TTL from config
     this.defaultTtl = this.configService.get<number>(
@@ -56,20 +68,24 @@ export class PermissionCacheService {
 
   /**
    * Cache user permissions
+   *
+   * Stores a user's roles and permissions in the cache.
+   * This method is typically called after retrieving permissions from the database
+   * or after updating a user's permissions.
+   *
    * @param userId User ID
    * @param roles User roles
    * @param permissions User permissions
-   * @param ttl Cache TTL in seconds
-   * @returns True if cached successfully
+   * @param ttl Cache TTL in seconds (defaults to the service's default TTL)
+   * @returns The cached permission data
    */
   async cachePermissions(
     userId: string,
     roles: string[],
     permissions: string[],
     ttl: number = this.defaultTtl,
-  ): Promise<boolean> {
+  ): Promise<UserPermissionData> {
     try {
-      const key = `${this.keyPrefix}${userId}`;
       const data: UserPermissionData = {
         userId,
         roles,
@@ -77,7 +93,7 @@ export class PermissionCacheService {
         updatedAt: Date.now(),
       };
 
-      await this.redisService.set(key, JSON.stringify(data), ttl);
+      const result = await this.permissionRepository.save(userId, data, ttl);
 
       this.loggingService.debug(
         `Cached permissions for user ${userId}`,
@@ -86,10 +102,11 @@ export class PermissionCacheService {
           userId,
           roleCount: roles.length,
           permissionCount: permissions.length,
+          ttl,
         },
       );
 
-      return true;
+      return result;
     } catch (error) {
       // Use ErrorLoggerService for structured error logging
       this.errorLogger.error(error, 'Failed to cache permissions', {
@@ -99,31 +116,37 @@ export class PermissionCacheService {
         roleCount: roles.length,
         permissionCount: permissions.length,
       });
-      return false;
+
+      // Return the original data even if caching fails
+      return {
+        userId,
+        roles,
+        permissions,
+        updatedAt: Date.now(),
+      };
     }
   }
 
   /**
    * Get user permissions from cache
+   *
+   * Retrieves a user's roles and permissions from the cache.
+   * This method is typically called before querying the database to improve performance.
+   *
    * @param userId User ID
    * @returns User permission data or null if not found
    */
   async getPermissions(userId: string): Promise<UserPermissionData | null> {
     try {
-      const key = `${this.keyPrefix}${userId}`;
-      const data = await this.redisService.get(key);
+      const permissionData = await this.permissionRepository.findById(userId);
 
-      if (!data) {
-        return null;
+      if (permissionData) {
+        this.loggingService.debug(
+          `Retrieved permissions for user ${userId} from cache`,
+          'getPermissions',
+          { userId, source: 'cache' },
+        );
       }
-
-      const permissionData = JSON.parse(data) as UserPermissionData;
-
-      this.loggingService.debug(
-        `Retrieved permissions for user ${userId} from cache`,
-        'getPermissions',
-        { userId },
-      );
 
       return permissionData;
     } catch (error) {
@@ -193,13 +216,17 @@ export class PermissionCacheService {
 
   /**
    * Invalidate user permissions cache
+   *
+   * Removes a user's permissions data from the cache.
+   * This method should be called whenever a user's permissions are updated
+   * to ensure that cached data doesn't become stale.
+   *
    * @param userId User ID
    * @returns True if invalidated successfully
    */
   async invalidatePermissions(userId: string): Promise<boolean> {
     try {
-      const key = `${this.keyPrefix}${userId}`;
-      await this.redisService.del(key);
+      await this.permissionRepository.delete(userId);
 
       this.loggingService.debug(
         `Invalidated permissions cache for user ${userId}`,
@@ -215,6 +242,40 @@ export class PermissionCacheService {
         method: 'invalidatePermissions',
         userId,
       });
+      return false;
+    }
+  }
+
+  /**
+   * Invalidate all permissions cache entries
+   *
+   * Removes all permissions data from the cache.
+   * This is a more aggressive form of cache invalidation that should be used
+   * sparingly, such as when making schema changes or during maintenance.
+   *
+   * @returns True if invalidation was successful
+   */
+  async invalidateAllPermissions(): Promise<boolean> {
+    try {
+      // Use the cache invalidation service to invalidate by prefix
+      await this.cacheInvalidation.invalidateByPrefix('permissions:user');
+
+      this.loggingService.debug(
+        'Invalidated all permissions cache entries',
+        'invalidateAllPermissions',
+      );
+
+      return true;
+    } catch (error) {
+      // Use ErrorLoggerService for structured error logging
+      this.errorLogger.error(
+        error,
+        'Failed to invalidate all permissions cache',
+        {
+          source: PermissionCacheService.name,
+          method: 'invalidateAllPermissions',
+        },
+      );
       return false;
     }
   }

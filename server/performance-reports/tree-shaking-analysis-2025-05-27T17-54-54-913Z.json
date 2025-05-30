@@ -1,0 +1,865 @@
+{
+  "timestamp": "2025-05-27T17:54:54.912Z",
+  "modules": [
+    {
+      "moduleName": "@app/validation",
+      "totalExports": 29,
+      "usedExports": 8,
+      "unusedExports": 21,
+      "treeshakingEffectiveness": 27.586206896551722,
+      "exports": [
+        {
+          "name": "ValidationModule",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "ValidationService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "ValidationCacheService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 300,
+          "sizeFormatted": "300 Bytes"
+        },
+        {
+          "name": "validationCache",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 450,
+          "sizeFormatted": "450 Bytes"
+        },
+        {
+          "name": "VALIDATION_CACHE_KEYS",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 450,
+          "sizeFormatted": "450 Bytes"
+        },
+        {
+          "name": "CachedValidators",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsUUIDField",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 8,
+          "usedInServices": [
+            "user-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsEmailField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsUsernameField",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 3,
+          "usedInServices": [
+            "user-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsStrongPasswordField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsDisplayNameField",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 4,
+          "usedInServices": [
+            "user-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsOptionalStringField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsJWTTokenField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsRefreshTokenField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsBioField",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 3,
+          "usedInServices": [
+            "user-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsAvatarUrlField",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 3,
+          "usedInServices": [
+            "user-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsSearchTermField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsISODateField",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 4,
+          "usedInServices": [
+            "logging-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsLogLevelField",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 2,
+          "usedInServices": [
+            "logging-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsJWTToken",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 400,
+          "sizeFormatted": "400 Bytes"
+        },
+        {
+          "name": "IsValidDateRange",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 3,
+          "usedInServices": [
+            "logging-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsOptimizedEmailField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsOptimizedUUIDField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsOptimizedUsernameField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsOptimizedJWTTokenField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsOptimizedStrongPasswordField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsBatchValidatedFields",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "IsPerformanceMonitoredField",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "ValidationPerformanceUtils",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 300,
+          "sizeFormatted": "300 Bytes"
+        }
+      ],
+      "recommendations": [
+        "Remove 21 unused exports",
+        "Low tree-shaking effectiveness - consider module restructuring",
+        "Consider lazy loading validation decorators"
+      ],
+      "potentialSavings": {
+        "size": 5900,
+        "sizeFormatted": "5.76 KB",
+        "percentage": 74.68354430379746
+      }
+    },
+    {
+      "moduleName": "@app/dtos",
+      "totalExports": 33,
+      "usedExports": 13,
+      "unusedExports": 20,
+      "treeshakingEffectiveness": 39.39393939393939,
+      "exports": [
+        {
+          "name": "DtosModule",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "LoginDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 11,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "RegisterDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 11,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "RefreshTokenDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 11,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "ForgotPasswordDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 11,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "ResetPasswordDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 11,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "ValidateTokenDto",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "AuthResponseDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 22,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "TokenValidationResponseDto",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "LogoutResponseDto",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "PaginationQueryDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 3,
+          "usedInServices": [
+            "logging-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "PaginatedResponseDto",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "PaginationMetaDto",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 450,
+          "sizeFormatted": "450 Bytes"
+        },
+        {
+          "name": "ErrorResponseDto",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 700,
+          "sizeFormatted": "700 Bytes"
+        },
+        {
+          "name": "ValidationErrorResponseDto",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 300,
+          "sizeFormatted": "300 Bytes"
+        },
+        {
+          "name": "AuthErrorResponseDto",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 300,
+          "sizeFormatted": "300 Bytes"
+        },
+        {
+          "name": "ListResponseDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 2,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 450,
+          "sizeFormatted": "450 Bytes"
+        },
+        {
+          "name": "SearchResponseDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 3,
+          "usedInServices": [
+            "logging-service"
+          ],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "HistoryResponseDto",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 2,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "PaginationMetadata",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "createPaginationMetadata",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "GraphQLPaginationInput",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "GraphQLSearchPaginationInput",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 3,
+          "usedInServices": [
+            "user-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "GraphQLCursorPaginationInput",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "GraphQLFilterPaginationInput",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 200,
+          "sizeFormatted": "200 Bytes"
+        },
+        {
+          "name": "GraphQLPageInfo",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "GraphQLListResponse",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 2,
+          "usedInServices": [
+            "user-service"
+          ],
+          "size": 200,
+          "sizeFormatted": "200 Bytes"
+        },
+        {
+          "name": "GraphQLSearchResponse",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 2,
+          "usedInServices": [
+            "user-service"
+          ],
+          "size": 200,
+          "sizeFormatted": "200 Bytes"
+        },
+        {
+          "name": "GraphQLConnection",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "GraphQLEdge",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "createGraphQLConnection",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "createGraphQLListResponse",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 300,
+          "sizeFormatted": "300 Bytes"
+        },
+        {
+          "name": "createGraphQLSearchResponse",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        }
+      ],
+      "recommendations": [
+        "Remove 20 unused exports",
+        "Low tree-shaking effectiveness - consider module restructuring"
+      ],
+      "potentialSavings": {
+        "size": 6450,
+        "sizeFormatted": "6.3 KB",
+        "percentage": 64.5
+      }
+    },
+    {
+      "moduleName": "@app/security",
+      "totalExports": 8,
+      "usedExports": 3,
+      "unusedExports": 5,
+      "treeshakingEffectiveness": 37.5,
+      "exports": [
+        {
+          "name": "SecurityModule",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 3,
+          "usedInServices": [
+            "auth-service"
+          ],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "RateLimit",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 12,
+          "usedInServices": [
+            "auth-service",
+            "user-service",
+            "logging-service"
+          ],
+          "size": 850,
+          "sizeFormatted": "850 Bytes"
+        },
+        {
+          "name": "RateLimitService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 500,
+          "sizeFormatted": "500 Bytes"
+        },
+        {
+          "name": "SecurityUtilsService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "RateLimitGuard",
+          "type": "const",
+          "isUsed": true,
+          "usageCount": 12,
+          "usedInServices": [
+            "auth-service",
+            "user-service",
+            "logging-service"
+          ],
+          "size": 350,
+          "sizeFormatted": "350 Bytes"
+        },
+        {
+          "name": "LazySecurityService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "LazySecurityOperation",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "MemoizedSecurityOperation",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        }
+      ],
+      "recommendations": [
+        "Remove 5 unused exports",
+        "Low tree-shaking effectiveness - consider module restructuring",
+        "Implement dynamic imports for heavy crypto operations"
+      ],
+      "potentialSavings": {
+        "size": 1500,
+        "sizeFormatted": "1.46 KB",
+        "percentage": 50.847457627118644
+      }
+    },
+    {
+      "moduleName": "@app/testing",
+      "totalExports": 7,
+      "usedExports": 0,
+      "unusedExports": 7,
+      "treeshakingEffectiveness": 0,
+      "exports": [
+        {
+          "name": "TestingModule",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 450,
+          "sizeFormatted": "450 Bytes"
+        },
+        {
+          "name": "TestDatabaseService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "MockFactoryService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "TestSetupService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "ControllerTestBuilder",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "ServiceTestBuilder",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        },
+        {
+          "name": "E2ETestSetupService",
+          "type": "const",
+          "isUsed": false,
+          "usageCount": 0,
+          "usedInServices": [],
+          "size": 250,
+          "sizeFormatted": "250 Bytes"
+        }
+      ],
+      "recommendations": [
+        "Remove 7 unused exports",
+        "Low tree-shaking effectiveness - consider module restructuring",
+        "Testing utilities should be fully tree-shakable in production"
+      ],
+      "potentialSavings": {
+        "size": 1950,
+        "sizeFormatted": "1.9 KB",
+        "percentage": 100
+      }
+    },
+    {
+      "moduleName": "@app/common",
+      "totalExports": 0,
+      "usedExports": 0,
+      "unusedExports": 0,
+      "treeshakingEffectiveness": 100,
+      "exports": [],
+      "recommendations": [],
+      "potentialSavings": {
+        "size": 0,
+        "sizeFormatted": "0 Bytes",
+        "percentage": 0
+      }
+    }
+  ],
+  "summary": {
+    "totalExports": 77,
+    "totalUsedExports": 24,
+    "totalUnusedExports": 53,
+    "overallEffectiveness": 31.16883116883117,
+    "totalPotentialSavings": 15800,
+    "totalPotentialSavingsFormatted": "15.43 KB"
+  },
+  "recommendations": {
+    "immediate": [
+      "Remove unused exports from shared modules",
+      "@app/validation: Remove 21 unused exports",
+      "@app/dtos: Remove 20 unused exports",
+      "@app/security: Remove 5 unused exports",
+      "@app/testing: Remove 7 unused exports"
+    ],
+    "shortTerm": [
+      "Improve tree-shaking effectiveness for low-performing modules",
+      "Implement selective exports instead of barrel exports"
+    ],
+    "longTerm": [
+      "Implement automated tree-shaking analysis in CI/CD",
+      "Consider micro-module architecture for better tree-shaking",
+      "Implement dynamic imports for optional features"
+    ]
+  }
+}

@@ -34,7 +34,13 @@ describe('NotificationServiceController', () => {
       jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
 
       // Act
-      const result = controller.getHello();
+      const mockRequest = {
+        method: 'GET',
+        url: '/test',
+        ip: '127.0.0.1',
+        headers: { 'user-agent': 'test-agent' }
+      };
+      const result = controller.getHello(mockRequest as any);
 
       // Assert
       expect(result).toBe(expectedResult);
@@ -47,7 +53,13 @@ describe('NotificationServiceController', () => {
       jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
 
       // Act
-      const result = controller.getHello();
+      const mockRequest = {
+        method: 'GET',
+        url: '/test',
+        ip: '127.0.0.1',
+        headers: { 'user-agent': 'test-agent' }
+      };
+      const result = controller.getHello(mockRequest as any);
 
       // Assert
       expect(result).toBe(expectedResult);

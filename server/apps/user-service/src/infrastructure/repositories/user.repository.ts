@@ -6,10 +6,10 @@ import * as schema from '@app/database/schemas';
 import { LoggingService } from '@app/logging';
 import { ErrorLoggerService } from '@app/logging';
 import { RepositoryError } from '@app/common/errors';
+import { UserId } from '@app/domain';
 
 import { User } from '../../domain/models/user.entity';
 import {
-  UserId,
   Username,
   DisplayName,
   Bio,

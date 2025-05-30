@@ -30,6 +30,12 @@
       "@app/database/*": [
         "libs/database/src/*"
       ],
+      "@app/domain": [
+        "libs/domain/src"
+      ],
+      "@app/domain/*": [
+        "libs/domain/src/*"
+      ],
       "@app/iam": [
         "libs/iam/src"
       ],
@@ -48,11 +54,65 @@
       "@app/logging/*": [
         "libs/logging/src/*"
       ],
+      "@app/events": [
+        "libs/events/src"
+      ],
+      "@app/events/*": [
+        "libs/events/src/*"
+      ],
       "@app/redis": [
         "libs/redis/src"
       ],
       "@app/redis/*": [
         "libs/redis/src/*"
+      ],
+      "@app/graphql": [
+        "libs/graphql/src"
+      ],
+      "@app/graphql/*": [
+        "libs/graphql/src/*"
+      ],
+      "@app/validation": [
+        "libs/validation/src"
+      ],
+      "@app/validation/*": [
+        "libs/validation/src/*"
+      ],
+      "@app/security": [
+        "libs/security/src"
+      ],
+      "@app/security/*": [
+        "libs/security/src/*"
+      ],
+      "@app/dtos": [
+        "libs/dtos/src"
+      ],
+      "@app/dtos/*": [
+        "libs/dtos/src/*"
+      ],
+      "@app/testing": [
+        "libs/testing/src"
+      ],
+      "@app/testing/*": [
+        "libs/testing/src/*"
+      ],
+      "@app/bootstrap": [
+        "libs/bootstrap/src"
+      ],
+      "@app/bootstrap/*": [
+        "libs/bootstrap/src/*"
+      ],
+      "@app/config": [
+        "libs/config/src"
+      ],
+      "@app/config/*": [
+        "libs/config/src/*"
+      ],
+      "@app/metrics": [
+        "libs/metrics/src"
+      ],
+      "@app/metrics/*": [
+        "libs/metrics/src/*"
       ]
     }
   }

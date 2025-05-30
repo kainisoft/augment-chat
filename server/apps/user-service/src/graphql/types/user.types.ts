@@ -1,5 +1,9 @@
-import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { UserStatusEnum } from '../../domain/models/value-objects/user-status.value-object';
+import {
+  GraphQLListResponse,
+  GraphQLSearchResponse,
+} from '@app/dtos/graphql/pagination-response.dto';
 
 /**
  * Register the UserStatus enum for GraphQL
@@ -49,33 +53,24 @@ export class UserType {
 
 /**
  * User Connection (for pagination)
+ *
+ * Extends the shared GraphQL list response for consistency.
  */
-@ObjectType()
-export class UserConnection {
+@ObjectType({ description: 'Paginated list of users' })
+export class UserConnection extends GraphQLListResponse<UserType> {
   @Field(() => [UserType], { description: 'List of users' })
-  nodes: UserType[];
-
-  @Field(() => Int, { description: 'Total count of users' })
-  totalCount: number;
-
-  @Field(() => Boolean, {
-    description: 'Whether there are more users to fetch',
-  })
-  hasMore: boolean;
+  items: UserType[];
 }
 
 /**
  * User Search Result
+ *
+ * Extends the shared GraphQL search response for consistency.
  */
 @ObjectType({ description: 'Result of a user search' })
-export class UserSearchResult {
+export class UserSearchResult extends GraphQLSearchResponse<UserType> {
   @Field(() => [UserType], {
     description: 'List of users matching the search criteria',
   })
-  users: UserType[];
-
-  @Field(() => Int, {
-    description: 'Total count of users matching the search criteria',
-  })
-  totalCount: number;
+  items: UserType[];
 }

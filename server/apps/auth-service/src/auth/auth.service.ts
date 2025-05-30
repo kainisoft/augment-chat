@@ -8,13 +8,12 @@ import {
   AccountInactiveError,
 } from '@app/common/errors';
 import { ErrorLoggerService } from '@app/logging';
+import { UserId, Email } from '@app/domain';
 import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { UserRepository } from '../domain/repositories/user.repository.interface';
 import { User } from '../domain/models/user.entity';
-import { Email } from '../domain/models/value-objects/email.value-object';
 import { Password } from '../domain/models/value-objects/password.value-object';
-import { UserId } from '../domain/models/value-objects/user-id.value-object';
 import { UserNotFoundError, UserAlreadyExistsError } from '../domain/errors';
 import {
   RegisterDto,
@@ -23,7 +22,7 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   AuthResponseDto,
-} from './dto';
+} from '@app/dtos';
 import { TokenType } from '@app/iam';
 
 /**
@@ -249,6 +248,7 @@ export class AuthService {
         email: user.getEmail().toString(),
         sessionId,
         expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
+        tokenType: 'Bearer',
       };
     } catch (error: any) {
       if (
@@ -418,6 +418,7 @@ export class AuthService {
       email: user.getEmail().toString(),
       sessionId,
       expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRY', 900),
+      tokenType: 'Bearer',
     };
   }
 }

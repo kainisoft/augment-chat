@@ -60,21 +60,25 @@ export class LogQueryService {
       // Parse the results
       const logs = this.parseLokiResponse(data);
 
-      return LogQueryResponseDto.create(
+      return LogQueryResponseDto.createLogResponse(
         logs,
         logs.length, // Loki doesn't provide a total count, so we use the returned count
         limit,
-        queryDto.offset || 0,
+        (queryDto as any).offset || 0,
+        queryDto.query,
+        0, // searchTime
       );
     } catch (error: any) {
       this.logger.error(`Error querying logs: ${error.message}`, error.stack);
 
       // Return empty results on error
-      return LogQueryResponseDto.create(
+      return LogQueryResponseDto.createLogResponse(
         [],
         0,
         queryDto.limit || this.defaultLimit,
-        queryDto.offset || 0,
+        (queryDto as any).offset || 0,
+        queryDto.query,
+        0, // searchTime
       );
     }
   }

@@ -1,6 +1,7 @@
 import { Controller, Get, Req } from '@nestjs/common';
 import { LoggingService } from '@app/logging';
 import { ApiGatewayService } from './api-gateway.service';
+import { FastifyRequest } from 'fastify';
 
 @Controller()
 export class ApiGatewayController {
@@ -13,7 +14,7 @@ export class ApiGatewayController {
   }
 
   @Get()
-  getHello(@Req() request: any): string {
+  getHello(@Req() request: FastifyRequest): string {
     // Log the request
     this.loggingService.log('Processing getHello request', 'getHello', {
       path: request.url,

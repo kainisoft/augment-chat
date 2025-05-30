@@ -34,7 +34,8 @@ describe('UserServiceController', () => {
       jest.spyOn(service, 'getHello').mockReturnValue(expectedResult);
 
       // Act
-      const result = controller.getHello();
+      const mockRequest = { url: '/test' } as any;
+      const result = controller.getHello(mockRequest);
 
       // Assert
       expect(result).toBe(expectedResult);

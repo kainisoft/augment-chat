@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { UserId } from './value-objects/user-id.value-object';
+import { UserId } from '@app/domain';
 import {
   RelationshipType,
   RelationshipTypeEnum,

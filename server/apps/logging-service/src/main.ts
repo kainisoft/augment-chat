@@ -1,6 +1,5 @@
-import { bootstrap } from '@app/common';
+import { bootstrap } from '@app/bootstrap';
 import { LoggingServiceModule } from './logging-service.module';
-import { ValidationPipe } from '@nestjs/common';
 
 declare const module: any;
 
@@ -9,27 +8,20 @@ async function startApplication() {
     const app = await bootstrap(LoggingServiceModule, {
       port: 4005,
       serviceName: 'Logging Service',
-      // Add custom setup for validation pipes
-      setup: (app) => {
-        app.useGlobalPipes(
-          new ValidationPipe({
-            transform: true,
-            whitelist: true,
-            forbidNonWhitelisted: true,
-            transformOptions: {
-              enableImplicitConversion: false,
-            },
-          }),
-        );
-        return Promise.resolve();
+      enableValidation: true,
+      enableCors: true,
+      // Custom validation options for logging service
+      validationOptions: {
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transformOptions: {
+          enableImplicitConversion: false,
+        },
       },
     });
 
-    // Enable Hot Module Replacement (HMR)
-    if (module.hot) {
-      module.hot.accept();
-      module.hot.dispose(() => app.close());
-    }
+    // HMR is now handled automatically by the bootstrap service
   } catch (error) {
     console.error('Error starting Logging Service:', error);
     process.exit(1);

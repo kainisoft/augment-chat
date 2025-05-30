@@ -1,6 +1,5 @@
-import { Email } from './value-objects/email.value-object';
+import { UserId, Email } from '@app/domain';
 import { Password } from './value-objects/password.value-object';
-import { UserId } from './value-objects/user-id.value-object';
 
 /**
  * User Entity Props

@@ -5,9 +5,9 @@ import { UserStatusChangedHandler } from './user-status-changed.handler';
 
 export const EventHandlers = [
   UserCreatedHandler,
-  UserDeletedHandler,
   UserProfileUpdatedHandler,
   UserStatusChangedHandler,
+  UserDeletedHandler,
 ];
 
 export * from './user-created.handler';

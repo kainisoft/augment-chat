@@ -1,12 +1,21 @@
+import { UserLoggedOutEvent as IUserLoggedOutEvent } from '@app/events';
+
 /**
  * User Logged Out Event
  *
  * Event triggered when a user logs out
  */
-export class UserLoggedOutEvent {
+export class UserLoggedOutEvent implements IUserLoggedOutEvent {
+  public readonly type = 'UserLoggedOut';
+  public readonly aggregateId: string;
+  public readonly timestamp: number;
+
   constructor(
     public readonly userId: string,
     public readonly sessionId?: string,
-    public readonly timestamp: Date = new Date(),
-  ) {}
+    timestamp?: Date,
+  ) {
+    this.aggregateId = userId;
+    this.timestamp = timestamp ? timestamp.getTime() : Date.now();
+  }
 }

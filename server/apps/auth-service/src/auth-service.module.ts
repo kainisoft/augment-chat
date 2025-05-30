@@ -1,25 +1,159 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
+// Shared Libraries
 import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
 import { DatabaseModule } from '@app/database';
 import { RedisModule } from '@app/redis';
-import { SessionModule } from '@app/redis/session';
-import { CacheModule } from '@app/redis/cache';
+import { SessionModule as RedisSessionModule } from '@app/redis/session';
+import { CacheModule as RedisCacheModule } from '@app/redis/cache';
 import { IamModule } from '@app/iam';
-import { AuthServiceController } from './auth-service.controller';
-import { AuthServiceService } from './auth-service.service';
+import { SecurityModule } from '@app/security';
+
+// Service Controllers and Services
 import {
   AuthServiceHealthController,
   AuthServiceHealthService,
 } from './health/health.controller';
-import { RepositoryProviders } from './infrastructure/repositories';
-import { TokenService } from './token/token.service';
-import { SessionService } from './session/session.service';
-import { RateLimitService, RateLimitGuard } from './rate-limit';
-import { PermissionCacheService } from './permission/permission-cache.service';
-import { AuthModule } from './auth/auth.module';
 
+// Infrastructure Modules
+import { RepositoryModule } from './infrastructure/repositories/repository.module';
+
+// Feature Modules
+import { AuthModule } from './auth/auth.module';
+import { PresentationModule } from './presentation/presentation.module';
+import { CacheModule } from './cache/cache.module';
+import { KafkaModule } from './kafka/kafka.module';
+import { TokenModule } from './token/token.module';
+import { SessionModule } from './session/session.module';
+import { PermissionModule } from './permission/permission.module';
+import { AccountLockoutModule } from './domain/services/account-lockout.module';
+
+/**
+ * Auth Service Module
+ *
+ * This is the main module for the Auth Service microservice. It orchestrates
+ * all authentication and authorization functionality within the chat application
+ * ecosystem, providing secure user authentication, session management, and
+ * access control mechanisms.
+ *
+ * ## Service Overview
+ *
+ * The Auth Service is responsible for:
+ * - User authentication (login, logout, token validation)
+ * - Session management and refresh token handling
+ * - Password management (reset, change, validation)
+ * - Account security (lockout, rate limiting, 2FA)
+ * - Permission and role-based access control
+ * - Security event logging and monitoring
+ * - Integration with other services for user verification
+ *
+ * ## Architecture
+ *
+ * The service follows a modular architecture with clear separation of concerns:
+ *
+ * ### Core Infrastructure
+ * - **Configuration**: Environment-based configuration management
+ * - **Logging**: Structured logging with security event tracking
+ * - **Database**: PostgreSQL with Drizzle ORM for user credentials
+ * - **Caching**: Redis-based caching for sessions and tokens
+ * - **Messaging**: Kafka for authentication event publishing
+ *
+ * ### Security Infrastructure
+ * - **IAM Module**: Identity and Access Management with JWT
+ * - **Session Management**: Redis-based session storage with encryption
+ * - **Rate Limiting**: Protection against brute force attacks
+ * - **Account Lockout**: Automatic account protection mechanisms
+ * - **Permission System**: Role-based access control
+ *
+ * ### Feature Modules
+ * - **Auth Module**: Core authentication logic and endpoints
+ * - **Token Module**: JWT and refresh token management
+ * - **Session Module**: User session lifecycle management
+ * - **Presentation Module**: REST API endpoints and validation
+ * - **Cache Module**: Service-specific caching strategies
+ * - **Kafka Module**: Security event publishing and consumption
+ *
+ * ## Module Dependencies
+ *
+ * ### Shared Libraries
+ * - `@app/common`: Common utilities and patterns
+ * - `@app/logging`: Structured logging infrastructure
+ * - `@app/database`: Database connectivity and ORM
+ * - `@app/redis`: Redis connection and utilities
+ * - `@app/iam`: Identity and Access Management framework
+ *
+ * ### Infrastructure Modules
+ * - **ConfigModule**: Environment variable management
+ * - **LoggingModule**: Service-specific logging with security focus
+ * - **DatabaseModule**: Database connectivity for auth data
+ * - **RedisModule**: Redis connection with auth-specific prefix
+ * - **RedisSessionModule**: Session storage and management
+ * - **RedisCacheModule**: Cache configuration and management
+ * - **IamModule**: JWT and authentication framework
+ *
+ * ### Feature Modules
+ * - **AuthModule**: Core authentication functionality
+ * - **PresentationModule**: REST API layer
+ * - **RepositoryModule**: Data access layer
+ * - **TokenModule**: Token management and validation
+ * - **SessionModule**: Session lifecycle management
+ * - **PermissionModule**: Access control and permissions
+ * - **AccountLockoutModule**: Security protection mechanisms
+ * - **CacheModule**: Auth-specific caching strategies
+ * - **KafkaModule**: Event communication patterns
+ *
+ * ## Security Considerations
+ *
+ * The Auth Service implements comprehensive security measures:
+ *
+ * ### Authentication Security
+ * - **Password Hashing**: bcrypt with configurable rounds
+ * - **JWT Security**: Signed tokens with configurable expiration
+ * - **Refresh Tokens**: Secure token rotation mechanism
+ * - **Session Security**: Encrypted session storage
+ *
+ * ### Attack Protection
+ * - **Rate Limiting**: Configurable limits on authentication attempts
+ * - **Account Lockout**: Automatic lockout after failed attempts
+ * - **Brute Force Protection**: Progressive delays and monitoring
+ * - **Input Validation**: Comprehensive validation at all entry points
+ *
+ * ### Monitoring and Auditing
+ * - **Security Logging**: Detailed logs of all authentication events
+ * - **Failed Attempt Tracking**: Monitoring and alerting on suspicious activity
+ * - **Session Monitoring**: Tracking active sessions and anomalies
+ * - **Event Publishing**: Real-time security event notifications
+ *
+ * ## Configuration Strategy
+ *
+ * The module uses environment-based configuration with security defaults:
+ * - **JWT Configuration**: Configurable secrets and expiration times
+ * - **Session Configuration**: TTL, encryption, and storage options
+ * - **Rate Limiting**: Configurable thresholds and time windows
+ * - **Logging**: Security-focused log levels and redaction
+ *
+ * ## Performance Considerations
+ *
+ * - **Caching**: Multi-layer caching for tokens and session data
+ * - **Connection Pooling**: Efficient database resource utilization
+ * - **Async Processing**: Non-blocking security event processing
+ * - **Redis Optimization**: Efficient session and cache management
+ *
+ * ## Integration Patterns
+ *
+ * - **Event Publishing**: Authentication events for other services
+ * - **Service Communication**: Secure inter-service authentication
+ * - **Health Monitoring**: Comprehensive health check endpoints
+ * - **Metrics Collection**: Security and performance metrics
+ *
+ * @see {@link AuthModule} for core authentication functionality
+ * @see {@link IamModule} for identity and access management
+ * @see {@link SessionModule} for session management
+ * @see {@link TokenModule} for token handling
+ * @see {@link PermissionModule} for access control
+ */
 @Module({
   imports: [
     // Import ConfigModule for environment variables
@@ -32,9 +166,6 @@ import { AuthModule } from './auth/auth.module';
 
     // Import DatabaseModule for database access
     DatabaseModule.forAuth(),
-
-    // Import AuthModule for authentication endpoints
-    AuthModule,
 
     // Import LoggingModule with Auth Service specific configuration
     LoggingModule.registerAsync({
@@ -79,7 +210,7 @@ import { AuthModule } from './auth/auth.module';
     }),
 
     // Import Session Module for session management
-    SessionModule.register({
+    RedisSessionModule.register({
       isGlobal: true,
       ttl: parseInt(process.env.SESSION_TTL || '3600', 10), // 1 hour default
       prefix: 'auth:session',
@@ -89,12 +220,25 @@ import { AuthModule } from './auth/auth.module';
     }),
 
     // Import Cache Module for caching
-    CacheModule.register({
+    RedisCacheModule.register({
       isGlobal: true,
       ttl: 300, // 5 minutes default
       prefix: 'auth:cache',
       enableLogs: process.env.CACHE_LOGS === 'true',
     }),
+
+    // Infrastructure modules
+    RepositoryModule,
+
+    // Feature modules
+    AuthModule,
+    PresentationModule,
+    CacheModule,
+    KafkaModule,
+    TokenModule,
+    SessionModule,
+    PermissionModule,
+    AccountLockoutModule,
 
     // Import IAM Module for authentication and authorization
     IamModule.register({
@@ -103,18 +247,17 @@ import { AuthModule } from './auth/auth.module';
       refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
       isGlobal: true,
     }),
+
+    // Import SecurityModule for shared security utilities
+    SecurityModule,
   ],
-  controllers: [AuthServiceController, AuthServiceHealthController],
+  controllers: [
+    // Health monitoring controller
+    AuthServiceHealthController,
+  ],
   providers: [
-    AuthServiceService,
+    // Health monitoring service
     AuthServiceHealthService,
-    ...RepositoryProviders,
-    // Add Redis-based services
-    TokenService,
-    SessionService,
-    RateLimitService,
-    RateLimitGuard,
-    PermissionCacheService,
   ],
 })
 export class AuthServiceModule {}

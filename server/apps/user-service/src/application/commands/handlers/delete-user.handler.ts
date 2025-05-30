@@ -1,10 +1,9 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-
+import { UserId } from '@app/domain';
 import { DeleteUserCommand } from '../impl/delete-user.command';
 import { UserRepository } from '../../../domain/repositories/user.repository.interface';
-import { UserId } from '../../../domain/models/value-objects';
 import { UserDeletedEvent } from '../../../domain/events/user-deleted.event';
 import { UserNotFoundError } from '../../../domain/errors/user.error';
 import { UserCacheService } from '../../../cache/user-cache.service';

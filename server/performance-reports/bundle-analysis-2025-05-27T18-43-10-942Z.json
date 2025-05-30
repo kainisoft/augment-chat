@@ -1,0 +1,608 @@
+{
+  "bundleDetails": [
+    {
+      "service": "api-gateway",
+      "mainBundle": {
+        "size": 103430,
+        "sizeFormatted": "101.01 KB",
+        "gzipSize": 16011,
+        "gzipSizeFormatted": "15.64 KB",
+        "compressionRatio": 6.459933795515583
+      },
+      "sharedModuleBreakdown": {
+        "@app/validation": {
+          "estimatedSize": 26980,
+          "estimatedSizeFormatted": "26.35 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/dtos": {
+          "estimatedSize": 22084,
+          "estimatedSizeFormatted": "21.57 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/security": {
+          "estimatedSize": 25400,
+          "estimatedSizeFormatted": "24.8 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/testing": {
+          "estimatedSize": 44455,
+          "estimatedSizeFormatted": "43.41 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        }
+      },
+      "dependencies": {
+        "total": 35,
+        "shared": 4,
+        "external": 31
+      },
+      "optimizationOpportunities": [
+        "Remove unused shared module: @app/validation",
+        "Remove unused shared module: @app/dtos",
+        "Remove unused shared module: @app/security",
+        "Remove unused shared module: @app/testing"
+      ]
+    },
+    {
+      "service": "auth-service",
+      "mainBundle": {
+        "size": 628542,
+        "sizeFormatted": "613.81 KB",
+        "gzipSize": 75855,
+        "gzipSizeFormatted": "74.08 KB",
+        "compressionRatio": 8.286098477358118
+      },
+      "sharedModuleBreakdown": {
+        "@app/validation": {
+          "estimatedSize": 26980,
+          "estimatedSizeFormatted": "26.35 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/dtos": {
+          "estimatedSize": 22084,
+          "estimatedSizeFormatted": "21.57 KB",
+          "importCount": 5,
+          "treeshakingEffective": false
+        },
+        "@app/security": {
+          "estimatedSize": 25400,
+          "estimatedSizeFormatted": "24.8 KB",
+          "importCount": 3,
+          "treeshakingEffective": true
+        },
+        "@app/testing": {
+          "estimatedSize": 44455,
+          "estimatedSizeFormatted": "43.41 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        }
+      },
+      "dependencies": {
+        "total": 35,
+        "shared": 4,
+        "external": 31
+      },
+      "optimizationOpportunities": [
+        "Remove unused shared module: @app/validation",
+        "Remove unused shared module: @app/testing"
+      ]
+    },
+    {
+      "service": "user-service",
+      "mainBundle": {
+        "size": 556740,
+        "sizeFormatted": "543.69 KB",
+        "gzipSize": 69289,
+        "gzipSizeFormatted": "67.67 KB",
+        "compressionRatio": 8.03504163720071
+      },
+      "sharedModuleBreakdown": {
+        "@app/validation": {
+          "estimatedSize": 26980,
+          "estimatedSizeFormatted": "26.35 KB",
+          "importCount": 2,
+          "treeshakingEffective": true
+        },
+        "@app/dtos": {
+          "estimatedSize": 22084,
+          "estimatedSizeFormatted": "21.57 KB",
+          "importCount": 2,
+          "treeshakingEffective": true
+        },
+        "@app/security": {
+          "estimatedSize": 25400,
+          "estimatedSizeFormatted": "24.8 KB",
+          "importCount": 1,
+          "treeshakingEffective": true
+        },
+        "@app/testing": {
+          "estimatedSize": 44455,
+          "estimatedSizeFormatted": "43.41 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        }
+      },
+      "dependencies": {
+        "total": 35,
+        "shared": 4,
+        "external": 31
+      },
+      "optimizationOpportunities": [
+        "Remove unused shared module: @app/testing"
+      ]
+    },
+    {
+      "service": "chat-service",
+      "mainBundle": {
+        "size": 103295,
+        "sizeFormatted": "100.87 KB",
+        "gzipSize": 15986,
+        "gzipSizeFormatted": "15.61 KB",
+        "compressionRatio": 6.46159139246841
+      },
+      "sharedModuleBreakdown": {
+        "@app/validation": {
+          "estimatedSize": 26980,
+          "estimatedSizeFormatted": "26.35 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/dtos": {
+          "estimatedSize": 22084,
+          "estimatedSizeFormatted": "21.57 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/security": {
+          "estimatedSize": 25400,
+          "estimatedSizeFormatted": "24.8 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/testing": {
+          "estimatedSize": 44455,
+          "estimatedSizeFormatted": "43.41 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        }
+      },
+      "dependencies": {
+        "total": 35,
+        "shared": 4,
+        "external": 31
+      },
+      "optimizationOpportunities": [
+        "Remove unused shared module: @app/validation",
+        "Remove unused shared module: @app/dtos",
+        "Remove unused shared module: @app/security",
+        "Remove unused shared module: @app/testing"
+      ]
+    },
+    {
+      "service": "notification-service",
+      "mainBundle": {
+        "size": 105180,
+        "sizeFormatted": "102.71 KB",
+        "gzipSize": 16245,
+        "gzipSizeFormatted": "15.86 KB",
+        "compressionRatio": 6.4746075715604805
+      },
+      "sharedModuleBreakdown": {
+        "@app/validation": {
+          "estimatedSize": 26980,
+          "estimatedSizeFormatted": "26.35 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/dtos": {
+          "estimatedSize": 22084,
+          "estimatedSizeFormatted": "21.57 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/security": {
+          "estimatedSize": 25400,
+          "estimatedSizeFormatted": "24.8 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        },
+        "@app/testing": {
+          "estimatedSize": 44455,
+          "estimatedSizeFormatted": "43.41 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        }
+      },
+      "dependencies": {
+        "total": 35,
+        "shared": 4,
+        "external": 31
+      },
+      "optimizationOpportunities": [
+        "Remove unused shared module: @app/validation",
+        "Remove unused shared module: @app/dtos",
+        "Remove unused shared module: @app/security",
+        "Remove unused shared module: @app/testing"
+      ]
+    },
+    {
+      "service": "logging-service",
+      "mainBundle": {
+        "size": 375936,
+        "sizeFormatted": "367.13 KB",
+        "gzipSize": 52028,
+        "gzipSizeFormatted": "50.81 KB",
+        "compressionRatio": 7.225647728146383
+      },
+      "sharedModuleBreakdown": {
+        "@app/validation": {
+          "estimatedSize": 26980,
+          "estimatedSizeFormatted": "26.35 KB",
+          "importCount": 1,
+          "treeshakingEffective": true
+        },
+        "@app/dtos": {
+          "estimatedSize": 22084,
+          "estimatedSizeFormatted": "21.57 KB",
+          "importCount": 1,
+          "treeshakingEffective": true
+        },
+        "@app/security": {
+          "estimatedSize": 25400,
+          "estimatedSizeFormatted": "24.8 KB",
+          "importCount": 1,
+          "treeshakingEffective": true
+        },
+        "@app/testing": {
+          "estimatedSize": 44455,
+          "estimatedSizeFormatted": "43.41 KB",
+          "importCount": 0,
+          "treeshakingEffective": true
+        }
+      },
+      "dependencies": {
+        "total": 35,
+        "shared": 4,
+        "external": 31
+      },
+      "optimizationOpportunities": [
+        "Remove unused shared module: @app/testing"
+      ]
+    }
+  ],
+  "sharedModuleAnalysis": [
+    {
+      "moduleName": "@app/validation",
+      "totalSourceSize": 38543,
+      "totalSourceSizeFormatted": "37.64 KB",
+      "usageAcrossServices": {
+        "api-gateway": {
+          "importCount": 0,
+          "estimatedBundleImpact": 26980,
+          "treeshakingEffectiveness": 0.8
+        },
+        "auth-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 26980,
+          "treeshakingEffectiveness": 0.8
+        },
+        "user-service": {
+          "importCount": 2,
+          "estimatedBundleImpact": 26980,
+          "treeshakingEffectiveness": 0.8
+        },
+        "chat-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 26980,
+          "treeshakingEffectiveness": 0.8
+        },
+        "notification-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 26980,
+          "treeshakingEffectiveness": 0.8
+        },
+        "logging-service": {
+          "importCount": 1,
+          "estimatedBundleImpact": 26980,
+          "treeshakingEffectiveness": 0.8
+        }
+      },
+      "mostUsedExports": [
+        {
+          "exportName": "IsUUIDField",
+          "usageCount": 2,
+          "services": [
+            "user-service"
+          ]
+        },
+        {
+          "exportName": "",
+          "usageCount": 2,
+          "services": [
+            "user-service",
+            "logging-service"
+          ]
+        },
+        {
+          "exportName": "IsUsernameField",
+          "usageCount": 1,
+          "services": [
+            "user-service"
+          ]
+        },
+        {
+          "exportName": "IsDisplayNameField",
+          "usageCount": 1,
+          "services": [
+            "user-service"
+          ]
+        },
+        {
+          "exportName": "IsBioField",
+          "usageCount": 1,
+          "services": [
+            "user-service"
+          ]
+        },
+        {
+          "exportName": "IsAvatarUrlField",
+          "usageCount": 1,
+          "services": [
+            "user-service"
+          ]
+        },
+        {
+          "exportName": "IsISODateField",
+          "usageCount": 1,
+          "services": [
+            "logging-service"
+          ]
+        },
+        {
+          "exportName": "IsLogLevelField",
+          "usageCount": 1,
+          "services": [
+            "logging-service"
+          ]
+        },
+        {
+          "exportName": "IsValidDateRange",
+          "usageCount": 1,
+          "services": [
+            "logging-service"
+          ]
+        }
+      ],
+      "optimizationRecommendations": [
+        "Consider lazy loading validation decorators for better performance"
+      ]
+    },
+    {
+      "moduleName": "@app/dtos",
+      "totalSourceSize": 31548,
+      "totalSourceSizeFormatted": "30.81 KB",
+      "usageAcrossServices": {
+        "api-gateway": {
+          "importCount": 0,
+          "estimatedBundleImpact": 22084,
+          "treeshakingEffectiveness": 0.8
+        },
+        "auth-service": {
+          "importCount": 5,
+          "estimatedBundleImpact": 22084,
+          "treeshakingEffectiveness": 0.3
+        },
+        "user-service": {
+          "importCount": 2,
+          "estimatedBundleImpact": 22084,
+          "treeshakingEffectiveness": 0.8
+        },
+        "chat-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 22084,
+          "treeshakingEffectiveness": 0.8
+        },
+        "notification-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 22084,
+          "treeshakingEffectiveness": 0.8
+        },
+        "logging-service": {
+          "importCount": 1,
+          "estimatedBundleImpact": 22084,
+          "treeshakingEffectiveness": 0.8
+        }
+      },
+      "mostUsedExports": [
+        {
+          "exportName": "RegisterDto",
+          "usageCount": 3,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "LoginDto",
+          "usageCount": 3,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "RefreshTokenDto",
+          "usageCount": 3,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "ForgotPasswordDto",
+          "usageCount": 3,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "ResetPasswordDto",
+          "usageCount": 3,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "AuthResponseDto",
+          "usageCount": 3,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "",
+          "usageCount": 3,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "HistoryResponseDto",
+          "usageCount": 1,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "ListResponseDto",
+          "usageCount": 1,
+          "services": [
+            "auth-service"
+          ]
+        },
+        {
+          "exportName": "GraphQLSearchPaginationInput",
+          "usageCount": 1,
+          "services": [
+            "user-service"
+          ]
+        }
+      ],
+      "optimizationRecommendations": []
+    },
+    {
+      "moduleName": "@app/security",
+      "totalSourceSize": 36286,
+      "totalSourceSizeFormatted": "35.44 KB",
+      "usageAcrossServices": {
+        "api-gateway": {
+          "importCount": 0,
+          "estimatedBundleImpact": 25400,
+          "treeshakingEffectiveness": 0.8
+        },
+        "auth-service": {
+          "importCount": 3,
+          "estimatedBundleImpact": 25400,
+          "treeshakingEffectiveness": 0.8
+        },
+        "user-service": {
+          "importCount": 1,
+          "estimatedBundleImpact": 25400,
+          "treeshakingEffectiveness": 0.8
+        },
+        "chat-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 25400,
+          "treeshakingEffectiveness": 0.8
+        },
+        "notification-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 25400,
+          "treeshakingEffectiveness": 0.8
+        },
+        "logging-service": {
+          "importCount": 1,
+          "estimatedBundleImpact": 25400,
+          "treeshakingEffectiveness": 0.8
+        }
+      },
+      "mostUsedExports": [
+        {
+          "exportName": "RateLimit",
+          "usageCount": 4,
+          "services": [
+            "auth-service",
+            "user-service",
+            "logging-service"
+          ]
+        },
+        {
+          "exportName": "RateLimitGuard",
+          "usageCount": 4,
+          "services": [
+            "auth-service",
+            "user-service",
+            "logging-service"
+          ]
+        },
+        {
+          "exportName": "SecurityModule",
+          "usageCount": 1,
+          "services": [
+            "auth-service"
+          ]
+        }
+      ],
+      "optimizationRecommendations": []
+    },
+    {
+      "moduleName": "@app/testing",
+      "totalSourceSize": 63507,
+      "totalSourceSizeFormatted": "62.02 KB",
+      "usageAcrossServices": {
+        "api-gateway": {
+          "importCount": 0,
+          "estimatedBundleImpact": 44455,
+          "treeshakingEffectiveness": 0.8
+        },
+        "auth-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 44455,
+          "treeshakingEffectiveness": 0.8
+        },
+        "user-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 44455,
+          "treeshakingEffectiveness": 0.8
+        },
+        "chat-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 44455,
+          "treeshakingEffectiveness": 0.8
+        },
+        "notification-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 44455,
+          "treeshakingEffectiveness": 0.8
+        },
+        "logging-service": {
+          "importCount": 0,
+          "estimatedBundleImpact": 44455,
+          "treeshakingEffectiveness": 0.8
+        }
+      },
+      "mostUsedExports": [],
+      "optimizationRecommendations": [
+        "Consider splitting large module into smaller, more focused modules"
+      ]
+    }
+  ],
+  "summary": {
+    "totalBundleSize": 1873123,
+    "averageBundleSize": 312187.1666666667,
+    "sharedModuleOverhead": 169884,
+    "optimizationPotential": 280968.45
+  }
+}

@@ -76,7 +76,7 @@ describe('ChatServiceHealthController', () => {
       // Mock the checkComponents method
       jest.spyOn(controller as any, 'checkComponents').mockResolvedValue({
         system: { status: 'ok' },
-        database: { 
+        database: {
           status: 'ok',
           details: {
             responseTime: 10,
@@ -100,7 +100,7 @@ describe('ChatServiceHealthController', () => {
       // Mock the checkComponents method to return an error
       jest.spyOn(controller as any, 'checkComponents').mockResolvedValue({
         system: { status: 'ok' },
-        database: { 
+        database: {
           status: 'error',
           details: {
             message: 'Database connection failed',
@@ -154,7 +154,19 @@ describe('ChatServiceHealthService', () => {
   let service: ChatServiceHealthService;
 
   beforeEach(() => {
-    service = new ChatServiceHealthService();
+    const mockLoggingService = {
+      setContext: jest.fn(),
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    };
+
+    const mockErrorLogger = {
+      error: jest.fn(),
+    };
+
+    service = new ChatServiceHealthService(mockLoggingService, mockErrorLogger);
   });
 
   it('should be defined', () => {

@@ -10,23 +10,29 @@ import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { LoggingService } from '@app/logging';
 import { User } from '../domain/models/user.entity';
-import { Email } from '../domain/models/value-objects/email.value-object';
+import { Email, UserId } from '@app/domain';
 import { Password } from '../domain/models/value-objects/password.value-object';
-import { UserId } from '../domain/models/value-objects/user-id.value-object';
-import { TokenType } from '../token/enums/token-type.enum';
+import { TokenType } from '@app/iam';
 import {
   RegisterDto,
   LoginDto,
   RefreshTokenDto,
   ForgotPasswordDto,
   ResetPasswordDto,
-} from './dto';
+} from '@app/dtos';
+import {
+  MockFactoryService,
+  ServiceTestBuilder,
+  TestSetupService,
+} from '@app/testing';
 
 describe('AuthService', () => {
   let service: AuthService;
   let userRepository: any;
   let tokenService: any;
   let sessionService: any;
+  let mockFactory: MockFactoryService;
+  let testData: any;
 
   const mockUser = new User({
     id: new UserId('user-id'),
@@ -35,60 +41,26 @@ describe('AuthService', () => {
   });
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuthService,
-        {
-          provide: 'UserRepository',
-          useValue: {
-            findByEmail: jest.fn(),
-            findById: jest.fn(),
-            save: jest.fn(),
-          },
-        },
-        {
-          provide: TokenService,
-          useValue: {
-            generateAccessToken: jest.fn().mockResolvedValue('access-token'),
-            generateRefreshToken: jest.fn().mockResolvedValue('refresh-token'),
-            validateToken: jest.fn(),
-            revokeToken: jest.fn().mockResolvedValue(true),
-            revokeAllUserTokens: jest.fn().mockResolvedValue(true),
-          },
-        },
-        {
-          provide: SessionService,
-          useValue: {
-            createSession: jest.fn().mockResolvedValue('session-id'),
-            getSession: jest.fn(),
-            updateSession: jest.fn().mockResolvedValue(true),
-            deleteSession: jest.fn().mockResolvedValue(true),
-            deleteUserSessions: jest.fn().mockResolvedValue(true),
-          },
-        },
-        {
-          provide: ConfigService,
-          useValue: {
-            get: jest.fn().mockReturnValue(900),
-          },
-        },
-        {
-          provide: LoggingService,
-          useValue: {
-            setContext: jest.fn(),
-            debug: jest.fn(),
-            log: jest.fn(),
-            error: jest.fn(),
-            warn: jest.fn(),
-          },
-        },
-      ],
-    }).compile();
+    mockFactory = new MockFactoryService();
+    const testSetup = new TestSetupService(mockFactory);
+    const serviceTestBuilder = new ServiceTestBuilder(testSetup, mockFactory);
 
-    service = module.get<AuthService>(AuthService);
-    userRepository = module.get('UserRepository');
-    tokenService = module.get<TokenService>(TokenService);
-    sessionService = module.get<SessionService>(SessionService);
+    const setup = await serviceTestBuilder.createAuthServiceTestSetup(
+      AuthService,
+      {
+        userRepository: mockFactory.createMockUserRepository(),
+        tokenService: mockFactory.createMockTokenService(),
+        sessionService: mockFactory.createMockSessionService(),
+        configService: mockFactory.createMockConfigService(),
+        loggingService: mockFactory.createMockLoggingService(),
+      },
+    );
+
+    service = setup.service;
+    userRepository = setup.userRepository;
+    tokenService = setup.tokenService;
+    sessionService = setup.sessionService;
+    testData = setup.testData;
   });
 
   it('should be defined', () => {
@@ -138,9 +110,7 @@ describe('AuthService', () => {
       };
 
       userRepository.findByEmail.mockResolvedValue(mockUser);
-      jest
-        .spyOn(mockUser.getPassword(), 'compare')
-        .mockResolvedValue(true);
+      jest.spyOn(mockUser.getPassword(), 'compare').mockResolvedValue(true);
 
       const result = await service.login(loginDto);
 
@@ -173,9 +143,7 @@ describe('AuthService', () => {
       };
 
       userRepository.findByEmail.mockResolvedValue(mockUser);
-      jest
-        .spyOn(mockUser.getPassword(), 'compare')
-        .mockResolvedValue(false);
+      jest.spyOn(mockUser.getPassword(), 'compare').mockResolvedValue(false);
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,

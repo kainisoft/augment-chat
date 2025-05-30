@@ -13,6 +13,7 @@ import { DatabaseService } from '@app/database';
  * Service to check auth service dependencies
  */
 @Injectable()
+@Public()
 export class AuthServiceHealthService {
   constructor(
     private readonly loggingService: LoggingService,

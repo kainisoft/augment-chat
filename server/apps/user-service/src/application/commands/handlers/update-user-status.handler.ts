@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-
+import { UserId } from '@app/domain';
 import { UpdateUserStatusCommand } from '../impl/update-user-status.command';
 import { UserRepository } from '../../../domain/repositories/user.repository.interface';
-import { UserId, UserStatus } from '../../../domain/models/value-objects';
+import { UserStatus } from '../../../domain/models/value-objects';
 import { UserStatusChangedEvent } from '../../../domain/events/user-status-changed.event';
 import { UserNotFoundError } from '../../../domain/errors/user.error';
 import { ValueObjectError } from '@app/common/errors/domain/business-error';
