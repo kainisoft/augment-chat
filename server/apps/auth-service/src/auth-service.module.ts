@@ -10,7 +10,6 @@ import { SessionModule as RedisSessionModule } from '@app/redis/session';
 import { CacheModule as RedisCacheModule } from '@app/redis/cache';
 import { IamModule } from '@app/iam';
 import { SecurityModule } from '@app/security';
-import { MetricsModule } from '@app/metrics';
 
 // Service Controllers and Services
 import {
@@ -251,15 +250,6 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
 
     // Import SecurityModule for shared security utilities
     SecurityModule,
-
-    // Import MetricsModule for comprehensive monitoring
-    MetricsModule.forRoot({
-      serviceName: 'Auth Service',
-      enablePerformanceMonitoring: true,
-      enableHealthMetrics: true,
-      enableBusinessMetrics: true,
-      collectionInterval: 60000, // 1 minute
-    }),
   ],
   controllers: [
     // Health monitoring controller
