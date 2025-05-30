@@ -165,9 +165,11 @@ The following shared libraries have been implemented to ensure consistency and r
 - [Security Standards Guide](SECURITY_STANDARDS_GUIDE.md)
 
 ### Performance and Monitoring
+- [Performance Documentation Index](performance/README.md) - Complete performance documentation overview
 - [Performance Best Practices](performance/PERFORMANCE_BEST_PRACTICES.md)
 - [Performance Monitoring Procedures](performance/PERFORMANCE_MONITORING_PROCEDURES.md)
 - [Optimization Techniques](performance/OPTIMIZATION_TECHNIQUES.md)
+- [Performance Metrics Comparison](performance/PERFORMANCE_METRICS_COMPARISON.md)
 
 ### Infrastructure and Deployment
 - [Database Plan](../database/DATABASE_PLAN.md)
