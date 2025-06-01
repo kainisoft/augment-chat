@@ -11,8 +11,8 @@
 export { SecurityModule } from './security.module';
 
 // Rate limiting (most frequently used - 5 usages)
-export { RateLimit } from './decorators/rate-limit.decorator';
-export { RateLimitService } from './rate-limit/rate-limit.service';
+export { RateLimit } from './decorators';
+export { RateGuardService } from './services';
 
 // Security utilities (frequently used)
 export { SecurityUtilsService } from './utils/security-utils.service';

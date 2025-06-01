@@ -1,0 +1,3 @@
+export const AUTH_GUARD_OPTIONS = Symbol('AUTH_GUARD_OPTIONS');
+
+export const RATE_GUARD_OPTIONS = Symbol('RATE_GUARD_OPTIONS');

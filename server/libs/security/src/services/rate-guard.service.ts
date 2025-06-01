@@ -1,16 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '@app/redis';
-import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { RateLimitConfig } from '../decorators/rate-limit.decorator';
-import { FastifyRequest } from 'fastify';
-
-// Extend FastifyRequest to include user property
-interface AuthenticatedRequest extends FastifyRequest {
-  user?: {
-    id?: string;
-    sub?: string;
-  };
-}
+import { AuthenticatedRequest } from '../interfaces';
 
 /**
  * Rate Limit Service
@@ -20,16 +11,10 @@ interface AuthenticatedRequest extends FastifyRequest {
  * rate limiting behavior.
  */
 @Injectable()
-export class RateLimitService {
+export class RateGuardService {
   private readonly keyPrefix = 'rate_limit:';
 
-  constructor(
-    private readonly redisService: RedisService,
-    private readonly loggingService: LoggingService,
-    private readonly errorLogger: ErrorLoggerService,
-  ) {
-    this.loggingService.setContext(RateLimitService.name);
-  }
+  constructor(private readonly redisService: RedisService) {}
 
   /**
    * Check if a key is rate limited
@@ -46,11 +31,6 @@ export class RateLimitService {
       // Check if key is blocked
       const isBlocked = await this.redisService.get(blockKey);
       if (isBlocked) {
-        this.loggingService.warn(
-          `Rate limit exceeded for ${key} (blocked)`,
-          'isRateLimited',
-          { key, blocked: true, config },
-        );
         return true;
       }
 
@@ -63,34 +43,11 @@ export class RateLimitService {
         // Block the key
         await this.redisService.set(blockKey, '1', config.blockSeconds);
 
-        this.loggingService.warn(
-          `Rate limit exceeded for ${key}, blocked for ${config.blockSeconds} seconds`,
-          'isRateLimited',
-          {
-            key,
-            attempts,
-            maxAttempts: config.maxAttempts,
-            blockSeconds: config.blockSeconds,
-          },
-        );
-
         return true;
       }
 
       return false;
     } catch (error) {
-      this.errorLogger.error(
-        error instanceof Error ? error : new Error(String(error)),
-        'Error checking rate limit',
-        {
-          source: RateLimitService.name,
-          method: 'isRateLimited',
-          key,
-          config,
-        },
-      );
-
-      // In case of error, allow the request to proceed
       return false;
     }
   }
@@ -114,30 +71,8 @@ export class RateLimitService {
         await this.redisService.expire(rateLimitKey, config.windowSeconds);
       }
 
-      this.loggingService.debug(
-        `Incremented rate limit counter for ${key} to ${count}`,
-        'increment',
-        {
-          key,
-          count,
-          maxAttempts: config.maxAttempts,
-          windowSeconds: config.windowSeconds,
-        },
-      );
-
       return count;
     } catch (error) {
-      this.errorLogger.error(
-        error instanceof Error ? error : new Error(String(error)),
-        'Error incrementing rate limit counter',
-        {
-          source: RateLimitService.name,
-          method: 'increment',
-          key,
-          config,
-        },
-      );
-
       return 0;
     }
   }
@@ -156,19 +91,7 @@ export class RateLimitService {
         this.redisService.del(rateLimitKey),
         this.redisService.del(blockKey),
       ]);
-
-      this.loggingService.log(`Reset rate limit for ${key}`, 'reset', { key });
-    } catch (error) {
-      this.errorLogger.error(
-        error instanceof Error ? error : new Error(String(error)),
-        'Error resetting rate limit',
-        {
-          source: RateLimitService.name,
-          method: 'reset',
-          key,
-        },
-      );
-    }
+    } catch (error) {}
   }
 
   /**
@@ -214,17 +137,6 @@ export class RateLimitService {
         blockExpiresAt,
       };
     } catch (error) {
-      this.errorLogger.error(
-        error instanceof Error ? error : new Error(String(error)),
-        'Error getting rate limit status',
-        {
-          source: RateLimitService.name,
-          method: 'getStatus',
-          key,
-          config,
-        },
-      );
-
       // Return safe defaults on error
       return {
         attempts: 0,

@@ -6,16 +6,15 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { LoggingService } from '@app/logging';
-import { RateLimitService } from '../rate-limit/rate-limit.service';
+import { RateGuardService } from '../services';
 import {
   RATE_LIMIT_KEY,
   RATE_LIMIT_SKIP_KEY,
   RATE_LIMIT_KEY_GENERATOR_KEY,
-  RateLimitConfig,
   RateLimitAction,
 } from '../decorators/rate-limit.decorator';
 import { FastifyRequest } from 'fastify';
+import { RateGuardOptions } from '../interfaces';
 
 /**
  * Rate Limit Metadata Interface
@@ -24,7 +23,7 @@ import { FastifyRequest } from 'fastify';
  */
 export interface RateLimitMetadata {
   action: RateLimitAction;
-  config: RateLimitConfig;
+  config: RateGuardOptions;
 }
 
 /**
@@ -54,11 +53,8 @@ export interface RateLimitMetadata {
 export class RateLimitGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly rateLimitService: RateLimitService,
-    private readonly loggingService: LoggingService,
-  ) {
-    this.loggingService.setContext(RateLimitGuard.name);
-  }
+    private readonly rateGuardService: RateGuardService,
+  ) {}
 
   /**
    * Check if the request can activate the route
@@ -100,24 +96,8 @@ export class RateLimitGuard implements CanActivate {
     const key = this.generateKey(request, action, config, customKeyGenerator);
 
     // Check if rate limited
-    const isLimited = await this.rateLimitService.isRateLimited(key, config);
+    const isLimited = await this.rateGuardService.isRateLimited(key, config);
     if (isLimited) {
-      this.loggingService.warn(
-        `Rate limit exceeded for ${action} by ${key}`,
-        'canActivate',
-        {
-          key,
-          action,
-          ip: request.ip || 'unknown',
-          userAgent: request.headers?.['user-agent'] || 'unknown',
-          config: {
-            maxAttempts: config.maxAttempts,
-            windowSeconds: config.windowSeconds,
-            blockSeconds: config.blockSeconds,
-          },
-        },
-      );
-
       throw new HttpException(
         {
           statusCode: HttpStatus.TOO_MANY_REQUESTS,
@@ -131,17 +111,7 @@ export class RateLimitGuard implements CanActivate {
     }
 
     // Increment counter
-    await this.rateLimitService.increment(key, config);
-
-    this.loggingService.debug(
-      `Rate limit check passed for ${action} by ${key}`,
-      'canActivate',
-      {
-        key,
-        action,
-        ip: request.ip || 'unknown',
-      },
-    );
+    await this.rateGuardService.increment(key, config);
 
     return true;
   }
@@ -158,7 +128,7 @@ export class RateLimitGuard implements CanActivate {
   private generateKey(
     request: FastifyRequest,
     action: RateLimitAction,
-    config: RateLimitConfig,
+    config: RateGuardOptions,
     customKeyGenerator?: (req: any) => string,
   ): string {
     // Use custom key generator if provided
@@ -172,6 +142,6 @@ export class RateLimitGuard implements CanActivate {
     }
 
     // Use service default key generation
-    return this.rateLimitService.generateKey(request, action);
+    return this.rateGuardService.generateKey(request, action);
   }
 }

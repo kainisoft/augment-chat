@@ -35,7 +35,12 @@ import { LogLevelService } from './api/log-level.service';
         redactFields: ['password', 'token', 'secret', 'authorization'],
       }),
     }),
-    SecurityModule,
+    SecurityModule.registerRateGuard({
+      isGlobal: true,
+      maxAttempts: 10,
+      windowSeconds: 60,
+      blockSeconds: 60,
+    }),
   ],
   controllers: [LoggingServiceController, LogApiController],
   providers: [

@@ -1,10 +1,14 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { RedisModule } from '@app/redis';
-import { LoggingModule } from '@app/logging';
-import { RateLimitService } from './rate-limit/rate-limit.service';
-import { SecurityUtilsService } from './utils/security-utils.service';
-import { RateLimitGuard } from './guards/rate-limit.guard';
-import { LazySecurityService } from './lazy/lazy-security.service';
+import { AuthGuardOptions } from './interfaces/';
+import { AUTH_GUARD_OPTIONS, RATE_GUARD_OPTIONS } from './constants';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthenticationGuard } from './guards/authentication.guard';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuardService, RateGuardService } from './services';
+import { AccessTokenGuard } from './guards/access-token.guard';
+import { RateGuardOptions } from './interfaces';
+import { RateLimitGuard } from './guards';
 
 /**
  * Security Module
@@ -22,24 +26,73 @@ import { LazySecurityService } from './lazy/lazy-security.service';
  * - Performance-optimized security utilities
  */
 @Module({
-  imports: [
-    RedisModule.registerDefault({
-      isGlobal: false,
-      keyPrefix: 'security:',
-    }),
-    LoggingModule,
-  ],
-  providers: [
-    RateLimitService,
-    SecurityUtilsService,
-    RateLimitGuard,
-    LazySecurityService,
-  ],
-  exports: [
-    RateLimitService,
-    SecurityUtilsService,
-    RateLimitGuard,
-    LazySecurityService,
-  ],
+  // imports: [
+  //   RedisModule.registerDefault({
+  //     isGlobal: false,
+  //     keyPrefix: 'security:',
+  //   }),
+  //   LoggingModule,
+  // ],
+  // providers: [
+  // RateLimitService,
+  //   SecurityUtilsService,
+  //   RateLimitGuard,
+  //   LazySecurityService,
+  // ],
+  // exports: [
+  //   RateLimitService,
+  //   SecurityUtilsService,
+  //   RateLimitGuard,
+  //   LazySecurityService,
+  // ],
 })
-export class SecurityModule {}
+export class SecurityModule {
+  static registerRateGuard(options: RateGuardOptions): DynamicModule {
+    return {
+      module: SecurityModule,
+      providers: [
+        {
+          provide: RATE_GUARD_OPTIONS,
+          useValue: options,
+        },
+        {
+          provide: APP_GUARD,
+          useClass: RateLimitGuard,
+        },
+        RateGuardService,
+        RateLimitGuard,
+      ],
+      imports: [
+        RedisModule.registerDefault({
+          keyPrefix: 'security:rate-guard:',
+        }),
+      ],
+      exports: [RateGuardService, RateLimitGuard],
+    };
+  }
+
+  static registerAuthGuard(options: AuthGuardOptions): DynamicModule {
+    return {
+      module: SecurityModule,
+      providers: [
+        {
+          provide: AUTH_GUARD_OPTIONS,
+          useValue: options,
+        },
+        {
+          provide: APP_GUARD,
+          useClass: AuthenticationGuard,
+        },
+        AuthGuardService,
+        AccessTokenGuard,
+        AuthenticationGuard,
+      ],
+      imports: [
+        JwtModule.register(options.jwtModuleOptions),
+        RedisModule.registerDefault({
+          keyPrefix: 'security:auth-guard:',
+        }),
+      ],
+    };
+  }
+}

@@ -1,22 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-
-/**
- * Rate Limit Configuration Interface
- *
- * Defines the configuration options for rate limiting.
- */
-export interface RateLimitConfig {
-  /** Maximum number of requests allowed */
-  maxAttempts: number;
-  /** Time window in seconds */
-  windowSeconds: number;
-  /** Block duration in seconds after limit is exceeded */
-  blockSeconds: number;
-  /** Custom key generator function */
-  keyGenerator?: (req: any) => string;
-  /** Custom error message */
-  message?: string;
-}
+import { RateGuardOptions } from '../interfaces';
 
 /**
  * Rate Limit Action Types
@@ -69,9 +52,9 @@ export const RATE_LIMIT_KEY = 'rate_limit';
  */
 export function RateLimit(
   action: RateLimitAction,
-  customConfig?: Partial<RateLimitConfig>,
+  customConfig?: Partial<RateGuardOptions>,
 ) {
-  let config: RateLimitConfig;
+  let config: RateGuardOptions;
 
   switch (action) {
     case 'login':
