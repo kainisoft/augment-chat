@@ -75,7 +75,8 @@ export interface GraphQLEdge<T> {
  */
 @ObjectType({ description: 'List response with pagination information' })
 export abstract class GraphQLListResponse<T> {
-  @Field(() => [Object], { description: 'List of items' })
+  // Note: @Field decorator is intentionally omitted here as concrete implementations
+  // must define their own @Field decorator with the correct type
   abstract items: T[];
 
   @Field(() => Int, { description: 'Total number of items' })

@@ -95,4 +95,44 @@ export class SecurityModule {
       ],
     };
   }
+
+  static register(
+    options: AuthGuardOptions,
+    rateGuardOptions: RateGuardOptions,
+  ): DynamicModule {
+    return {
+      module: SecurityModule,
+      providers: [
+        {
+          provide: AUTH_GUARD_OPTIONS,
+          useValue: options,
+        },
+        {
+          provide: RATE_GUARD_OPTIONS,
+          useValue: rateGuardOptions,
+        },
+        {
+          provide: APP_GUARD,
+          useClass: AuthenticationGuard,
+        },
+        {
+          provide: APP_GUARD,
+          useClass: RateLimitGuard,
+        },
+        AuthGuardService,
+        RateGuardService,
+        AccessTokenGuard,
+        AuthenticationGuard,
+        RateLimitGuard,
+      ],
+      imports: [
+        JwtModule.register(options.jwtModuleOptions),
+        RedisModule.registerDefault({
+          keyPrefix: 'security:',
+        }),
+      ],
+      exports: [AuthGuardService, RateGuardService],
+      global: options.isGlobal,
+    };
+  }
 }
