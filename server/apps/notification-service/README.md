@@ -447,12 +447,12 @@ pnpm perf:events --service=notification-service
 - **Preference Caching**: Cached user preferences for faster filtering
 
 #### Monitoring Integration
-- **@app/metrics**: Integrated performance metrics collection
-- **Custom Metrics**: Service-specific notification and delivery metrics
-- **Delivery Metrics**: Success rates, delivery times, and failure tracking
-- **User Engagement**: Open rates, click rates, and user interaction tracking
-- **Alerting**: Delivery failure and performance threshold monitoring
-- **Dashboards**: Real-time notification delivery and engagement visualization
+- **External Monitoring**: PM2 for process management and performance monitoring
+- **Delivery Metrics**: Success rates, delivery times, and failure tracking via logging and events
+- **User Engagement**: Open rates, click rates, and user interaction tracking via analytics events
+- **Health Checks**: Built-in health endpoints for service status monitoring
+- **Alerting**: Delivery failure and performance threshold monitoring via external tools
+- **Dashboards**: Real-time notification delivery and engagement visualization via PM2 and log aggregation
 
 For detailed performance documentation, see [Performance Documentation Index](../../docs/server/performance/README.md).
 

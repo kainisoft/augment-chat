@@ -249,38 +249,39 @@ export class AppModule {}
 - **Enhanced Consumer**: Advanced message consumption with error handling
 - **Health Service**: Comprehensive Kafka health monitoring
 
-### 8. Metrics Library (`@app/metrics`)
+### 8. External Monitoring Integration
 
-**Purpose**: Provides comprehensive metrics collection and monitoring utilities for microservices including performance, health, and business metrics.
+**Purpose**: Application monitoring is handled by external services like PM2 for production-grade performance monitoring, process management, and health tracking.
 
 **Key Features**:
-- Performance monitoring (CPU, memory, event loop, GC)
-- Health status tracking
-- Business metrics collection
-- Metrics aggregation and export
+- Process monitoring and automatic restarts via PM2
+- System resource monitoring (CPU, memory, disk)
+- Application health checks and status reporting
+- Log aggregation and centralized monitoring
+- Performance metrics collection and alerting
 
-**Usage Example**:
-```typescript
-import { MetricsModule, MetricsService } from '@app/metrics';
-
-@Module({
-  imports: [
-    MetricsModule.forRoot({
-      serviceName: 'Auth Service',
-      enablePerformanceMonitoring: true,
-      enableHealthMetrics: true,
-      enableBusinessMetrics: true,
-    }),
-  ],
-})
-export class AppModule {}
+**PM2 Configuration Example**:
+```json
+{
+  "apps": [{
+    "name": "auth-service",
+    "script": "dist/apps/auth-service/main.js",
+    "instances": "max",
+    "exec_mode": "cluster",
+    "monitoring": true,
+    "max_memory_restart": "1G",
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }]
+}
 ```
 
 **Available Features**:
-- **Core Metrics**: Counter, gauge, histogram, and summary metrics
-- **Performance Monitor**: System and application performance tracking
-- **Health Metrics**: Component health monitoring and scoring
-- **Business Metrics**: User actions and business KPI tracking
+- **Process Management**: Automatic restarts, clustering, and load balancing
+- **Resource Monitoring**: Real-time CPU, memory, and disk usage tracking
+- **Health Monitoring**: Application health checks and status reporting
+- **Log Management**: Centralized log collection and rotation
 
 ## Integration Guidelines
 

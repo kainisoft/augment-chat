@@ -494,12 +494,12 @@ pnpm perf:security --service=auth-service
 - **Token Validation**: Fast JWT validation with caching
 
 #### Monitoring Integration
-- **@app/metrics**: Integrated performance metrics collection
-- **Custom Metrics**: Service-specific authentication and security metrics
-- **Security Metrics**: Failed login attempts, rate limiting, and security events
-- **Session Metrics**: Active sessions, session duration, and cleanup efficiency
-- **Alerting**: Security and performance threshold monitoring
-- **Dashboards**: Real-time authentication and security visualization
+- **External Monitoring**: PM2 for process management and performance monitoring
+- **Security Metrics**: Failed login attempts, rate limiting, and security events tracked via logging
+- **Session Metrics**: Active sessions, session duration, and cleanup efficiency via Redis monitoring
+- **Health Checks**: Built-in health endpoints for service status monitoring
+- **Alerting**: Security and performance threshold monitoring via external tools
+- **Dashboards**: Real-time authentication and security visualization via PM2 and log aggregation
 
 For detailed performance documentation, see [Performance Documentation Index](../../docs/server/performance/README.md).
 

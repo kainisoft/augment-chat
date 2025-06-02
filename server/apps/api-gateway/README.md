@@ -421,14 +421,14 @@ pnpm perf:ratelimit --service=api-gateway
 - **Fault Tolerance**: Circuit breaker patterns with minimal performance impact
 
 #### Monitoring Integration
-- **@app/metrics**: Integrated performance metrics collection
-- **Custom Metrics**: Service-specific gateway and routing metrics
-- **Federation Metrics**: GraphQL federation performance and query complexity
-- **Rate Limiting Metrics**: Rate limit effectiveness and performance impact
-- **Circuit Breaker Metrics**: Fault tolerance effectiveness and recovery times
-- **Downstream Metrics**: Performance monitoring of all connected services
-- **Alerting**: Gateway performance and downstream service health monitoring
-- **Dashboards**: Real-time gateway performance and service health visualization
+- **External Monitoring**: PM2 for process management and performance monitoring
+- **Federation Metrics**: GraphQL federation performance and query complexity via built-in GraphQL monitoring
+- **Rate Limiting Metrics**: Rate limit effectiveness and performance impact via security module monitoring
+- **Circuit Breaker Metrics**: Fault tolerance effectiveness and recovery times via health checks
+- **Downstream Metrics**: Performance monitoring of all connected services via health endpoints
+- **Health Checks**: Built-in health endpoints for service status monitoring
+- **Alerting**: Gateway performance and downstream service health monitoring via external tools
+- **Dashboards**: Real-time gateway performance and service health visualization via PM2 and log aggregation
 
 For detailed performance documentation, see [Performance Documentation Index](../../docs/server/performance/README.md).
 

@@ -651,12 +651,12 @@ pnpm perf:messaging --service=chat-service
 - **Memory Management**: Efficient memory usage for large conversation histories
 
 #### Monitoring Integration
-- **@app/metrics**: Integrated performance metrics collection
-- **Custom Metrics**: Service-specific messaging and real-time metrics
-- **GraphQL Metrics**: Query complexity and execution time tracking
-- **WebSocket Metrics**: Connection count and message delivery tracking
-- **Alerting**: Performance threshold monitoring and alerting
-- **Dashboards**: Real-time performance visualization
+- **External Monitoring**: PM2 for process management and performance monitoring
+- **GraphQL Metrics**: Query complexity and execution time tracking via built-in GraphQL monitoring
+- **WebSocket Metrics**: Connection count and message delivery tracking via WebSocket monitoring
+- **Health Checks**: Built-in health endpoints for service status monitoring
+- **Alerting**: Performance threshold monitoring via external tools
+- **Dashboards**: Real-time performance visualization via PM2 and log aggregation
 
 For detailed performance documentation, see [Performance Documentation Index](../../docs/server/performance/README.md).
 

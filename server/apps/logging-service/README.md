@@ -457,12 +457,12 @@ pnpm perf:queries --service=logging-service
 - **Resource Management**: Efficient resource usage for log processing
 
 #### Monitoring Integration
-- **@app/metrics**: Integrated performance metrics collection
-- **Custom Metrics**: Service-specific logging and storage metrics
-- **Loki Metrics**: Storage usage, ingestion rates, and query performance
-- **Processing Metrics**: Log processing times and batch efficiency
-- **Alerting**: Storage capacity and performance threshold monitoring
-- **Dashboards**: Real-time logging performance and storage visualization
+- **External Monitoring**: PM2 for process management and performance monitoring
+- **Loki Metrics**: Storage usage, ingestion rates, and query performance via Loki's built-in metrics
+- **Processing Metrics**: Log processing times and batch efficiency via internal monitoring
+- **Health Checks**: Built-in health endpoints for service status monitoring
+- **Alerting**: Storage capacity and performance threshold monitoring via external tools
+- **Dashboards**: Real-time logging performance and storage visualization via PM2 and Loki dashboards
 
 For detailed performance documentation, see [Performance Documentation Index](../../docs/server/performance/README.md).
 
