@@ -11,12 +11,15 @@ importers:
       '@apollo/server':
         specifier: 4.12.1
         version: 4.12.1(graphql@16.11.0)
+      '@apollo/subgraph':
+        specifier: 2.10.2
+        version: 2.10.2(graphql@16.11.0)
       '@as-integrations/fastify':
         specifier: 2.1.1
         version: 2.1.1(@apollo/server@4.12.1(graphql@16.11.0))(fastify@5.3.2)
       '@nestjs/apollo':
         specifier: 13.1.0
-        version: 13.1.0(@apollo/server@4.12.1(graphql@16.11.0))(@as-integrations/fastify@2.1.1(@apollo/server@4.12.1(graphql@16.11.0))(fastify@5.3.2))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(@nestjs/graphql@13.1.0(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1))(graphql@16.11.0)
+        version: 13.1.0(@apollo/server@4.12.1(graphql@16.11.0))(@apollo/subgraph@2.10.2(graphql@16.11.0))(@as-integrations/fastify@2.1.1(@apollo/server@4.12.1(graphql@16.11.0))(fastify@5.3.2))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(@nestjs/graphql@13.1.0(@apollo/subgraph@2.10.2(graphql@16.11.0))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1))(graphql@16.11.0)
       '@nestjs/common':
         specifier: 11.0.1
         version: 11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -31,7 +34,7 @@ importers:
         version: 11.0.3(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/graphql':
         specifier: 13.1.0
-        version: 13.1.0(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1)
+        version: 13.1.0(@apollo/subgraph@2.10.2(graphql@16.11.0))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1)
       '@nestjs/jwt':
         specifier: 11.0.0
         version: 11.0.0(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))
@@ -283,6 +286,12 @@ packages:
       subscriptions-transport-ws:
         optional: true
 
+  '@apollo/federation-internals@2.10.2':
+    resolution: {integrity: sha512-6GLJsFizf8J5GJUSgXmW7zzwhwSELB/X0OGkqW3x+s7M9s1VFO15jvaqwI0Pk4OAzuDxVjO4EGaPJ7MqKafAtQ==}
+    engines: {node: '>=14.15.0'}
+    peerDependencies:
+      graphql: ^16.5.0
+
   '@apollo/protobufjs@1.2.7':
     resolution: {integrity: sha512-Lahx5zntHPZia35myYDBRuF58tlwPskwHc5CWBZC/4bMKB6siTBWwtMrkqXcsNwQiFSzSx5hKdRPUmemrEp3Gg==}
     hasBin: true
@@ -304,6 +313,12 @@ packages:
     engines: {node: '>=14.16.0'}
     peerDependencies:
       graphql: ^16.6.0
+
+  '@apollo/subgraph@2.10.2':
+    resolution: {integrity: sha512-823Xc8r2bTDSj8/J8/Zt9qpVnU9ahmE9xapvcZnYPCbu5wrsseRjH8UHBdStqDKNgHZU0w9BxoI3T4spjdrCtg==}
+    engines: {node: '>=14.15.0'}
+    peerDependencies:
+      graphql: ^16.5.0
 
   '@apollo/usage-reporting-protobuf@4.1.1':
     resolution: {integrity: sha512-u40dIUePHaSKVshcedO7Wp+mPiZsaU6xjv9J+VyxpoU/zL6Jle+9zWeG98tr/+SZ0nZ4OXhrbb8SNr0rAPpIDA==}
@@ -2408,6 +2423,9 @@ packages:
   '@types/uuid@10.0.0':
     resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
 
+  '@types/uuid@9.0.8':
+    resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
+
   '@types/validator@13.15.0':
     resolution: {integrity: sha512-nh7nrWhLr6CBq9ldtw0wx+z9wKnnv/uTVLA9g/3/TcOYxbpOSZE+MhKPmWqU+K0NvThjhv12uD8MuqijB0WzEA==}
 
@@ -4312,6 +4330,10 @@ packages:
   jose@5.10.0:
     resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
 
+  js-levenshtein@1.1.6:
+    resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
+    engines: {node: '>=0.10.0'}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -6104,6 +6126,14 @@ snapshots:
       - '@types/react'
     optional: true
 
+  '@apollo/federation-internals@2.10.2(graphql@16.11.0)':
+    dependencies:
+      '@types/uuid': 9.0.8
+      chalk: 4.1.2
+      graphql: 16.11.0
+      js-levenshtein: 1.1.6
+      uuid: 9.0.1
+
   '@apollo/protobufjs@1.2.7':
     dependencies:
       '@protobufjs/aspromise': 1.1.2
@@ -6162,6 +6192,12 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - supports-color
+
+  '@apollo/subgraph@2.10.2(graphql@16.11.0)':
+    dependencies:
+      '@apollo/cache-control-types': 1.0.3(graphql@16.11.0)
+      '@apollo/federation-internals': 2.10.2(graphql@16.11.0)
+      graphql: 16.11.0
 
   '@apollo/usage-reporting-protobuf@4.1.1':
     dependencies:
@@ -7973,18 +8009,19 @@ snapshots:
       '@napi-rs/nice-win32-x64-msvc': 1.0.1
     optional: true
 
-  '@nestjs/apollo@13.1.0(@apollo/server@4.12.1(graphql@16.11.0))(@as-integrations/fastify@2.1.1(@apollo/server@4.12.1(graphql@16.11.0))(fastify@5.3.2))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(@nestjs/graphql@13.1.0(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1))(graphql@16.11.0)':
+  '@nestjs/apollo@13.1.0(@apollo/server@4.12.1(graphql@16.11.0))(@apollo/subgraph@2.10.2(graphql@16.11.0))(@as-integrations/fastify@2.1.1(@apollo/server@4.12.1(graphql@16.11.0))(fastify@5.3.2))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(@nestjs/graphql@13.1.0(@apollo/subgraph@2.10.2(graphql@16.11.0))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1))(graphql@16.11.0)':
     dependencies:
       '@apollo/server': 4.12.1(graphql@16.11.0)
       '@apollo/server-plugin-landing-page-graphql-playground': 4.0.1(@apollo/server@4.12.1(graphql@16.11.0))
       '@nestjs/common': 11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 11.0.1(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.1.1)(@nestjs/platform-express@11.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
-      '@nestjs/graphql': 13.1.0(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1)
+      '@nestjs/graphql': 13.1.0(@apollo/subgraph@2.10.2(graphql@16.11.0))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1)
       graphql: 16.11.0
       iterall: 1.3.0
       lodash.omit: 4.5.0
       tslib: 2.8.1
     optionalDependencies:
+      '@apollo/subgraph': 2.10.2(graphql@16.11.0)
       '@as-integrations/fastify': 2.1.1(@apollo/server@4.12.1(graphql@16.11.0))(fastify@5.3.2)
 
   '@nestjs/cli@11.0.0(@swc/cli@0.6.0(@swc/core@1.10.7)(chokidar@4.0.3))(@swc/core@1.10.7)(@types/node@22.10.7)(esbuild@0.25.3)':
@@ -8058,7 +8095,7 @@ snapshots:
       reflect-metadata: 0.2.2
       rxjs: 7.8.1
 
-  '@nestjs/graphql@13.1.0(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1)':
+  '@nestjs/graphql@13.1.0(@apollo/subgraph@2.10.2(graphql@16.11.0))(@nestjs/common@11.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.1)(class-transformer@0.5.1)(class-validator@0.14.1)(graphql@16.11.0)(reflect-metadata@0.2.2)(ts-morph@25.0.1)':
     dependencies:
       '@graphql-tools/merge': 9.0.24(graphql@16.11.0)
       '@graphql-tools/schema': 10.0.23(graphql@16.11.0)
@@ -8078,6 +8115,7 @@ snapshots:
       tslib: 2.8.1
       ws: 8.18.1
     optionalDependencies:
+      '@apollo/subgraph': 2.10.2(graphql@16.11.0)
       class-transformer: 0.5.1
       class-validator: 0.14.1
       ts-morph: 25.0.1
@@ -8511,6 +8549,8 @@ snapshots:
   '@types/triple-beam@1.3.5': {}
 
   '@types/uuid@10.0.0': {}
+
+  '@types/uuid@9.0.8': {}
 
   '@types/validator@13.15.0': {}
 
@@ -10856,6 +10896,8 @@ snapshots:
   jiti@2.4.2: {}
 
   jose@5.10.0: {}
+
+  js-levenshtein@1.1.6: {}
 
   js-tokens@4.0.0: {}
 

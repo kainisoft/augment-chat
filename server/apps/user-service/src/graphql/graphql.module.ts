@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { resolvers } from './resolvers';
 import { LoggingService } from '@app/logging';
 import { UserCqrsModule } from '../user-cqrs.module';
@@ -8,14 +11,14 @@ import { UserCqrsModule } from '../user-cqrs.module';
 @Module({
   imports: [
     UserCqrsModule,
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
+    GraphQLModule.forRootAsync<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
       useFactory: (loggingService: LoggingService) => {
         loggingService.setContext('GraphQLModule');
 
         return {
-          // Use code-first approach with schema file generation
-          autoSchemaFile: 'src/graphql/generated/schema.gql', // Generate schema to file for code generation
+          // Use code-first approach with schema file generation for federation
+          autoSchemaFile: 'apps/user-service/src/graphql/generated/schema.gql', // Generate schema to file for code generation
           sortSchema: true,
           debug: process.env.GRAPHQL_DEBUG === 'true',
           playground: process.env.GRAPHQL_PLAYGROUND === 'true',

@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType, registerEnumType, Directive } from '@nestjs/graphql';
 import { RelationshipTypeEnum } from '../../domain/models/value-objects/relationship-type.value-object';
 import { RelationshipStatusEnum } from '../../domain/models/value-objects/relationship-status.value-object';
 import { UserType } from './user.types';
@@ -23,8 +23,10 @@ registerEnumType(RelationshipStatusEnum, {
  * Relationship GraphQL Type
  *
  * Represents a relationship between users in the system.
+ * Enhanced for Apollo Federation with @key directive for entity resolution.
  */
 @ObjectType({ description: 'Relationship between users' })
+@Directive('@key(fields: "id")')
 export class UserRelationship {
   @Field(() => ID, { description: 'Unique identifier for the relationship' })
   id: string;

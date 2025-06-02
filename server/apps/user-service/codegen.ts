@@ -16,11 +16,12 @@ const config: CodegenConfig = {
       plugins: ['typescript', 'typescript-resolvers'],
       config: {
         useIndexSignature: true,
-        contextType: '../types#GraphQLContext',
+        contextType: '../types/graphql-context#GraphQLContext',
         mappers: {
-          User: '../types#UserModel',
-          Relationship: '../types#RelationshipModel',
-          UserSetting: '../types#UserSettingModel',
+          UserType:
+            '../../domain/read-models/user-profile.read-model#UserProfileReadModel',
+          UserRelationship:
+            '../../domain/read-models/relationship.read-model#RelationshipReadModel',
         },
         scalars: {
           DateTime: 'Date',

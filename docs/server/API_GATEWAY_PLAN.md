@@ -21,7 +21,6 @@ The API Gateway follows the established 'gold standard' patterns and integrates 
 - **Caching Layer**: Redis-based caching for performance optimization
 - **Real-time Support**: WebSocket gateway for GraphQL subscriptions
 - **Security**: CORS, rate limiting, and security headers
-- **Monitoring**: Comprehensive metrics and health checks
 
 ## Current Implementation Status
 
@@ -33,16 +32,17 @@ The API Gateway follows the established 'gold standard' patterns and integrates 
   - ✅ Bootstrap service configured with Fastify in `main.ts`
   - ✅ Port 4000 configured for API Gateway
 - ✅ **Basic module structure**
-  - ✅ Main module with logging and metrics integration
+  - ✅ Main module with logging integration
   - ✅ Health check endpoints implemented
   - ✅ Shared infrastructure modules integrated
 
-### Phase 2: GraphQL Federation Setup ⏳ PENDING
+### Phase 2: GraphQL Federation Setup ⏳ IN PROGRESS
 - ☐ **Apollo Federation Gateway setup**
   - ☐ Install and configure Apollo Federation packages
   - ☐ Set up federated gateway configuration
   - ☐ Configure service discovery for microservices
 - ☐ **Schema composition and stitching**
+  - ⏳ Enhance User Service GraphQL schema for federation
   - ☐ Integrate User Service GraphQL schema
   - ☐ Integrate Chat Service GraphQL schema
   - ☐ Configure schema delegation and resolver composition
@@ -107,10 +107,6 @@ The API Gateway follows the established 'gold standard' patterns and integrates 
   - ☐ Implement GraphQL query caching
   - ☐ Add response caching strategies
   - ☐ Configure cache invalidation
-- ☐ **Monitoring and observability**
-  - ☐ Add comprehensive metrics collection
-  - ☐ Implement distributed tracing
-  - ☐ Configure alerting and dashboards
 
 ## Detailed Implementation Plan
 
@@ -364,7 +360,6 @@ export const routingConfig = {
    - ☐ Create circuit breaker service
    - ☐ Configure failure thresholds
    - ☐ Implement half-open state testing
-   - ☐ Add circuit breaker metrics
 
 2. **Fallback Mechanisms**:
    - ☐ Implement cached response fallbacks
@@ -480,7 +475,7 @@ export class ApiGatewayAuthModule {}
    - ☐ Add session affinity for stateful operations
    - ☐ Implement session-based load balancing
    - ☐ Configure session failover handling
-   - ☐ Add session monitoring and metrics
+   - ☐ Add session monitoring
 
 **Success Criteria**:
 - ✅ JWT authentication for all protected operations
@@ -566,7 +561,6 @@ export class WebSocketModule {}
    - ☐ Implement connection state tracking
    - ☐ Add user presence management
    - ☐ Configure connection recovery
-   - ☐ Implement connection metrics
 
 **Success Criteria**:
 - ✅ WebSocket connections authenticated and authorized
@@ -628,27 +622,6 @@ export class WebSocketModule {}
    - ☐ Implement request batching
    - ☐ Configure connection pooling
    - ☐ Add performance monitoring
-
-#### Step 3: Monitoring and Observability
-
-**Implementation Tasks**:
-1. **Metrics Collection**:
-   - ☐ Add comprehensive metrics collection
-   - ☐ Implement custom business metrics
-   - ☐ Configure performance metrics
-   - ☐ Add error rate monitoring
-
-2. **Distributed Tracing**:
-   - ☐ Implement distributed tracing
-   - ☐ Add request correlation
-   - ☐ Configure trace sampling
-   - ☐ Implement trace aggregation
-
-3. **Alerting and Dashboards**:
-   - ☐ Configure alerting rules
-   - ☐ Create monitoring dashboards
-   - ☐ Add health check endpoints
-   - ☐ Implement automated incident response
 
 **Success Criteria**:
 - ✅ Comprehensive security headers implemented
@@ -801,8 +774,6 @@ RATE_LIMIT_MAX_REQUESTS=100
 RATE_LIMIT_SKIP_SUCCESSFUL_REQUESTS=false
 
 # Monitoring
-METRICS_ENABLED=true
-TRACING_ENABLED=true
 LOG_LEVEL=info
 
 # Security
@@ -913,10 +884,6 @@ server/apps/api-gateway/src/
 │   ├── cache.module.ts
 │   ├── strategies/
 │   └── invalidation/
-├── monitoring/              # Metrics and observability
-│   ├── monitoring.module.ts
-│   ├── metrics/
-│   └── tracing/
 ├── health/                  # Health checks and status
 │   ├── health.controller.ts
 │   └── health.service.ts
@@ -951,7 +918,6 @@ server/apps/api-gateway/src/
 - **Real-time Features**: Test WebSocket subscriptions
 - **Performance**: Test under load with multiple services
 - **Security**: Test authentication and authorization
-- **Monitoring**: Test metrics collection and alerting
 
 ### Testing Utilities
 ```typescript
@@ -1047,8 +1013,6 @@ describe('API Gateway', () => {
 - Add caching strategies
 
 **Day 5**: Monitoring and production readiness
-- Add metrics collection
-- Configure alerting
 - Final testing and documentation
 
 ## Dependencies and Prerequisites
@@ -1088,13 +1052,6 @@ describe('API Gateway', () => {
 - ✅ Authentication and authorization functional
 - ✅ Error handling and resilience operational
 
-### Performance Metrics
-- **Response Time**: < 100ms for simple queries, < 500ms for complex queries
-- **Throughput**: > 1000 requests per second
-- **Availability**: > 99.9% uptime
-- **Error Rate**: < 0.1% for successful operations
-- **Cache Hit Rate**: > 80% for cacheable operations
-
 ### Security Metrics
 - ✅ All protected operations require authentication
 - ✅ Authorization rules enforced correctly
@@ -1114,7 +1071,6 @@ describe('API Gateway', () => {
 1. **Service Discovery Failures**: Implement health monitoring and failover
 2. **Authentication Issues**: Comprehensive testing and monitoring
 3. **Scaling Challenges**: Load testing and performance optimization
-4. **Monitoring Gaps**: Comprehensive metrics and alerting
 
 ## Related Documents
 

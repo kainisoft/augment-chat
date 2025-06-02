@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType, Directive } from '@nestjs/graphql';
 import { UserStatusEnum } from '../../domain/models/value-objects/user-status.value-object';
 import {
   GraphQLListResponse,
@@ -17,8 +17,10 @@ registerEnumType(UserStatusEnum, {
  * User GraphQL Type
  *
  * Represents a user in the system.
+ * Enhanced for Apollo Federation with @key directive for entity resolution.
  */
 @ObjectType({ description: 'User profile information' })
+@Directive('@key(fields: "id")')
 export class UserType {
   @Field(() => ID, { description: 'Unique identifier for the user' })
   id: string;
