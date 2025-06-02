@@ -8,8 +8,8 @@ import { UserRegisteredEvent } from '../../events/impl/user-registered.event';
 import { UserRepository } from '../../../domain/repositories/user.repository.interface';
 import { User } from '../../../domain/models/user.entity';
 import { Password } from '../../../domain/models/value-objects/password.value-object';
-import { TokenService } from '../../../token/token.service';
 import { SessionService } from '../../../session/session.service';
+import { AuthGuardService } from '@app/security';
 
 /**
  * Register User Command Handler
@@ -23,7 +23,7 @@ export class RegisterUserHandler
   constructor(
     @Inject('UserRepository')
     private readonly userRepository: UserRepository,
-    private readonly tokenService: TokenService,
+    private readonly securetyAuthGuardService: AuthGuardService,
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
     private readonly eventBus: EventBus,
@@ -70,16 +70,15 @@ export class RegisterUserHandler
       );
 
       // Generate tokens with session ID in payload
-      const accessToken = await this.tokenService.generateAccessToken(userId, {
-        sessionId,
-      });
-
-      const refreshToken = await this.tokenService.generateRefreshToken(
-        userId,
-        {
+      const accessToken =
+        await this.securetyAuthGuardService.generateAccessToken(userId, {
           sessionId,
-        },
-      );
+        });
+
+      const refreshToken =
+        await this.securetyAuthGuardService.generateRefreshToken(userId, {
+          sessionId,
+        });
 
       // Publish domain event
       this.eventBus.publish(

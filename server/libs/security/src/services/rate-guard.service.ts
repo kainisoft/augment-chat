@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '@app/redis';
-import { RateLimitConfig } from '../decorators/rate-limit.decorator';
-import { AuthenticatedRequest } from '../interfaces';
+import { AuthenticatedRequest, RateGuardOptions } from '../interfaces';
 
 /**
  * Rate Limit Service
@@ -23,7 +22,7 @@ export class RateGuardService {
    * @param config - Rate limit configuration
    * @returns True if rate limited, false otherwise
    */
-  async isRateLimited(key: string, config: RateLimitConfig): Promise<boolean> {
+  async isRateLimited(key: string, config: RateGuardOptions): Promise<boolean> {
     const rateLimitKey = `${this.keyPrefix}${key}`;
     const blockKey = `${this.keyPrefix}block:${key}`;
 
@@ -59,7 +58,7 @@ export class RateGuardService {
    * @param config - Rate limit configuration
    * @returns Current attempt count
    */
-  async increment(key: string, config: RateLimitConfig): Promise<number> {
+  async increment(key: string, config: RateGuardOptions): Promise<number> {
     const rateLimitKey = `${this.keyPrefix}${key}`;
 
     try {
@@ -103,7 +102,7 @@ export class RateGuardService {
    */
   async getStatus(
     key: string,
-    config: RateLimitConfig,
+    config: RateGuardOptions,
   ): Promise<{
     attempts: number;
     remaining: number;

@@ -5,15 +5,15 @@ import {
   DatabaseLogMetadata,
   ErrorLoggerService,
 } from '@app/logging';
-import { Public } from '@app/iam';
 import { RedisHealthIndicator } from '@app/redis/health/redis-health.indicator';
 import { DatabaseService } from '@app/database';
+import { Auth, AuthType } from '@app/security';
 
 /**
  * Service to check auth service dependencies
  */
 @Injectable()
-@Public()
+@Auth(AuthType.NONE)
 export class AuthServiceHealthService {
   constructor(
     private readonly loggingService: LoggingService,
@@ -174,7 +174,7 @@ export class AuthServiceHealthService {
 }
 
 @Controller('health')
-@Public()
+@Auth(AuthType.NONE)
 export class AuthServiceHealthController extends BaseHealthController {
   constructor(
     private readonly healthService: AuthServiceHealthService,

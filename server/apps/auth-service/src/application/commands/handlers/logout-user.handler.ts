@@ -4,9 +4,8 @@ import { LoggingService, ErrorLoggerService } from '@app/logging';
 
 import { LogoutUserCommand } from '../impl/logout-user.command';
 import { UserLoggedOutEvent } from '../../events/impl/user-logged-out.event';
-import { TokenService } from '../../../token/token.service';
 import { SessionService } from '../../../session/session.service';
-import { TokenType } from '@app/iam';
+import { AuthGuardService, TokenType } from '@app/security';
 
 /**
  * Logout User Command Handler
@@ -16,7 +15,7 @@ import { TokenType } from '@app/iam';
 @CommandHandler(LogoutUserCommand)
 export class LogoutUserHandler implements ICommandHandler<LogoutUserCommand> {
   constructor(
-    private readonly tokenService: TokenService,
+    private readonly secureAuthGuardService: AuthGuardService,
     private readonly sessionService: SessionService,
     private readonly eventBus: EventBus,
     private readonly loggingService: LoggingService,
@@ -28,7 +27,7 @@ export class LogoutUserHandler implements ICommandHandler<LogoutUserCommand> {
   async execute(command: LogoutUserCommand): Promise<boolean> {
     try {
       // Validate the refresh token
-      const payload = await this.tokenService.validateToken(
+      const payload = await this.secureAuthGuardService.validateToken(
         command.refreshToken,
         TokenType.REFRESH,
       );
@@ -41,7 +40,7 @@ export class LogoutUserHandler implements ICommandHandler<LogoutUserCommand> {
       const sessionId = payload.sessionId;
 
       // Revoke the refresh token
-      await this.tokenService.revokeToken(command.refreshToken);
+      await this.secureAuthGuardService.revokeToken(userId, sessionId);
 
       // Delete the session
       if (sessionId) {

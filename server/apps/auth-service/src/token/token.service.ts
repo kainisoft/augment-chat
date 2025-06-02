@@ -2,8 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '@app/redis';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-import { IamService, TokenType } from '@app/iam';
-import { TokenPayload } from './interfaces/token-payload.interface';
+import { AuthGuardService, TokenType, JwtPayload } from '@app/security';
 
 /**
  * Token Service
@@ -18,11 +17,11 @@ export class TokenService {
   private readonly tokenMetadataPrefix = 'token:metadata:';
 
   constructor(
-    private readonly iamService: IamService,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly securityAuthGuardService: AuthGuardService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(TokenService.name);
@@ -48,18 +47,19 @@ export class TokenService {
     userId: string,
     additionalData: Record<string, any> = {},
   ): Promise<string> {
-    const token = await this.iamService.generateAccessToken(
+    const token = await this.securityAuthGuardService.generateAccessToken(
       userId,
       additionalData,
     );
 
     // Store token metadata in Redis
-    const payload: TokenPayload = {
+    const payload: JwtPayload = {
       sub: userId,
       type: TokenType.ACCESS,
       iat: Math.floor(Date.now() / 1000),
       ...additionalData,
     };
+
     await this.storeTokenMetadata(token, payload);
 
     this.loggingService.debug(
@@ -81,13 +81,13 @@ export class TokenService {
     userId: string,
     additionalData: Record<string, any> = {},
   ): Promise<string> {
-    const token = await this.iamService.generateRefreshToken(
+    const token = await this.securityAuthGuardService.generateRefreshToken(
       userId,
       additionalData,
     );
 
     // Store token metadata in Redis
-    const payload: TokenPayload = {
+    const payload: JwtPayload = {
       sub: userId,
       type: TokenType.REFRESH,
       iat: Math.floor(Date.now() / 1000),
@@ -111,13 +111,10 @@ export class TokenService {
    * @returns Token payload if valid
    * @throws UnauthorizedException if token is invalid
    */
-  async validateToken(token: string, type: TokenType): Promise<TokenPayload> {
+  async validateToken(token: string, type: TokenType): Promise<JwtPayload> {
     try {
       // Verify the token using IAM service
-      const payload = (await this.iamService.validateToken(
-        token,
-        type,
-      )) as TokenPayload;
+      const payload = this.securityAuthGuardService.validateToken(token, type);
 
       // Check if token is blacklisted
       const isBlacklisted = await this.isTokenBlacklisted(token);
@@ -149,10 +146,10 @@ export class TokenService {
   async revokeToken(token: string): Promise<boolean> {
     try {
       // Verify the token first
-      const payload = (await this.iamService.validateToken(
+      const payload = await this.securityAuthGuardService.validateToken(
         token,
         TokenType.ACCESS,
-      )) as TokenPayload;
+      );
 
       // Calculate remaining time until token expiry
       const currentTime = Math.floor(Date.now() / 1000);
@@ -169,7 +166,10 @@ export class TokenService {
       await this.redisService.set(blacklistKey, '1', ttl);
 
       // Also revoke the token in IAM service
-      await this.iamService.revokeToken(payload.sub, payload.sessionId);
+      await this.securityAuthGuardService.revokeToken(
+        payload.sub,
+        payload.sessionId,
+      );
 
       this.loggingService.debug(
         `Revoked token for user ${payload.sub}`,
@@ -210,12 +210,12 @@ export class TokenService {
    */
   private async storeTokenMetadata(
     token: string,
-    payload: TokenPayload,
+    payload: JwtPayload,
   ): Promise<void> {
     try {
       // Calculate TTL based on token type
       const ttl =
-        payload.type === 'access'
+        payload.type === TokenType.ACCESS
           ? this.accessTokenExpiry
           : this.refreshTokenExpiry;
 

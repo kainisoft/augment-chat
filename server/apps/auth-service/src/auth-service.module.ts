@@ -24,7 +24,6 @@ import { AuthModule } from './auth/auth.module';
 import { PresentationModule } from './presentation/presentation.module';
 import { CacheModule } from './cache/cache.module';
 import { KafkaModule } from './kafka/kafka.module';
-import { TokenModule } from './token/token.module';
 import { SessionModule } from './session/session.module';
 import { PermissionModule } from './permission/permission.module';
 import { AccountLockoutModule } from './domain/services/account-lockout.module';
@@ -96,7 +95,6 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
  * - **AuthModule**: Core authentication functionality
  * - **PresentationModule**: REST API layer
  * - **RepositoryModule**: Data access layer
- * - **TokenModule**: Token management and validation
  * - **SessionModule**: Session lifecycle management
  * - **PermissionModule**: Access control and permissions
  * - **AccountLockoutModule**: Security protection mechanisms
@@ -150,7 +148,6 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
  * @see {@link AuthModule} for core authentication functionality
  * @see {@link SecurityModule} for identity and access management
  * @see {@link SessionModule} for session management
- * @see {@link TokenModule} for token handling
  * @see {@link PermissionModule} for access control
  */
 @Module({
@@ -234,7 +231,6 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
     PresentationModule,
     CacheModule,
     KafkaModule,
-    TokenModule,
     SessionModule,
     PermissionModule,
     AccountLockoutModule,

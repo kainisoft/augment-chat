@@ -8,8 +8,8 @@ import { AccountLockoutService } from '../../../domain/services/account-lockout.
 import { LoginUserCommand } from '../impl/login-user.command';
 import { UserLoggedInEvent } from '../../events/impl/user-logged-in.event';
 import { UserRepository } from '../../../domain/repositories/user.repository.interface';
-import { TokenService } from '../../../token/token.service';
 import { SessionService } from '../../../session/session.service';
+import { AuthGuardService } from '@app/security';
 
 /**
  * Login User Command Handler
@@ -21,7 +21,7 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
   constructor(
     @Inject('UserRepository')
     private readonly userRepository: UserRepository,
-    private readonly tokenService: TokenService,
+    private readonly securetyAuthGuardService: AuthGuardService,
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
     private readonly eventBus: EventBus,
@@ -90,16 +90,15 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
       );
 
       // Generate tokens with session ID in payload
-      const accessToken = await this.tokenService.generateAccessToken(userId, {
-        sessionId,
-      });
-
-      const refreshToken = await this.tokenService.generateRefreshToken(
-        userId,
-        {
+      const accessToken =
+        await this.securetyAuthGuardService.generateAccessToken(userId, {
           sessionId,
-        },
-      );
+        });
+
+      const refreshToken =
+        await this.securetyAuthGuardService.generateRefreshToken(userId, {
+          sessionId,
+        });
 
       // Publish domain event
       this.eventBus.publish(

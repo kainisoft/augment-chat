@@ -9,7 +9,6 @@ import {
 } from '@app/common/errors';
 import { ErrorLoggerService } from '@app/logging';
 import { UserId, Email } from '@app/domain';
-import { TokenService } from '../token/token.service';
 import { SessionService } from '../session/session.service';
 import { UserRepository } from '../domain/repositories/user.repository.interface';
 import { User } from '../domain/models/user.entity';
@@ -23,7 +22,7 @@ import {
   ResetPasswordDto,
   AuthResponseDto,
 } from '@app/dtos';
-import { TokenType } from '@app/iam';
+import { AuthGuardService, TokenType } from '@app/security';
 
 /**
  * Auth Service
@@ -35,7 +34,7 @@ export class AuthService {
   constructor(
     @Inject('UserRepository')
     private readonly userRepository: UserRepository,
-    private readonly tokenService: TokenService,
+    private readonly secureAuthGuardService: AuthGuardService,
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
     private readonly loggingService: LoggingService,
@@ -169,7 +168,7 @@ export class AuthService {
   ): Promise<boolean> {
     try {
       // Revoke the token
-      await this.tokenService.revokeToken(token);
+      await this.secureAuthGuardService.revokeToken(token);
 
       // Delete the session
       await this.sessionService.deleteSession(sessionId);
@@ -203,7 +202,7 @@ export class AuthService {
   ): Promise<AuthResponseDto> {
     try {
       // Validate refresh token
-      const payload = await this.tokenService.validateToken(
+      const payload = await this.secureAuthGuardService.validateToken(
         refreshTokenDto.refreshToken,
         TokenType.REFRESH,
       );
@@ -222,16 +221,17 @@ export class AuthService {
       }
 
       // Revoke the old refresh token
-      await this.tokenService.revokeToken(refreshTokenDto.refreshToken);
+      await this.secureAuthGuardService.revokeToken(userId, payload.sessionId);
 
       // Generate new tokens
-      const accessToken = await this.tokenService.generateAccessToken(
+      const accessToken = await this.secureAuthGuardService.generateAccessToken(
         user.getId().toString(),
       );
 
-      const refreshToken = await this.tokenService.generateRefreshToken(
-        user.getId().toString(),
-      );
+      const refreshToken =
+        await this.secureAuthGuardService.generateRefreshToken(
+          user.getId().toString(),
+        );
 
       // Get session ID from payload
       const sessionId = payload.sessionId!;
@@ -285,9 +285,12 @@ export class AuthService {
       }
 
       // Generate password reset token
-      await this.tokenService.generateAccessToken(user.getId().toString(), {
-        purpose: 'password-reset',
-      });
+      await this.secureAuthGuardService.generateAccessToken(
+        user.getId().toString(),
+        {
+          purpose: 'password-reset',
+        },
+      );
 
       // TODO: Store the token or send it via email
 
@@ -321,7 +324,7 @@ export class AuthService {
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<boolean> {
     try {
       // Validate reset token
-      const payload = await this.tokenService.validateToken(
+      const payload = await this.secureAuthGuardService.validateToken(
         resetPasswordDto.token,
         TokenType.ACCESS,
       );
@@ -347,7 +350,7 @@ export class AuthService {
       await this.userRepository.save(user);
 
       // Revoke all user tokens
-      await this.tokenService.revokeAllUserTokens(userId);
+      await this.secureAuthGuardService.revokeToken(userId, payload.sessionId);
 
       // Delete all user sessions
       await this.sessionService.deleteUserSessions(userId);
@@ -403,13 +406,19 @@ export class AuthService {
     );
 
     // Generate tokens with session ID in payload
-    const accessToken = await this.tokenService.generateAccessToken(userId, {
-      sessionId,
-    });
+    const accessToken = await this.secureAuthGuardService.generateAccessToken(
+      userId,
+      {
+        sessionId,
+      },
+    );
 
-    const refreshToken = await this.tokenService.generateRefreshToken(userId, {
-      sessionId,
-    });
+    const refreshToken = await this.secureAuthGuardService.generateRefreshToken(
+      userId,
+      {
+        sessionId,
+      },
+    );
 
     return {
       accessToken,

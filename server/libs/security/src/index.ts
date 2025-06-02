@@ -39,3 +39,4 @@ export {
 } from './lazy/lazy-security.service';
 
 export { AuthType, TokenType } from './enums';
+export { JwtPayload } from './interfaces';

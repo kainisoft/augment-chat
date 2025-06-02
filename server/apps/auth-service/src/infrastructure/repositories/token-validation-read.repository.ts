@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { TokenService } from '../../token/token.service';
 import { TokenValidationReadRepository } from '../../domain/repositories/token-validation-read.repository.interface';
 import { TokenValidationReadModel } from '../../domain/read-models/token-validation.read-model';
-import { TokenType } from '@app/iam';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { AuthGuardService, TokenType } from '@app/security';
 
 /**
  * Token Validation Read Repository
@@ -15,7 +14,7 @@ export class TokenValidationReadRepositoryImpl
   implements TokenValidationReadRepository
 {
   constructor(
-    private readonly tokenService: TokenService,
+    private readonly secureAuthGuardService: AuthGuardService,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
   ) {
@@ -34,7 +33,7 @@ export class TokenValidationReadRepositoryImpl
         'validateAccessToken',
       );
 
-      const payload = await this.tokenService.validateToken(
+      const payload = await this.secureAuthGuardService.validateToken(
         token,
         TokenType.ACCESS,
       );
@@ -86,7 +85,7 @@ export class TokenValidationReadRepositoryImpl
         'validateRefreshToken',
       );
 
-      const payload = await this.tokenService.validateToken(
+      const payload = await this.secureAuthGuardService.validateToken(
         token,
         TokenType.REFRESH,
       );
