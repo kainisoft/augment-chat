@@ -396,7 +396,7 @@ export const routingConfig = {
 **Prerequisites**:
 - ✅ Phase 3 (Request Routing) completed
 - ✅ Auth Service JWT validation operational
-- ✅ IAM module available
+- ✅ Security module available
 
 #### Step 1: JWT Authentication Middleware
 
@@ -424,10 +424,13 @@ export const routingConfig = {
 // server/apps/api-gateway/src/auth/auth.module.ts
 @Module({
   imports: [
-    IamModule.register({
-      jwtSecret: process.env.JWT_SECRET,
-      jwtExpiresIn: process.env.JWT_EXPIRES_IN,
-      authServiceUrl: process.env.AUTH_SERVICE_URL,
+    SecurityModule.register({
+      jwtModuleOptions: {
+        secret: process.env.JWT_SECRET,
+        signOptions: {
+          expiresIn: process.env.JWT_EXPIRES_IN,
+        },
+      },
       isGlobal: true,
     }),
   ],
@@ -838,11 +841,9 @@ HSTS_ENABLED=true
 
 ### Required Shared Modules
 - **@app/validation**: Input validation decorators and pipes
-- **@app/security**: Rate limiting, CORS, and security utilities
-- **@app/iam**: JWT authentication and authorization
+- **@app/security**: JWT authentication and authorization, Rate limiting, CORS, and security utilities
 - **@app/logging**: Centralized logging with correlation IDs
 - **@app/redis**: Redis connection and caching utilities
-- **@app/metrics**: Performance monitoring and metrics collection
 - **@app/testing**: Testing utilities and mock factories
 - **@app/bootstrap**: Enhanced service startup patterns
 
@@ -869,8 +870,8 @@ export class GraphQLController {
   }
 }
 
-// Using shared IAM
-import { AuthGuard, RequirePermissions } from '@app/iam';
+// Using shared Security
+import { AuthGuard, RequirePermissions } from '@app/security';
 
 @UseGuards(AuthGuard)
 @RequirePermissions('user:read')

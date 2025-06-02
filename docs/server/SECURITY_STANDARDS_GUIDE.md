@@ -171,16 +171,16 @@ export class ChangePasswordDto {
 ## Token Security Standards
 
 ### JWT Token Generation
-All JWT tokens are generated through the IAM module:
+All JWT tokens are generated through the Security module:
 
 ```typescript
-import { IamService } from '@app/iam';
+import { SecurityService } from '@app/security';
 
 // Generate access token
-const accessToken = await iamService.generateAccessToken(userId, payload);
+const accessToken = await securityService.generateAccessToken(userId, payload);
 
 // Generate refresh token
-const refreshToken = await iamService.generateRefreshToken(userId, payload);
+const refreshToken = await securityService.generateRefreshToken(userId, payload);
 ```
 
 ### Secure Token Generation
@@ -249,8 +249,8 @@ const isMalicious = securityUtils.containsMaliciousContent(input);
 ### Authorization Patterns
 ```typescript
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard, RolesGuard } from '@app/iam';
-import { Roles } from '@app/iam';
+import { JwtAuthGuard, RolesGuard } from '@app/security';
+import { Roles } from '@app/security';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -265,7 +265,7 @@ export class AdminController {
 
 ### Public Endpoints
 ```typescript
-import { Public } from '@app/iam';
+import { Public } from '@app/security';
 
 @Controller('auth')
 export class AuthController {
@@ -331,7 +331,7 @@ const isValid = securityUtils.verifyTOTP(token, secret);
 ### Auth Service
 - ✅ Rate limiting on all authentication endpoints
 - ✅ Password hashing using shared SecurityUtilsService
-- ✅ JWT token generation through IAM module
+- ✅ JWT token generation through Security module
 - ✅ Session management with Redis encryption
 - ✅ Account lockout protection
 
@@ -427,7 +427,7 @@ try {
     operation: 'passwordReset',
     error: error.message,
   });
-  
+
   // Return generic error to client
   throw new BadRequestException('Operation failed');
 }

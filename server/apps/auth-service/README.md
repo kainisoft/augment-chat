@@ -45,14 +45,13 @@ The service follows Domain-Driven Design (DDD) and CQRS patterns:
 ### Shared Modules
 - `@app/dtos` - Shared data transfer objects for authentication responses
 - `@app/validation` - Shared validation decorators for input validation
-- `@app/security` - Security utilities, guards, and rate limiting
+- `@app/security` - Security utilities, guards, rate limiting, and Identity and Access Management
 - `@app/logging` - Centralized logging service with security event logging
 - `@app/testing` - Shared testing utilities and mock factories
 - `@app/domain` - Shared domain models (UserId, Email, Password, etc.)
 - `@app/events` - Event interfaces for inter-service communication
 - `@app/kafka` - Event publishing and consumption
 - `@app/redis` - Session management and token storage
-- `@app/iam` - Identity and Access Management utilities
 
 #### Shared Module Integration Examples
 
@@ -341,7 +340,7 @@ During the service standardization process, the Auth Service underwent significa
 
 #### 5. Security Enhancements
 - **Before**: Basic JWT implementation
-- **After**: Comprehensive security using `@app/security` and `@app/iam`
+- **After**: Comprehensive security using `@app/security`
 - **Improvements**:
   - Rate limiting with Redis backend
   - Enhanced session management
@@ -353,11 +352,11 @@ During the service standardization process, the Auth Service underwent significa
 - **After**: Shared testing patterns using `@app/testing`
 - **Benefits**: Consistent test structure, reusable mock factories, better coverage
 
-#### 7. IAM Integration
+#### 7. Security Integration
 - **Before**: Service-specific authentication and authorization logic
-- **After**: Centralized IAM using `@app/iam` module
+- **After**: Centralized security using `@app/security` module
 - **Changes**:
-  - Replaced custom JWT guards with `JwtAuthGuard` from IAM
+  - Replaced custom JWT guards with `JwtAuthGuard` from Security module
   - Implemented role-based access control using `@Roles()` decorator
   - Added `@Public()` decorator for public endpoints
   - Centralized user context injection across all endpoints
@@ -576,7 +575,6 @@ docker-compose logs -f auth-service
 - [User Service Plan](../../docs/server/USER_SERVICE_PLAN.md)
 
 ### Shared Module Documentation
-- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Security Library](../../libs/security/README.md) - Identity and Access Management
 - [Testing Library](../../libs/testing/README.md)
 - [Validation Library](../../libs/validation/README.md)
-- [Security Library](../../libs/security/README.md)

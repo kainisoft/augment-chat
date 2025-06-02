@@ -56,8 +56,7 @@ The service follows Domain-Driven Design (DDD) patterns and integrates with shar
 ### Shared Modules
 - `@app/dtos` - Shared data transfer objects for logging
 - `@app/validation` - Shared validation decorators
-- `@app/security` - Security utilities and guards
-- `@app/iam` - Identity and Access Management for authentication and authorization
+- `@app/security` - Security utilities, guards, and Identity and Access Management
 - `@app/logging` - Core logging utilities (self-hosted)
 - `@app/testing` - Shared testing utilities
 - `@app/domain` - Shared domain models (ServiceId, LogLevel, etc.)
@@ -121,9 +120,9 @@ export class LogEntry {
 }
 ```
 
-**Using IAM Authentication and Authorization:**
+**Using Security Authentication and Authorization:**
 ```typescript
-import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/iam';
+import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/security';
 import { Controller, Get, Post, Delete, UseGuards, Request, Body, Query } from '@nestjs/common';
 
 @Controller('logs')
@@ -469,9 +468,9 @@ For detailed performance documentation, see [Performance Documentation Index](..
 
 ## Security
 
-### Centralized IAM Integration
+### Centralized Security Integration
 
-The Logging Service uses the centralized `@app/iam` module for all authentication and authorization:
+The Logging Service uses the centralized `@app/security` module for all authentication and authorization:
 
 - **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
 - **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
@@ -481,7 +480,7 @@ The Logging Service uses the centralized `@app/iam` module for all authenticatio
 
 ### Log Security
 
-- **Authentication**: Centralized JWT token validation via `@app/iam`
+- **Authentication**: Centralized JWT token validation via `@app/security`
 - **Authorization**: Role-based access to log data (admin, developer, operator)
 - **Data Sanitization**: Sensitive data filtering and masking
 - **Audit Logging**: All log access operations logged with user context
@@ -602,7 +601,6 @@ LOKI_DEBUG=true pnpm run start:dev logging-service
 - [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
 
 ### Shared Module Documentation
-- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Security Library](../../libs/security/README.md) - Identity and Access Management
 - [Testing Library](../../libs/testing/README.md)
 - [Validation Library](../../libs/validation/README.md)
-- [Security Library](../../libs/security/README.md)

@@ -8,7 +8,6 @@ import { DatabaseModule } from '@app/database';
 import { RedisModule } from '@app/redis';
 import { SessionModule as RedisSessionModule } from '@app/redis/session';
 import { CacheModule as RedisCacheModule } from '@app/redis/cache';
-import { IamModule } from '@app/iam';
 import { SecurityModule } from '@app/security';
 
 // Service Controllers and Services
@@ -91,7 +90,7 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
  * - **RedisModule**: Redis connection with auth-specific prefix
  * - **RedisSessionModule**: Session storage and management
  * - **RedisCacheModule**: Cache configuration and management
- * - **IamModule**: JWT and authentication framework
+ * - **SecurityModule**: JWT and authentication framework
  *
  * ### Feature Modules
  * - **AuthModule**: Core authentication functionality
@@ -149,7 +148,7 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
  * - **Metrics Collection**: Security and performance metrics
  *
  * @see {@link AuthModule} for core authentication functionality
- * @see {@link IamModule} for identity and access management
+ * @see {@link SecurityModule} for identity and access management
  * @see {@link SessionModule} for session management
  * @see {@link TokenModule} for token handling
  * @see {@link PermissionModule} for access control
@@ -240,16 +239,24 @@ import { AccountLockoutModule } from './domain/services/account-lockout.module';
     PermissionModule,
     AccountLockoutModule,
 
-    // Import IAM Module for authentication and authorization
-    IamModule.register({
-      jwtSecret: process.env.JWT_SECRET || 'change-me-in-production',
-      jwtExpiresIn: process.env.JWT_EXPIRES_IN || '15m',
-      refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
-      isGlobal: true,
-    }),
-
-    // Import SecurityModule for shared security utilities
-    SecurityModule,
+    // Import Security Module for authentication and authorization
+    SecurityModule.register(
+      {
+        jwtModuleOptions: {
+          secret: process.env.JWT_SECRET || 'change-me-in-production',
+          signOptions: {
+            expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+          },
+        },
+        isGlobal: true,
+      },
+      {
+        isGlobal: true,
+        maxAttempts: 5,
+        windowSeconds: 60,
+        blockSeconds: 300,
+      },
+    ),
   ],
   controllers: [
     // Health monitoring controller

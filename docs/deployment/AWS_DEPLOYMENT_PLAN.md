@@ -16,7 +16,7 @@ This document outlines the AWS infrastructure and deployment strategy for the ch
 - **Caching**: Custom Redis Cluster on EC2 instances (accessed via private IPs)
 - **CI/CD**: AWS CodePipeline or GitHub Actions
 - **Monitoring**: CloudWatch, X-Ray
-- **Security**: WAF, Shield, IAM
+- **Security**: WAF, Shield, AWS IAM
 
 ### Architecture Diagram
 ```
@@ -66,7 +66,7 @@ This document outlines the AWS infrastructure and deployment strategy for the ch
 - **S3 Module**: File storage
 - **CloudFront Module**: CDN configuration
 - **EC2 Module**: For custom Redis Cluster instances
-- **IAM Module**: Security and permissions
+- **AWS IAM Module**: Security and permissions
 - **Monitoring Module**: CloudWatch and alerting
 
 ### Custom Redis Cluster Implementation
@@ -302,7 +302,7 @@ artifacts:
 ### Data Security
 - Encryption at rest for all databases
 - Encryption in transit with TLS
-- IAM roles with least privilege
+- AWS IAM roles with least privilege
 - Secrets management with AWS Secrets Manager
 
 ### Compliance
@@ -316,7 +316,7 @@ artifacts:
 ### Phase 1: Infrastructure Setup
 - [ ] Create Terraform modules for core infrastructure
 - [ ] Set up VPC and networking
-- [ ] Configure security groups and IAM roles
+- [ ] Configure security groups and AWS IAM roles
 - [ ] Deploy database services (RDS, DocumentDB)
 - [ ] Set up MSK for Kafka
 - [ ] Implement custom Redis Cluster on EC2 instances

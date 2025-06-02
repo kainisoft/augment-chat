@@ -116,7 +116,7 @@ Based on codebase audit performed on the current implementation, the following r
   - ☐ Event consumer implementation
   - ☐ Inter-service communication
   - ☐ Event handler registration
-- ☐ **IAM integration**
+- ☐ **Security integration**
   - ☐ JWT authentication guards
   - ☐ Role-based access control
   - ☐ User context injection
@@ -503,7 +503,7 @@ KAFKA_CLIENT_ID=chat-service
 - `@app/events` - Event interfaces and handlers
 - `@app/kafka` - Kafka producer and consumer
 - `@app/redis` - Redis caching and pub/sub
-- `@app/iam` - Authentication and authorization
+- `@app/security` - Authentication and authorization
 - `@app/logging` - Centralized logging (already integrated)
 - `@app/testing` - Testing utilities and mocks
 

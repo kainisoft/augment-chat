@@ -114,13 +114,12 @@ The following shared libraries have been implemented to ensure consistency and r
 ### Domain and Business Logic Libraries
 - **@app/domain**: Shared domain models and value objects (UserId, Email, etc.)
 - **@app/events**: Standardized event interfaces for inter-service communication
-- **@app/iam**: Identity and Access Management with authentication/authorization
 
 ### API and Validation Libraries
 - **@app/dtos**: Shared Data Transfer Objects for consistent API interfaces
 - **@app/validation**: Validation decorators and utilities
 - **@app/graphql**: GraphQL utilities, decorators, and error handling
-- **@app/security**: Security utilities, rate limiting, and input sanitization
+- **@app/security**: Security utilities, rate limiting, input sanitization, and Identity and Access Management
 
 ### Development and Testing Libraries
 - **@app/testing**: Mock factories, test builders, and testing utilities

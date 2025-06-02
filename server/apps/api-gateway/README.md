@@ -54,8 +54,7 @@ The service follows Domain-Driven Design (DDD) patterns and integrates with shar
 ### Shared Modules
 - `@app/dtos` - Shared data transfer objects for API responses
 - `@app/validation` - Shared validation decorators
-- `@app/security` - Security utilities, guards, and rate limiting
-- `@app/iam` - Identity and Access Management for centralized authentication
+- `@app/security` - Security utilities, guards, rate limiting, and centralized authentication
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities
 - `@app/domain` - Shared domain models (UserId, etc.)
@@ -63,9 +62,9 @@ The service follows Domain-Driven Design (DDD) patterns and integrates with shar
 
 #### Shared Module Integration Examples
 
-**Using IAM Authentication Guards:**
+**Using Security Authentication Guards:**
 ```typescript
-import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/iam';
+import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/security';
 import { RateLimitGuard } from '@app/security';
 
 @Controller('api')
@@ -75,7 +74,7 @@ export class GatewayController {
   @Roles('user', 'admin')
   @RateLimit({ points: 10, duration: 60 })
   async protectedEndpoint(@Request() req) {
-    // User context automatically injected by IAM
+    // User context automatically injected by Security module
     return this.processRequest(req.user);
   }
 
@@ -435,9 +434,9 @@ For detailed performance documentation, see [Performance Documentation Index](..
 
 ## Security
 
-### Centralized IAM Integration
+### Centralized Security Integration
 
-The API Gateway uses the centralized `@app/iam` module as the primary authentication and authorization layer:
+The API Gateway uses the centralized `@app/security` module as the primary authentication and authorization layer:
 
 - **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
 - **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
@@ -446,15 +445,15 @@ The API Gateway uses the centralized `@app/iam` module as the primary authentica
 
 ### Authentication & Authorization
 
-- **JWT Validation**: Centralized token verification via `@app/iam`
+- **JWT Validation**: Centralized token verification via `@app/security`
 - **User Context**: Automatic user context injection for downstream services
 - **Role-Based Access**: Admin, user, and moderator role distinctions
 - **API Key Support**: Optional API key authentication for service-to-service calls
 
-### IAM Integration Examples
+### Security Integration Examples
 
 ```typescript
-// GraphQL gateway with IAM protection
+// GraphQL gateway with Security protection
 @Resolver()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class GatewayResolver {
@@ -479,14 +478,14 @@ export class GatewayResolver {
   }
 }
 
-// Gateway middleware with IAM
+// Gateway middleware with Security
 @Injectable()
 export class GatewayAuthMiddleware implements NestMiddleware {
-  constructor(private readonly iamService: IAMService) {}
+  constructor(private readonly securityService: SecurityService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    // IAM handles token validation and user context injection
-    this.iamService.validateAndInjectUser(req, res, next);
+    // Security module handles token validation and user context injection
+    this.securityService.validateAndInjectUser(req, res, next);
   }
 }
 ```
@@ -546,7 +545,6 @@ GRAPHQL_DEBUG=true pnpm run start:dev api-gateway
 - [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
 
 ### Shared Module Documentation
-- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Security Library](../../libs/security/README.md) - Identity and Access Management
 - [Testing Library](../../libs/testing/README.md)
 - [GraphQL Library](../../libs/graphql/README.md)
-- [Security Library](../../libs/security/README.md)

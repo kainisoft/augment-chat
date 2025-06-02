@@ -1,4 +1,4 @@
-# IAM (Identity and Access Management) Library
+# Security Library (Identity and Access Management)
 
 A centralized authentication and authorization library for NestJS microservices.
 
@@ -15,7 +15,7 @@ A centralized authentication and authorization library for NestJS microservices.
 
 ## Installation
 
-The IAM library is included in the monorepo and doesn't require separate installation. It depends on the Redis library (@app/redis), which should be imported in your application module.
+The Security library is included in the monorepo and doesn't require separate installation. It depends on the Redis library (@app/redis), which should be imported in your application module.
 
 ## Usage
 
@@ -23,7 +23,7 @@ The IAM library is included in the monorepo and doesn't require separate install
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { IamModule } from '@app/iam';
+import { SecurityModule } from '@app/security';
 import { RedisModule } from '@app/redis';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -36,17 +36,24 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       keyPrefix: 'app:',
       password: process.env.REDIS_PASSWORD,
     }),
-    // Then import IAM module
-    IamModule.register({
-      jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
-      jwtExpiresIn: process.env.JWT_EXPIRES_IN || '15m',
-      refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
-      isGlobal: true,
-      globalGuards: {
-        jwt: true,
-        roles: true,
+    // Then import Security module
+    SecurityModule.register(
+      {
+        jwtModuleOptions: {
+          secret: process.env.JWT_SECRET || 'your-secret-key',
+          signOptions: {
+            expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+          },
+        },
+        isGlobal: true,
       },
-    }),
+      {
+        isGlobal: true,
+        maxAttempts: 10,
+        windowSeconds: 60,
+        blockSeconds: 60,
+      },
+    ),
   ],
 })
 export class AppModule {}
@@ -60,7 +67,7 @@ By default, all routes are protected if you enable the global JWT guard. You can
 
 ```typescript
 import { Controller, Get, Post } from '@nestjs/common';
-import { Public } from '@app/iam';
+import { Public } from '@app/security';
 
 @Controller('auth')
 export class AuthController {
@@ -81,7 +88,7 @@ export class AuthController {
 
 ```typescript
 import { Controller, Get } from '@nestjs/common';
-import { CurrentUser, JwtPayload } from '@app/iam';
+import { CurrentUser, JwtPayload } from '@app/security';
 
 @Controller('users')
 export class UsersController {
@@ -103,7 +110,7 @@ export class UsersController {
 
 ```typescript
 import { Controller, Get } from '@nestjs/common';
-import { Roles } from '@app/iam';
+import { Roles } from '@app/security';
 
 @Controller('admin')
 export class AdminController {
@@ -127,7 +134,7 @@ export class AdminController {
 
 ```typescript
 import { Controller, Get, Post, Delete } from '@nestjs/common';
-import { Permissions } from '@app/iam';
+import { Permissions } from '@app/security';
 
 @Controller('articles')
 export class ArticlesController {
@@ -155,20 +162,20 @@ export class ArticlesController {
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { IamService, TokenType } from '@app/iam';
+import { SecurityService, TokenType } from '@app/security';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly iamService: IamService) {}
+  constructor(private readonly securityService: SecurityService) {}
 
   async login(userId: string, roles: string[], permissions: string[]) {
     // Generate tokens
-    const accessToken = await this.iamService.generateAccessToken(userId, {
+    const accessToken = await this.securityService.generateAccessToken(userId, {
       roles,
       permissions,
     });
 
-    const refreshToken = await this.iamService.generateRefreshToken(userId, {
+    const refreshToken = await this.securityService.generateRefreshToken(userId, {
       roles,
       permissions,
     });
@@ -178,45 +185,51 @@ export class AuthService {
 
   async logout(userId: string, sessionId: string) {
     // Revoke token
-    await this.iamService.revokeToken(userId, sessionId);
+    await this.securityService.revokeToken(userId, sessionId);
   }
 
   async validateToken(token: string) {
     // Validate token
-    return this.iamService.validateToken(token, TokenType.ACCESS);
+    return this.securityService.validateToken(token, TokenType.ACCESS);
   }
 }
 ```
 
 ## Configuration Options
 
+### Auth Guard Options
 | Option | Description | Default |
 |--------|-------------|---------|
-| `jwtSecret` | Secret key for JWT signing | Required |
-| `jwtExpiresIn` | Access token expiration time | `'15m'` |
-| `refreshTokenExpiresIn` | Refresh token expiration time | `'7d'` |
+| `jwtModuleOptions.secret` | Secret key for JWT signing | Required |
+| `jwtModuleOptions.signOptions.expiresIn` | Access token expiration time | `'15m'` |
 | `isGlobal` | Register the module globally | `false` |
-| `globalGuards.jwt` | Register JWT guard globally | `false` |
-| `globalGuards.roles` | Register roles guard globally | `false` |
+
+### Rate Guard Options
+| Option | Description | Default |
+|--------|-------------|---------|
+| `isGlobal` | Register the rate guard globally | `false` |
+| `maxAttempts` | Maximum attempts per window | `10` |
+| `windowSeconds` | Time window in seconds | `60` |
+| `blockSeconds` | Block duration in seconds | `60` |
 
 ## Testing
 
-To test components that use the IAM library, you can mock the IamService:
+To test components that use the Security library, you can mock the SecurityService:
 
 ```typescript
 import { Test } from '@nestjs/testing';
-import { IamService } from '@app/iam';
+import { SecurityService } from '@app/security';
 
 describe('YourService', () => {
   let service: YourService;
-  let iamService: IamService;
+  let securityService: SecurityService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         YourService,
         {
-          provide: IamService,
+          provide: SecurityService,
           useValue: {
             generateAccessToken: jest.fn(),
             validateToken: jest.fn(),
@@ -228,11 +241,11 @@ describe('YourService', () => {
     }).compile();
 
     service = moduleRef.get<YourService>(YourService);
-    iamService = moduleRef.get<IamService>(IamService);
+    securityService = moduleRef.get<SecurityService>(SecurityService);
   });
 
   it('should generate a token', async () => {
-    jest.spyOn(iamService, 'generateAccessToken').mockResolvedValue('token');
+    jest.spyOn(securityService, 'generateAccessToken').mockResolvedValue('token');
     expect(await service.generateToken('user-id')).toBe('token');
   });
 });

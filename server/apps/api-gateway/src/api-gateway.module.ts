@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
-import { MetricsModule } from '@app/metrics';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 import {
@@ -54,15 +53,6 @@ import {
         };
       },
       inject: [ConfigService],
-    }),
-
-    // Import MetricsModule for comprehensive monitoring
-    MetricsModule.forRoot({
-      serviceName: 'API Gateway',
-      enablePerformanceMonitoring: true,
-      enableHealthMetrics: true,
-      enableBusinessMetrics: true,
-      collectionInterval: 60000, // 1 minute
     }),
   ],
   controllers: [ApiGatewayController, ApiGatewayHealthController],

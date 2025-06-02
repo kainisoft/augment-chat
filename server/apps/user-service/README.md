@@ -100,8 +100,7 @@ mutation AddFriend($targetUserId: ID!) {
 ### Shared Modules
 - `@app/dtos` - Shared data transfer objects (GraphQL pagination, error responses)
 - `@app/validation` - Shared validation decorators
-- `@app/security` - Security utilities and guards
-- `@app/iam` - Identity and Access Management for authentication and authorization
+- `@app/security` - Security utilities, guards, and Identity and Access Management
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities
 
@@ -381,9 +380,9 @@ Structured logging following the gold standard:
 
 ## Security
 
-### Centralized IAM Integration
+### Centralized Security Integration
 
-The User Service uses the centralized `@app/iam` module for all authentication and authorization:
+The User Service uses the centralized `@app/security` module for all authentication and authorization:
 
 - **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
 - **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
@@ -392,28 +391,28 @@ The User Service uses the centralized `@app/iam` module for all authentication a
 
 ### Authentication
 
-- **JWT Validation**: Centralized token verification via `@app/iam`
+- **JWT Validation**: Centralized token verification via `@app/security`
 - **GraphQL Context**: Automatic user context injection for resolvers
 - **Rate Limiting**: Query complexity and request rate limits using `@app/security`
 
 ### Authorization
 
-- **Field-Level Security**: GraphQL field access control via IAM guards
+- **Field-Level Security**: GraphQL field access control via Security guards
 - **Resource Ownership**: Users can only access their own data
 - **Relationship Permissions**: Friend-based access controls
 - **Role-Based Access**: Admin, user, and moderator role distinctions
 
-### IAM Integration Examples
+### Security Integration Examples
 
 ```typescript
-// GraphQL resolver with IAM protection
+// GraphQL resolver with Security protection
 @Resolver(() => UserType)
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserResolver {
   @Query(() => UserType)
   @Roles('user', 'admin')
   async me(@Context() context: any) {
-    // User automatically injected by IAM
+    // User automatically injected by Security module
     return this.userService.findById(context.user.id);
   }
 
@@ -523,7 +522,6 @@ When contributing:
 - [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
 
 ### Shared Module Documentation
-- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Security Library](../../libs/security/README.md) - Identity and Access Management
 - [Testing Library](../../libs/testing/README.md)
 - [Validation Library](../../libs/validation/README.md)
-- [Security Library](../../libs/security/README.md)

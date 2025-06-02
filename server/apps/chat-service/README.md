@@ -140,8 +140,7 @@ subscription TypingStatus($conversationId: ID!) {
 ### Shared Modules
 - `@app/dtos` - Shared data transfer objects for messaging and GraphQL responses
 - `@app/validation` - Shared validation decorators for GraphQL inputs
-- `@app/security` - Security utilities and guards
-- `@app/iam` - Identity and Access Management for authentication and authorization
+- `@app/security` - Security utilities, guards, and Identity and Access Management
 - `@app/logging` - Centralized logging service
 - `@app/testing` - Shared testing utilities and GraphQL test builders
 - `@app/domain` - Shared domain models (UserId, MessageId, ConversationId, etc.)
@@ -248,9 +247,9 @@ export class MessageResolver {
 }
 ```
 
-**Using IAM Authentication and Authorization:**
+**Using Security Authentication and Authorization:**
 ```typescript
-import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/iam';
+import { JwtAuthGuard, RolesGuard, Roles, Public } from '@app/security';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
@@ -285,9 +284,9 @@ export class MessageResolver {
 }
 ```
 
-**Using IAM Guards in Controllers:**
+**Using Security Guards in Controllers:**
 ```typescript
-import { JwtAuthGuard, RolesGuard, Roles } from '@app/iam';
+import { JwtAuthGuard, RolesGuard, Roles } from '@app/security';
 import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
 
 @Controller('chat')
@@ -663,9 +662,9 @@ For detailed performance documentation, see [Performance Documentation Index](..
 
 ## Security
 
-### Centralized IAM Integration
+### Centralized Security Integration
 
-The Chat Service uses the centralized `@app/iam` module for all authentication and authorization:
+The Chat Service uses the centralized `@app/security` module for all authentication and authorization:
 
 - **JWT Authentication**: Centralized JWT token validation using `JwtAuthGuard`
 - **Role-Based Access Control**: Fine-grained permissions using `@Roles()` decorator
@@ -687,17 +686,17 @@ The Chat Service uses the centralized `@app/iam` module for all authentication a
 - **Room-Based Security**: Conversation-specific access control for real-time events
 - **Message Validation**: All incoming messages validated before processing
 
-### IAM Integration Examples
+### Security Integration Examples
 
 ```typescript
-// GraphQL resolver with IAM protection
+// GraphQL resolver with Security protection
 @Resolver(() => ConversationType)
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ConversationResolver {
   @Query(() => [ConversationType])
   @Roles('user')
   async myConversations(@Context() context: any) {
-    // Automatically gets user from JWT token via IAM
+    // Automatically gets user from JWT token via Security module
     return this.conversationService.getUserConversations(context.user.id);
   }
 
@@ -778,7 +777,6 @@ WEBSOCKET_DEBUG=true pnpm run start:dev chat-service
 - [Performance Best Practices](../../docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)
 
 ### Shared Module Documentation
-- [IAM Library](../../libs/iam/README.md) - Identity and Access Management
+- [Security Library](../../libs/security/README.md) - Identity and Access Management
 - [Testing Library](../../libs/testing/README.md)
 - [GraphQL Library](../../libs/graphql/README.md)
-- [Security Library](../../libs/security/README.md)

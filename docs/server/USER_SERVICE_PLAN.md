@@ -198,7 +198,7 @@ The User Service integrates with the Authentication Service in the following way
 
 1. **User Creation**: When a user registers through the Auth Service, a corresponding user profile is created in the User Service.
 
-2. **Authentication**: The User Service uses the IAM library for authentication and authorization, which is also used by the Auth Service.
+2. **Authentication**: The User Service uses the Security library for authentication and authorization, which is also used by the Auth Service.
 
 3. **User Deletion**: When a user account is deleted, the Auth Service communicates with the User Service to delete the corresponding user profile.
 
