@@ -29,6 +29,15 @@
         "tsConfigPath": "apps/auth-service/tsconfig.app.json"
       }
     },
+    "bootstrap": {
+      "type": "library",
+      "root": "libs/bootstrap",
+      "entryFile": "index",
+      "sourceRoot": "libs/bootstrap/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/bootstrap/tsconfig.lib.json"
+      }
+    },
     "chat-service": {
       "type": "application",
       "root": "apps/chat-service",
@@ -45,6 +54,15 @@
       "sourceRoot": "libs/common/src",
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
+    },
+    "config": {
+      "type": "library",
+      "root": "libs/config",
+      "entryFile": "index",
+      "sourceRoot": "libs/config/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/config/tsconfig.lib.json"
       }
     },
     "database": {
@@ -65,6 +83,15 @@
         "tsConfigPath": "libs/domain/tsconfig.lib.json"
       }
     },
+    "dtos": {
+      "type": "library",
+      "root": "libs/dtos",
+      "entryFile": "index",
+      "sourceRoot": "libs/dtos/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/dtos/tsconfig.lib.json"
+      }
+    },
     "events": {
       "type": "library",
       "root": "libs/events",
@@ -72,6 +99,15 @@
       "sourceRoot": "libs/events/src",
       "compilerOptions": {
         "tsConfigPath": "libs/events/tsconfig.lib.json"
+      }
+    },
+    "graphql": {
+      "type": "library",
+      "root": "libs/graphql",
+      "entryFile": "index",
+      "sourceRoot": "libs/graphql/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/graphql/tsconfig.lib.json"
       }
     },
     "iam": {
@@ -128,24 +164,6 @@
         "tsConfigPath": "libs/redis/tsconfig.lib.json"
       }
     },
-    "graphql": {
-      "type": "library",
-      "root": "libs/graphql",
-      "entryFile": "index",
-      "sourceRoot": "libs/graphql/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/graphql/tsconfig.lib.json"
-      }
-    },
-    "validation": {
-      "type": "library",
-      "root": "libs/validation",
-      "entryFile": "index",
-      "sourceRoot": "libs/validation/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/validation/tsconfig.lib.json"
-      }
-    },
     "security": {
       "type": "library",
       "root": "libs/security",
@@ -153,24 +171,6 @@
       "sourceRoot": "libs/security/src",
       "compilerOptions": {
         "tsConfigPath": "libs/security/tsconfig.lib.json"
-      }
-    },
-    "dtos": {
-      "type": "library",
-      "root": "libs/dtos",
-      "entryFile": "index",
-      "sourceRoot": "libs/dtos/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/dtos/tsconfig.lib.json"
-      }
-    },
-    "user-service": {
-      "type": "application",
-      "root": "apps/user-service",
-      "entryFile": "main",
-      "sourceRoot": "apps/user-service/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/user-service/tsconfig.app.json"
       }
     },
     "testing": {
@@ -182,22 +182,22 @@
         "tsConfigPath": "libs/testing/tsconfig.lib.json"
       }
     },
-    "bootstrap": {
-      "type": "library",
-      "root": "libs/bootstrap",
-      "entryFile": "index",
-      "sourceRoot": "libs/bootstrap/src",
+    "user-service": {
+      "type": "application",
+      "root": "apps/user-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/user-service/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/bootstrap/tsconfig.lib.json"
+        "tsConfigPath": "apps/user-service/tsconfig.app.json"
       }
     },
-    "config": {
+    "validation": {
       "type": "library",
-      "root": "libs/config",
+      "root": "libs/validation",
       "entryFile": "index",
-      "sourceRoot": "libs/config/src",
+      "sourceRoot": "libs/validation/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/config/tsconfig.lib.json"
+        "tsConfigPath": "libs/validation/tsconfig.lib.json"
       }
     }
   }

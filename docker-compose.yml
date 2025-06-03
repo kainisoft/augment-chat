@@ -10,14 +10,8 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     ports:
       - "4000:4000"
-    environment:
-      - NODE_ENV=development
-      - PORT=4000
-      # Logging configuration
-      - LOG_LEVEL=info
-      - KAFKA_BROKERS=kafka:29092
-      - KAFKA_LOGS_TOPIC=logs
-      - LOG_CONSOLE=true
+    env_file:
+      - ./docker/config/api-gateway/api-gateway.env
     volumes:
       - ./server/apps/api-gateway:/app/apps/api-gateway:delegated
       - ./server/libs:/app/libs:delegated
