@@ -17,8 +17,7 @@ import { UserCqrsModule } from '../user-cqrs.module';
         loggingService.setContext('GraphQLModule');
 
         return {
-          // Use code-first approach with schema file generation for federation
-          autoSchemaFile: 'apps/user-service/src/graphql/generated/schema.gql', // Generate schema to file for code generation
+          autoSchemaFile: true,
           sortSchema: true,
           debug: process.env.GRAPHQL_DEBUG === 'true',
           playground: process.env.GRAPHQL_PLAYGROUND === 'true',
