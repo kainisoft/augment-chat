@@ -32,7 +32,7 @@ services:
       - chat-network
     profiles: [ "api" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://localhost:4000/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4000/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -50,7 +50,7 @@ services:
       - "4001:4001"
       - "9229:9229"
     env_file:
-      - ./docker/config/auth/auth-config.env
+      - ./docker/config/auth-service/auth-service.env
     volumes:
       - ./server/apps/auth-service:/app/apps/auth-service:delegated
       - ./server/libs:/app/libs:delegated
@@ -61,7 +61,7 @@ services:
       - chat-network
     profiles: [ "auth" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://localhost:4001/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4001/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -78,19 +78,8 @@ services:
     ports:
       - "4002:4002"
       - "9230:9229"
-    environment:
-      - NODE_ENV=development
-      - PORT=4002
-      - DATABASE_URL_USER=postgresql://postgres:postgres@postgres:5432/user_db
-      # Logging configuration
-      - LOG_LEVEL=info
-      - KAFKA_BROKERS=kafka:29092
-      - KAFKA_LOGS_TOPIC=logs
-      - LOG_CONSOLE=true
-      # GraphQL configuration
-      - GRAPHQL_PLAYGROUND=true
-      - GRAPHQL_DEBUG=true
-      - GRAPHQL_INTROSPECTION=true
+    env_file:
+      - ./docker/config/user-service/user-service.env
     volumes:
       - ./server/apps/user-service:/app/apps/user-service:delegated
       - ./server/libs:/app/libs:delegated
@@ -101,7 +90,7 @@ services:
       - chat-network
     profiles: [ "user" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://localhost:4002/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4002/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -114,12 +103,12 @@ services:
       dockerfile: ../docker/Dockerfiles/chat-service.Dockerfile
       args:
         - BUILDKIT_INLINE_CACHE=1
+    command: pnpm run start:debug 0.0.0.0:9229 chat-service
     ports:
       - "4003:4003"
-    environment:
-      - NODE_ENV=development
-      - PORT=4003
-      - MONGODB_URI=mongodb://mongo:mongo@mongo:27017/chat_db?authSource=admin
+      - "9232:9229"
+    env_file:
+      - ./docker/config/chat-service/chat-service.env
     volumes:
       - ./server/apps/chat-service:/app/apps/chat-service:delegated
       - ./server/libs:/app/libs:delegated
@@ -131,7 +120,7 @@ services:
       - chat-network
     profiles: [ "chat" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://localhost:4003/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4003/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -146,15 +135,8 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     ports:
       - "4004:4004"
-    environment:
-      - NODE_ENV=development
-      - PORT=4004
-      - MONGODB_URI=mongodb://mongo:mongo@mongo:27017/notification_db?authSource=admin
-      # Logging configuration
-      - LOG_LEVEL=info
-      - KAFKA_BROKERS=kafka:29092
-      - KAFKA_LOGS_TOPIC=logs
-      - LOG_CONSOLE=true
+    env_file:
+      - ./docker/config/notification-service/notification-service.env
     volumes:
       - ./server/apps/notification-service:/app/apps/notification-service:delegated
       - ./server/libs:/app/libs:delegated
@@ -171,7 +153,7 @@ services:
       - chat-network
     profiles: [ "notification" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://localhost:4004/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4004/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -189,10 +171,7 @@ services:
       - "4005:4005"
       - "9231:9229"
     env_file:
-      - ./docker/config/logging/logging-config.env
-    environment:
-      - NODE_ENV=development
-      - PORT=4005
+      - ./docker/config/logging-service/logging-service.env
     volumes:
       - ./server/apps/logging-service:/app/apps/logging-service:delegated
       - ./server/libs:/app/libs:delegated
@@ -208,11 +187,11 @@ services:
       - chat-network
     profiles: [ "logging", "infra" ]
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4005/api/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4005/api/health" ]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 15s
+      retries: 3
+      start_period: 10s
 
   # PostgreSQL
   postgres:

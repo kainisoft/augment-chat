@@ -643,7 +643,7 @@ While the user-service has a better overall structure, there are still areas tha
 4. ✅ Create repository module in auth-service
 5. ✅ Refactor CQRS module in auth-service
 6. ✅ Update event handlers for consistent event communication
-7. ⏳ Implement user-service improvements
+7. ✅ Implement user-service improvements
    - ✅ Phase 1: Event Standardization
      - ✅ Update domain events to implement shared interfaces
      - ✅ Update event handlers to use standardized event format
@@ -666,6 +666,38 @@ While the user-service has a better overall structure, there are still areas tha
      - ✅ Improve module organization
 8. ✅ Standardize main module organization
 9. ✅ Create additional shared infrastructure modules as needed
+10. ⏳ **Phase 6: Environment Variable Management Standardization**
+    - ✅ Step 1: File Structure Standardization
+      - ✅ Create new directory structure for environment files
+      - ✅ Rename existing environment files to follow naming convention
+      - ✅ Update Docker Compose to use new file paths
+      - ✅ Test that all services start correctly with new file structure
+    - ✅ Step 2: Environment File Creation
+      - ✅ Create comprehensive environment files for user-service
+      - ✅ Create comprehensive environment files for chat-service
+      - ✅ Create comprehensive environment files for notification-service
+      - ✅ Update existing environment files to follow standard structure
+      - ✅ Create shared environment files for common variables
+    - ✅ Step 3: Validation Enhancement
+      - ✅ Add service-specific validation rules to EnvironmentValidationService
+      - ✅ Update ConfigurationService to use enhanced validation
+      - ✅ Test validation rules with all services
+      - ✅ Create validation error handling and reporting
+    - ✅ Step 4: Docker Integration
+      - ✅ Update all services in Docker Compose to use env_file
+      - ✅ Remove inline environment variables from Docker Compose
+      - ✅ Test Docker Compose with new environment file integration
+      - ✅ Verify all services start and communicate correctly
+    - ✅ Step 5: Documentation Creation
+      - ✅ Create master environment variables documentation
+      - ✅ Create service-specific environment documentation
+      - ✅ Document validation rules and troubleshooting guides
+      - ✅ Create environment configuration examples
+    - ⏳ Step 6: Production Configuration
+      - [ ] Create production environment files for all services
+      - [ ] Implement environment variable substitution patterns
+      - [ ] Create production-specific Docker Compose configuration
+      - [ ] Test production environment configuration
 
 ## Testing Strategy
 
@@ -708,6 +740,601 @@ To maintain consistency in future development:
 5. **Review for Consistency**: Include checks for architectural consistency in code reviews.
 6. **Update Standards**: Evolve standards as needed, but ensure changes are applied consistently.
 
+## Phase 6: Environment Variable Management Standardization
+
+### Overview
+
+This phase standardizes environment variable management across all microservices to ensure consistency, maintainability, and security. The standardization leverages the existing `@app/config` library infrastructure while establishing consistent patterns for Docker environment configuration.
+
+### Current State Analysis
+
+**Inconsistencies Identified:**
+- **Mixed Configuration Approaches**: Some services use `env_file` (auth-service, api-gateway, logging-service) while others use inline `environment` variables (user-service, chat-service, notification-service)
+- **Inconsistent File Naming**: `auth-config.env`, `api-gateway.env`, `logging-config.env` lack standardized naming convention
+- **Variable Configuration Depth**: Auth-service has comprehensive environment configuration while other services have minimal variables
+- **Docker Compose Integration**: Inconsistent integration between environment files and Docker Compose service definitions
+
+**Existing Infrastructure Strengths:**
+- ✅ Robust `@app/config` library with validation and type safety
+- ✅ `ConfigurationService` with standardized configuration patterns
+- ✅ `EnvironmentValidationService` for validation rules
+- ✅ `ConfigurationFactory` for service-specific configuration creation
+- ✅ Service-specific configuration patterns in bootstrap service
+
+### Standardization Goals
+
+1. **Consistent File Naming**: Standardize environment file naming across all services
+2. **Unified Directory Structure**: Organize Docker environment configs consistently
+3. **Comprehensive Environment Coverage**: Ensure all services have complete environment configuration
+4. **Validation and Type Safety**: Leverage existing validation infrastructure
+5. **Documentation Standards**: Document required vs optional variables for each service
+6. **Docker Compose Integration**: Standardize how environment files integrate with Docker Compose
+7. **Security Best Practices**: Implement consistent security patterns for sensitive variables
+8. **Development vs Production**: Clear separation of environment-specific configurations
+
+### Implementation Plan
+
+#### Step 1: Standardize Environment File Naming and Structure
+
+**Objective**: Create consistent naming convention and directory structure for all environment files.
+
+**New File Naming Convention**:
+```
+docker/config/{service-name}/{service-name}.env
+```
+
+**Files to Create/Rename**:
+- ✅ `docker/config/auth/auth-config.env` → `docker/config/auth-service/auth-service.env`
+- ✅ `docker/config/api-gateway/api-gateway.env` → `docker/config/api-gateway/api-gateway.env` (already correct)
+- ✅ `docker/config/logging/logging-config.env` → `docker/config/logging-service/logging-service.env`
+- ⏳ `docker/config/user-service/user-service.env` (new)
+- ⏳ `docker/config/chat-service/chat-service.env` (new)
+- ⏳ `docker/config/notification-service/notification-service.env` (new)
+
+**Directory Structure**:
+```
+docker/config/
+├── api-gateway/
+│   ├── api-gateway.env
+│   └── api-gateway.production.env
+├── auth-service/
+│   ├── auth-service.env
+│   └── auth-service.production.env
+├── user-service/
+│   ├── user-service.env
+│   └── user-service.production.env
+├── chat-service/
+│   ├── chat-service.env
+│   └── chat-service.production.env
+├── notification-service/
+│   ├── notification-service.env
+│   └── notification-service.production.env
+├── logging-service/
+│   ├── logging-service.env
+│   └── logging-service.production.env
+└── shared/
+    ├── common.env
+    └── infrastructure.env
+```
+
+**Implementation Tasks**:
+- ✅ Create new directory structure for all services
+- ✅ Rename existing environment files to follow naming convention
+- [ ] Create comprehensive environment files for services currently using inline variables
+- [ ] Create production-specific environment files for all services
+- [ ] Create shared environment files for common variables
+- ✅ Update Docker Compose to use new file paths
+
+#### Step 2: Create Comprehensive Environment Files
+
+**Objective**: Ensure all services have complete environment configuration following the auth-service model.
+
+**Standard Environment File Structure**:
+```env
+# Service Configuration
+NODE_ENV=development
+PORT={service-port}
+HOST=0.0.0.0
+APP_VERSION=1.0.0
+
+# Database Configuration
+DATABASE_URL_{SERVICE}=postgresql://postgres:postgres@postgres:5432/{service}_db
+DATABASE_POOL_SIZE=10
+DATABASE_IDLE_TIMEOUT=30
+DATABASE_SSL=false
+
+# Redis Configuration (for services that use Redis)
+REDIS_NODE_1=redis-node-1
+REDIS_NODE_1_PORT=6379
+REDIS_NODE_2=redis-node-2
+REDIS_NODE_2_PORT=6380
+REDIS_NODE_3=redis-node-3
+REDIS_NODE_3_PORT=6381
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_KEY_PREFIX={service}:
+
+# Kafka Configuration
+KAFKA_BROKERS=kafka:29092
+KAFKA_LOGS_TOPIC=logs
+KAFKA_CLIENT_ID={service}
+KAFKA_GROUP_ID={service}-group
+
+# Logging Configuration
+LOG_LEVEL=info
+LOG_CONSOLE=true
+LOG_KAFKA_ENABLED=true
+
+# CORS Configuration
+CORS_ENABLED=true
+CORS_ORIGIN=http://localhost:3000,http://localhost:4000
+CORS_CREDENTIALS=true
+
+# Service-Specific Configuration
+# (Additional variables specific to each service)
+```
+
+**Service-Specific Environment Files**:
+
+**User Service** (`docker/config/user-service/user-service.env`):
+```env
+# User Service Configuration
+
+# Service Configuration
+NODE_ENV=development
+PORT=4002
+HOST=0.0.0.0
+APP_VERSION=1.0.0
+
+# Database Configuration
+DATABASE_URL_USER=postgresql://postgres:postgres@postgres:5432/user_db
+DATABASE_POOL_SIZE=10
+DATABASE_IDLE_TIMEOUT=30
+DATABASE_SSL=false
+
+# Redis Configuration
+REDIS_NODE_1=redis-node-1
+REDIS_NODE_1_PORT=6379
+REDIS_NODE_2=redis-node-2
+REDIS_NODE_2_PORT=6380
+REDIS_NODE_3=redis-node-3
+REDIS_NODE_3_PORT=6381
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_KEY_PREFIX=user:
+
+# Cache Configuration
+CACHE_TTL=300
+CACHE_PREFIX=user:cache
+CACHE_LOGS=true
+
+# Kafka Configuration
+KAFKA_BROKERS=kafka:29092
+KAFKA_LOGS_TOPIC=logs
+KAFKA_CLIENT_ID=user-service
+KAFKA_GROUP_ID=user-service-group
+
+# Logging Configuration
+LOG_LEVEL=info
+LOG_CONSOLE=true
+LOG_KAFKA_ENABLED=true
+
+# GraphQL Configuration
+GRAPHQL_PLAYGROUND=true
+GRAPHQL_DEBUG=true
+GRAPHQL_INTROSPECTION=true
+GRAPHQL_SCHEMA_FILE_ENABLED=false
+
+# CORS Configuration
+CORS_ENABLED=true
+CORS_ORIGIN=http://localhost:3000,http://localhost:4000,http://localhost:4001
+CORS_CREDENTIALS=true
+
+# Performance Configuration
+QUERY_COMPLEXITY_LIMIT=1000
+QUERY_DEPTH_LIMIT=10
+```
+
+**Chat Service** (`docker/config/chat-service/chat-service.env`):
+```env
+# Chat Service Configuration
+
+# Service Configuration
+NODE_ENV=development
+PORT=4003
+HOST=0.0.0.0
+APP_VERSION=1.0.0
+
+# MongoDB Configuration
+MONGODB_URI=mongodb://mongo:mongo@mongo:27017/chat_db?authSource=admin
+MONGODB_CONNECTION_POOL_SIZE=10
+MONGODB_CONNECTION_TIMEOUT=30000
+
+# Kafka Configuration
+KAFKA_BROKERS=kafka:29092
+KAFKA_LOGS_TOPIC=logs
+KAFKA_CLIENT_ID=chat-service
+KAFKA_GROUP_ID=chat-service-group
+
+# Logging Configuration
+LOG_LEVEL=info
+LOG_CONSOLE=true
+LOG_KAFKA_ENABLED=true
+
+# GraphQL Configuration
+GRAPHQL_PLAYGROUND=true
+GRAPHQL_DEBUG=true
+GRAPHQL_INTROSPECTION=true
+GRAPHQL_SUBSCRIPTIONS_ENABLED=true
+
+# WebSocket Configuration
+WS_PORT=4003
+WS_PATH=/graphql
+WS_CORS_ORIGIN=http://localhost:3000
+
+# CORS Configuration
+CORS_ENABLED=true
+CORS_ORIGIN=http://localhost:3000,http://localhost:4000,http://localhost:4001
+CORS_CREDENTIALS=true
+
+# Message Configuration
+MAX_MESSAGE_LENGTH=10000
+MESSAGE_HISTORY_LIMIT=100
+TYPING_INDICATOR_TIMEOUT=3000
+```
+
+**Notification Service** (`docker/config/notification-service/notification-service.env`):
+```env
+# Notification Service Configuration
+
+# Service Configuration
+NODE_ENV=development
+PORT=4004
+HOST=0.0.0.0
+APP_VERSION=1.0.0
+
+# MongoDB Configuration
+MONGODB_URI=mongodb://mongo:mongo@mongo:27017/notification_db?authSource=admin
+MONGODB_CONNECTION_POOL_SIZE=10
+MONGODB_CONNECTION_TIMEOUT=30000
+
+# Kafka Configuration
+KAFKA_BROKERS=kafka:29092
+KAFKA_LOGS_TOPIC=logs
+KAFKA_CLIENT_ID=notification-service
+KAFKA_GROUP_ID=notification-service-group
+
+# Logging Configuration
+LOG_LEVEL=info
+LOG_CONSOLE=true
+LOG_KAFKA_ENABLED=true
+
+# CORS Configuration
+CORS_ENABLED=true
+CORS_ORIGIN=http://localhost:3000,http://localhost:4000,http://localhost:4001
+CORS_CREDENTIALS=true
+
+# Notification Configuration
+EMAIL_ENABLED=false
+SMS_ENABLED=false
+PUSH_ENABLED=true
+NOTIFICATION_BATCH_SIZE=100
+NOTIFICATION_RETRY_ATTEMPTS=3
+NOTIFICATION_RETRY_DELAY=5000
+
+# Rate Limiting
+NOTIFICATION_RATE_LIMIT_PER_USER=100
+NOTIFICATION_RATE_LIMIT_WINDOW=3600
+```
+
+**Implementation Tasks**:
+- ✅ Create comprehensive environment files for user-service
+- ✅ Create comprehensive environment files for chat-service
+- ✅ Create comprehensive environment files for notification-service
+- ✅ Update existing auth-service environment file to follow standard structure
+- ✅ Update existing api-gateway environment file to follow standard structure
+- ✅ Update existing logging-service environment file to follow standard structure
+- ✅ Create shared environment files for common infrastructure variables
+
+#### Step 3: Enhance Environment Validation
+
+**Objective**: Extend the existing `@app/config` library to support service-specific validation rules.
+
+**Files to Update**:
+- `server/libs/config/src/environment-validation.service.ts`
+- `server/libs/config/src/configuration.service.ts`
+- `server/libs/config/src/configuration.factory.ts`
+
+**New Service-Specific Validation Rules**:
+
+**User Service Validation Rules**:
+```typescript
+getUserServiceRules(): ValidationRule[] {
+  return [
+    ...this.getCommonRules(),
+    {
+      key: 'DATABASE_URL_USER',
+      required: true,
+      type: 'url',
+      pattern: /^postgresql:\/\/.+/,
+      description: 'User service PostgreSQL database connection URL',
+    },
+    {
+      key: 'GRAPHQL_PLAYGROUND',
+      required: false,
+      type: 'boolean',
+      description: 'Enable GraphQL Playground',
+    },
+    {
+      key: 'QUERY_COMPLEXITY_LIMIT',
+      required: false,
+      type: 'number',
+      min: 100,
+      max: 10000,
+      description: 'GraphQL query complexity limit',
+    },
+    {
+      key: 'CACHE_TTL',
+      required: false,
+      type: 'number',
+      min: 60,
+      max: 3600,
+      description: 'Cache TTL in seconds',
+    },
+  ];
+}
+```
+
+**Chat Service Validation Rules**:
+```typescript
+getChatServiceRules(): ValidationRule[] {
+  return [
+    ...this.getCommonRules(),
+    {
+      key: 'MONGODB_URI',
+      required: true,
+      type: 'url',
+      pattern: /^mongodb:\/\/.+/,
+      description: 'Chat service MongoDB connection URI',
+    },
+    {
+      key: 'MAX_MESSAGE_LENGTH',
+      required: false,
+      type: 'number',
+      min: 1000,
+      max: 50000,
+      description: 'Maximum message length in characters',
+    },
+    {
+      key: 'WS_PORT',
+      required: false,
+      type: 'number',
+      min: 1000,
+      max: 65535,
+      description: 'WebSocket server port',
+    },
+  ];
+}
+```
+
+**Implementation Tasks**:
+- ✅ Add service-specific validation rules to EnvironmentValidationService
+- ✅ Create validation rule factories for each service
+- ✅ Update ConfigurationService to use service-specific validation
+- ✅ Add validation for MongoDB connection strings
+- ✅ Add validation for WebSocket configuration
+- ✅ Add validation for GraphQL-specific variables
+- ✅ Create comprehensive validation documentation
+
+#### Step 4: Update Docker Compose Integration
+
+**Objective**: Standardize how environment files are integrated with Docker Compose services.
+
+**Docker Compose Changes**:
+
+**Standard Service Configuration Pattern**:
+```yaml
+service-name:
+  build:
+    context: ./server
+    dockerfile: ../docker/Dockerfiles/{service-name}.Dockerfile
+    args:
+      - BUILDKIT_INLINE_CACHE=1
+  command: pnpm run start:debug 0.0.0.0:9229 {service-name}
+  ports:
+    - "{service-port}:{service-port}"
+    - "{debug-port}:9229"
+  env_file:
+    - ./docker/config/{service-name}/{service-name}.env
+  volumes:
+    - ./server/apps/{service-name}:/app/apps/{service-name}:delegated
+    - ./server/libs:/app/libs:delegated
+    - ./server/nest-cli.json:/app/nest-cli.json:delegated
+    - ./server/tsconfig.json:/app/tsconfig.json:delegated
+    - {service-name}-node-modules:/app/node_modules
+  networks:
+    - chat-network
+  profiles: [ "{service-profile}" ]
+  healthcheck:
+    test: [ "CMD", "wget", "--spider", "http://localhost:{service-port}/health" ]
+    interval: 10s
+    timeout: 5s
+    retries: 3
+    start_period: 10s
+```
+
+**Implementation Tasks**:
+- ✅ Update user-service to use env_file instead of inline environment variables
+- ✅ Update chat-service to use env_file instead of inline environment variables
+- ✅ Update notification-service to use env_file instead of inline environment variables
+- ✅ Update auth-service to use new environment file path
+- ✅ Update logging-service to use new environment file path
+- ✅ Remove inline environment variables from all services
+- ✅ Ensure consistent service configuration patterns
+- ✅ Update health check endpoints to be consistent
+
+#### Step 5: Create Environment Documentation
+
+**Objective**: Create comprehensive documentation for environment variables across all services.
+
+**Documentation Files to Create**:
+- `docs/server/ENVIRONMENT_VARIABLES.md`
+- `docs/server/environment/AUTH_SERVICE_ENV.md`
+- `docs/server/environment/USER_SERVICE_ENV.md`
+- `docs/server/environment/CHAT_SERVICE_ENV.md`
+- `docs/server/environment/NOTIFICATION_SERVICE_ENV.md`
+- `docs/server/environment/API_GATEWAY_ENV.md`
+- `docs/server/environment/LOGGING_SERVICE_ENV.md`
+
+**Environment Variables Documentation Structure**:
+```markdown
+# {Service Name} Environment Variables
+
+## Required Variables
+
+| Variable | Type | Description | Example |
+|----------|------|-------------|---------|
+| NODE_ENV | string | Application environment | development |
+| PORT | number | Service port | 4002 |
+
+## Optional Variables
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| LOG_LEVEL | string | info | Logging level |
+
+## Service-Specific Variables
+
+### Database Configuration
+- Detailed database configuration variables
+
+### Cache Configuration
+- Detailed cache configuration variables
+
+## Environment File Examples
+
+### Development
+```env
+# Example development configuration
+```
+
+### Production
+```env
+# Example production configuration
+```
+```
+
+**Implementation Tasks**:
+- ✅ Create master environment variables documentation
+- ✅ Create service-specific environment documentation
+- ✅ Document required vs optional variables for each service
+- ✅ Create environment file examples for development and production
+- ✅ Document environment variable validation rules
+- ✅ Create troubleshooting guide for environment configuration
+- ✅ Document security best practices for environment variables
+
+#### Step 6: Implement Production Environment Configuration
+
+**Objective**: Create production-ready environment configurations with security best practices.
+
+**Production Environment Files**:
+- `docker/config/{service-name}/{service-name}.production.env`
+
+**Production Configuration Patterns**:
+```env
+# Production Service Configuration
+NODE_ENV=production
+PORT={service-port}
+HOST=0.0.0.0
+
+# Database Configuration (using environment-specific URLs)
+DATABASE_URL_{SERVICE}=${DATABASE_URL_{SERVICE}}
+DATABASE_POOL_SIZE=20
+DATABASE_IDLE_TIMEOUT=60
+DATABASE_SSL=true
+
+# Security Configuration
+JWT_SECRET=${JWT_SECRET}
+SESSION_ENCRYPTION_KEY=${SESSION_ENCRYPTION_KEY}
+
+# Logging Configuration (reduced verbosity)
+LOG_LEVEL=warn
+LOG_CONSOLE=false
+LOG_KAFKA_ENABLED=true
+
+# Performance Configuration
+CACHE_TTL=600
+QUERY_COMPLEXITY_LIMIT=500
+```
+
+**Implementation Tasks**:
+- [ ] Create production environment files for all services
+- [ ] Implement environment variable substitution for sensitive values
+- [ ] Configure production-specific logging levels
+- [ ] Set production-appropriate cache TTL values
+- [ ] Configure production database connection settings
+- [ ] Implement security-focused configuration patterns
+- [ ] Create environment-specific Docker Compose files
+
+### Implementation Sequence
+
+#### Phase 6, Step 1: File Structure Standardization
+- [ ] Create new directory structure for environment files
+- [ ] Rename existing environment files to follow naming convention
+- [ ] Update Docker Compose to use new file paths
+- [ ] Test that all services start correctly with new file structure
+
+#### Phase 6, Step 2: Environment File Creation
+- [ ] Create comprehensive environment files for user-service
+- [ ] Create comprehensive environment files for chat-service
+- [ ] Create comprehensive environment files for notification-service
+- [ ] Update existing environment files to follow standard structure
+- [ ] Create shared environment files for common variables
+
+#### Phase 6, Step 3: Validation Enhancement
+- [ ] Add service-specific validation rules to EnvironmentValidationService
+- [ ] Update ConfigurationService to use enhanced validation
+- [ ] Test validation rules with all services
+- [ ] Create validation error handling and reporting
+
+#### Phase 6, Step 4: Docker Integration
+- ✅ Update all services in Docker Compose to use env_file
+- ✅ Remove inline environment variables from Docker Compose
+- ✅ Test Docker Compose with new environment file integration
+- ✅ Verify all services start and communicate correctly
+
+#### Phase 6, Step 5: Documentation Creation
+- ✅ Create master environment variables documentation
+- ✅ Create service-specific environment documentation
+- ✅ Document validation rules and troubleshooting guides
+- ✅ Create environment configuration examples
+
+#### Phase 6, Step 6: Production Configuration
+- [ ] Create production environment files for all services
+- [ ] Implement environment variable substitution patterns
+- [ ] Create production-specific Docker Compose configuration
+- [ ] Test production environment configuration
+
+### Testing Strategy
+
+**Environment Configuration Testing**:
+1. **Validation Testing**: Verify that all validation rules work correctly
+2. **Service Startup Testing**: Ensure all services start with new environment files
+3. **Integration Testing**: Verify services can communicate with new configuration
+4. **Production Simulation**: Test production environment files in staging
+5. **Rollback Testing**: Verify ability to rollback to previous configuration
+
+### Benefits of Environment Variable Standardization
+
+1. **Consistency**: All services follow the same environment configuration patterns
+2. **Maintainability**: Centralized environment management reduces configuration drift
+3. **Security**: Standardized security practices for sensitive variables
+4. **Documentation**: Clear documentation of all environment variables
+5. **Validation**: Type-safe environment variable validation across all services
+6. **Development Experience**: Easier onboarding and development with consistent patterns
+7. **Production Readiness**: Clear separation between development and production configurations
+8. **Troubleshooting**: Standardized configuration makes debugging easier
+
 ## Related Documents
 
 - [Server Plan](SERVER_PLAN.md)
@@ -718,5 +1345,5 @@ To maintain consistency in future development:
 ## Document Information
 - **Author**: Chat Application Team
 - **Created**: 2023-09-10
-- **Last Updated**: 2023-06-05
-- **Version**: 1.5.0
+- **Last Updated**: 2024-01-15
+- **Version**: 1.6.0

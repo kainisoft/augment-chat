@@ -1,6 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ConfigModuleOptions } from './config.module';
+import {
+  EnvironmentValidationService,
+  ValidationResult,
+} from './environment-validation.service';
 
 export interface DatabaseConfig {
   url: string;
@@ -72,11 +76,52 @@ export interface ServiceConfig {
  * and standardized configuration patterns for microservices.
  */
 @Injectable()
-export class ConfigurationService {
+export class ConfigurationService implements OnModuleInit {
+  private readonly logger = new Logger(ConfigurationService.name);
+
   constructor(
     private readonly configService: ConfigService,
     @Inject('CONFIG_OPTIONS') private readonly options: ConfigModuleOptions,
+    private readonly validationService: EnvironmentValidationService,
   ) {}
+
+  /**
+   * Validate environment configuration on module initialization
+   */
+  onModuleInit(): void {
+    if (this.options.enableValidation !== false) {
+      this.validateConfiguration();
+    }
+  }
+
+  /**
+   * Validate environment configuration for the current service
+   */
+  validateConfiguration(): ValidationResult {
+    const serviceName = this.options.serviceName;
+    const rules = this.validationService.getServiceRules(serviceName);
+    const result = this.validationService.validate(rules);
+
+    if (!result.isValid) {
+      this.logger.error(
+        `Environment validation failed for ${serviceName}:`,
+        result.errors,
+      );
+      throw new Error(
+        `Environment validation failed: ${result.errors.join(', ')}`,
+      );
+    }
+
+    if (result.warnings.length > 0) {
+      this.logger.warn(
+        `Environment validation warnings for ${serviceName}:`,
+        result.warnings,
+      );
+    }
+
+    this.logger.log(`Environment validation passed for ${serviceName}`);
+    return result;
+  }
 
   /**
    * Get service configuration
@@ -197,7 +242,7 @@ export class ConfigurationService {
     const value = this.configService.get<string>(key);
     if (value) {
       const parsed = parseInt(value, 10);
-      return isNaN(parsed) ? (defaultValue || 0) : parsed;
+      return isNaN(parsed) ? defaultValue || 0 : parsed;
     }
     return defaultValue || 0;
   }
@@ -219,7 +264,7 @@ export class ConfigurationService {
   getArray(key: string, defaultValue?: string[]): string[] {
     const value = this.configService.get<string>(key);
     if (value) {
-      return value.split(',').map(item => item.trim());
+      return value.split(',').map((item) => item.trim());
     }
     return defaultValue || [];
   }

@@ -4,44 +4,66 @@ import {
   OnModuleInit,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
-import { Connection } from 'mongoose';
+import { MongoClient, Db, Collection } from 'mongodb';
 
 /**
  * MongoDB Service
  *
- * Service for MongoDB connection management and health checks.
- * Follows the same patterns as the PostgreSQL DrizzleService.
+ * Service for MongoDB connection management using native MongoDB driver.
+ * Follows the same patterns as the PostgreSQL DrizzleService for consistency.
  */
 @Injectable()
 export class MongodbService implements OnModuleInit, OnModuleDestroy {
+  private client: MongoClient;
+  private database: Db;
+
   constructor(
-    @InjectConnection() private readonly connection: Connection,
+    @Inject('MONGODB_CLIENT') private readonly injectedClient: MongoClient,
     @Inject('DATABASE_NAME') private readonly databaseName: string,
-  ) {}
+  ) {
+    this.client = injectedClient;
+  }
 
   /**
    * Initialize the MongoDB connection when the module is initialized
    */
   async onModuleInit() {
-    // Connection is automatically handled by Mongoose
-    // This is here for consistency with the DrizzleService pattern
+    // Connect to MongoDB
+    await this.client.connect();
+    this.database = this.client.db(this.databaseName);
+
+    console.log(`MongoDB connected to ${this.databaseName}`);
   }
 
   /**
    * Close the MongoDB connection when the module is destroyed
    */
   async onModuleDestroy() {
-    if (this.connection.readyState === 1) {
-      await this.connection.close();
+    if (this.client) {
+      await this.client.close();
+      console.log(`MongoDB disconnected from ${this.databaseName}`);
     }
   }
 
   /**
-   * Get the MongoDB connection
+   * Get the MongoDB database instance
    */
-  get db(): Connection {
-    return this.connection;
+  get db(): Db {
+    if (!this.database) {
+      throw new Error(
+        `Database connection not initialized for ${this.databaseName}`,
+      );
+    }
+    return this.database;
+  }
+
+  /**
+   * Get a specific collection
+   * @param collectionName - The name of the collection
+   * @returns The MongoDB collection
+   */
+  getCollection(collectionName: string): Collection {
+    return this.db.collection(collectionName);
   }
 
   /**
@@ -49,6 +71,13 @@ export class MongodbService implements OnModuleInit, OnModuleDestroy {
    */
   get dbName(): string {
     return this.databaseName;
+  }
+
+  /**
+   * Get the MongoDB client
+   */
+  get mongoClient(): MongoClient {
+    return this.client;
   }
 
   /**
@@ -60,11 +89,7 @@ export class MongodbService implements OnModuleInit, OnModuleDestroy {
       const startTime = Date.now();
 
       // Execute a simple ping command to check connectivity
-      const db = this.connection.db;
-      if (!db) {
-        throw new Error('Database connection not available');
-      }
-      const result = await db.admin().ping();
+      const result = await this.db.admin().ping();
       const responseTime = Date.now() - startTime;
 
       if (result.ok === 1) {
@@ -74,7 +99,7 @@ export class MongodbService implements OnModuleInit, OnModuleDestroy {
             responseTime,
             connection: 'established',
             database: this.databaseName,
-            readyState: this.connection.readyState,
+            serverStatus: 'connected',
           },
         };
       } else {
@@ -89,7 +114,7 @@ export class MongodbService implements OnModuleInit, OnModuleDestroy {
         details: {
           message: errorMessage,
           database: this.databaseName,
-          readyState: this.connection.readyState,
+          serverStatus: 'disconnected',
         },
       };
     }
@@ -99,16 +124,43 @@ export class MongodbService implements OnModuleInit, OnModuleDestroy {
    * Get connection statistics
    */
   getConnectionStats(): {
-    readyState: number;
-    host: string;
-    port: number;
-    name: string;
+    databaseName: string;
+    isConnected: boolean;
+    clientInfo?: string;
   } {
     return {
-      readyState: this.connection.readyState,
-      host: this.connection.host,
-      port: this.connection.port,
-      name: this.connection.name,
+      databaseName: this.databaseName,
+      isConnected: !!this.database,
+      clientInfo: this.client ? 'MongoDB Native Driver' : 'Not connected',
     };
+  }
+
+  /**
+   * Create indexes for a collection
+   * @param collectionName - The collection name
+   * @param indexes - Array of index specifications
+   */
+  async createIndexes(
+    collectionName: string,
+    indexes: Record<string, 1 | -1>[],
+  ): Promise<void> {
+    const collection = this.getCollection(collectionName);
+
+    for (const index of indexes) {
+      try {
+        await collection.createIndex(index);
+        console.log(`Index created for ${collectionName}:`, index);
+      } catch (error) {
+        console.warn(`Failed to create index for ${collectionName}:`, error);
+      }
+    }
+  }
+
+  /**
+   * Initialize database indexes
+   */
+  async initializeIndexes(): Promise<void> {
+    // This will be called during module initialization to set up indexes
+    // Implementation will be added when we create specific repositories
   }
 }

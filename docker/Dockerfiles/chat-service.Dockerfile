@@ -23,5 +23,5 @@ COPY libs ./libs
 # Expose port
 EXPOSE 4003
 
-# Start the application with Hot Module Replacement
-CMD ["pnpm", "run", "start:dev:hmr", "chat-service"]
+# Start the application
+CMD ["pnpm", "run", "start:debug", "chat-service"]

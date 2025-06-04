@@ -1,6 +1,6 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { MongoClient } from 'mongodb';
 import { MongodbService } from './mongodb.service';
 
 /**
@@ -21,42 +21,37 @@ export class MongodbModule {
   static forRoot(databaseName: string): DynamicModule {
     return {
       module: MongodbModule,
-      imports: [
-        ConfigModule,
-        MongooseModule.forRootAsync({
-          imports: [ConfigModule],
-          useFactory: () => {
-            const connectionString = process.env.MONGODB_URI;
-
-            return {
-              uri: connectionString,
-              connectionFactory: (connection) => {
-                connection.on('connected', () => {
-                  console.log(`MongoDB connected to ${connectionString}`);
-                });
-                connection.on('disconnected', () => {
-                  console.log(`MongoDB disconnected from ${databaseName}`);
-                });
-                connection.on('error', (error) => {
-                  console.error(
-                    `MongoDB connection error for ${databaseName}:`,
-                    error,
-                  );
-                });
-                return connection;
-              },
-            };
-          },
-        }),
-      ],
+      imports: [ConfigModule],
       providers: [
+        {
+          provide: 'MONGODB_CLIENT',
+          useFactory: () => {
+            // Use localhost for local development, mongo for Docker
+            const mongoHost = process.env.MONGODB_HOST || 'localhost';
+            const mongoPort = process.env.MONGODB_PORT || '27017';
+            const mongoUser = process.env.MONGODB_USER || 'mongo';
+            const mongoPassword = process.env.MONGODB_PASSWORD || 'mongo';
+
+            const connectionString = `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:${mongoPort}?authSource=admin`;
+
+            console.log(
+              `Creating MongoDB client for ${databaseName} at ${mongoHost}:${mongoPort}`,
+            );
+
+            return new MongoClient(connectionString, {
+              maxPoolSize: 10,
+              serverSelectionTimeoutMS: 5000,
+              socketTimeoutMS: 45000,
+            });
+          },
+        },
         {
           provide: 'DATABASE_NAME',
           useValue: databaseName,
         },
         MongodbService,
       ],
-      exports: [MongooseModule, MongodbService],
+      exports: [MongodbService],
     };
   }
 

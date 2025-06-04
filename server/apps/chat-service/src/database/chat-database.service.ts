@@ -4,7 +4,8 @@ import {
   ErrorLoggerService,
   DatabaseLogMetadata,
 } from '@app/logging';
-import { MongodbService } from '@app/mongodb';
+import { MongodbService, COLLECTIONS } from '@app/mongodb';
+import { Collection } from 'mongodb';
 
 /**
  * Chat Database Service
@@ -24,10 +25,38 @@ export class ChatDatabaseService {
   }
 
   /**
-   * Get the MongoDB connection
+   * Get the MongoDB service
    */
   get mongodb(): MongodbService {
     return this.mongodbService;
+  }
+
+  /**
+   * Get the messages collection
+   */
+  get messagesCollection(): Collection {
+    return this.mongodbService.getCollection(COLLECTIONS.MESSAGES);
+  }
+
+  /**
+   * Get the conversations collection
+   */
+  get conversationsCollection(): Collection {
+    return this.mongodbService.getCollection(COLLECTIONS.CONVERSATIONS);
+  }
+
+  /**
+   * Get the attachments collection
+   */
+  get attachmentsCollection(): Collection {
+    return this.mongodbService.getCollection(COLLECTIONS.ATTACHMENTS);
+  }
+
+  /**
+   * Get the message reactions collection
+   */
+  get messageReactionsCollection(): Collection {
+    return this.mongodbService.getCollection(COLLECTIONS.MESSAGE_REACTIONS);
   }
 
   /**
@@ -64,15 +93,14 @@ export class ChatDatabaseService {
         return {
           status: 'ok',
           details: {
-            ...result.details,
             responseTime,
+            connection: 'established',
             database: this.mongodbService.dbName,
+            serverStatus: 'connected',
           },
         };
       } else {
-        throw new Error(
-          result.details?.message || 'MongoDB connectivity check failed',
-        );
+        throw new Error('MongoDB connectivity check failed');
       }
     } catch (error: any) {
       const errorMessage =
