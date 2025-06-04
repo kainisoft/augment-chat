@@ -127,11 +127,6 @@ services:
       - ./server/tsconfig.json:/app/tsconfig.json:delegated
       - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
       - chat-service-node-modules:/app/node_modules
-    depends_on:
-      mongo:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
     networks:
       - chat-network
     profiles: [ "chat" ]

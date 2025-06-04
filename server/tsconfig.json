@@ -84,6 +84,12 @@
       "@app/logging/*": [
         "libs/logging/src/*"
       ],
+      "@app/mongodb": [
+        "libs/mongodb/src"
+      ],
+      "@app/mongodb/*": [
+        "libs/mongodb/src/*"
+      ],
       "@app/redis": [
         "libs/redis/src"
       ],

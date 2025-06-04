@@ -137,6 +137,15 @@
         "tsConfigPath": "libs/logging/tsconfig.lib.json"
       }
     },
+    "mongodb": {
+      "type": "library",
+      "root": "libs/mongodb",
+      "entryFile": "index",
+      "sourceRoot": "libs/mongodb/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/mongodb/tsconfig.lib.json"
+      }
+    },
     "logging-service": {
       "type": "application",
       "root": "apps/logging-service",

@@ -1,10 +1,7 @@
 import { Controller, Injectable } from '@nestjs/common';
 import { BaseHealthController } from '@app/common';
-import {
-  LoggingService,
-  DatabaseLogMetadata,
-  ErrorLoggerService,
-} from '@app/logging';
+import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { ChatDatabaseService } from '../database/chat-database.service';
 
 /**
  * Service to check chat service dependencies
@@ -14,6 +11,7 @@ export class ChatServiceHealthService {
   constructor(
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly databaseService: ChatDatabaseService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(ChatServiceHealthService.name);
@@ -21,53 +19,14 @@ export class ChatServiceHealthService {
 
   /**
    * Check database connectivity
-   * In a real implementation, this would check the actual database connection
+   * Uses the database service to check the actual MongoDB connection
    */
   async checkDatabase(): Promise<{ status: 'ok' | 'error'; details?: any }> {
-    // Simulate database check
-    const startTime = Date.now();
-
-    // Create database metadata for logging
-    const dbMetadata: DatabaseLogMetadata = {
-      operation: 'query',
-      table: 'system',
-      duration: 0, // Will be updated after operation
-    };
-
-    this.loggingService.debug<DatabaseLogMetadata>(
-      'Checking database connectivity',
-      'checkDatabase',
-      dbMetadata,
-    );
+    this.loggingService.debug('Checking MongoDB connectivity', 'checkDatabase');
 
     try {
-      // Simulate a database query
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
-      const duration = Date.now() - startTime;
-
-      const result = {
-        status: 'ok' as const,
-        details: {
-          responseTime: duration,
-          connection: 'established',
-        },
-      };
-
-      // Update metadata with actual duration
-      const successMetadata: DatabaseLogMetadata = {
-        ...dbMetadata,
-        duration,
-        recordCount: 1,
-      };
-
-      this.loggingService.debug<DatabaseLogMetadata>(
-        'Database connectivity check successful',
-        'checkDatabase',
-        successMetadata,
-      );
-
-      return result;
+      // Use the database service to check connectivity
+      return await this.databaseService.checkConnection();
     } catch (error: any) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
@@ -77,11 +36,15 @@ export class ChatServiceHealthService {
           : undefined;
 
       // Use ErrorLoggerService for structured error logging
-      this.errorLogger.error(error, 'Database connectivity check failed', {
-        source: ChatServiceHealthService.name,
-        method: 'checkDatabase',
-        errorCode: 'DB_CONN_ERROR',
-      });
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        'MongoDB connectivity check failed',
+        {
+          source: ChatServiceHealthService.name,
+          method: 'checkDatabase',
+          errorCode: 'MONGO_CONN_ERROR',
+        },
+      );
 
       return {
         status: 'error' as const,

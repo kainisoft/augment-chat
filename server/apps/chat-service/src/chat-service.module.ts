@@ -8,6 +8,7 @@ import {
   ChatServiceHealthController,
   ChatServiceHealthService,
 } from './health/health.controller';
+import { ChatDatabaseModule } from './database/chat-database.module';
 
 @Module({
   imports: [
@@ -18,6 +19,9 @@ import {
 
     // Import CommonModule
     CommonModule,
+
+    // Import ChatDatabaseModule for MongoDB access
+    ChatDatabaseModule,
 
     // Import LoggingModule with Chat Service specific configuration
     LoggingModule.registerAsync({
