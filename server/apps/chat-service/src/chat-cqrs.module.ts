@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { LoggingModule } from '@app/logging';
 import { ChatDatabaseModule } from './database/chat-database.module';
 import { KafkaProducerModule } from './kafka/kafka-producer.module';
+import { ChatGraphQLModule } from './graphql/graphql.module';
 
 // Import handlers (will be created)
 import { CommandHandlers } from './application/commands/handlers';
@@ -22,6 +23,7 @@ import { RepositoryModule } from './infrastructure/repositories/repository.modul
     ChatDatabaseModule,
     RepositoryModule,
     KafkaProducerModule,
+    forwardRef(() => ChatGraphQLModule),
   ],
   providers: [...CommandHandlers, ...QueryHandlers, ...EventHandlers],
   exports: [CqrsModule],

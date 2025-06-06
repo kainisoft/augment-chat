@@ -256,3 +256,27 @@ export class MarkMessageReadInput {
   @IsString()
   messageId: string;
 }
+
+/**
+ * Start Typing Input
+ *
+ * Input type for starting typing indicator in a conversation.
+ */
+@InputType({ description: 'Input for starting typing indicator' })
+export class StartTypingInput {
+  @Field(() => ID, { description: 'Conversation ID where user is typing' })
+  @IsString()
+  conversationId: string;
+}
+
+/**
+ * Stop Typing Input
+ *
+ * Input type for stopping typing indicator in a conversation.
+ */
+@InputType({ description: 'Input for stopping typing indicator' })
+export class StopTypingInput {
+  @Field(() => ID, { description: 'Conversation ID where user stopped typing' })
+  @IsString()
+  conversationId: string;
+}

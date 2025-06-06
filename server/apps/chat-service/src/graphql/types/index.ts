@@ -37,6 +37,8 @@ export {
   MarkMessagesReadInput,
   MarkMessageDeliveredInput,
   MarkMessageReadInput,
+  StartTypingInput,
+  StopTypingInput,
 } from './input.types';
 
 // Response Types

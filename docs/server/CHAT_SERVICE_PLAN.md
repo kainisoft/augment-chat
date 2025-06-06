@@ -124,7 +124,13 @@ Based on codebase audit performed on the current implementation, the following r
   - ✅ Connection management and authentication
 - ☐ **Real-time features**
   - ☐ Live message delivery via subscriptions
-  - ☐ Typing indicators implementation
+  - ✅ **Typing indicators implementation**
+    - ✅ Create `StartTypingInput` and `StopTypingInput` GraphQL input types
+    - ✅ Add `startTyping` and `stopTyping` mutations to message resolver
+    - ✅ Create `StartTypingCommand` and `StopTypingCommand` CQRS commands
+    - ✅ Implement command handlers for typing operations
+    - ✅ Integrate with existing SubscriptionService for real-time broadcasting
+    - ✅ Test typing indicators in Docker environment with GraphQL playground
   - ☐ User presence status
   - ☐ Connection state management
 

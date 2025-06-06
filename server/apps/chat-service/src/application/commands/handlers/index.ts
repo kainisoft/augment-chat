@@ -6,6 +6,8 @@ import { AddParticipantsHandler } from './add-participants.handler';
 import { RemoveParticipantsHandler } from './remove-participants.handler';
 import { MarkMessageDeliveredHandler } from './mark-message-delivered.handler';
 import { MarkMessageReadHandler } from './mark-message-read.handler';
+import { StartTypingHandler } from './start-typing.handler';
+import { StopTypingHandler } from './stop-typing.handler';
 
 export const CommandHandlers = [
   SendMessageHandler,
@@ -16,6 +18,8 @@ export const CommandHandlers = [
   RemoveParticipantsHandler,
   MarkMessageDeliveredHandler,
   MarkMessageReadHandler,
+  StartTypingHandler,
+  StopTypingHandler,
 ];
 
 export {
@@ -27,4 +31,6 @@ export {
   RemoveParticipantsHandler,
   MarkMessageDeliveredHandler,
   MarkMessageReadHandler,
+  StartTypingHandler,
+  StopTypingHandler,
 };

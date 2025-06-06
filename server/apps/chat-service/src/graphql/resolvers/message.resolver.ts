@@ -20,12 +20,17 @@ import {
   MarkMessageDeliveredInput,
   MarkMessageReadInput,
   MessageStatusUpdateResponse,
+  StartTypingInput,
+  StopTypingInput,
+  TypingStatusResponse,
 } from '../types';
 import { SendMessageCommand } from '../../application/commands/send-message.command';
 import { UpdateMessageCommand } from '../../application/commands/update-message.command';
 import { DeleteMessageCommand } from '../../application/commands/delete-message.command';
 import { MarkMessageDeliveredCommand } from '../../application/commands/mark-message-delivered.command';
 import { MarkMessageReadCommand } from '../../application/commands/mark-message-read.command';
+import { StartTypingCommand } from '../../application/commands/start-typing.command';
+import { StopTypingCommand } from '../../application/commands/stop-typing.command';
 import { GetMessageQuery } from '../../application/queries/get-message.query';
 import { GetConversationMessagesQuery } from '../../application/queries/get-conversation-messages.query';
 import { AuthenticatedRequest } from '@app/security';
@@ -485,6 +490,110 @@ export class MessageResolver {
         messageId: input.messageId,
         statusType: 'read',
         userId: context.user?.sub || 'anonymous-user',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  /**
+   * Start typing indicator
+   */
+  @Mutation(() => TypingStatusResponse, {
+    name: 'startTyping',
+    description: 'Start typing indicator in a conversation',
+  })
+  async startTyping(
+    @Args('input') input: StartTypingInput,
+    @Context() context: AuthenticatedRequest,
+  ): Promise<TypingStatusResponse> {
+    try {
+      this.loggingService.debug(
+        `Starting typing indicator for conversation: ${input.conversationId}`,
+        'startTyping',
+        { conversationId: input.conversationId },
+      );
+
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
+
+      await this.commandBus.execute(
+        new StartTypingCommand(input.conversationId, currentUserId),
+      );
+
+      return {
+        success: true,
+        conversationId: input.conversationId,
+        userId: currentUserId,
+        isTyping: true,
+      };
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error starting typing indicator for conversation: ${input.conversationId}`,
+        {
+          source: MessageResolver.name,
+          method: 'startTyping',
+          conversationId: input.conversationId,
+        },
+      );
+
+      return {
+        success: false,
+        conversationId: input.conversationId,
+        userId: context.user?.sub || 'anonymous-user',
+        isTyping: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  /**
+   * Stop typing indicator
+   */
+  @Mutation(() => TypingStatusResponse, {
+    name: 'stopTyping',
+    description: 'Stop typing indicator in a conversation',
+  })
+  async stopTyping(
+    @Args('input') input: StopTypingInput,
+    @Context() context: AuthenticatedRequest,
+  ): Promise<TypingStatusResponse> {
+    try {
+      this.loggingService.debug(
+        `Stopping typing indicator for conversation: ${input.conversationId}`,
+        'stopTyping',
+        { conversationId: input.conversationId },
+      );
+
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
+
+      await this.commandBus.execute(
+        new StopTypingCommand(input.conversationId, currentUserId),
+      );
+
+      return {
+        success: true,
+        conversationId: input.conversationId,
+        userId: currentUserId,
+        isTyping: false,
+      };
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error stopping typing indicator for conversation: ${input.conversationId}`,
+        {
+          source: MessageResolver.name,
+          method: 'stopTyping',
+          conversationId: input.conversationId,
+        },
+      );
+
+      return {
+        success: false,
+        conversationId: input.conversationId,
+        userId: context.user?.sub || 'anonymous-user',
+        isTyping: false,
         error: error instanceof Error ? error.message : 'Unknown error',
       };
     }

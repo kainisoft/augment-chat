@@ -100,6 +100,6 @@ import { SubscriptionService } from './services/subscription.service';
     }),
   ],
   providers: [...resolvers, SubscriptionService],
-  exports: [GraphQLModule],
+  exports: [GraphQLModule, SubscriptionService],
 })
 export class ChatGraphQLModule {}
