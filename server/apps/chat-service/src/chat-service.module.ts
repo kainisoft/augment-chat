@@ -39,6 +39,7 @@ import { ChatCqrsModule } from './chat-cqrs.module';
         channelPrefix: 'chat',
         enableLogs: process.env.PUBSUB_LOGS === 'true',
       },
+      isGlobal: true,
     }),
 
     // Import ChatDatabaseModule for MongoDB access

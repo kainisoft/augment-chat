@@ -1,8 +1,7 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { LoggingService } from '@app/logging';
-import { BaseEvent } from '@app/redis';
+import { BaseEvent, RedisEventPublisher, RedisService } from '@app/redis';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import Redis from 'ioredis';
 
 /**
  * Chat Event Interface
@@ -67,36 +66,26 @@ export interface MessageStatusEvent extends ChatEvent {
 @Injectable()
 export class SubscriptionService implements OnModuleDestroy {
   private readonly pubSub: RedisPubSub;
-  private readonly redisPublisher: Redis;
-  private readonly redisSubscriber: Redis;
 
-  constructor(private readonly loggingService: LoggingService) {
+  constructor(
+    private readonly loggingService: LoggingService,
+    private readonly eventPublisher: RedisEventPublisher,
+    private readonly redisService: RedisService,
+  ) {
     this.loggingService.setContext(SubscriptionService.name);
 
-    // Create Redis clients for PubSub
-    this.redisPublisher = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-      enableReadyCheck: false,
-      maxRetriesPerRequest: null,
-    });
+    // Create GraphQL Redis PubSub using standardized Redis clients
+    const redisClient = this.redisService.getClient();
 
-    this.redisSubscriber = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-      enableReadyCheck: false,
-      maxRetriesPerRequest: null,
-    });
-
-    // Initialize GraphQL Redis PubSub
     this.pubSub = new RedisPubSub({
-      publisher: this.redisPublisher,
-      subscriber: this.redisSubscriber,
+      publisher: redisClient.duplicate(),
+      subscriber: redisClient.duplicate(),
     });
 
-    this.loggingService.log('Subscription service initialized', 'constructor');
+    this.loggingService.log(
+      'Subscription service initialized with standardized Redis clients',
+      'constructor',
+    );
   }
 
   /**
@@ -144,6 +133,11 @@ export class SubscriptionService implements OnModuleDestroy {
   async publishMessageEvent(event: MessageEvent): Promise<void> {
     try {
       const channel = `message.${event.conversationId}`;
+
+      // Publish using standardized event publisher for microservice communication
+      await this.eventPublisher.publish(channel, event);
+
+      // Publish using GraphQL PubSub for GraphQL subscriptions
       await this.pubSub.publish(channel, { messageReceived: event.data });
 
       this.loggingService.debug(
@@ -166,6 +160,11 @@ export class SubscriptionService implements OnModuleDestroy {
   async publishTypingEvent(event: TypingEvent): Promise<void> {
     try {
       const channel = `typing.${event.conversationId}`;
+
+      // Publish using standardized event publisher for microservice communication
+      await this.eventPublisher.publish(channel, event);
+
+      // Publish using GraphQL PubSub for GraphQL subscriptions
       await this.pubSub.publish(channel, { typingStatus: event.data });
 
       this.loggingService.debug(
@@ -188,6 +187,11 @@ export class SubscriptionService implements OnModuleDestroy {
   async publishMessageStatusEvent(event: MessageStatusEvent): Promise<void> {
     try {
       const channel = `status.${event.conversationId}`;
+
+      // Publish using standardized event publisher for microservice communication
+      await this.eventPublisher.publish(channel, event);
+
+      // Publish using GraphQL PubSub for GraphQL subscriptions
       await this.pubSub.publish(channel, { messageStatusUpdated: event.data });
 
       this.loggingService.debug(
@@ -213,9 +217,14 @@ export class SubscriptionService implements OnModuleDestroy {
     );
 
     try {
+      // Close the GraphQL PubSub instance
+      // This will automatically close the duplicated Redis clients used by RedisPubSub
       await this.pubSub.close();
-      await this.redisPublisher.quit();
-      await this.redisSubscriber.quit();
+
+      this.loggingService.log(
+        'Subscription service cleanup completed successfully',
+        'onModuleDestroy',
+      );
     } catch (error) {
       this.loggingService.error(
         `Error during cleanup: ${error instanceof Error ? error.message : 'Unknown error'}`,
