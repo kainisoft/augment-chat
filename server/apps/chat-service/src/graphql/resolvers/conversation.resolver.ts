@@ -11,6 +11,8 @@ import {
   RemoveParticipantsInput,
 } from '../types';
 import { CreateConversationCommand } from '../../application/commands/create-conversation.command';
+import { AddParticipantsCommand } from '../../application/commands/add-participants.command';
+import { RemoveParticipantsCommand } from '../../application/commands/remove-participants.command';
 import { GetConversationQuery } from '../../application/queries/get-conversation.query';
 import { GetUserConversationsQuery } from '../../application/queries/get-user-conversations.query';
 import { AuthenticatedRequest } from '@app/security';
@@ -188,7 +190,7 @@ export class ConversationResolver {
       // Get current user from context
       const currentUserId = context.user?.sub || 'anonymous-user';
 
-      await this.commandBus.execute(
+      const conversationId = await this.commandBus.execute(
         new CreateConversationCommand(
           input.type,
           input.participants,
@@ -199,18 +201,23 @@ export class ConversationResolver {
         ),
       );
 
-      // Return a success response (in real implementation, we might want to return the created conversation)
+      // Fetch and return the created conversation
+      const conversation = await this.queryBus.execute(
+        new GetConversationQuery(conversationId, currentUserId),
+      );
+
       return {
-        id: `conv-${Date.now()}`,
-        type: input.type,
-        participants: input.participants,
-        name: input.name,
-        description: input.description,
-        avatar: input.avatar,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        unreadCount: 0,
-        messageCount: 0,
+        id: conversation.id.toString(),
+        type: conversation.type,
+        participants: conversation.participants.map((p: any) => p.toString()),
+        name: conversation.name,
+        description: conversation.description,
+        avatar: conversation.avatar,
+        createdAt: conversation.createdAt,
+        updatedAt: conversation.updatedAt,
+        lastMessageAt: conversation.lastMessageAt,
+        unreadCount: 0, // TODO: Calculate unread count
+        messageCount: 0, // TODO: Calculate message count
       } as ConversationType;
     } catch (error) {
       this.errorLogger.error(
@@ -320,6 +327,138 @@ export class ConversationResolver {
         conversationId,
         error: error instanceof Error ? error.message : 'Unknown error',
       };
+    }
+  }
+
+  /**
+   * Add participants to a group conversation
+   */
+  @Mutation(() => ConversationType, {
+    name: 'addParticipants',
+    description: 'Add participants to a group conversation',
+  })
+  async addParticipants(
+    @Args('conversationId', { type: () => ID }) conversationId: string,
+    @Args('input') input: AddParticipantsInput,
+    @Context() context: AuthenticatedRequest,
+  ): Promise<ConversationType> {
+    try {
+      this.loggingService.debug(
+        `Adding participants to conversation: ${conversationId}`,
+        'addParticipants',
+        {
+          conversationId,
+          participantCount: input.participants.length,
+        },
+      );
+
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
+
+      await this.commandBus.execute(
+        new AddParticipantsCommand(
+          conversationId,
+          input.participants,
+          currentUserId,
+        ),
+      );
+
+      // Fetch and return the updated conversation
+      const conversation = await this.queryBus.execute(
+        new GetConversationQuery(conversationId, currentUserId),
+      );
+
+      return {
+        id: conversation.id.toString(),
+        type: conversation.type,
+        participants: conversation.participants.map((p: any) => p.toString()),
+        name: conversation.name,
+        description: conversation.description,
+        avatar: conversation.avatar,
+        createdAt: conversation.createdAt,
+        updatedAt: conversation.updatedAt,
+        lastMessageAt: conversation.lastMessageAt,
+        unreadCount: 0, // TODO: Calculate unread count
+        messageCount: 0, // TODO: Calculate message count
+      } as ConversationType;
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error adding participants to conversation: ${conversationId}`,
+        {
+          source: ConversationResolver.name,
+          method: 'addParticipants',
+          conversationId,
+          participantCount: input.participants.length,
+        },
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Remove participants from a group conversation
+   */
+  @Mutation(() => ConversationType, {
+    name: 'removeParticipants',
+    description: 'Remove participants from a group conversation',
+  })
+  async removeParticipants(
+    @Args('conversationId', { type: () => ID }) conversationId: string,
+    @Args('input') input: RemoveParticipantsInput,
+    @Context() context: AuthenticatedRequest,
+  ): Promise<ConversationType> {
+    try {
+      this.loggingService.debug(
+        `Removing participants from conversation: ${conversationId}`,
+        'removeParticipants',
+        {
+          conversationId,
+          participantCount: input.participants.length,
+        },
+      );
+
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
+
+      await this.commandBus.execute(
+        new RemoveParticipantsCommand(
+          conversationId,
+          input.participants,
+          currentUserId,
+        ),
+      );
+
+      // Fetch and return the updated conversation
+      const conversation = await this.queryBus.execute(
+        new GetConversationQuery(conversationId, currentUserId),
+      );
+
+      return {
+        id: conversation.id.toString(),
+        type: conversation.type,
+        participants: conversation.participants.map((p: any) => p.toString()),
+        name: conversation.name,
+        description: conversation.description,
+        avatar: conversation.avatar,
+        createdAt: conversation.createdAt,
+        updatedAt: conversation.updatedAt,
+        lastMessageAt: conversation.lastMessageAt,
+        unreadCount: 0, // TODO: Calculate unread count
+        messageCount: 0, // TODO: Calculate message count
+      } as ConversationType;
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error removing participants from conversation: ${conversationId}`,
+        {
+          source: ConversationResolver.name,
+          method: 'removeParticipants',
+          conversationId,
+          participantCount: input.participants.length,
+        },
+      );
+      throw error;
     }
   }
 }

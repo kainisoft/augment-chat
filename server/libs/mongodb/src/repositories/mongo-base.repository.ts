@@ -6,6 +6,7 @@ import {
   Document,
   WithId,
 } from 'mongodb';
+import { BaseDocument } from '../schemas/chat.schema';
 
 /**
  * Query Options for MongoDB operations
@@ -30,17 +31,19 @@ export interface MongoQueryOptions {
 export abstract class AbstractMongoRepository<
   T,
   TId,
-  TDocument extends Document = Document,
+  TDocument extends BaseDocument,
 > {
   /**
    * Constructor
    * @param collection - The MongoDB collection
    * @param collectionName - The name of the collection (for logging)
    */
-  constructor(
-    protected readonly collection: Collection<TDocument>,
-    protected readonly collectionName: string,
-  ) {}
+  constructor(protected readonly collectionName: string) {}
+
+  /**
+   * Get the MongoDB collection
+   */
+  protected abstract get collection(): Collection<TDocument>;
 
   /**
    * Map a MongoDB document to a domain entity

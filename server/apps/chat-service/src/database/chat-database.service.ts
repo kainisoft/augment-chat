@@ -4,8 +4,14 @@ import {
   ErrorLoggerService,
   DatabaseLogMetadata,
 } from '@app/logging';
-import { MongodbService, COLLECTIONS } from '@app/mongodb';
-import { Collection } from 'mongodb';
+import {
+  MongodbService,
+  COLLECTIONS,
+  ConversationDocument,
+  MessageDocument,
+  AttachmentDocument,
+  MessageReactionDocument,
+} from '@app/mongodb';
 
 /**
  * Chat Database Service
@@ -34,29 +40,37 @@ export class ChatDatabaseService {
   /**
    * Get the messages collection
    */
-  get messagesCollection(): Collection {
-    return this.mongodbService.getCollection(COLLECTIONS.MESSAGES);
+  get messagesCollection() {
+    return this.mongodbService.getCollection<MessageDocument>(
+      COLLECTIONS.MESSAGES,
+    );
   }
 
   /**
    * Get the conversations collection
    */
-  get conversationsCollection(): Collection {
-    return this.mongodbService.getCollection(COLLECTIONS.CONVERSATIONS);
+  get conversationsCollection() {
+    return this.mongodbService.getCollection<ConversationDocument>(
+      COLLECTIONS.CONVERSATIONS,
+    );
   }
 
   /**
    * Get the attachments collection
    */
-  get attachmentsCollection(): Collection {
-    return this.mongodbService.getCollection(COLLECTIONS.ATTACHMENTS);
+  get attachmentsCollection() {
+    return this.mongodbService.getCollection<AttachmentDocument>(
+      COLLECTIONS.ATTACHMENTS,
+    );
   }
 
   /**
    * Get the message reactions collection
    */
-  get messageReactionsCollection(): Collection {
-    return this.mongodbService.getCollection(COLLECTIONS.MESSAGE_REACTIONS);
+  get messageReactionsCollection() {
+    return this.mongodbService.getCollection<MessageReactionDocument>(
+      COLLECTIONS.MESSAGE_REACTIONS,
+    );
   }
 
   /**

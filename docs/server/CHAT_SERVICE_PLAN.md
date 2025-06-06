@@ -95,11 +95,17 @@ Based on codebase audit performed on the current implementation, the following r
   - ✅ Message ordering by timestamp (descending)
   - ✅ Authorization checks for conversation access
   - ☐ Performance optimization with indexing (MongoDB connection pending)
-- ☐ **Basic group chat capability**
-  - ☐ Group conversation creation
-  - ☐ Participant management
-  - ☐ Group message broadcasting
-  - ☐ Group metadata handling
+- ✅ **Basic group chat capability**
+  - ✅ Group conversation creation
+  - ✅ Participant management (add/remove participants)
+  - ✅ Group message broadcasting
+  - ✅ Group metadata handling
+  - ✅ Group-specific authorization checks
+  - ✅ CQRS commands: AddParticipantsCommand, RemoveParticipantsCommand
+  - ✅ GraphQL mutations: addParticipants, removeParticipants
+  - ✅ Domain events: ParticipantsAddedEvent, ParticipantsRemovedEvent
+  - ✅ Authorization validation (only participants can manage groups)
+  - ✅ Edge case handling (prevent removing all participants)
 - ☐ **Message delivery status**
   - ☐ Delivery confirmation tracking
   - ☐ Read receipt implementation

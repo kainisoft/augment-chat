@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Collection } from 'mongodb';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-import { MessageDocument } from '@app/mongodb/schemas/chat.schema';
+import { COLLECTIONS, MessageDocument } from '@app/mongodb/schemas/chat.schema';
 import { ChatDatabaseService } from '../../database/chat-database.service';
 import { MessageReadRepository } from '../../domain/repositories/message-read.repository';
 import { MessageReadModel } from '../../domain/read-models/message.read-model';
 import { MessageId } from '../../domain/value-objects/message-id.vo';
 import { ConversationId } from '../../domain/value-objects/conversation-id.vo';
 import { UserId } from '../../domain/value-objects/user-id.vo';
+import { AbstractMongoReadRepository } from '@app/mongodb';
 
 /**
  * MongoDB Message Read Repository
@@ -15,18 +15,26 @@ import { UserId } from '../../domain/value-objects/user-id.vo';
  * Implementation of MessageReadRepository using MongoDB.
  */
 @Injectable()
-export class MongoMessageReadRepository implements MessageReadRepository {
+export class MongoMessageReadRepository
+  extends AbstractMongoReadRepository<
+    MessageReadModel,
+    MessageId,
+    MessageDocument
+  >
+  implements MessageReadRepository
+{
   constructor(
     private readonly chatDatabaseService: ChatDatabaseService,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
   ) {
+    super(COLLECTIONS.MESSAGES);
+
     this.loggingService.setContext(MongoMessageReadRepository.name);
   }
 
-  private get collection(): Collection<MessageDocument> {
-    return this.chatDatabaseService
-      .messagesCollection as unknown as Collection<MessageDocument>;
+  protected get collection() {
+    return this.chatDatabaseService.messagesCollection;
   }
 
   async findById(id: MessageId): Promise<MessageReadModel | null> {

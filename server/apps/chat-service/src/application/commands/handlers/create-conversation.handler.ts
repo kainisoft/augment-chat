@@ -4,7 +4,7 @@ import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { CreateConversationCommand } from '../create-conversation.command';
 import { ConversationRepository } from '../../../domain/repositories/conversation.repository';
 import { Conversation } from '../../../domain/entities/conversation.entity';
-import { ConversationId } from '../../../domain/value-objects/conversation-id.vo';
+
 import { UserId } from '../../../domain/value-objects/user-id.vo';
 import { ConversationCreatedEvent } from '../../events/conversation-created.event';
 
@@ -16,7 +16,7 @@ import { ConversationCreatedEvent } from '../../events/conversation-created.even
 @CommandHandler(CreateConversationCommand)
 @Injectable()
 export class CreateConversationHandler
-  implements ICommandHandler<CreateConversationCommand>
+  implements ICommandHandler<CreateConversationCommand, string>
 {
   constructor(
     @Inject('ConversationRepository')
@@ -28,7 +28,7 @@ export class CreateConversationHandler
     this.loggingService.setContext(CreateConversationHandler.name);
   }
 
-  async execute(command: CreateConversationCommand): Promise<void> {
+  async execute(command: CreateConversationCommand): Promise<string> {
     try {
       this.loggingService.debug(
         `Creating ${command.type} conversation`,
@@ -95,6 +95,8 @@ export class CreateConversationHandler
           participantCount: command.participants.length,
         },
       );
+
+      return conversation.getId().toString();
     } catch (error) {
       this.errorLogger.error(
         error instanceof Error ? error : new Error(String(error)),

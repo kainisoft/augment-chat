@@ -5,6 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { MongoClient, Db, Collection } from 'mongodb';
+import { BaseDocument } from './schemas/chat.schema';
 
 /**
  * MongoDB Service
@@ -62,8 +63,8 @@ export class MongodbService implements OnModuleInit, OnModuleDestroy {
    * @param collectionName - The name of the collection
    * @returns The MongoDB collection
    */
-  getCollection(collectionName: string): Collection {
-    return this.db.collection(collectionName);
+  getCollection<T extends BaseDocument>(collectionName: string): Collection<T> {
+    return this.db.collection<T>(collectionName);
   }
 
   /**

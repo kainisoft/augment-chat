@@ -84,8 +84,10 @@ export const messageReactionSchema = {
  * TypeScript Interfaces for Type Safety
  */
 
-export interface MessageDocument {
+export interface BaseDocument {
   _id?: ObjectId;
+}
+export interface MessageDocument extends BaseDocument {
   conversationId: ObjectId;
   senderId: string;
   content: string;
@@ -101,8 +103,7 @@ export interface MessageDocument {
   metadata?: Record<string, any>;
 }
 
-export interface ConversationDocument {
-  _id?: ObjectId;
+export interface ConversationDocument extends BaseDocument {
   type: 'private' | 'group';
   participants: string[];
   name?: string;
@@ -116,8 +117,7 @@ export interface ConversationDocument {
   metadata?: Record<string, any>;
 }
 
-export interface AttachmentDocument {
-  _id?: ObjectId;
+export interface AttachmentDocument extends BaseDocument {
   messageId: ObjectId;
   fileName: string;
   originalName: string;
@@ -129,8 +129,7 @@ export interface AttachmentDocument {
   metadata?: Record<string, any>;
 }
 
-export interface MessageReactionDocument {
-  _id?: ObjectId;
+export interface MessageReactionDocument extends BaseDocument {
   messageId: ObjectId;
   userId: string;
   emoji: string;

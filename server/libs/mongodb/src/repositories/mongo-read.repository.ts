@@ -1,8 +1,9 @@
-import { ObjectId, Collection, Filter, Document, WithId } from 'mongodb';
+import { Filter, WithId } from 'mongodb';
 import {
   AbstractMongoRepository,
   MongoQueryOptions,
 } from './mongo-base.repository';
+import { BaseDocument } from '../schemas/chat.schema';
 
 /**
  * Pagination Result Interface
@@ -40,22 +41,8 @@ export interface SearchOptions extends MongoQueryOptions {
 export abstract class AbstractMongoReadRepository<
   T,
   TId,
-  TDocument extends Document = Document,
+  TDocument extends BaseDocument,
 > extends AbstractMongoRepository<T, TId, TDocument> {
-  /**
-   * Constructor
-   * @param collection - The MongoDB collection
-   * @param collectionName - The name of the collection (for logging)
-   * @param searchFields - Default fields to search in when using text search
-   */
-  constructor(
-    collection: Collection<TDocument>,
-    collectionName: string,
-    protected readonly searchFields: string[] = [],
-  ) {
-    super(collection, collectionName);
-  }
-
   /**
    * Find entities with pagination
    * @param filter - MongoDB filter
@@ -117,9 +104,9 @@ export abstract class AbstractMongoReadRepository<
       return [];
     }
 
-    const searchFields = options?.searchFields || this.searchFields;
+    const searchFields = options?.searchFields;
 
-    if (searchFields.length === 0) {
+    if (!searchFields || searchFields.length === 0) {
       throw new Error('No search fields defined for text search');
     }
 
@@ -165,9 +152,9 @@ export abstract class AbstractMongoReadRepository<
       };
     }
 
-    const searchFields = options?.searchFields || this.searchFields;
+    const searchFields = options?.searchFields;
 
-    if (searchFields.length === 0) {
+    if (!searchFields || searchFields.length === 0) {
       throw new Error('No search fields defined for text search');
     }
 

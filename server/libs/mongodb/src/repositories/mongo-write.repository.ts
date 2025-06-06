@@ -1,15 +1,6 @@
-import {
-  ObjectId,
-  Collection,
-  Filter,
-  UpdateFilter,
-  Document,
-  WithId,
-} from 'mongodb';
-import {
-  AbstractMongoRepository,
-  MongoQueryOptions,
-} from './mongo-base.repository';
+import { Filter, UpdateFilter, WithId } from 'mongodb';
+import { AbstractMongoRepository } from './mongo-base.repository';
+import { BaseDocument } from '../schemas/chat.schema';
 
 /**
  * Abstract MongoDB Write Repository
@@ -24,7 +15,7 @@ import {
 export abstract class AbstractMongoWriteRepository<
   T,
   TId,
-  TDocument extends Document = Document,
+  TDocument extends BaseDocument,
 > extends AbstractMongoRepository<T, TId, TDocument> {
   /**
    * Save an entity (create or update)

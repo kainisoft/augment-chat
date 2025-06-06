@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Collection } from 'mongodb';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-import { ConversationDocument } from '@app/mongodb/schemas/chat.schema';
+import {
+  COLLECTIONS,
+  ConversationDocument,
+} from '@app/mongodb/schemas/chat.schema';
 import { ChatDatabaseService } from '../../database/chat-database.service';
 import { ConversationRepository } from '../../domain/repositories/conversation.repository';
 import { Conversation } from '../../domain/entities/conversation.entity';
 import { ConversationId } from '../../domain/value-objects/conversation-id.vo';
 import { MessageId } from '../../domain/value-objects/message-id.vo';
 import { UserId } from '../../domain/value-objects/user-id.vo';
+import { AbstractMongoRepository } from '@app/mongodb';
 
 /**
  * MongoDB Conversation Repository
@@ -15,18 +19,26 @@ import { UserId } from '../../domain/value-objects/user-id.vo';
  * Implementation of ConversationRepository using MongoDB.
  */
 @Injectable()
-export class MongoConversationRepository implements ConversationRepository {
+export class MongoConversationRepository
+  extends AbstractMongoRepository<
+    Conversation,
+    ConversationId,
+    ConversationDocument
+  >
+  implements ConversationRepository
+{
   constructor(
     private readonly chatDatabaseService: ChatDatabaseService,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
   ) {
+    super(COLLECTIONS.CONVERSATIONS);
+
     this.loggingService.setContext(MongoConversationRepository.name);
   }
 
-  private get collection(): Collection<ConversationDocument> {
-    return this.chatDatabaseService
-      .conversationsCollection as unknown as Collection<ConversationDocument>;
+  protected get collection(): Collection<ConversationDocument> {
+    return this.chatDatabaseService.conversationsCollection;
   }
 
   async save(entity: Conversation): Promise<void> {
