@@ -4,7 +4,6 @@ import { FastifyRequest } from 'fastify';
  * GraphQL Context Interface
  *
  * Defines the context object available to all GraphQL resolvers.
- * Following the 'gold standard' pattern from user-service.
  */
 export interface GraphQLContext {
   /**

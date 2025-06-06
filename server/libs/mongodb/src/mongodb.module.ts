@@ -27,7 +27,7 @@ export class MongodbModule {
           provide: 'MONGODB_CLIENT',
           useFactory: () => {
             // Use localhost for local development, mongo for Docker
-            const mongoHost = process.env.MONGODB_HOST || 'localhost';
+            const mongoHost = process.env.MONGODB_HOST || 'mongo';
             const mongoPort = process.env.MONGODB_PORT || '27017';
             const mongoUser = process.env.MONGODB_USER || 'mongo';
             const mongoPassword = process.env.MONGODB_PASSWORD || 'mongo';

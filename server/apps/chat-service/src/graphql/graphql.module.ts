@@ -4,23 +4,21 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { resolvers } from './resolvers';
 import { LoggingService } from '@app/logging';
 import { ChatDatabaseModule } from '../database/chat-database.module';
+import { ChatCqrsModule } from '../chat-cqrs.module';
 
 /**
  * Chat Service GraphQL Module
  *
  * This module configures Apollo Federation for the Chat Service, providing
  * GraphQL API endpoints for messaging, conversations, and real-time features.
- *
- * Follows the 'gold standard' patterns established in user-service:
- * - Apollo Federation Driver for microservice integration
- * - Comprehensive error handling and logging
- * - Environment-based configuration
- * - Type-safe schema generation
  */
 @Module({
   imports: [
     // Import database module for data access
     ChatDatabaseModule,
+
+    // Import CQRS module for command and query handling
+    ChatCqrsModule,
 
     // Configure GraphQL with Apollo Server
     GraphQLModule.forRootAsync<ApolloDriverConfig>({

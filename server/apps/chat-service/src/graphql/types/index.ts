@@ -2,7 +2,6 @@
  * Chat Service GraphQL Types
  *
  * This file exports all GraphQL types for the Chat Service.
- * Following the 'gold standard' pattern from user-service.
  */
 
 // Message Types

@@ -114,7 +114,6 @@ services:
       - ./server/libs:/app/libs:delegated
       - ./server/nest-cli.json:/app/nest-cli.json:delegated
       - ./server/tsconfig.json:/app/tsconfig.json:delegated
-      - ./server/webpack-hmr.config.js:/app/webpack-hmr.config.js:delegated
       - chat-service-node-modules:/app/node_modules
     networks:
       - chat-network

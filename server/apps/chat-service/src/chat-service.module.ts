@@ -10,6 +10,7 @@ import {
 } from './health/health.controller';
 import { ChatDatabaseModule } from './database/chat-database.module';
 import { ChatGraphQLModule } from './graphql/graphql.module';
+import { ChatCqrsModule } from './chat-cqrs.module';
 
 @Module({
   imports: [
@@ -23,6 +24,9 @@ import { ChatGraphQLModule } from './graphql/graphql.module';
 
     // Import ChatDatabaseModule for MongoDB access
     ChatDatabaseModule,
+
+    // Import ChatCqrsModule for CQRS pattern
+    ChatCqrsModule,
 
     // Import ChatGraphQLModule for GraphQL API
     ChatGraphQLModule,

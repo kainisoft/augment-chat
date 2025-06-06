@@ -89,7 +89,7 @@ export interface MessageDocument {
   conversationId: ObjectId;
   senderId: string;
   content: string;
-  attachments?: AttachmentDocument[];
+  attachments?: string[]; // Simplified to string array for now
   createdAt: Date;
   updatedAt: Date;
   deliveredTo?: string[];

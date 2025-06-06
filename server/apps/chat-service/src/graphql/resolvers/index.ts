@@ -2,7 +2,6 @@
  * Chat Service GraphQL Resolvers
  *
  * This file exports all GraphQL resolvers for the Chat Service.
- * Following the 'gold standard' pattern from user-service.
  */
 
 import { HelloResolver } from './hello.resolver';

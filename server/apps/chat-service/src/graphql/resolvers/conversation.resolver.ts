@@ -1,4 +1,5 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID, Context } from '@nestjs/graphql';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 import {
   ConversationType,
@@ -9,16 +10,21 @@ import {
   AddParticipantsInput,
   RemoveParticipantsInput,
 } from '../types';
+import { CreateConversationCommand } from '../../application/commands/create-conversation.command';
+import { GetConversationQuery } from '../../application/queries/get-conversation.query';
+import { GetUserConversationsQuery } from '../../application/queries/get-user-conversations.query';
+import { AuthenticatedRequest } from '@app/security';
 
 /**
  * Conversation Resolver
  *
  * Handles GraphQL operations for conversations including queries and mutations.
- * Following the 'gold standard' patterns from user-service.
  */
 @Resolver(() => ConversationType)
 export class ConversationResolver {
   constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
   ) {
@@ -35,6 +41,7 @@ export class ConversationResolver {
   })
   async getConversationById(
     @Args('id', { type: () => ID }) id: string,
+    @Context() context: AuthenticatedRequest,
   ): Promise<ConversationType | null> {
     try {
       this.loggingService.debug(
@@ -45,19 +52,29 @@ export class ConversationResolver {
         },
       );
 
-      // TODO: Implement with CQRS query handler
-      // const conversation = await this.queryBus.execute(new GetConversationQuery(id));
-      // return conversation as ConversationType;
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
 
-      // Temporary mock response for testing
+      const conversation = await this.queryBus.execute(
+        new GetConversationQuery(id, currentUserId),
+      );
+
+      if (!conversation) {
+        return null;
+      }
+
       return {
-        id,
-        type: 'private' as any,
-        participants: ['user-123', 'user-456'],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        unreadCount: 0,
-        messageCount: 5,
+        id: conversation.id.toString(),
+        type: conversation.type,
+        participants: conversation.participants.map(p => p.toString()),
+        name: conversation.name,
+        description: conversation.description,
+        avatar: conversation.avatar,
+        createdAt: conversation.createdAt,
+        updatedAt: conversation.updatedAt,
+        lastMessageAt: conversation.lastMessageAt,
+        unreadCount: 0, // TODO: Calculate unread count
+        messageCount: 0, // TODO: Calculate message count
       } as ConversationType;
     } catch (error) {
       this.errorLogger.error(
@@ -155,6 +172,7 @@ export class ConversationResolver {
   })
   async createConversation(
     @Args('input') input: CreateConversationInput,
+    @Context() context: AuthenticatedRequest,
   ): Promise<ConversationType> {
     try {
       this.loggingService.debug(
@@ -167,12 +185,21 @@ export class ConversationResolver {
         },
       );
 
-      // TODO: Implement with CQRS command handler
-      // await this.commandBus.execute(
-      //   new CreateConversationCommand(input.type, input.participants, input.name, input.description)
-      // );
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
 
-      // Temporary mock response for testing
+      await this.commandBus.execute(
+        new CreateConversationCommand(
+          input.type,
+          input.participants,
+          currentUserId,
+          input.name,
+          input.description,
+          input.avatar,
+        ),
+      );
+
+      // Return a success response (in real implementation, we might want to return the created conversation)
       return {
         id: `conv-${Date.now()}`,
         type: input.type,

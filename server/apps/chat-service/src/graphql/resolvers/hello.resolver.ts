@@ -5,7 +5,6 @@ import { LoggingService } from '@app/logging';
  * Hello Resolver
  *
  * Provides a simple hello world query for testing GraphQL functionality.
- * Following the 'gold standard' pattern from user-service.
  */
 @Resolver()
 export class HelloResolver {

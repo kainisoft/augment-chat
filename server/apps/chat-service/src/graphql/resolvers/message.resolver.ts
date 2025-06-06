@@ -1,4 +1,5 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID, Context } from '@nestjs/graphql';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 import {
   MessageType,
@@ -10,16 +11,23 @@ import {
   AddReactionResponse,
   RemoveReactionResponse,
 } from '../types';
+import { SendMessageCommand } from '../../application/commands/send-message.command';
+import { UpdateMessageCommand } from '../../application/commands/update-message.command';
+import { DeleteMessageCommand } from '../../application/commands/delete-message.command';
+import { GetMessageQuery } from '../../application/queries/get-message.query';
+import { GetConversationMessagesQuery } from '../../application/queries/get-conversation-messages.query';
+import { AuthenticatedRequest } from '@app/security';
 
 /**
  * Message Resolver
  *
  * Handles GraphQL operations for messages including queries and mutations.
- * Following the 'gold standard' patterns from user-service.
  */
 @Resolver(() => MessageType)
 export class MessageResolver {
   constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
   ) {
@@ -36,6 +44,7 @@ export class MessageResolver {
   })
   async getMessageById(
     @Args('id', { type: () => ID }) id: string,
+    @Context() context: AuthenticatedRequest,
   ): Promise<MessageType | null> {
     try {
       this.loggingService.debug(
@@ -46,19 +55,27 @@ export class MessageResolver {
         },
       );
 
-      // TODO: Implement with CQRS query handler
-      // const message = await this.queryBus.execute(new GetMessageQuery(id));
-      // return message as MessageType;
+      // Get current user from context (will be implemented with authentication)
+      const currentUserId = context.user?.sub || 'anonymous-user';
 
-      // Temporary mock response for testing
+      const message = await this.queryBus.execute(
+        new GetMessageQuery(id, currentUserId),
+      );
+
+      if (!message) {
+        return null;
+      }
+
       return {
-        id,
-        conversationId: 'conv-123',
-        senderId: 'user-123',
-        content: 'Hello, this is a test message!',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        messageType: 'text' as any,
+        id: message.id.toString(),
+        conversationId: message.conversationId.toString(),
+        senderId: message.senderId.toString(),
+        content: message.content,
+        messageType: message.messageType,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+        replyTo: message.replyTo?.toString(),
+        attachments: message.attachments,
       } as MessageType;
     } catch (error) {
       this.errorLogger.error(
@@ -85,6 +102,7 @@ export class MessageResolver {
     @Args('conversationId', { type: () => ID }) conversationId: string,
     @Args('limit', { type: () => Number, defaultValue: 20 }) limit: number,
     @Args('offset', { type: () => Number, defaultValue: 0 }) offset: number,
+    @Context() context: AuthenticatedRequest,
   ): Promise<MessageConnection> {
     try {
       this.loggingService.debug(
@@ -97,38 +115,30 @@ export class MessageResolver {
         },
       );
 
-      // TODO: Implement with CQRS query handler
-      // const messages = await this.queryBus.execute(
-      //   new GetConversationMessagesQuery(conversationId, limit, offset)
-      // );
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
 
-      // Temporary mock response for testing
-      const mockMessages: MessageType[] = [
-        {
-          id: 'msg-1',
-          conversationId,
-          senderId: 'user-123',
-          content: 'Hello!',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          messageType: 'text' as any,
-        },
-        {
-          id: 'msg-2',
-          conversationId,
-          senderId: 'user-456',
-          content: 'Hi there!',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          messageType: 'text' as any,
-        },
-      ];
+      const messages = await this.queryBus.execute(
+        new GetConversationMessagesQuery(conversationId, currentUserId, limit, offset),
+      );
+
+      const messageTypes: MessageType[] = messages.map(message => ({
+        id: message.id.toString(),
+        conversationId: message.conversationId.toString(),
+        senderId: message.senderId.toString(),
+        content: message.content,
+        messageType: message.messageType,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+        replyTo: message.replyTo?.toString(),
+        attachments: message.attachments,
+      }));
 
       return {
-        items: mockMessages,
-        totalCount: mockMessages.length,
-        count: mockMessages.length,
-        hasMore: false,
+        items: messageTypes,
+        totalCount: messageTypes.length,
+        count: messageTypes.length,
+        hasMore: messageTypes.length === limit,
         offset,
         limit,
       } as MessageConnection;
@@ -155,6 +165,7 @@ export class MessageResolver {
   })
   async sendMessage(
     @Args('input') input: SendMessageInput,
+    @Context() context: AuthenticatedRequest,
   ): Promise<MessageType> {
     try {
       this.loggingService.debug(
@@ -167,21 +178,31 @@ export class MessageResolver {
         },
       );
 
-      // TODO: Implement with CQRS command handler
-      // await this.commandBus.execute(
-      //   new SendMessageCommand(input.conversationId, input.content, input.messageType)
-      // );
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
 
-      // Temporary mock response for testing
+      await this.commandBus.execute(
+        new SendMessageCommand(
+          input.conversationId,
+          currentUserId,
+          input.content,
+          input.messageType || 'text',
+          input.replyTo,
+          input.attachments,
+        ),
+      );
+
+      // Return a success response (in real implementation, we might want to return the created message)
       return {
         id: `msg-${Date.now()}`,
         conversationId: input.conversationId,
-        senderId: 'current-user', // TODO: Get from authentication context
+        senderId: currentUserId,
         content: input.content,
         createdAt: new Date(),
         updatedAt: new Date(),
-        messageType: input.messageType || ('text' as any),
+        messageType: input.messageType || 'text',
         replyTo: input.replyTo,
+        attachments: input.attachments,
       } as MessageType;
     } catch (error) {
       this.errorLogger.error(
@@ -207,6 +228,7 @@ export class MessageResolver {
   async updateMessage(
     @Args('messageId', { type: () => ID }) messageId: string,
     @Args('input') input: UpdateMessageInput,
+    @Context() context: AuthenticatedRequest,
   ): Promise<MessageType> {
     try {
       this.loggingService.debug(
@@ -218,20 +240,32 @@ export class MessageResolver {
         },
       );
 
-      // TODO: Implement with CQRS command handler
-      // await this.commandBus.execute(
-      //   new UpdateMessageCommand(messageId, input.content)
-      // );
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
 
-      // Temporary mock response for testing
+      await this.commandBus.execute(
+        new UpdateMessageCommand(messageId, currentUserId, input.content),
+      );
+
+      // Get updated message to return
+      const updatedMessage = await this.queryBus.execute(
+        new GetMessageQuery(messageId, currentUserId),
+      );
+
+      if (!updatedMessage) {
+        throw new Error(`Message with ID ${messageId} not found after update`);
+      }
+
       return {
-        id: messageId,
-        conversationId: 'conv-123',
-        senderId: 'current-user',
-        content: input.content,
-        createdAt: new Date(Date.now() - 3600000), // 1 hour ago
-        updatedAt: new Date(),
-        messageType: 'text' as any,
+        id: updatedMessage.id.toString(),
+        conversationId: updatedMessage.conversationId.toString(),
+        senderId: updatedMessage.senderId.toString(),
+        content: updatedMessage.content,
+        messageType: updatedMessage.messageType,
+        createdAt: updatedMessage.createdAt,
+        updatedAt: updatedMessage.updatedAt,
+        replyTo: updatedMessage.replyTo?.toString(),
+        attachments: updatedMessage.attachments,
       } as MessageType;
     } catch (error) {
       this.errorLogger.error(
@@ -256,6 +290,7 @@ export class MessageResolver {
   })
   async deleteMessage(
     @Args('messageId', { type: () => ID }) messageId: string,
+    @Context() context: AuthenticatedRequest,
   ): Promise<DeleteMessageResponse> {
     try {
       this.loggingService.debug(
@@ -264,8 +299,12 @@ export class MessageResolver {
         { messageId },
       );
 
-      // TODO: Implement with CQRS command handler
-      // await this.commandBus.execute(new DeleteMessageCommand(messageId));
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
+
+      await this.commandBus.execute(
+        new DeleteMessageCommand(messageId, currentUserId),
+      );
 
       return {
         success: true,
