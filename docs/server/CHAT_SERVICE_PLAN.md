@@ -117,11 +117,11 @@ Based on codebase audit performed on the current implementation, the following r
   - ✅ GraphQL field resolvers for deliveredTo/readBy 
 
 ### Phase 4: Real-time Communication
-- ☐ **WebSocket subscriptions setup**
-  - ☐ GraphQL subscription resolver implementation
-  - ☐ WebSocket gateway configuration
-  - ☐ Real-time message broadcasting
-  - ☐ Connection management and authentication
+- ✅ **WebSocket subscriptions setup**
+  - ✅ GraphQL subscription resolver implementation
+  - ✅ WebSocket gateway configuration
+  - ✅ Real-time message broadcasting
+  - ✅ Connection management and authentication
 - ☐ **Real-time features**
   - ☐ Live message delivery via subscriptions
   - ☐ Typing indicators implementation

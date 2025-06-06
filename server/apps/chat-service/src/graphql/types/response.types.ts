@@ -156,3 +156,49 @@ export class MessageStatusUpdateResponse {
   })
   error?: string;
 }
+
+/**
+ * Typing Status Type
+ *
+ * Represents typing status for real-time subscriptions.
+ */
+@ObjectType({ description: 'Typing status for real-time updates' })
+export class TypingStatusType {
+  @Field(() => ID, { description: 'ID of the conversation' })
+  conversationId: string;
+
+  @Field(() => String, { description: 'User ID who is typing' })
+  userId: string;
+
+  @Field(() => String, { description: 'Display name of the user' })
+  displayName: string;
+
+  @Field(() => Boolean, { description: 'Whether the user is currently typing' })
+  isTyping: boolean;
+
+  @Field(() => Date, { description: 'Timestamp of the typing status' })
+  timestamp: Date;
+}
+
+/**
+ * Message Status Update Type
+ *
+ * Represents message status updates for real-time subscriptions.
+ */
+@ObjectType({ description: 'Message status update for real-time updates' })
+export class MessageStatusUpdateType {
+  @Field(() => ID, { description: 'ID of the message' })
+  messageId: string;
+
+  @Field(() => ID, { description: 'ID of the conversation' })
+  conversationId: string;
+
+  @Field(() => String, { description: 'Type of status update' })
+  statusType: string; // 'delivered', 'read'
+
+  @Field(() => String, { description: 'User ID who updated the status' })
+  userId: string;
+
+  @Field(() => Date, { description: 'Timestamp of the status update' })
+  timestamp: Date;
+}

@@ -12,13 +12,11 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 import {
   MessageType,
+  MessageTypeEnum,
   MessageConnection,
   SendMessageInput,
   UpdateMessageInput,
   DeleteMessageResponse,
-  AddReactionInput,
-  AddReactionResponse,
-  RemoveReactionResponse,
   MarkMessageDeliveredInput,
   MarkMessageReadInput,
   MessageStatusUpdateResponse,
@@ -32,6 +30,11 @@ import { GetMessageQuery } from '../../application/queries/get-message.query';
 import { GetConversationMessagesQuery } from '../../application/queries/get-conversation-messages.query';
 import { AuthenticatedRequest } from '@app/security';
 import { MessageReadModel } from '../../domain/read-models/message.read-model';
+import {
+  SubscriptionService,
+  MessageEvent,
+  MessageStatusEvent,
+} from '../services/subscription.service';
 
 /**
  * Message Resolver
@@ -45,6 +48,7 @@ export class MessageResolver {
     private readonly queryBus: QueryBus,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly subscriptionService: SubscriptionService,
   ) {
     this.loggingService.setContext(MessageResolver.name);
   }
@@ -212,18 +216,51 @@ export class MessageResolver {
         ),
       );
 
-      // Return a success response (in real implementation, we might want to return the created message)
-      return {
+      // Create the message response
+      const messageResponse: MessageType = {
         id: `msg-${Date.now()}`,
         conversationId: input.conversationId,
         senderId: currentUserId,
         content: input.content,
         createdAt: new Date(),
         updatedAt: new Date(),
-        messageType: input.messageType || 'text',
+        messageType: input.messageType || MessageTypeEnum.TEXT,
         replyTo: input.replyTo,
-        attachments: input.attachments,
-      } as MessageType;
+        attachments:
+          input.attachments?.map((attachment, index) => ({
+            id: `att-${Date.now()}-${index}`,
+            fileName: attachment,
+            originalName: attachment,
+            fileType: 'application/octet-stream',
+            fileSize: 0,
+            storageUrl: attachment,
+            createdAt: new Date(),
+          })) || [],
+      };
+
+      // Publish real-time event for subscribers
+      try {
+        await this.subscriptionService.publishMessageEvent({
+          type: 'message.received',
+          timestamp: Date.now(),
+          source: 'chat-service',
+          conversationId: input.conversationId,
+          data: messageResponse,
+        });
+
+        this.loggingService.debug(
+          `Published real-time message event for conversation: ${input.conversationId}`,
+          'sendMessage',
+        );
+      } catch (eventError) {
+        // Log the error but don't fail the message sending
+        this.loggingService.error(
+          `Failed to publish real-time event: ${eventError instanceof Error ? eventError.message : 'Unknown error'}`,
+          'sendMessage',
+        );
+      }
+
+      return messageResponse;
     } catch (error) {
       this.errorLogger.error(
         error instanceof Error ? error : new Error(String(error)),

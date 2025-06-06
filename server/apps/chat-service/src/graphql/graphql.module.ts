@@ -3,8 +3,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { resolvers } from './resolvers';
 import { LoggingService } from '@app/logging';
+import { RedisEventPublisher, RedisEventSubscriber } from '@app/redis';
 import { ChatDatabaseModule } from '../database/chat-database.module';
 import { ChatCqrsModule } from '../chat-cqrs.module';
+import { SubscriptionService } from './services/subscription.service';
 
 /**
  * Chat Service GraphQL Module
@@ -97,7 +99,14 @@ import { ChatCqrsModule } from '../chat-cqrs.module';
       inject: [LoggingService],
     }),
   ],
-  providers: [...resolvers],
+  providers: [
+    ...resolvers,
+    SubscriptionService,
+    {
+      provide: 'EVENT_PUBLISHER',
+      useExisting: RedisEventPublisher,
+    },
+  ],
   exports: [GraphQLModule],
 })
 export class ChatGraphQLModule {}

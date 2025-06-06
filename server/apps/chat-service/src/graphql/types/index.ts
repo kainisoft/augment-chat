@@ -47,4 +47,6 @@ export {
   RemoveReactionResponse,
   MessageStatusUpdateResponse,
   TypingStatusResponse,
+  TypingStatusType,
+  MessageStatusUpdateType,
 } from './response.types';

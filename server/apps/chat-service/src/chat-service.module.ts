@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
+import { RedisModule, PubSubModule } from '@app/redis';
 import { ChatServiceController } from './chat-service.controller';
 import { ChatServiceService } from './chat-service.service';
 import {
@@ -21,6 +22,24 @@ import { ChatCqrsModule } from './chat-cqrs.module';
 
     // Import CommonModule
     CommonModule,
+
+    // Import Redis Module for Redis connection
+    RedisModule.registerDefault({
+      isGlobal: true,
+      keyPrefix: 'chat:',
+    }),
+
+    // Import PubSub Module for real-time communication
+    PubSubModule.register({
+      publisher: {
+        channelPrefix: 'chat',
+        enableLogs: process.env.PUBSUB_LOGS === 'true',
+      },
+      subscriber: {
+        channelPrefix: 'chat',
+        enableLogs: process.env.PUBSUB_LOGS === 'true',
+      },
+    }),
 
     // Import ChatDatabaseModule for MongoDB access
     ChatDatabaseModule,
