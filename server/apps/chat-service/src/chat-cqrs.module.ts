@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { LoggingModule } from '@app/logging';
 import { ChatDatabaseModule } from './database/chat-database.module';
+import { KafkaProducerModule } from './kafka/kafka-producer.module';
 
 // Import handlers (will be created)
 import { CommandHandlers } from './application/commands/handlers';
@@ -15,7 +16,13 @@ import { RepositoryModule } from './infrastructure/repositories/repository.modul
  * Module for CQRS pattern implementation in the Chat Service.
  */
 @Module({
-  imports: [CqrsModule, LoggingModule, ChatDatabaseModule, RepositoryModule],
+  imports: [
+    CqrsModule,
+    LoggingModule,
+    ChatDatabaseModule,
+    RepositoryModule,
+    KafkaProducerModule,
+  ],
   providers: [...CommandHandlers, ...QueryHandlers, ...EventHandlers],
   exports: [CqrsModule],
 })

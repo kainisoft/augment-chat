@@ -35,6 +35,8 @@ export {
   AddReactionInput,
   ConversationSettingsInput,
   MarkMessagesReadInput,
+  MarkMessageDeliveredInput,
+  MarkMessageReadInput,
 } from './input.types';
 
 // Response Types
@@ -43,4 +45,6 @@ export {
   DeleteConversationResponse,
   AddReactionResponse,
   RemoveReactionResponse,
+  MessageStatusUpdateResponse,
+  TypingStatusResponse,
 } from './response.types';

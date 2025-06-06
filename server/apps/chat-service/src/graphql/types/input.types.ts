@@ -232,3 +232,27 @@ export class MarkMessagesReadInput {
   @IsString({ each: true })
   messageIds: string[];
 }
+
+/**
+ * Mark Message Delivered Input
+ *
+ * Input type for marking a single message as delivered.
+ */
+@InputType({ description: 'Input for marking a message as delivered' })
+export class MarkMessageDeliveredInput {
+  @Field(() => ID, { description: 'Message ID to mark as delivered' })
+  @IsString()
+  messageId: string;
+}
+
+/**
+ * Mark Message Read Input
+ *
+ * Input type for marking a single message as read.
+ */
+@InputType({ description: 'Input for marking a message as read' })
+export class MarkMessageReadInput {
+  @Field(() => ID, { description: 'Message ID to mark as read' })
+  @IsString()
+  messageId: string;
+}

@@ -1,4 +1,13 @@
-import { Resolver, Query, Mutation, Args, ID, Context } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  Context,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 import {
@@ -10,13 +19,19 @@ import {
   AddReactionInput,
   AddReactionResponse,
   RemoveReactionResponse,
+  MarkMessageDeliveredInput,
+  MarkMessageReadInput,
+  MessageStatusUpdateResponse,
 } from '../types';
 import { SendMessageCommand } from '../../application/commands/send-message.command';
 import { UpdateMessageCommand } from '../../application/commands/update-message.command';
 import { DeleteMessageCommand } from '../../application/commands/delete-message.command';
+import { MarkMessageDeliveredCommand } from '../../application/commands/mark-message-delivered.command';
+import { MarkMessageReadCommand } from '../../application/commands/mark-message-read.command';
 import { GetMessageQuery } from '../../application/queries/get-message.query';
 import { GetConversationMessagesQuery } from '../../application/queries/get-conversation-messages.query';
 import { AuthenticatedRequest } from '@app/security';
+import { MessageReadModel } from '../../domain/read-models/message.read-model';
 
 /**
  * Message Resolver
@@ -119,10 +134,15 @@ export class MessageResolver {
       const currentUserId = context.user?.sub || 'anonymous-user';
 
       const messages = await this.queryBus.execute(
-        new GetConversationMessagesQuery(conversationId, currentUserId, limit, offset),
+        new GetConversationMessagesQuery(
+          conversationId,
+          currentUserId,
+          limit,
+          offset,
+        ),
       );
 
-      const messageTypes: MessageType[] = messages.map(message => ({
+      const messageTypes: MessageType[] = messages.map((message) => ({
         id: message.id.toString(),
         conversationId: message.conversationId.toString(),
         senderId: message.senderId.toString(),
@@ -326,6 +346,156 @@ export class MessageResolver {
         messageId,
         error: error instanceof Error ? error.message : 'Unknown error',
       };
+    }
+  }
+
+  /**
+   * Mark message as delivered
+   */
+  @Mutation(() => MessageStatusUpdateResponse, {
+    name: 'markMessageDelivered',
+    description: 'Mark a message as delivered to the current user',
+  })
+  async markMessageDelivered(
+    @Args('input') input: MarkMessageDeliveredInput,
+    @Context() context: AuthenticatedRequest,
+  ): Promise<MessageStatusUpdateResponse> {
+    try {
+      this.loggingService.debug(
+        `Marking message as delivered: ${input.messageId}`,
+        'markMessageDelivered',
+        { messageId: input.messageId },
+      );
+
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
+
+      await this.commandBus.execute(
+        new MarkMessageDeliveredCommand(input.messageId, currentUserId),
+      );
+
+      return {
+        success: true,
+        messageId: input.messageId,
+        statusType: 'delivered',
+        userId: currentUserId,
+      };
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error marking message as delivered: ${input.messageId}`,
+        {
+          source: MessageResolver.name,
+          method: 'markMessageDelivered',
+          messageId: input.messageId,
+        },
+      );
+
+      return {
+        success: false,
+        messageId: input.messageId,
+        statusType: 'delivered',
+        userId: context.user?.sub || 'anonymous-user',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  /**
+   * Mark message as read
+   */
+  @Mutation(() => MessageStatusUpdateResponse, {
+    name: 'markMessageRead',
+    description: 'Mark a message as read by the current user',
+  })
+  async markMessageRead(
+    @Args('input') input: MarkMessageReadInput,
+    @Context() context: AuthenticatedRequest,
+  ): Promise<MessageStatusUpdateResponse> {
+    try {
+      this.loggingService.debug(
+        `Marking message as read: ${input.messageId}`,
+        'markMessageRead',
+        { messageId: input.messageId },
+      );
+
+      // Get current user from context
+      const currentUserId = context.user?.sub || 'anonymous-user';
+
+      await this.commandBus.execute(
+        new MarkMessageReadCommand(input.messageId, currentUserId),
+      );
+
+      return {
+        success: true,
+        messageId: input.messageId,
+        statusType: 'read',
+        userId: currentUserId,
+      };
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error marking message as read: ${input.messageId}`,
+        {
+          source: MessageResolver.name,
+          method: 'markMessageRead',
+          messageId: input.messageId,
+        },
+      );
+
+      return {
+        success: false,
+        messageId: input.messageId,
+        statusType: 'read',
+        userId: context.user?.sub || 'anonymous-user',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  /**
+   * Resolve deliveredTo field
+   */
+  @ResolveField('deliveredTo', () => [String], { nullable: true })
+  resolveDeliveredTo(@Parent() message: MessageReadModel): string[] | null {
+    try {
+      return message.deliveredTo
+        ? message.deliveredTo.map((userId) => userId.toString())
+        : null;
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        'Error resolving deliveredTo field',
+        {
+          source: MessageResolver.name,
+          method: 'resolveDeliveredTo',
+          messageId: message.id.toString(),
+        },
+      );
+      return null;
+    }
+  }
+
+  /**
+   * Resolve readBy field
+   */
+  @ResolveField('readBy', () => [String], { nullable: true })
+  resolveReadBy(@Parent() message: MessageReadModel): string[] | null {
+    try {
+      return message.readBy
+        ? message.readBy.map((userId) => userId.toString())
+        : null;
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        'Error resolving readBy field',
+        {
+          source: MessageResolver.name,
+          method: 'resolveReadBy',
+          messageId: message.id.toString(),
+        },
+      );
+      return null;
     }
   }
 }
