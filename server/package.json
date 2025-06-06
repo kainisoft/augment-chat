@@ -28,6 +28,8 @@
     "test:e2e": "jest --config ./apps/server/test/jest-e2e.json",
     "graphql:generate": "graphql-codegen --config apps/user-service/codegen.ts",
     "graphql:watch": "graphql-codegen --config apps/user-service/codegen.ts --watch",
+    "graphql:generate:chat": "graphql-codegen --config apps/chat-service/codegen.ts",
+    "graphql:watch:chat": "graphql-codegen --config apps/chat-service/codegen.ts --watch",
     "migration:create": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:create",
     "migration:up": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run",
     "migration:down": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:revert",
