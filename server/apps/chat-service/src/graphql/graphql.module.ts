@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { resolvers } from './resolvers';
 import { LoggingService } from '@app/logging';
 
@@ -12,7 +15,8 @@ import { SubscriptionService } from './services/subscription.service';
  * Chat Service GraphQL Module
  *
  * This module configures Apollo Federation for the Chat Service, providing
- * GraphQL API endpoints for messaging, conversations, and real-time features.
+ * GraphQL API endpoints for messaging and conversations. Real-time features
+ * (subscriptions) are handled by the dedicated WebSocket Gateway.
  */
 @Module({
   imports: [
@@ -22,9 +26,9 @@ import { SubscriptionService } from './services/subscription.service';
     // Import CQRS module for command and query handling
     ChatCqrsModule,
 
-    // Configure GraphQL with Apollo Server
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
+    // Configure GraphQL with Apollo Federation
+    GraphQLModule.forRootAsync<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
       useFactory: (loggingService: LoggingService) => {
         loggingService.setContext('ChatGraphQLModule');
 
@@ -87,12 +91,6 @@ import { SubscriptionService } from './services/subscription.service';
             }
 
             return error;
-          },
-
-          // Enable subscriptions for real-time features
-          subscriptions: {
-            'graphql-ws': true,
-            'subscriptions-transport-ws': true,
           },
         };
       },

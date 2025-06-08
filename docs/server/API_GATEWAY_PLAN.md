@@ -22,8 +22,8 @@ This document outlines the implementation plan for a **Hybrid API Gateway Archit
                     │         (nginx/AWS ALB)                 │
                     └─────────────────┬───────────────────────┘
                                       │
-                    ┌─────────────────┴───────────────────────┐
-                    │                                         │
+                    ┌─────────────────┴──────────────-─────────┐
+                    │                                          │
           ┌─────────▼───────--──┐                    ┌─────────▼─────────┐
           │   Apollo Federation │                    │   WebSocket       │
           │     Gateway         │                    │    Gateway        │

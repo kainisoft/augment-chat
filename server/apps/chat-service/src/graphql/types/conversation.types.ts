@@ -1,4 +1,10 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  ID,
+  ObjectType,
+  registerEnumType,
+  Directive,
+} from '@nestjs/graphql';
 import { GraphQLListResponse } from '@app/dtos/graphql/pagination-response.dto';
 import { MessageType } from './message.types';
 
@@ -70,8 +76,10 @@ export class ConversationParticipantType {
  * Conversation GraphQL Type
  *
  * Represents a conversation (private or group chat).
+ * Enhanced for Apollo Federation with @key directive for entity resolution.
  */
 @ObjectType({ description: 'Chat conversation' })
+@Directive('@key(fields: "id")')
 export class ConversationType {
   @Field(() => ID, { description: 'Unique identifier for the conversation' })
   id: string;
