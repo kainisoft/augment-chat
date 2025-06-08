@@ -59,6 +59,21 @@ export interface MessageStatusEvent extends ChatEvent {
 }
 
 /**
+ * Presence Event Interface
+ */
+export interface PresenceEvent extends BaseEvent {
+  type: 'presence.updated' | 'presence.offline';
+  userId: string;
+  data: {
+    userId: string;
+    status: string; // 'online', 'offline', 'away', 'busy'
+    statusMessage?: string;
+    lastSeen: Date;
+    timestamp: Date;
+  };
+}
+
+/**
  * Subscription Service
  *
  * Handles GraphQL subscriptions using Redis PubSub for real-time communication.
@@ -123,6 +138,19 @@ export class SubscriptionService implements OnModuleDestroy {
       `Creating message status subscription for channel: ${channel}`,
       'createMessageStatusSubscription',
       { conversationId },
+    );
+    return this.pubSub.asyncIterator(channel);
+  }
+
+  /**
+   * Create an async iterator for user presence subscriptions
+   */
+  createPresenceSubscription(userId?: string) {
+    const channel = userId ? `presence.${userId}` : 'presence.global';
+    this.loggingService.debug(
+      `Creating presence subscription for channel: ${channel}`,
+      'createPresenceSubscription',
+      { userId },
     );
     return this.pubSub.asyncIterator(channel);
   }
@@ -202,6 +230,36 @@ export class SubscriptionService implements OnModuleDestroy {
       this.loggingService.error(
         `Error publishing message status event: ${error instanceof Error ? error.message : 'Unknown error'}`,
         'publishMessageStatusEvent',
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Publish a presence event
+   */
+  async publishPresenceEvent(event: PresenceEvent): Promise<void> {
+    try {
+      const userChannel = `presence.${event.userId}`;
+      const globalChannel = 'presence.global';
+
+      // Publish using standardized event publisher for microservice communication
+      await this.eventPublisher.publish(userChannel, event);
+      await this.eventPublisher.publish(globalChannel, event);
+
+      // Publish using GraphQL PubSub for GraphQL subscriptions
+      await this.pubSub.publish(userChannel, { presenceUpdated: event.data });
+      await this.pubSub.publish(globalChannel, { presenceUpdated: event.data });
+
+      this.loggingService.debug(
+        `Published presence event to channels: ${userChannel}, ${globalChannel}`,
+        'publishPresenceEvent',
+        { userId: event.userId, status: event.data.status },
+      );
+    } catch (error) {
+      this.loggingService.error(
+        `Error publishing presence event: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'publishPresenceEvent',
       );
       throw error;
     }

@@ -8,6 +8,7 @@ import { MarkMessageDeliveredHandler } from './mark-message-delivered.handler';
 import { MarkMessageReadHandler } from './mark-message-read.handler';
 import { StartTypingHandler } from './start-typing.handler';
 import { StopTypingHandler } from './stop-typing.handler';
+import { UpdatePresenceHandler } from './update-presence.handler';
 
 export const CommandHandlers = [
   SendMessageHandler,
@@ -20,6 +21,7 @@ export const CommandHandlers = [
   MarkMessageReadHandler,
   StartTypingHandler,
   StopTypingHandler,
+  UpdatePresenceHandler,
 ];
 
 export {
@@ -33,4 +35,5 @@ export {
   MarkMessageReadHandler,
   StartTypingHandler,
   StopTypingHandler,
+  UpdatePresenceHandler,
 };

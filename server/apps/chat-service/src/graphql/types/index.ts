@@ -39,6 +39,8 @@ export {
   MarkMessageReadInput,
   StartTypingInput,
   StopTypingInput,
+  UpdatePresenceInput,
+  UserPresenceType,
 } from './input.types';
 
 // Response Types
@@ -51,4 +53,6 @@ export {
   TypingStatusResponse,
   TypingStatusType,
   MessageStatusUpdateType,
+  UserPresenceResponse,
+  UserPresenceInfoType,
 } from './response.types';

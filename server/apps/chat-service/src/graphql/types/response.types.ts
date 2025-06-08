@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { MessageReactionType } from './message.types';
+import { UserPresenceType } from './input.types';
 
 /**
  * Delete Message Response
@@ -201,4 +202,64 @@ export class MessageStatusUpdateType {
 
   @Field(() => Date, { description: 'Timestamp of the status update' })
   timestamp: Date;
+}
+
+/**
+ * User Presence Response
+ *
+ * Response type for user presence operations.
+ */
+@ObjectType({ description: 'Response for user presence operations' })
+export class UserPresenceResponse {
+  @Field(() => Boolean, {
+    description: 'Whether the presence update was successful',
+  })
+  success: boolean;
+
+  @Field(() => String, { description: 'User ID' })
+  userId: string;
+
+  @Field(() => UserPresenceType, { description: 'Current presence status' })
+  status: UserPresenceType;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Custom status message',
+  })
+  statusMessage?: string;
+
+  @Field(() => Date, { description: 'Last updated timestamp' })
+  lastSeen: Date;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Error message if presence update failed',
+  })
+  error?: string;
+}
+
+/**
+ * User Presence Info Type
+ *
+ * Represents user presence for real-time subscriptions and queries.
+ */
+@ObjectType({ description: 'User presence information' })
+export class UserPresenceInfoType {
+  @Field(() => String, { description: 'User ID' })
+  userId: string;
+
+  @Field(() => UserPresenceType, { description: 'Current presence status' })
+  status: UserPresenceType;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Custom status message',
+  })
+  statusMessage?: string;
+
+  @Field(() => Date, { description: 'Last updated timestamp' })
+  lastSeen: Date;
+
+  @Field(() => Date, { description: 'When the presence was last updated' })
+  updatedAt: Date;
 }

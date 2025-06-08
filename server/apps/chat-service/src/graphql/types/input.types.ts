@@ -1,4 +1,4 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, ID, InputType, registerEnumType } from '@nestjs/graphql';
 import {
   IsString,
   IsOptional,
@@ -10,6 +10,24 @@ import {
 } from 'class-validator';
 import { ConversationTypeEnum } from './conversation.types';
 import { MessageTypeEnum } from './message.types';
+
+/**
+ * User Presence Type Enum
+ */
+export enum UserPresenceType {
+  ONLINE = 'online',
+  OFFLINE = 'offline',
+  AWAY = 'away',
+  BUSY = 'busy',
+}
+
+/**
+ * Register the UserPresenceType enum for GraphQL
+ */
+registerEnumType(UserPresenceType, {
+  name: 'UserPresenceType',
+  description: 'User presence status options',
+});
 
 /**
  * Send Message Input
@@ -279,4 +297,22 @@ export class StopTypingInput {
   @Field(() => ID, { description: 'Conversation ID where user stopped typing' })
   @IsString()
   conversationId: string;
+}
+
+/**
+ * Update Presence Input
+ *
+ * Input type for updating user presence status.
+ */
+@InputType({ description: 'Input for updating user presence status' })
+export class UpdatePresenceInput {
+  @Field(() => UserPresenceType, { description: 'New presence status' })
+  @IsEnum(UserPresenceType)
+  status: UserPresenceType;
+
+  @Field({ description: 'Optional custom status message', nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  statusMessage?: string;
 }

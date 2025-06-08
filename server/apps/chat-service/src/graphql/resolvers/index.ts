@@ -8,6 +8,7 @@ import { HelloResolver } from './hello.resolver';
 import { MessageResolver } from './message.resolver';
 import { ConversationResolver } from './conversation.resolver';
 import { SubscriptionResolver } from './subscription.resolver';
+import { PresenceResolver } from './presence.resolver';
 
 /**
  * Array of all resolver classes to be registered with the GraphQL module
@@ -17,6 +18,7 @@ export const resolvers = [
   MessageResolver,
   ConversationResolver,
   SubscriptionResolver,
+  PresenceResolver,
 ];
 
 /**
@@ -27,4 +29,5 @@ export {
   MessageResolver,
   ConversationResolver,
   SubscriptionResolver,
+  PresenceResolver,
 };
