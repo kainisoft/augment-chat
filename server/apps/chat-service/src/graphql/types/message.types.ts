@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { GraphQLListResponse } from '@app/dtos/graphql/pagination-response.dto';
+import { UserType } from './user.types';
 
 /**
  * Message Type Enum
@@ -103,6 +104,9 @@ export class MessageType {
 
   @Field(() => String, { description: 'User ID who sent the message' })
   senderId: string;
+
+  @Field(() => UserType, { description: 'User who sent the message' })
+  sender?: UserType;
 
   @Field(() => String, { description: 'Message content' })
   content: string;

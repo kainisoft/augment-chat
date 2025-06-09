@@ -23,6 +23,7 @@ import {
   StartTypingInput,
   StopTypingInput,
   TypingStatusResponse,
+  UserType,
 } from '../types';
 import { SendMessageCommand } from '../../application/commands/send-message.command';
 import { UpdateMessageCommand } from '../../application/commands/update-message.command';
@@ -596,6 +597,41 @@ export class MessageResolver {
         isTyping: false,
         error: error instanceof Error ? error.message : 'Unknown error',
       };
+    }
+  }
+
+  /**
+   * Resolve sender field for Apollo Federation
+   */
+  @ResolveField('sender', () => UserType)
+  resolveSender(@Parent() message: MessageReadModel): UserType {
+    try {
+      this.loggingService.debug(
+        `Resolving sender for message: ${message.id.toString()}`,
+        'resolveSender',
+        {
+          messageId: message.id.toString(),
+          senderId: message.senderId.toString(),
+        },
+      );
+
+      // Return a User entity reference for Apollo Federation
+      // The User Service will resolve the full user data
+      return {
+        id: message.senderId.toString(),
+      } as UserType;
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        'Error resolving sender field',
+        {
+          source: MessageResolver.name,
+          method: 'resolveSender',
+          messageId: message.id.toString(),
+          senderId: message.senderId.toString(),
+        },
+      );
+      throw error;
     }
   }
 

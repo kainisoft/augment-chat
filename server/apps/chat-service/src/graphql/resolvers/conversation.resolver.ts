@@ -1,4 +1,13 @@
-import { Resolver, Query, Mutation, Args, ID, Context } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  Context,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 import {
@@ -9,6 +18,7 @@ import {
   DeleteConversationResponse,
   AddParticipantsInput,
   RemoveParticipantsInput,
+  UserType,
 } from '../types';
 import { CreateConversationCommand } from '../../application/commands/create-conversation.command';
 import { AddParticipantsCommand } from '../../application/commands/add-participants.command';
@@ -461,6 +471,44 @@ export class ConversationResolver {
         },
       );
       throw error;
+    }
+  }
+
+  /**
+   * Resolve participantUsers field for federation
+   *
+   * This field resolver maps participant IDs to User entity references
+   * for Apollo Federation. The User Service will resolve the actual user data.
+   */
+  @ResolveField('participantUsers', () => [UserType])
+  resolveParticipantUsers(
+    @Parent() conversation: ConversationType,
+  ): UserType[] {
+    try {
+      this.loggingService.debug(
+        `Resolving participant users for conversation: ${conversation.id}`,
+        'resolveParticipantUsers',
+        {
+          conversationId: conversation.id,
+          participantCount: conversation.participants.length,
+        },
+      );
+
+      // Map participant IDs to User entity references for federation
+      return conversation.participants.map((participantId) => ({
+        id: participantId,
+      })) as UserType[];
+    } catch (error) {
+      this.errorLogger.error(
+        error instanceof Error ? error : new Error(String(error)),
+        `Error resolving participant users for conversation: ${conversation.id}`,
+        {
+          source: ConversationResolver.name,
+          method: 'resolveParticipantUsers',
+          conversationId: conversation.id,
+        },
+      );
+      return [];
     }
   }
 }

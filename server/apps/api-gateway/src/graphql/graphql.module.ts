@@ -3,7 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService } from '@app/logging';
-import { IntrospectAndCompose } from '@apollo/gateway';
+import { IntrospectAndCompose, RemoteGraphQLDataSource } from '@apollo/gateway';
 
 /**
  * Apollo Federation GraphQL Module
@@ -47,6 +47,17 @@ import { IntrospectAndCompose } from '@apollo/gateway';
           'GraphQLFederationSetup',
         );
 
+        // Log service configuration for debugging
+        loggingService.debug(
+          'Federated services configuration',
+          'GraphQLFederationSetup',
+          {
+            userService: userServiceUrl,
+            chatService: chatServiceUrl,
+            pollInterval: 30000,
+          },
+        );
+
         return {
           gateway: {
             // Phase 2, Step 2: Dynamic schema composition from services
@@ -68,6 +79,43 @@ import { IntrospectAndCompose } from '@apollo/gateway';
                 'User-Agent': 'Apollo-Gateway/2.0',
               },
             }),
+            // Configure service communication with authentication context
+            buildService({ name, url }) {
+              return new RemoteGraphQLDataSource({
+                url,
+                willSendRequest({ request, context }) {
+                  // Ensure request.http exists
+                  if (!request.http) {
+                    return;
+                  }
+
+                  // Pass authentication headers to downstream services
+                  const authHeader = context?.req?.headers?.authorization;
+                  if (authHeader && typeof authHeader === 'string') {
+                    request.http.headers.set('authorization', authHeader);
+                  }
+
+                  // Pass other relevant headers
+                  const userAgent = context?.req?.headers?.['user-agent'];
+                  if (userAgent && typeof userAgent === 'string') {
+                    request.http.headers.set('user-agent', userAgent);
+                  }
+
+                  // Add service identification header
+                  request.http.headers.set('x-gateway-service', name);
+
+                  loggingService.debug(
+                    `Sending request to ${name} service`,
+                    'FederationRequest',
+                    {
+                      service: name,
+                      url,
+                      hasAuth: !!authHeader,
+                    },
+                  );
+                },
+              });
+            },
           },
           server: {
             // Enable GraphQL Playground in development
@@ -81,26 +129,26 @@ import { IntrospectAndCompose } from '@apollo/gateway';
               credentials: true,
             },
           },
-          // Error formatting
+          // Error formatting for GraphQL operations
           formatError: (error: any) => {
             loggingService.error(
-              `GraphQL Error: ${error.message}`,
+              `GraphQL Error: ${error?.message || 'Unknown error'}`,
+              error?.stack || 'No stack trace available',
               'GraphQLError',
             );
 
             // Don't expose internal errors in production
-            if (
-              configService.get<string>('NODE_ENV') === 'production' &&
-              error.extensions?.code === 'INTERNAL_SERVER_ERROR'
-            ) {
+            if (configService.get<string>('NODE_ENV') === 'production') {
               return {
                 message: 'Internal server error',
                 extensions: {
                   code: 'INTERNAL_SERVER_ERROR',
+                  timestamp: new Date().toISOString(),
                 },
               };
             }
 
+            // In development, return full error details
             return error;
           },
         };

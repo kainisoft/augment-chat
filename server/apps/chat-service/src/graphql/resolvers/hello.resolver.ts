@@ -1,5 +1,6 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { LoggingService } from '@app/logging';
+import { Auth, AuthType } from '@app/security';
 
 /**
  * Hello Resolver
@@ -7,6 +8,7 @@ import { LoggingService } from '@app/logging';
  * Provides a simple hello world query for testing GraphQL functionality.
  */
 @Resolver()
+@Auth(AuthType.NONE)
 export class HelloResolver {
   constructor(private readonly loggingService: LoggingService) {
     this.loggingService.setContext(HelloResolver.name);

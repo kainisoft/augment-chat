@@ -17,10 +17,7 @@ import { UserCqrsModule } from '../user-cqrs.module';
         loggingService.setContext('GraphQLModule');
 
         return {
-          autoSchemaFile: {
-            path: './generated/schema.gql',
-            federation: 2,
-          },
+          autoSchemaFile: true,
           sortSchema: true,
           debug: process.env.GRAPHQL_DEBUG === 'true',
           playground: process.env.GRAPHQL_PLAYGROUND === 'true',
