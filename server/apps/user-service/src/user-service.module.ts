@@ -21,7 +21,6 @@ import { UserDatabaseModule } from './database/user-database.module';
 import { UserCqrsModule } from './user-cqrs.module';
 import { CacheModule } from './cache/cache.module';
 import { KafkaModule } from './kafka/kafka.module';
-import { SecurityModule } from '@app/security';
 
 /**
  * User Service Module
@@ -183,24 +182,6 @@ import { SecurityModule } from '@app/security';
 
     // Import Kafka Module for event communication
     KafkaModule,
-
-    SecurityModule.register(
-      {
-        jwtModuleOptions: {
-          secret: process.env.JWT_SECRET || 'change-me-in-production',
-          signOptions: {
-            expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-          },
-        },
-        isGlobal: true,
-      },
-      {
-        isGlobal: true,
-        maxAttempts: 10,
-        windowSeconds: 60,
-        blockSeconds: 60,
-      },
-    ),
   ],
   controllers: [
     // Main service controller

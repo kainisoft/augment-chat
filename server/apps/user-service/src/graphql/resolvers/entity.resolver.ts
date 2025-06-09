@@ -1,6 +1,5 @@
 import { Resolver, ResolveReference } from '@nestjs/graphql';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
-import { Auth, AuthType } from '@app/security';
 
 import { UserType } from '../types/user.types';
 import { UserStatusEnum } from '../../domain/models/value-objects/user-status.value-object';
@@ -16,7 +15,6 @@ import { UserStatusEnum } from '../../domain/models/value-objects/user-status.va
  * resolution, enabling cross-service queries and data composition.
  */
 @Resolver(() => UserType)
-@Auth(AuthType.NONE)
 export class EntityResolver {
   constructor(
     private readonly loggingService: LoggingService,

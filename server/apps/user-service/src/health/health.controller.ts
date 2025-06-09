@@ -2,7 +2,6 @@ import { Controller, Injectable } from '@nestjs/common';
 import { BaseHealthController } from '@app/common';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
 import { UserDatabaseService } from '../database/user-database.service';
-import { Auth, AuthType } from '@app/security';
 
 /**
  * Service to check database connectivity for the user service
@@ -62,7 +61,6 @@ export class UserServiceHealthService {
 }
 
 @Controller('health')
-@Auth(AuthType.NONE)
 export class UserServiceHealthController extends BaseHealthController {
   constructor(
     private readonly healthService: UserServiceHealthService,
