@@ -9,6 +9,7 @@ import {
   ApiGatewayHealthService,
 } from './health/health.controller';
 import { ApiGatewayGraphQLModule } from './graphql/graphql.module';
+import { ServiceDiscoveryModule } from './services/service-discovery.module';
 
 @Module({
   imports: [
@@ -55,6 +56,9 @@ import { ApiGatewayGraphQLModule } from './graphql/graphql.module';
       },
       inject: [ConfigService],
     }),
+
+    // Import Service Discovery Module
+    ServiceDiscoveryModule,
 
     // Import Apollo Federation GraphQL Module
     ApiGatewayGraphQLModule,

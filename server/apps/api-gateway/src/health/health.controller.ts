@@ -1,6 +1,8 @@
-import { Controller, Injectable } from '@nestjs/common';
+import { Controller, Injectable, Get } from '@nestjs/common';
 import { BaseHealthController } from '@app/common';
 import { LoggingService, ErrorLoggerService } from '@app/logging';
+import { ServiceRegistryService } from '../services/service-registry.service';
+import { CircuitBreakerService } from '../services/circuit-breaker.service';
 
 /**
  * Service to check API Gateway dependencies
@@ -10,39 +12,73 @@ export class ApiGatewayHealthService {
   constructor(
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly serviceRegistry: ServiceRegistryService,
+    private readonly circuitBreaker: CircuitBreakerService,
   ) {
     // Set context for all logs from this service
     this.loggingService.setContext(ApiGatewayHealthService.name);
   }
 
   /**
-   * Check connectivity to microservices
-   * In a real implementation, this would check actual service connections
+   * Check connectivity to microservices using service registry
    */
   async checkServices(): Promise<{ status: 'ok' | 'error'; details?: any }> {
-    // Simulate service connectivity checks
-    this.loggingService.debug('Checking service connectivity', 'checkServices');
+    this.loggingService.debug(
+      'Checking service connectivity via service registry',
+      'checkServices',
+    );
 
     try {
-      // Simulate checking connections to other services
-      await new Promise((resolve) => setTimeout(resolve, 5));
+      // Get all registered services and their health status
+      const allServices = this.serviceRegistry.getAllServices();
+      const serviceHealthMap: Record<string, any> = {};
+
+      for (const service of allServices) {
+        const healthStats = this.serviceRegistry.getServiceHealth(service.name);
+        const circuitBreakerState = this.circuitBreaker.getState(service.name);
+
+        serviceHealthMap[service.name] = {
+          instances: {
+            total: healthStats.total,
+            healthy: healthStats.healthy,
+            unhealthy: healthStats.unhealthy,
+            unknown: healthStats.unknown,
+          },
+          circuitBreaker: {
+            state: circuitBreakerState.state,
+            failureCount: circuitBreakerState.failureCount,
+            lastFailureTime: circuitBreakerState.lastFailureTime,
+          },
+          loadBalancing: service.loadBalancingStrategy,
+        };
+      }
+
+      // Get circuit breaker statistics
+      const circuitBreakerStats = this.circuitBreaker.getStatistics();
+
+      const hasUnhealthyServices = allServices.some((service) => {
+        const health = this.serviceRegistry.getServiceHealth(service.name);
+        return health.healthy === 0 && health.total > 0;
+      });
 
       const result = {
-        status: 'ok' as const,
+        status: hasUnhealthyServices ? ('error' as const) : ('ok' as const),
         details: {
-          services: {
-            'user-service': 'connected',
-            'auth-service': 'connected',
-            'chat-service': 'connected',
-            'notification-service': 'connected',
-          },
+          services: serviceHealthMap,
+          circuitBreakers: circuitBreakerStats,
+          totalServices: allServices.length,
         },
       };
 
       this.loggingService.debug(
-        'Service connectivity check successful',
+        'Service connectivity check completed',
         'checkServices',
+        {
+          totalServices: allServices.length,
+          hasUnhealthyServices,
+        },
       );
+
       return result;
     } catch (error: any) {
       const errorMessage =
@@ -76,6 +112,8 @@ export class ApiGatewayHealthController extends BaseHealthController {
     private readonly healthService: ApiGatewayHealthService,
     private readonly loggingService: LoggingService,
     private readonly errorLogger: ErrorLoggerService,
+    private readonly serviceRegistry: ServiceRegistryService,
+    private readonly circuitBreaker: CircuitBreakerService,
   ) {
     super();
     // Set context for all logs from this controller
@@ -109,5 +147,68 @@ export class ApiGatewayHealthController extends BaseHealthController {
     });
 
     return result;
+  }
+
+  /**
+   * Get detailed service health information
+   */
+  @Get('services')
+  async getServiceHealth() {
+    this.loggingService.debug(
+      'Getting service health details',
+      'getServiceHealth',
+    );
+
+    const allServices = this.serviceRegistry.getAllServices();
+    const serviceDetails = allServices.map((service) => {
+      const healthStats = this.serviceRegistry.getServiceHealth(service.name);
+      const circuitBreakerState = this.circuitBreaker.getState(service.name);
+
+      return {
+        name: service.name,
+        instances: service.instances.map((instance) => ({
+          id: instance.id,
+          url: instance.url,
+          health: instance.health,
+          lastHealthCheck: instance.lastHealthCheck,
+          weight: instance.weight,
+          metadata: instance.metadata,
+        })),
+        healthStats,
+        circuitBreaker: circuitBreakerState,
+        loadBalancingStrategy: service.loadBalancingStrategy,
+      };
+    });
+
+    const circuitBreakerStats = this.circuitBreaker.getStatistics();
+
+    return {
+      timestamp: new Date().toISOString(),
+      services: serviceDetails,
+      summary: {
+        totalServices: allServices.length,
+        circuitBreakers: circuitBreakerStats,
+      },
+    };
+  }
+
+  /**
+   * Get circuit breaker status
+   */
+  @Get('circuit-breakers')
+  async getCircuitBreakerStatus() {
+    this.loggingService.debug(
+      'Getting circuit breaker status',
+      'getCircuitBreakerStatus',
+    );
+
+    const allStates = this.circuitBreaker.getAllStates();
+    const statistics = this.circuitBreaker.getStatistics();
+
+    return {
+      timestamp: new Date().toISOString(),
+      statistics,
+      circuitBreakers: Object.fromEntries(allStates),
+    };
   }
 }

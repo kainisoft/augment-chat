@@ -4,6 +4,9 @@ import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService } from '@app/logging';
 import { IntrospectAndCompose, RemoteGraphQLDataSource } from '@apollo/gateway';
+import { ServiceRegistryService } from '../services/service-registry.service';
+import { ServiceDiscoveryModule } from '../services/service-discovery.module';
+import { CircuitBreakerService } from '../services/circuit-breaker.service';
 
 /**
  * Apollo Federation GraphQL Module
@@ -18,6 +21,7 @@ import { IntrospectAndCompose, RemoteGraphQLDataSource } from '@apollo/gateway';
  */
 @Module({
   imports: [
+    ServiceDiscoveryModule,
     GraphQLModule.forRootAsync<ApolloGatewayDriverConfig>({
       driver: ApolloGatewayDriver,
       useFactory: (
@@ -79,8 +83,15 @@ import { IntrospectAndCompose, RemoteGraphQLDataSource } from '@apollo/gateway';
                 'User-Agent': 'Apollo-Gateway/2.0',
               },
             }),
-            // Configure service communication with authentication context
-            buildService({ name, url }) {
+            // Configure service communication with enhanced monitoring
+            buildService({ name, url }: { name: string; url: string }) {
+              // Log service discovery integration
+              loggingService.log(
+                `Building service data source with discovery: ${name}`,
+                'ServiceDiscoveryIntegration',
+                { service: name, url },
+              );
+
               return new RemoteGraphQLDataSource({
                 url,
                 willSendRequest({ request, context }) {
@@ -101,8 +112,12 @@ import { IntrospectAndCompose, RemoteGraphQLDataSource } from '@apollo/gateway';
                     request.http.headers.set('user-agent', userAgent);
                   }
 
-                  // Add service identification header
+                  // Add service identification headers
                   request.http.headers.set('x-gateway-service', name);
+                  request.http.headers.set(
+                    'x-request-id',
+                    `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+                  );
 
                   loggingService.debug(
                     `Sending request to ${name} service`,
