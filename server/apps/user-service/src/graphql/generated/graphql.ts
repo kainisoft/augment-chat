@@ -446,12 +446,6 @@ export type ShareableDirectiveArgs = { };
 
 export type ShareableDirectiveResolver<Result, Parent, ContextType = GraphQLContext, Args = ShareableDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export type TagDirectiveArgs = {
-  name: Scalars['String']['input'];
-};
-
-export type TagDirectiveResolver<Result, Parent, ContextType = GraphQLContext, Args = TagDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
@@ -543,5 +537,4 @@ export type DirectiveResolvers<ContextType = GraphQLContext> = ResolversObject<{
   provides: ProvidesDirectiveResolver<any, any, ContextType>;
   requires: RequiresDirectiveResolver<any, any, ContextType>;
   shareable: ShareableDirectiveResolver<any, any, ContextType>;
-  tag: TagDirectiveResolver<any, any, ContextType>;
 }>;

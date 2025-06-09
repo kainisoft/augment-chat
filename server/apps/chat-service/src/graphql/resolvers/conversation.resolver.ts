@@ -68,7 +68,7 @@ export class ConversationResolver {
       return {
         id: conversation.id.toString(),
         type: conversation.type,
-        participants: conversation.participants.map(p => p.toString()),
+        participants: conversation.participants.map((p) => p.toString()),
         name: conversation.name,
         description: conversation.description,
         avatar: conversation.avatar,
@@ -129,6 +129,7 @@ export class ConversationResolver {
           lastMessageAt: new Date(),
           unreadCount: 2,
           messageCount: 15,
+          participantUsers: [],
         },
         {
           id: 'conv-2',
@@ -141,6 +142,7 @@ export class ConversationResolver {
           lastMessageAt: new Date(),
           unreadCount: 0,
           messageCount: 42,
+          participantUsers: [],
         },
       ];
 

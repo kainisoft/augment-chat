@@ -1,10 +1,4 @@
-import {
-  Field,
-  ID,
-  ObjectType,
-  registerEnumType,
-  Directive,
-} from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { GraphQLListResponse } from '@app/dtos/graphql/pagination-response.dto';
 
 /**
@@ -98,10 +92,8 @@ export class MessageReactionType {
  * Message GraphQL Type
  *
  * Represents a message in a conversation.
- * Enhanced for Apollo Federation with @key directive for entity resolution.
  */
 @ObjectType({ description: 'Chat message' })
-@Directive('@key(fields: "id")')
 export class MessageType {
   @Field(() => ID, { description: 'Unique identifier for the message' })
   id: string;

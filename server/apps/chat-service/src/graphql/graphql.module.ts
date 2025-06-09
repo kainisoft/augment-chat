@@ -39,10 +39,11 @@ import { SubscriptionService } from './services/subscription.service';
 
         return {
           // Auto-generate schema from decorators
-          autoSchemaFile: true,
+          autoSchemaFile: {
+            path: './generated/schema.gql',
+            federation: 2,
+          },
           sortSchema: true,
-
-          // Environment-based configuration
           debug: process.env.GRAPHQL_DEBUG === 'true',
           playground: process.env.GRAPHQL_PLAYGROUND === 'true',
           introspection: process.env.GRAPHQL_INTROSPECTION === 'true',

@@ -67,10 +67,10 @@
     "optimize:imports": "ts-node -r tsconfig-paths/register ./scripts/optimization/import-export-optimizer.ts"
   },
   "dependencies": {
-    "@apollo/gateway": "2.10.2",
+    "@apollo/gateway": "2.2.3",
     "@apollo/server": "4.12.1",
     "@apollo/server-plugin-landing-page-graphql-playground": "4.0.0",
-    "@apollo/subgraph": "2.10.2",
+    "@apollo/subgraph": "2.2.3",
     "@as-integrations/fastify": "2.1.1",
     "@graphql-yoga/nestjs": "3.13.5",
     "@nestjs/apollo": "13.1.0",

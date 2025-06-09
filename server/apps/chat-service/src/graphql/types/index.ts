@@ -4,6 +4,9 @@
  * This file exports all GraphQL types for the Chat Service.
  */
 
+// User Types (Federation Extension)
+export { UserType } from './user.types';
+
 // Message Types
 export {
   MessageType,

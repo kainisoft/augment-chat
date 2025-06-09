@@ -7,6 +7,7 @@ import {
 } from '@nestjs/graphql';
 import { GraphQLListResponse } from '@app/dtos/graphql/pagination-response.dto';
 import { MessageType } from './message.types';
+import { UserType } from './user.types';
 
 /**
  * Conversation Type Enum
@@ -91,6 +92,11 @@ export class ConversationType {
     description: 'User IDs of conversation participants',
   })
   participants: string[];
+
+  @Field(() => [UserType], {
+    description: 'User entities of conversation participants',
+  })
+  participantUsers: UserType[];
 
   @Field(() => String, {
     nullable: true,

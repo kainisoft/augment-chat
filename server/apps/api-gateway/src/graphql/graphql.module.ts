@@ -3,6 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService } from '@app/logging';
+import { IntrospectAndCompose } from '@apollo/gateway';
 
 /**
  * Apollo Federation GraphQL Module
@@ -10,7 +11,10 @@ import { LoggingService } from '@app/logging';
  * This module configures Apollo Federation Gateway to combine schemas from
  * User Service and Chat Service into a unified GraphQL API.
  *
- * Phase 2, Step 1: Basic Apollo Federation setup without service integration
+ * Phase 2, Step 2: Service Integration and Schema Composition
+ * - Dynamic service discovery with IntrospectAndCompose
+ * - User Service and Chat Service integration
+ * - Cross-service entity resolution
  */
 @Module({
   imports: [
@@ -37,52 +41,33 @@ import { LoggingService } from '@app/logging';
           'GraphQLFederationSetup',
         );
 
-        // For Phase 2, Step 1: Use a minimal static schema since no services are integrated yet
-        // This allows the Apollo Federation Gateway to start successfully
+        // Phase 2, Step 2: Dynamic service discovery with IntrospectAndCompose
         loggingService.log(
-          'Phase 2, Step 1: Starting Apollo Federation Gateway with minimal schema (no service integration)',
+          'Phase 2, Step 2: Starting Apollo Federation Gateway with dynamic service discovery',
           'GraphQLFederationSetup',
         );
 
         return {
           gateway: {
-            // Phase 2, Step 1: Minimal static supergraph SDL
-            supergraphSdl: `
-              schema
-                @link(url: "https://specs.apollo.dev/link/v1.0")
-                @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-              {
-                query: Query
-              }
-
-              directive @join__enumValue(graph: join__Graph!) on ENUM_VALUE
-              directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-              directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-              directive @join__implements(graph: join__Graph!, interface: String!) on OBJECT | INTERFACE
-              directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean, resolvable: Boolean, isInterfaceObject: Boolean) on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-              directive @join__unionMember(graph: join__Graph!, member: String!) on UNION
-              directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
-              scalar join__FieldSet
-              enum join__Graph {
-                PLACEHOLDER @join__graph(name: "placeholder", url: "http://localhost:9999/placeholder")
-              }
-              scalar link__Import
-              enum link__Purpose {
-                SECURITY
-                EXECUTION
-              }
-
-              type Query @join__type(graph: PLACEHOLDER) {
-                _service: _Service!
-                hello: String! @join__field(graph: PLACEHOLDER)
-                gatewayStatus: String! @join__field(graph: PLACEHOLDER)
-              }
-
-              type _Service @join__type(graph: PLACEHOLDER) {
-                sdl: String @join__field(graph: PLACEHOLDER)
-              }
-            `,
+            // Phase 2, Step 2: Dynamic schema composition from services
+            supergraphSdl: new IntrospectAndCompose({
+              subgraphs: [
+                {
+                  name: 'user-service',
+                  url: userServiceUrl,
+                },
+                {
+                  name: 'chat-service',
+                  url: chatServiceUrl,
+                },
+              ],
+              // Add polling interval for schema updates
+              pollIntervalInMs: 30000, // 30 seconds
+              // Add introspection headers if needed
+              introspectionHeaders: {
+                'User-Agent': 'Apollo-Gateway/2.0',
+              },
+            }),
           },
           server: {
             // Enable GraphQL Playground in development

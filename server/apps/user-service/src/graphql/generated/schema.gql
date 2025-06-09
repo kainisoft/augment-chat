@@ -47,11 +47,6 @@ Indicates that an object type's field is allowed to be resolved by multiple subg
 """
 directive @shareable on FIELD_DEFINITION | OBJECT
 
-"""
-Applies arbitrary string metadata to a schema location. Custom tooling can use this metadata during any step of the schema delivery flow, including composition, static analysis, and documentation. The GraphOS Enterprise contracts feature uses @tag with its inclusion and exclusion filters.
-"""
-directive @tag(name: String!) repeatable on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | SCHEMA | UNION
-
 """Input for creating a new relationship"""
 input CreateRelationshipInput {
   """Target user ID"""
