@@ -10,6 +10,7 @@ import {
 } from './health/health.controller';
 import { ApiGatewayGraphQLModule } from './graphql/graphql.module';
 import { ServiceDiscoveryModule } from './services/service-discovery.module';
+import { RoutingModule } from './routing/routing.module';
 
 @Module({
   imports: [
@@ -62,6 +63,9 @@ import { ServiceDiscoveryModule } from './services/service-discovery.module';
 
     // Import Apollo Federation GraphQL Module
     ApiGatewayGraphQLModule,
+
+    // Import Routing Module for intelligent request routing
+    RoutingModule,
   ],
   controllers: [ApiGatewayController, ApiGatewayHealthController],
   providers: [ApiGatewayService, ApiGatewayHealthService],
