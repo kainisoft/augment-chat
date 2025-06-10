@@ -23,6 +23,7 @@ show_help() {
   echo "  chat        Start chat service with dependencies"
   echo "  notification Start notification service with dependencies"
   echo "  api         Start API gateway with dependencies"
+  echo "  websocket   Start WebSocket gateway with dependencies"
   echo "  all         Start all services"
   echo "  build       Rebuild all services"
   echo "  build:auth  Rebuild auth service"
@@ -30,6 +31,7 @@ show_help() {
   echo "  build:chat  Rebuild chat service"
   echo "  build:notification Rebuild notification service"
   echo "  build:api   Rebuild API gateway"
+  echo "  build:websocket Rebuild WebSocket gateway"
   echo "  down        Stop all services (using all profiles)"
   echo "  down:all    Forcefully stop all project containers"
   echo "  clean       Stop all services and remove volumes"
@@ -125,6 +127,10 @@ case "$1" in
     echo "Starting API gateway with dependencies..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile api up -d --build --force-recreate
     ;;
+  websocket)
+    echo "Starting WebSocket gateway with dependencies..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile websocket up -d --build --force-recreate
+    ;;
   all)
     echo "Starting all services..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all up -d --build --force-recreate
@@ -153,10 +159,14 @@ case "$1" in
     echo "Rebuilding API gateway..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" build api-gateway
     ;;
+  build:websocket)
+    echo "Rebuilding WebSocket gateway..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" build websocket-gateway
+    ;;
   down)
     echo "Stopping all services..."
     # Stop services with all profiles to ensure everything is stopped
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile infra down
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile websocket --profile infra down
     ;;
   down:all)
     echo "Forcefully stopping all project containers..."
@@ -173,7 +183,7 @@ case "$1" in
     ;;
   clean)
     echo "Stopping all services and removing volumes..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile infra down -v
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile websocket --profile infra down -v
     ;;
   logs)
     if [ -z "$2" ]; then

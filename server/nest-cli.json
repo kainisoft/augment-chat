@@ -137,15 +137,6 @@
         "tsConfigPath": "libs/logging/tsconfig.lib.json"
       }
     },
-    "mongodb": {
-      "type": "library",
-      "root": "libs/mongodb",
-      "entryFile": "index",
-      "sourceRoot": "libs/mongodb/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/mongodb/tsconfig.lib.json"
-      }
-    },
     "logging-service": {
       "type": "application",
       "root": "apps/logging-service",
@@ -153,6 +144,15 @@
       "sourceRoot": "apps/logging-service/src",
       "compilerOptions": {
         "tsConfigPath": "apps/logging-service/tsconfig.app.json"
+      }
+    },
+    "mongodb": {
+      "type": "library",
+      "root": "libs/mongodb",
+      "entryFile": "index",
+      "sourceRoot": "libs/mongodb/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/mongodb/tsconfig.lib.json"
       }
     },
     "notification-service": {
@@ -207,6 +207,15 @@
       "sourceRoot": "libs/validation/src",
       "compilerOptions": {
         "tsConfigPath": "libs/validation/tsconfig.lib.json"
+      }
+    },
+    "websocket-gateway": {
+      "type": "application",
+      "root": "apps/websocket-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/websocket-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/websocket-gateway/tsconfig.app.json"
       }
     }
   }

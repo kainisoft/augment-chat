@@ -29,6 +29,35 @@ services:
       retries: 3
       start_period: 10s
 
+  # WebSocket Gateway
+  websocket-gateway:
+    build:
+      context: ./server
+      dockerfile: ../docker/Dockerfiles/websocket-gateway.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    command: pnpm run start:debug 0.0.0.0:9229 websocket-gateway
+    ports:
+      - "4001:4001"
+      - "9233:9229"
+    env_file:
+      - ./docker/config/websocket-gateway/websocket-gateway.env
+    volumes:
+      - ./server/apps/websocket-gateway:/app/apps/websocket-gateway:delegated
+      - ./server/libs:/app/libs:delegated
+      - ./server/nest-cli.json:/app/nest-cli.json:delegated
+      - ./server/tsconfig.json:/app/tsconfig.json:delegated
+      - websocket-gateway-node-modules:/app/node_modules
+    networks:
+      - chat-network
+    profiles: [ "websocket" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4001/api/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
   # Auth Service
   auth-service:
     build:
@@ -401,6 +430,7 @@ volumes:
   redis-node-2-data:
   redis-node-3-data:
   api-gateway-node-modules:
+  websocket-gateway-node-modules:
   auth-service-node-modules:
   user-service-node-modules:
   chat-service-node-modules:
