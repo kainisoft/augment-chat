@@ -13,6 +13,7 @@ import { ApolloServerPluginUsageReporting } from '@apollo/server/plugin/usageRep
 import { ApolloServerPluginSchemaReporting } from '@apollo/server/plugin/schemaReporting';
 import { GraphQLDevelopmentToolsService } from './development-tools.service';
 import { GraphQLDevelopmentController } from './development.controller';
+import { UserContextService } from '@app/security';
 
 /**
  * Apollo Federation GraphQL Module
@@ -33,6 +34,7 @@ import { GraphQLDevelopmentController } from './development.controller';
       useFactory: (
         configService: ConfigService,
         loggingService: LoggingService,
+        userContextService: UserContextService,
       ) => {
         loggingService.setContext('ApiGatewayGraphQLModule');
 
@@ -110,6 +112,18 @@ import { GraphQLDevelopmentController } from './development.controller';
                     return;
                   }
 
+                  // Create service headers with user context
+                  const serviceHeaders =
+                    userContextService.createServiceHeaders(
+                      context?.user,
+                      context?.requestId,
+                    );
+
+                  // Set all service headers
+                  Object.entries(serviceHeaders).forEach(([key, value]) => {
+                    request.http!.headers.set(key, value);
+                  });
+
                   // Pass authentication headers to downstream services
                   const authHeader = context?.req?.headers?.authorization;
                   if (authHeader && typeof authHeader === 'string') {
@@ -124,10 +138,6 @@ import { GraphQLDevelopmentController } from './development.controller';
 
                   // Add service identification headers
                   request.http.headers.set('x-gateway-service', name);
-                  request.http.headers.set(
-                    'x-request-id',
-                    `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-                  );
 
                   loggingService.debug(
                     `Sending request to ${name} service`,
@@ -136,6 +146,8 @@ import { GraphQLDevelopmentController } from './development.controller';
                       service: name,
                       url,
                       hasAuth: !!authHeader,
+                      hasUser: !!context?.user,
+                      userId: context?.user?.sub,
                     },
                   );
                 },
@@ -200,15 +212,22 @@ import { GraphQLDevelopmentController } from './development.controller';
             // Query complexity and depth limits for security
             validationRules: [],
 
-            // Custom context for development tools
-            context: ({ req, reply }) => ({
-              req,
-              reply,
-              // Add development-specific context
-              isDevelopment:
-                configService.get<string>('NODE_ENV') === 'development',
-              requestId: `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-            }),
+            // Custom context with user authentication
+            context: async ({ req, reply }) => {
+              const graphqlContext =
+                await userContextService.createGraphQLContext(req);
+
+              return {
+                req,
+                reply,
+                user: graphqlContext.user,
+                requestId: graphqlContext.requestId,
+                timestamp: graphqlContext.timestamp,
+                // Add development-specific context
+                isDevelopment:
+                  configService.get<string>('NODE_ENV') === 'development',
+              };
+            },
           },
           // Error formatting for GraphQL operations
           formatError: (error: any) => {
@@ -234,7 +253,7 @@ import { GraphQLDevelopmentController } from './development.controller';
           },
         };
       },
-      inject: [ConfigService, LoggingService],
+      inject: [ConfigService, LoggingService, UserContextService],
     }),
   ],
   controllers: [GraphQLDevelopmentController],

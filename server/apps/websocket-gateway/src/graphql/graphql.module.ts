@@ -4,6 +4,7 @@ import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { LoggingService, LoggingModule } from '@app/logging';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { UserContextService } from '@app/security';
 import Redis from 'ioredis';
 import { join } from 'path';
 
@@ -27,6 +28,7 @@ import { join } from 'path';
       useFactory: (
         configService: ConfigService,
         loggingService: LoggingService,
+        userContextService: UserContextService,
       ) => {
         loggingService.setContext('WebSocketGraphQLModule');
 
@@ -53,39 +55,82 @@ import { join } from 'path';
           // Configure subscriptions with WebSocket support
           subscriptions: {
             'graphql-ws': {
-              onConnect: () => {
+              onConnect: async (context: any) => {
                 loggingService.debug(
                   'WebSocket connection attempt',
                   'WebSocketAuth',
                 );
 
-                // For development, allow connections without authentication
-                const user = { id: 'dev-user', email: 'dev@example.com' };
+                try {
+                  // Extract user from connection parameters
+                  const user =
+                    await userContextService.extractUserFromConnectionParams(
+                      context.connectionParams,
+                    );
 
-                loggingService.log(
-                  'WebSocket connection authenticated',
-                  'WebSocketAuth',
-                  { userId: user.id },
-                );
-
-                return { user };
+                  if (user) {
+                    loggingService.log(
+                      'WebSocket connection authenticated',
+                      'WebSocketAuth',
+                      { userId: user.sub, sessionId: user.sessionId },
+                    );
+                    return { user };
+                  } else {
+                    // For development, allow connections without authentication
+                    if (configService.get<string>('NODE_ENV') === 'development') {
+                      const devUser = { id: 'dev-user', email: 'dev@example.com' };
+                      loggingService.log(
+                        'WebSocket connection allowed (development mode)',
+                        'WebSocketAuth',
+                        { userId: devUser.id },
+                      );
+                      return { user: devUser };
+                    } else {
+                      loggingService.warn(
+                        'WebSocket connection rejected: No authentication',
+                        'WebSocketAuth',
+                      );
+                      throw new Error('Authentication required');
+                    }
+                  }
+                } catch (error) {
+                  loggingService.error(
+                    'WebSocket authentication failed',
+                    error instanceof Error ? error.stack : 'Unknown error',
+                    'WebSocketAuth',
+                  );
+                  throw new Error('Authentication failed');
+                }
               },
-              onDisconnect: () => {
+              onDisconnect: (context: any) => {
+                const userId =
+                  context?.user?.sub || context?.user?.id || 'unknown';
                 loggingService.log(
                   'WebSocket connection closed',
                   'WebSocketLifecycle',
+                  { userId },
                 );
               },
             },
           },
 
           // Configure context for resolvers
-          context: ({ connectionParams, req }) => ({
-            user: connectionParams?.user || req?.user || { id: 'dev-user' },
-            req,
-            isDevelopment:
-              configService.get<string>('NODE_ENV') === 'development',
-          }),
+          context: async ({ connectionParams, req }) => {
+            const graphqlContext =
+              await userContextService.createGraphQLContext(
+                req,
+                connectionParams,
+              );
+
+            return {
+              req,
+              user: graphqlContext.user || connectionParams?.user || { id: 'dev-user' },
+              requestId: graphqlContext.requestId,
+              timestamp: graphqlContext.timestamp,
+              isDevelopment:
+                configService.get<string>('NODE_ENV') === 'development',
+            };
+          },
 
           // Configure CORS for WebSocket connections
           cors: {
@@ -118,7 +163,7 @@ import { join } from 'path';
           },
         };
       },
-      inject: [ConfigService, LoggingService],
+      inject: [ConfigService, LoggingService, UserContextService],
     }),
   ],
   providers: [

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggingModule, LogLevel } from '@app/logging';
+import { SecurityModule } from '@app/security';
 import { WebSocketGraphQLModule } from './graphql/graphql.module';
 import { ChatSubscriptionResolver } from './resolvers/chat.resolver';
 import { UserPresenceResolver } from './resolvers/user.resolver';
@@ -62,6 +63,17 @@ import { WebsocketGatewayService } from './websocket-gateway.service';
         };
       },
       inject: [ConfigService],
+    }),
+
+    // Security module for authentication
+    SecurityModule.registerAuthGuard({
+      isGlobal: true,
+      jwtModuleOptions: {
+        secret: process.env.JWT_SECRET || 'websocket-gateway-secret-key',
+        signOptions: {
+          expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+        },
+      },
     }),
 
     // GraphQL WebSocket module

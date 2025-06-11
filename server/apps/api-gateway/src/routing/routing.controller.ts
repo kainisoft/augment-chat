@@ -11,6 +11,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { LoggingService } from '@app/logging';
 import { RequestProxyService } from './request-proxy.service';
 import { GraphQLOperationRouterService } from './graphql-operation-router.service';
+import { Auth, AuthType } from '@app/security';
 
 /**
  * Routing Controller
@@ -175,6 +176,7 @@ export class RoutingController {
   /**
    * Get routing information and statistics
    */
+  @Auth(AuthType.NONE)
   @Get('routing-info')
   async getRoutingInfo(): Promise<any> {
     try {
@@ -224,6 +226,7 @@ export class RoutingController {
   /**
    * Health check endpoint for routing service
    */
+  @Auth(AuthType.NONE)
   @Get('health')
   async getRoutingHealth(): Promise<any> {
     try {

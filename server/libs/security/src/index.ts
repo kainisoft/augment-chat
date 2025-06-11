@@ -10,15 +10,23 @@
 // Core module
 export { SecurityModule } from './security.module';
 
-// Rate limiting (most frequently used - 5 usages)
+// Rate limiting and authentication decorators (most frequently used)
 export {
   RateLimit,
   RateLimitSkip,
   RateLimitKeyGenerator,
   Auth,
   AUTH_TYPE_KEY,
+  CurrentUser,
+  CurrentUserId,
+  CurrentUserRoles,
+  CurrentUserPermissions,
 } from './decorators';
-export { RateGuardService, AuthGuardService } from './services';
+export {
+  RateGuardService,
+  AuthGuardService,
+  UserContextService,
+} from './services';
 
 // Security utilities (frequently used)
 export { SecurityUtilsService } from './utils/security-utils.service';

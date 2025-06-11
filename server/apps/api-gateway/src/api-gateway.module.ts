@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '@app/common';
 import { LoggingModule, LogLevel } from '@app/logging';
+import { SecurityModule } from '@app/security';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 import {
@@ -21,6 +22,17 @@ import { RoutingModule } from './routing/routing.module';
 
     // Import CommonModule
     CommonModule,
+
+    // Import SecurityModule for authentication and authorization
+    SecurityModule.registerAuthGuard({
+      isGlobal: true,
+      jwtModuleOptions: {
+        secret: process.env.JWT_SECRET || 'api-gateway-secret-key',
+        signOptions: {
+          expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+        },
+      },
+    }),
 
     // Import LoggingModule with API Gateway specific configuration
     LoggingModule.registerAsync({

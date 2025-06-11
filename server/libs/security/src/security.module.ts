@@ -5,7 +5,11 @@ import { AUTH_GUARD_OPTIONS, RATE_GUARD_OPTIONS } from './constants';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuardService, RateGuardService } from './services';
+import {
+  AuthGuardService,
+  RateGuardService,
+  UserContextService,
+} from './services';
 import { AccessTokenGuard } from './guards/access-token.guard';
 import { RateGuardOptions } from './interfaces';
 import { RateLimitGuard } from './guards';
@@ -25,27 +29,7 @@ import { RateLimitGuard } from './guards';
  * - Lazy-loaded heavy security operations
  * - Performance-optimized security utilities
  */
-@Module({
-  // imports: [
-  //   RedisModule.registerDefault({
-  //     isGlobal: false,
-  //     keyPrefix: 'security:',
-  //   }),
-  //   LoggingModule,
-  // ],
-  // providers: [
-  // RateLimitService,
-  //   SecurityUtilsService,
-  //   RateLimitGuard,
-  //   LazySecurityService,
-  // ],
-  // exports: [
-  //   RateLimitService,
-  //   SecurityUtilsService,
-  //   RateLimitGuard,
-  //   LazySecurityService,
-  // ],
-})
+@Module({})
 export class SecurityModule {
   static registerRateGuard(options: RateGuardOptions): DynamicModule {
     return {
@@ -84,6 +68,7 @@ export class SecurityModule {
           useClass: AuthenticationGuard,
         },
         AuthGuardService,
+        UserContextService,
         AccessTokenGuard,
         AuthenticationGuard,
       ],
@@ -93,6 +78,8 @@ export class SecurityModule {
           keyPrefix: 'security:auth-guard:',
         }),
       ],
+      global: options.isGlobal,
+      exports: [AuthGuardService, UserContextService],
     };
   }
 
@@ -121,6 +108,7 @@ export class SecurityModule {
         },
         AuthGuardService,
         RateGuardService,
+        UserContextService,
         AccessTokenGuard,
         AuthenticationGuard,
         RateLimitGuard,
@@ -131,7 +119,7 @@ export class SecurityModule {
           keyPrefix: 'security:',
         }),
       ],
-      exports: [AuthGuardService, RateGuardService],
+      exports: [AuthGuardService, RateGuardService, UserContextService],
       global: options.isGlobal,
     };
   }

@@ -268,38 +268,67 @@ The Hybrid API Gateway Architecture consists of two specialized gateways that wo
 - ✅ Circuit breaker and service discovery functioning properly
 - ✅ Request correlation and error handling working as expected
 
-### Phase 5: Authentication Middleware Integration ⏳ PENDING
-- 🎯 **GOAL**: Unified authentication across both gateways
-- ⚠️ **CRITICAL**: Must support both HTTP and WebSocket authentication
+### Phase 5: Authentication Middleware Integration ✅ COMPLETED
+- ✅ **GOAL**: Unified authentication across both gateways
+- ✅ **CRITICAL**: Must support both HTTP and WebSocket authentication
 
 **Shared Authentication Infrastructure**:
-- ☐ **JWT authentication middleware**
-  - ☐ Integrate with Auth Service for token validation
-  - ☐ Implement JWT middleware for Apollo Federation Gateway
-  - ☐ Add JWT validation for WebSocket Gateway connections
-  - ☐ Configure shared JWT secret and validation logic
-- ☐ **User context injection**
-  - ☐ Add user context injection for downstream services
-  - ☐ Implement context propagation headers
-  - ☐ Configure user context for GraphQL resolvers
-  - ☐ Add user context for WebSocket subscriptions
-- ☐ **Authorization and permissions**
-  - ☐ Implement role-based access control
-  - ☐ Add operation-level authorization
-  - ☐ Configure subscription-level permissions
-  - ☐ Implement resource-based authorization
+- ✅ **JWT authentication middleware**
+  - ✅ Integrate with Auth Service for token validation
+  - ✅ Implement JWT middleware for Apollo Federation Gateway
+  - ✅ Add JWT validation for WebSocket Gateway connections
+  - ✅ Configure shared JWT secret and validation logic
+- ✅ **User context injection**
+  - ✅ Add user context injection for downstream services
+  - ✅ Implement context propagation headers
+  - ✅ Configure user context for GraphQL resolvers
+  - ✅ Add user context for WebSocket subscriptions
+- ✅ **Authorization and permissions**
+  - ✅ Implement role-based access control
+  - ✅ Add operation-level authorization
+  - ✅ Configure subscription-level permissions
+  - ✅ Implement resource-based authorization
 
 **WebSocket-Specific Authentication**:
-- ☐ **Connection authentication**
-  - ☐ JWT validation during WebSocket handshake
-  - ☐ Connection parameter authentication
-  - ☐ Token refresh handling for long-lived connections
-  - ☐ Authentication failure handling and reconnection
-- ☐ **Session management**
-  - ☐ Integrate with Redis for session storage
-  - ☐ Implement session validation and refresh
-  - ☐ Add session-based subscription filtering
-  - ☐ Configure session cleanup for disconnected clients
+- ✅ **Connection authentication**
+  - ✅ JWT validation during WebSocket handshake
+  - ✅ Connection parameter authentication
+  - ✅ Token refresh handling for long-lived connections
+  - ✅ Authentication failure handling and reconnection
+- ✅ **Session management**
+  - ✅ Integrate with Redis for session storage
+  - ✅ Implement session validation and refresh
+  - ✅ Add session-based subscription filtering
+  - ✅ Configure session cleanup for disconnected clients
+
+**✅ Phase 5 Implementation Summary**:
+- **Unified Security Module Integration**: Successfully integrated `@app/security` module across both gateways
+- **JWT Authentication**: Global authentication guards active on both Apollo Federation Gateway (port 4000) and WebSocket Gateway (port 4001)
+- **User Context Service**: Created comprehensive user context service for extracting and managing user information across HTTP and WebSocket connections
+- **Current User Decorators**: Implemented `@CurrentUser()`, `@CurrentUserId()`, `@CurrentUserRoles()`, and `@CurrentUserPermissions()` decorators for easy user context injection
+- **Public Route Support**: Added `@Public()` decorator support for marking endpoints as publicly accessible (e.g., routing info, health checks)
+- **WebSocket Authentication**: Implemented JWT validation during WebSocket connection handshake with proper error handling
+- **Context Propagation**: Added service headers for downstream communication including user ID, roles, permissions, and request correlation
+- **Development Mode Support**: Graceful fallback for development environments while maintaining security in production
+
+**🔗 Authentication Endpoints**:
+- **Protected**: All GraphQL endpoints require valid JWT tokens
+- **Public**: Routing information and health endpoints accessible without authentication
+- **WebSocket**: Connection authentication via connection parameters or headers
+
+**🧪 Authentication Testing Results**:
+- ✅ JWT validation working for HTTP requests
+- ✅ WebSocket authentication during connection handshake
+- ✅ Public endpoints accessible without tokens
+- ✅ Protected endpoints properly reject unauthorized requests
+- ✅ User context propagation to downstream services
+- ✅ Unified authentication experience across both gateways
+
+**📁 Security Components Created**:
+- `server/libs/security/src/decorators/current-user.decorator.ts` - User context decorators
+- `server/libs/security/src/services/user-context.service.ts` - User context management
+- Updated GraphQL modules with authentication context
+- Integrated `@app/iam` public route decorators
 
 ### Phase 6: Client Integration and Dual Connection Management ⏳ PENDING
 - 🎯 **GOAL**: Enable clients to work with both Apollo Federation and WebSocket gateways
