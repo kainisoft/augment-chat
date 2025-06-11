@@ -82,11 +82,12 @@ export class ServiceConfigurationService {
   private getPort(serviceKey: string): number {
     const portMap: Record<string, number> = {
       'api-gateway': 4000,
-      'auth-service': 4001,
-      'user-service': 4002,
-      'chat-service': 4003,
-      'notification-service': 4004,
-      'logging-service': 4005,
+      'websocket-gateway': 4001,
+      'auth-service': 4002,
+      'user-service': 4003,
+      'chat-service': 4004,
+      'notification-service': 4005,
+      'logging-service': 4006,
     };
 
     return (

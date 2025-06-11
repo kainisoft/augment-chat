@@ -4,7 +4,7 @@
 
 The Chat Service manages real-time messaging, chat rooms, and message history. This document details all environment variables required for the Chat Service configuration.
 
-**Service Port**: 4003  
+**Service Port**: 4004
 **Environment File**: `docker/config/chat-service/chat-service.env`
 
 ## Required Variables
@@ -12,7 +12,7 @@ The Chat Service manages real-time messaging, chat rooms, and message history. T
 | Variable | Type | Description | Example | Validation |
 |----------|------|-------------|---------|------------|
 | `NODE_ENV` | string | Application environment | `development` | Must be: `development`, `production`, `test` |
-| `PORT` | number | Service port number | `4003` | Range: 1000-65535 |
+| `PORT` | number | Service port number | `4004` | Range: 1000-65535 |
 | `MONGODB_URI` | url | MongoDB connection URI | `mongodb://mongo:27017/chatdb` | Must match MongoDB URI pattern |
 | `JWT_SECRET` | string | JWT signing secret | `your-32-character-secret-key-here` | Minimum 32 characters |
 | `REDIS_HOST` | string | Redis cluster host | `redis-cluster` | Required for real-time features |
@@ -68,7 +68,7 @@ MONGODB_TIMEOUT=10000
 
 | Variable | Type | Default | Description | Validation |
 |----------|------|---------|-------------|------------|
-| `WEBSOCKET_PORT` | number | `4003` | WebSocket server port | Range: 1000-65535 |
+| `WEBSOCKET_PORT` | number | `4004` | WebSocket server port | Range: 1000-65535 |
 | `WEBSOCKET_PATH` | string | `/socket.io` | WebSocket endpoint path | Must start with `/` |
 | `WEBSOCKET_CORS_ORIGIN` | string | `*` | CORS allowed origins | Valid origin pattern |
 | `WEBSOCKET_PING_TIMEOUT` | number | `60000` | Ping timeout (ms) | Range: 10000-300000 |
@@ -211,7 +211,7 @@ KAFKA_GROUP_ID=chat-service-group
 
 # Application Configuration
 NODE_ENV=development
-PORT=4003
+PORT=4004
 HOST=0.0.0.0
 API_PREFIX=api
 
@@ -232,7 +232,7 @@ JWT_ACCESS_TOKEN_EXPIRY=900
 JWT_REFRESH_TOKEN_EXPIRY=604800
 
 # WebSocket Configuration
-WEBSOCKET_PORT=4003
+WEBSOCKET_PORT=4004
 WEBSOCKET_PATH=/socket.io
 WEBSOCKET_CORS_ORIGIN=*
 WEBSOCKET_PING_TIMEOUT=60000
@@ -288,7 +288,7 @@ LOKI_HOST=http://loki:3100
 
 # Application Configuration
 NODE_ENV=production
-PORT=4003
+PORT=4004
 HOST=0.0.0.0
 API_PREFIX=api
 
@@ -309,7 +309,7 @@ JWT_ACCESS_TOKEN_EXPIRY=900
 JWT_REFRESH_TOKEN_EXPIRY=604800
 
 # WebSocket Configuration
-WEBSOCKET_PORT=4003
+WEBSOCKET_PORT=4004
 WEBSOCKET_PATH=/socket.io
 WEBSOCKET_CORS_ORIGIN=${ALLOWED_ORIGINS}
 WEBSOCKET_PING_TIMEOUT=60000

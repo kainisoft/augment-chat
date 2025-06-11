@@ -4,7 +4,7 @@
 
 The Logging Service provides centralized log aggregation, processing, and storage with a GUI dashboard. This document details all environment variables required for the Logging Service configuration.
 
-**Service Port**: 4005  
+**Service Port**: 4006
 **Environment File**: `docker/config/logging-service/logging-service.env`
 
 ## Required Variables
@@ -12,7 +12,7 @@ The Logging Service provides centralized log aggregation, processing, and storag
 | Variable | Type | Description | Example | Validation |
 |----------|------|-------------|---------|------------|
 | `NODE_ENV` | string | Application environment | `development` | Must be: `development`, `production`, `test` |
-| `PORT` | number | Service port number | `4005` | Range: 1000-65535 |
+| `PORT` | number | Service port number | `4006` | Range: 1000-65535 |
 | `JWT_SECRET` | string | JWT signing secret | `your-32-character-secret-key-here` | Minimum 32 characters |
 | `REDIS_HOST` | string | Redis cluster host | `redis-cluster` | Required for caching |
 | `REDIS_PORT` | number | Redis cluster port | `7000` | Range: 1000-65535 |
@@ -180,7 +180,7 @@ LOKI_RETRY_DELAY=1000
 
 # Application Configuration
 NODE_ENV=development
-PORT=4005
+PORT=4006
 HOST=0.0.0.0
 API_PREFIX=api
 
@@ -226,7 +226,7 @@ KAFKA_METRICS_TOPIC=metrics-logs
 
 # Dashboard Configuration
 DASHBOARD_ENABLED=true
-DASHBOARD_PORT=4005
+DASHBOARD_PORT=4006
 DASHBOARD_PATH=/dashboard
 DASHBOARD_AUTH_REQUIRED=false
 
@@ -270,7 +270,7 @@ LOG_KAFKA_ENABLED=false
 
 # Application Configuration
 NODE_ENV=production
-PORT=4005
+PORT=4006
 HOST=0.0.0.0
 API_PREFIX=api
 
@@ -319,7 +319,7 @@ KAFKA_METRICS_TOPIC=metrics-logs
 
 # Dashboard Configuration
 DASHBOARD_ENABLED=true
-DASHBOARD_PORT=4005
+DASHBOARD_PORT=4006
 DASHBOARD_PATH=/dashboard
 DASHBOARD_AUTH_REQUIRED=true
 

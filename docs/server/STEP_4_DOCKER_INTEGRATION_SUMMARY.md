@@ -70,11 +70,12 @@ healthcheck:
 
 **Applied to All Services**:
 - ✅ **api-gateway**: `http://127.0.0.1:4000/api/health`
-- ✅ **auth-service**: `http://127.0.0.1:4001/api/health`
-- ✅ **user-service**: `http://127.0.0.1:4002/api/health`
-- ✅ **chat-service**: `http://127.0.0.1:4003/api/health`
-- ✅ **notification-service**: `http://127.0.0.1:4004/api/health`
-- ✅ **logging-service**: `http://127.0.0.1:4005/api/health`
+- ✅ **websocket-gateway**: `http://127.0.0.1:4001/api/health`
+- ✅ **auth-service**: `http://127.0.0.1:4002/api/health`
+- ✅ **user-service**: `http://127.0.0.1:4003/api/health`
+- ✅ **chat-service**: `http://127.0.0.1:4004/api/health`
+- ✅ **notification-service**: `http://127.0.0.1:4005/api/health`
+- ✅ **logging-service**: `http://127.0.0.1:4006/api/health`
 
 ---
 

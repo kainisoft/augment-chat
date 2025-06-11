@@ -6,7 +6,7 @@ declare const module: any;
 async function startApplication() {
   try {
     const app = await bootstrap(LoggingServiceModule, {
-      port: 4005,
+      port: 4006,
       serviceName: 'Logging Service',
       enableValidation: true,
       enableCors: true,

@@ -4,7 +4,7 @@
 
 The Auth Service handles authentication, authorization, and user session management. This document details all environment variables required for the Auth Service configuration.
 
-**Service Port**: 4001  
+**Service Port**: 4002
 **Environment File**: `docker/config/auth-service/auth-service.env`
 
 ## Required Variables
@@ -12,7 +12,7 @@ The Auth Service handles authentication, authorization, and user session managem
 | Variable | Type | Description | Example | Validation |
 |----------|------|-------------|---------|------------|
 | `NODE_ENV` | string | Application environment | `development` | Must be: `development`, `production`, `test` |
-| `PORT` | number | Service port number | `4001` | Range: 1000-65535 |
+| `PORT` | number | Service port number | `4002` | Range: 1000-65535 |
 | `DATABASE_URL_AUTH` | url | PostgreSQL connection URL | `postgresql://user:pass@postgres:5432/authdb` | Must match PostgreSQL URL pattern |
 | `JWT_SECRET` | string | JWT signing secret | `your-32-character-secret-key-here` | Minimum 32 characters |
 | `REDIS_HOST` | string | Redis cluster host | `redis-cluster` | Required for session storage |
@@ -190,7 +190,7 @@ HEALTH_CHECK_INTERVAL=30000
 
 # Application Configuration
 NODE_ENV=development
-PORT=4001
+PORT=4002
 HOST=0.0.0.0
 API_PREFIX=api
 
@@ -240,7 +240,7 @@ HEALTH_CHECK_INTERVAL=30000
 
 # Application Configuration
 NODE_ENV=production
-PORT=4001
+PORT=4002
 HOST=0.0.0.0
 API_PREFIX=api
 

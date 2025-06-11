@@ -34,11 +34,11 @@ The API Gateway serves as the unified entry point for all client requests, imple
 
 **Example Configuration**:
 ```env
-USER_SERVICE_URL=http://user-service:4002/api/graphql
-CHAT_SERVICE_URL=http://chat-service:4003/api/graphql
-NOTIFICATION_SERVICE_URL=http://notification-service:4004/api/graphql
-AUTH_SERVICE_URL=http://auth-service:4001/api/graphql
-LOGGING_SERVICE_URL=http://logging-service:4005/api/graphql
+USER_SERVICE_URL=http://user-service:4003/api/graphql
+CHAT_SERVICE_URL=http://chat-service:4004/api/graphql
+NOTIFICATION_SERVICE_URL=http://notification-service:4005/api/graphql
+AUTH_SERVICE_URL=http://auth-service:4002/api/graphql
+LOGGING_SERVICE_URL=http://logging-service:4006/api/graphql
 ```
 
 ## Optional Variables
@@ -181,11 +181,11 @@ HOST=0.0.0.0
 API_PREFIX=api
 
 # Service Endpoints
-USER_SERVICE_URL=http://user-service:4002/api/graphql
-CHAT_SERVICE_URL=http://chat-service:4003/api/graphql
-NOTIFICATION_SERVICE_URL=http://notification-service:4004/api/graphql
-AUTH_SERVICE_URL=http://auth-service:4001/api/graphql
-LOGGING_SERVICE_URL=http://logging-service:4005/api/graphql
+USER_SERVICE_URL=http://user-service:4003/api/graphql
+CHAT_SERVICE_URL=http://chat-service:4004/api/graphql
+NOTIFICATION_SERVICE_URL=http://notification-service:4005/api/graphql
+AUTH_SERVICE_URL=http://auth-service:4002/api/graphql
+LOGGING_SERVICE_URL=http://logging-service:4006/api/graphql
 
 # Cache Configuration
 REDIS_HOST=redis-cluster

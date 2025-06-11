@@ -6,7 +6,7 @@ declare const module: any;
 async function startApplication() {
   try {
     const app = await bootstrap(ChatServiceModule, {
-      port: 4003,
+      port: 4004,
       serviceName: 'Chat Service',
       enableValidation: true,
       enableCors: true,

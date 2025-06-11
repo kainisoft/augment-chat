@@ -243,11 +243,11 @@ PORT=4000
 NODE_ENV=development
 
 # Downstream Services
-AUTH_SERVICE_URL=http://localhost:4001
-USER_SERVICE_URL=http://localhost:4002
-CHAT_SERVICE_URL=http://localhost:4003
-NOTIFICATION_SERVICE_URL=http://localhost:4004
-LOGGING_SERVICE_URL=http://localhost:4005
+AUTH_SERVICE_URL=http://localhost:4002
+USER_SERVICE_URL=http://localhost:4003
+CHAT_SERVICE_URL=http://localhost:4004
+NOTIFICATION_SERVICE_URL=http://localhost:4005
+LOGGING_SERVICE_URL=http://localhost:4006
 
 # Redis
 REDIS_HOST=localhost

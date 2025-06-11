@@ -531,11 +531,11 @@ KAFKA_BROKERS=localhost:9092
 KAFKA_CLIENT_ID=chat-service
 
 # WebSocket
-WEBSOCKET_PORT=4003
+WEBSOCKET_PORT=4004
 WEBSOCKET_CORS_ORIGIN=http://localhost:3000
 
 # Service
-PORT=4003
+PORT=4004
 NODE_ENV=development
 ```
 

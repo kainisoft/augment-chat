@@ -67,7 +67,7 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     command: pnpm run start:debug 0.0.0.0:9229 auth-service
     ports:
-      - "4001:4001"
+      - "4002:4002"
       - "9229:9229"
     env_file:
       - ./docker/config/auth-service/auth-service.env
@@ -81,7 +81,7 @@ services:
       - chat-network
     profiles: [ "auth" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4001/api/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4002/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -96,7 +96,7 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     command: pnpm run start:debug 0.0.0.0:9229 user-service
     ports:
-      - "4002:4002"
+      - "4003:4003"
       - "9230:9229"
     env_file:
       - ./docker/config/user-service/user-service.env
@@ -110,7 +110,7 @@ services:
       - chat-network
     profiles: [ "user" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4002/api/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4003/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -125,7 +125,7 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     command: pnpm run start:debug 0.0.0.0:9229 chat-service
     ports:
-      - "4003:4003"
+      - "4004:4004"
       - "9232:9229"
     env_file:
       - ./docker/config/chat-service/chat-service.env
@@ -139,7 +139,7 @@ services:
       - chat-network
     profiles: [ "chat" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4003/api/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4004/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -153,7 +153,7 @@ services:
       args:
         - BUILDKIT_INLINE_CACHE=1
     ports:
-      - "4004:4004"
+      - "4005:4005"
     env_file:
       - ./docker/config/notification-service/notification-service.env
     volumes:
@@ -187,7 +187,7 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     command: pnpm run start:debug 0.0.0.0:9229 logging-service
     ports:
-      - "4005:4005"
+      - "4006:4006"
       - "9231:9229"
     env_file:
       - ./docker/config/logging-service/logging-service.env
@@ -206,7 +206,7 @@ services:
       - chat-network
     profiles: [ "logging", "infra" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4005/api/health" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4006/api/health" ]
       interval: 10s
       timeout: 5s
       retries: 3

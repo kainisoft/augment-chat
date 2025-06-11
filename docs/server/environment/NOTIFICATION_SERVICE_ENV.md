@@ -4,7 +4,7 @@
 
 The Notification Service handles multi-channel notifications including email, SMS, and push notifications. This document details all environment variables required for the Notification Service configuration.
 
-**Service Port**: 4004  
+**Service Port**: 4005
 **Environment File**: `docker/config/notification-service/notification-service.env`
 
 ## Required Variables
@@ -12,7 +12,7 @@ The Notification Service handles multi-channel notifications including email, SM
 | Variable | Type | Description | Example | Validation |
 |----------|------|-------------|---------|------------|
 | `NODE_ENV` | string | Application environment | `development` | Must be: `development`, `production`, `test` |
-| `PORT` | number | Service port number | `4004` | Range: 1000-65535 |
+| `PORT` | number | Service port number | `4005` | Range: 1000-65535 |
 | `MONGODB_URI` | url | MongoDB connection URI | `mongodb://mongo:27017/notificationdb` | Must match MongoDB URI pattern |
 | `JWT_SECRET` | string | JWT signing secret | `your-32-character-secret-key-here` | Minimum 32 characters |
 | `REDIS_HOST` | string | Redis cluster host | `redis-cluster` | Required for queuing |

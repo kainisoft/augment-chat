@@ -21,7 +21,7 @@ COPY apps/chat-service ./apps/chat-service
 COPY libs ./libs
 
 # Expose port
-EXPOSE 4003
+EXPOSE 4004
 
 # Start the application
 CMD ["pnpm", "run", "start:debug", "chat-service"]

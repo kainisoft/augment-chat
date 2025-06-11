@@ -56,6 +56,6 @@ $DOCKER_COMPOSE -f "$COMPOSE_PATH" ps loki grafana logging-service
 echo "Logging system has been restarted."
 echo "Grafana UI is available at: http://localhost:3000"
 echo "Loki API is available at: http://localhost:3100"
-echo "Logging Service API is available at: http://localhost:4005"
+echo "Logging Service API is available at: http://localhost:4006"
 
 exit 0

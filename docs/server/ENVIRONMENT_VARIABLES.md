@@ -309,7 +309,7 @@ HEALTH_CHECK_INTERVAL=30000
 # =============================================================================
 
 NODE_ENV=development
-PORT=4002
+PORT=4003
 HOST=0.0.0.0
 API_PREFIX=api
 

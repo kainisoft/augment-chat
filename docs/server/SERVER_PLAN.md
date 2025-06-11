@@ -13,10 +13,11 @@ This document outlines the development plan for the server-side components of th
   - [Phase 3: Backend Advanced Features](#phase-3-backend-advanced-features)
 - [Microservices Breakdown](#microservices-breakdown)
   - [API Gateway](#api-gateway-port-4000)
-  - [Authentication Service](#authentication-service-port-4001)
-  - [User Service](#user-service-port-4002)
-  - [Chat Service](#chat-service-port-4003)
-  - [Notification Service](#notification-service-port-4004)
+  - [WebSocket Gateway](#websocket-gateway-port-4001)
+  - [Authentication Service](#authentication-service-port-4002)
+  - [User Service](#user-service-port-4003)
+  - [Chat Service](#chat-service-port-4004)
+  - [Notification Service](#notification-service-port-4005)
 - [Database Schema](#database-schema-high-level)
 - [Related Documents](#related-documents)
 
@@ -67,20 +68,26 @@ This document outlines the development plan for the server-side components of th
 - [x] Request routing
 - [x] Rate limiting
 
-### Authentication Service (Port 4001)
+### WebSocket Gateway (Port 4001)
+- [x] Real-time GraphQL subscriptions
+- [x] WebSocket connection management
+- [x] Chat subscriptions
+- [x] User presence subscriptions
+
+### Authentication Service (Port 4002)
 - [x] User registration
 - [x] Login/logout
 - [x] JWT token management
 - [x] Password reset
 - [ ] OAuth integration (optional)
 
-### User Service (Port 4002)
+### User Service (Port 4003)
 - [x] User profiles
 - [x] User relationships (friends/contacts)
 - [x] User settings
 - [x] User search
 
-### Chat Service (Port 4003)
+### Chat Service (Port 4004)
 - [x] Private messaging
 - [ ] Group chats
 - [x] Message history
@@ -88,12 +95,12 @@ This document outlines the development plan for the server-side components of th
 - [ ] Typing indicators
 - [ ] File attachments
 
-### Notification Service (Port 4004)
+### Notification Service (Port 4005)
 - [x] Real-time notifications
 - [ ] Email notifications (optional)
 - [ ] Push notifications (optional)
 
-### Logging Service (Port 4005)
+### Logging Service (Port 4006)
 - [x] Centralized log collection
 - [x] Log processing and filtering
 - [x] Loki integration for storage

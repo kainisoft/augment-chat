@@ -53,10 +53,10 @@ services:
       context: ./server
       dockerfile: ./docker/Dockerfiles/auth-service.Dockerfile
     ports:
-      - "4001:4001"
+      - "4002:4002"
     environment:
       - NODE_ENV=development
-      - PORT=4001
+      - PORT=4002
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/auth_db
     volumes:
       - ./server:/app
@@ -73,10 +73,10 @@ services:
       context: ./server
       dockerfile: ./docker/Dockerfiles/user-service.Dockerfile
     ports:
-      - "4002:4002"
+      - "4003:4003"
     environment:
       - NODE_ENV=development
-      - PORT=4002
+      - PORT=4003
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/user_db
     volumes:
       - ./server:/app
@@ -93,10 +93,10 @@ services:
       context: ./server
       dockerfile: ./docker/Dockerfiles/chat-service.Dockerfile
     ports:
-      - "4003:4003"
+      - "4004:4004"
     environment:
       - NODE_ENV=development
-      - PORT=4003
+      - PORT=4004
       - MONGODB_URI=mongodb://mongo:27017/chat_db
     volumes:
       - ./server:/app

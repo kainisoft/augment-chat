@@ -4,7 +4,7 @@
 
 The User Service manages user profiles, relationships, and user-related data operations. This document details all environment variables required for the User Service configuration.
 
-**Service Port**: 4002  
+**Service Port**: 4003
 **Environment File**: `docker/config/user-service/user-service.env`
 
 ## Required Variables
@@ -12,7 +12,7 @@ The User Service manages user profiles, relationships, and user-related data ope
 | Variable | Type | Description | Example | Validation |
 |----------|------|-------------|---------|------------|
 | `NODE_ENV` | string | Application environment | `development` | Must be: `development`, `production`, `test` |
-| `PORT` | number | Service port number | `4002` | Range: 1000-65535 |
+| `PORT` | number | Service port number | `4003` | Range: 1000-65535 |
 | `DATABASE_URL_USER` | url | PostgreSQL connection URL | `postgresql://user:pass@postgres:5432/userdb` | Must match PostgreSQL URL pattern |
 | `JWT_SECRET` | string | JWT signing secret | `your-32-character-secret-key-here` | Minimum 32 characters |
 | `REDIS_HOST` | string | Redis cluster host | `redis-cluster` | Required for caching |
@@ -217,7 +217,7 @@ LOKI_HOST=http://loki:3100
 
 # Application Configuration
 NODE_ENV=development
-PORT=4002
+PORT=4003
 HOST=0.0.0.0
 API_PREFIX=api
 
@@ -271,7 +271,7 @@ MAX_PENDING_REQUESTS=100
 
 # Application Configuration
 NODE_ENV=production
-PORT=4002
+PORT=4003
 HOST=0.0.0.0
 API_PREFIX=api
 

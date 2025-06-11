@@ -411,7 +411,7 @@ For teams adopting these changes:
 docker build -t auth-service .
 
 # Run container
-docker run -p 4001:4001 auth-service
+docker run -p 4002:4002 auth-service
 ```
 
 ### Docker Compose

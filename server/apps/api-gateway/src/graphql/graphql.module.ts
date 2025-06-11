@@ -41,11 +41,11 @@ import { UserContextService } from '@app/security';
         // Get service URLs from environment
         const userServiceUrl = configService.get<string>(
           'USER_SERVICE_GRAPHQL_URL',
-          'http://localhost:4002/graphql',
+          'http://localhost:4003/graphql',
         );
         const chatServiceUrl = configService.get<string>(
           'CHAT_SERVICE_GRAPHQL_URL',
-          'http://localhost:4003/graphql',
+          'http://localhost:4004/graphql',
         );
 
         loggingService.log(

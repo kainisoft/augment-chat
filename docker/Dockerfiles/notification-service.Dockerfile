@@ -21,7 +21,7 @@ COPY apps/notification-service ./apps/notification-service
 COPY libs ./libs
 
 # Expose port
-EXPOSE 4004
+EXPOSE 4005
 
 # Start the application with Hot Module Replacement
 CMD ["pnpm", "run", "start:dev:hmr", "notification-service"]

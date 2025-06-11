@@ -21,7 +21,7 @@ COPY apps/auth-service ./apps/auth-service
 COPY libs ./libs
 
 # Expose port
-EXPOSE 4001
+EXPOSE 4002
 
 # Start the application
 CMD ["pnpm", "run", "start:debug", "auth-service"]

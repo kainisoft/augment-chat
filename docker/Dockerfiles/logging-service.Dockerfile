@@ -21,7 +21,7 @@ COPY apps/logging-service ./apps/logging-service
 COPY libs ./libs
 
 # Expose port
-EXPOSE 4005
+EXPOSE 4006
 
 # Start the application
 CMD ["pnpm", "run", "start:debug", "logging-service"]

@@ -6,7 +6,7 @@ declare const module: any;
 async function startApplication() {
   try {
     const app = await bootstrap(AuthServiceModule, {
-      port: 4001,
+      port: 4002,
       serviceName: 'Auth Service',
       enableValidation: true,
       enableCors: true,

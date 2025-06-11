@@ -6,7 +6,7 @@ declare const module: any;
 async function startApplication() {
   try {
     const app = await bootstrap(NotificationServiceModule, {
-      port: 4004,
+      port: 4005,
       serviceName: 'Notification Service',
       enableValidation: true,
       enableCors: true,

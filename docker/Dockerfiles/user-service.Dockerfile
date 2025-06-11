@@ -21,7 +21,7 @@ COPY apps/user-service ./apps/user-service
 COPY libs ./libs
 
 # Expose port
-EXPOSE 4002
+EXPOSE 4003
 
 # Start the application
 CMD ["pnpm", "run", "start:debug", "user-service"]

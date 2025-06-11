@@ -98,17 +98,23 @@ case "$1" in
       api-gateway)
         run_service $2 4000 ""
         ;;
+      websocket-gateway)
+        run_service $2 4001 ""
+        ;;
       auth-service)
-        run_service $2 4001 "DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/auth_db"
+        run_service $2 4002 "DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/auth_db"
         ;;
       user-service)
-        run_service $2 4002 "DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/user_db"
+        run_service $2 4003 "DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/user_db"
         ;;
       chat-service)
-        run_service $2 4003 "MONGODB_URI=mongodb://mongo:mongo@host.docker.internal:27017/chat_db?authSource=admin"
+        run_service $2 4004 "MONGODB_URI=mongodb://mongo:mongo@host.docker.internal:27017/chat_db?authSource=admin"
         ;;
       notification-service)
-        run_service $2 4004 "MONGODB_URI=mongodb://mongo:mongo@host.docker.internal:27017/notification_db?authSource=admin"
+        run_service $2 4005 "MONGODB_URI=mongodb://mongo:mongo@host.docker.internal:27017/notification_db?authSource=admin"
+        ;;
+      logging-service)
+        run_service $2 4006 ""
         ;;
       *)
         echo "Error: Unknown service $2"
