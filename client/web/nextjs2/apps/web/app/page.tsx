@@ -1,6 +1,7 @@
 import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
+import { add } from '@repo/math';
 
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
@@ -8,6 +9,7 @@ type Props = Omit<ImageProps, "src"> & {
 };
 
 const ThemeImage = (props: Props) => {
+  
   const { srcLight, srcDark, ...rest } = props;
 
   return (
@@ -19,6 +21,8 @@ const ThemeImage = (props: Props) => {
 };
 
 export default function Home() {
+  const result = add(2, 3);
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -36,6 +40,7 @@ export default function Home() {
             Get started by editing <code>apps/web/app/page.tsx</code>
           </li>
           <li>Save and see your changes instantly.</li>
+          <li>Math test: 2 + 3 = {result}</li>
         </ol>
 
         <div className={styles.ctas}>

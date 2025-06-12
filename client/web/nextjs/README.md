@@ -1,44 +1,84 @@
-# Next.js Chat Application
+# Turborepo starter
 
-This is the Next.js implementation of the chat application web client.
+This Turborepo starter is maintained by the Turborepo core team.
 
-## Quick Start
+## Using this example
 
-```bash
-# Navigate to the Next.js directory
-cd client/web/nextjs
+Run the following command:
 
-# Install dependencies
-pnpm install
+```sh
+npx create-turbo@latest
+```
 
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your configuration
+## What's inside?
 
-# Generate GraphQL types
-pnpm codegen
+This Turborepo includes the following packages/apps:
 
-# Start development server
+### Apps and Packages
+
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### Utilities
+
+This Turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+
+### Build
+
+To build all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm build
+```
+
+### Develop
+
+To develop all apps and packages, run the following command:
+
+```
+cd my-turborepo
 pnpm dev
 ```
 
-## Development
+### Remote Caching
 
-- **Development Server**: `pnpm dev` - Starts the Next.js development server on http://localhost:3000
-- **Build**: `pnpm build` - Creates an optimized production build
-- **Test**: `pnpm test` - Runs the test suite
-- **Type Check**: `pnpm type-check` - Runs TypeScript type checking
-- **Lint**: `pnpm lint` - Runs ESLint
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
 
-## Documentation
+Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
 
-For detailed implementation information, see [NEXTJS_IMPLEMENTATION_PLAN.md](./NEXTJS_IMPLEMENTATION_PLAN.md).
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
 
-## Backend Services
+```
+cd my-turborepo
+npx turbo login
+```
 
-This client integrates with the following backend services:
-- **Apollo Federation Gateway**: http://localhost:4000/graphql
-- **WebSocket Gateway**: ws://localhost:4001
-- **Authentication Service**: http://localhost:4002
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
 
-Make sure these services are running before starting the client.
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+```
+npx turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
+- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
+- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
+- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
+- [Configuration Options](https://turborepo.com/docs/reference/configuration)
+- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)

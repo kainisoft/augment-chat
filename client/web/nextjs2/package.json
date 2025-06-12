@@ -1,5 +1,5 @@
 {
-  "name": "nextjs2",
+  "name": "nextjs",
   "private": true,
   "scripts": {
     "build": "turbo run build",
