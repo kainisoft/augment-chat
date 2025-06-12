@@ -11,15 +11,19 @@ docker/
 │   ├── auth-service.Dockerfile # With HMR support
 │   ├── chat-service.Dockerfile # With HMR support
 │   ├── notification-service.Dockerfile # With HMR support
-│   └── user-service.Dockerfile # With HMR support
+│   ├── user-service.Dockerfile # With HMR support
+│   └── nextjs-chat.Dockerfile  # Next.js frontend with hot reload
 ├── config/                     # Configuration files
+│   ├── nextjs-chat/            # Next.js frontend configuration
+│   │   └── nextjs-chat.env     # Environment variables
 │   └── redis/                  # Redis configuration
 │       ├── redis-node-1.conf
 │       ├── redis-node-2.conf
 │       └── redis-node-3.conf
 ├── scripts/                    # Helper scripts
 │   ├── dev.sh                  # General development script
-│   └── hmr-dev.sh              # HMR development script
+│   ├── hmr-dev.sh              # HMR development script
+│   └── test-frontend.sh        # Frontend Docker setup test
 └── init-scripts/               # Initialization scripts
     ├── kafka/                  # Kafka initialization
     │   └── create-topics.sh
@@ -92,6 +96,9 @@ We provide several development scripts to make working with Docker easier:
 
 # Start all services
 ./docker/scripts/dev.sh all
+
+# Start Next.js frontend with dependencies
+./docker/scripts/dev.sh frontend
 
 # View logs for a specific service
 ./docker/scripts/dev.sh logs auth-service

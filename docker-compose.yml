@@ -395,7 +395,7 @@ services:
   grafana:
     image: grafana/grafana:10.2.0
     ports:
-      - "3001:3000"
+      - "3001:3000" # Back to 3001 since Next.js moved to 5000+ range
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -417,6 +417,35 @@ services:
       retries: 5
       start_period: 10s
 
+  # Next.js Chat Frontend
+  nextjs-chat:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfiles/nextjs-chat.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    ports:
+      - "5100:5000" # Next.js chat app
+      - "5101:5001" # Next.js docs app
+    env_file:
+      - ./docker/config/nextjs-chat/nextjs-chat.env
+    volumes:
+      - ./client/web/nextjs/apps:/app/apps:delegated
+      - ./client/web/nextjs/packages:/app/packages:delegated
+      - ./client/web/nextjs/turbo.json:/app/turbo.json:delegated
+      - ./client/web/nextjs/package.json:/app/package.json:delegated
+      - ./client/web/nextjs/pnpm-workspace.yaml:/app/pnpm-workspace.yaml:delegated
+      - nextjs-chat-node-modules:/app/node_modules
+    networks:
+      - chat-network
+    profiles: [ "frontend", "web" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:5000" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
 networks:
   chat-network:
     driver: bridge
@@ -436,5 +465,6 @@ volumes:
   chat-service-node-modules:
   notification-service-node-modules:
   logging-service-node-modules:
+  nextjs-chat-node-modules:
   loki-data:
   grafana-data:
