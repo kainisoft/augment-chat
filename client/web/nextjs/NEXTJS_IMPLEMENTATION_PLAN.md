@@ -43,8 +43,6 @@ This document outlines the detailed implementation plan for the Next.js web clie
 - ✅ **Stability**: Released October 2024, proven stable in production
 - ✅ **Future-Proof**: Latest features and long-term support
 
-**Migration Path**: Start with Next.js 15.1 for new project (no migration needed)
-
 ### UI Component Library Selection
 **Chosen**: shadcn/ui
 **Rationale**:
