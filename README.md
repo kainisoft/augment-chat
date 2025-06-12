@@ -1,228 +1,398 @@
 # Chat Application
 
-A modern chat application with microservice architecture built with NestJS, MongoDB, PostgreSQL, Kafka, and Redis.
+A modern real-time chat application built with microservice architecture, featuring NestJS backend services, multiple frontend framework implementations, and comprehensive real-time messaging capabilities.
 
-## Project Structure
+## 🏗️ Architecture Overview
 
-- **server/** - Backend NestJS monorepo with microservices
-- **client/** - Frontend applications (web, mobile)
-- **docker/** - Docker configuration files
-- **docs/** - Project documentation and implementation plans
+### Hybrid GraphQL Architecture ✅ **In Production**
+- **Apollo Federation Gateway** (Port 4000): Handles queries and mutations
+- **WebSocket Gateway** (Port 4001): Dedicated real-time subscriptions
+- **Microservice Communication**: Kafka-based event-driven architecture
+- **Domain-Driven Design**: CQRS patterns with rich domain models
 
-## Microservices
+### Project Structure
 
-| Service | Port | Description |
-|---------|------|-------------|
-| API Gateway | 4000 | GraphQL API Gateway for client applications |
-| Auth Service | 4001 | Handles authentication and authorization |
-| User Service | 4002 | Manages user profiles and relationships |
-| Chat Service | 4003 | Handles chat messages and conversations |
-| Notification Service | 4004 | Manages notifications |
+```
+├── server/                   # NestJS monorepo with microservices
+│   ├── apps/                 # Microservice applications
+│   │   ├── api-gateway/      # Apollo Federation Gateway (4000)
+│   │   ├── websocket-gateway/# WebSocket Gateway (4001)
+│   │   ├── auth-service/     # Authentication Service (4002)
+│   │   ├── user-service/     # User Management Service (4003)
+│   │   ├── chat-service/     # Chat Functionality Service (4004)
+│   │   ├── notification-service/ # Notification Service (4005)
+│   │   └── logging-service/  # Centralized Logging Service (4006)
+│   └── libs/                 # 17+ Shared Libraries
+├── client/                   # Frontend implementations
+│   ├── web/                  # Web framework implementations
+│   │   ├── nextjs/          # Next.js implementation (primary)
+│   │   ├── remix/           # 📋 Planned: Remix implementation
+│   │   ├── nuxtjs/          # 📋 Planned: Nuxt.js implementation
+│   │   └── sveltekit/       # 📋 Planned: SvelteKit implementation
+│   └── mobile/              # 📋 Planned: Mobile implementations
+├── docker/                  # Docker configuration and scripts
+└── docs/                    # Comprehensive project documentation
+```
 
-## Infrastructure
+## 🚀 Current Technology Stack
 
-| Service | Port | Description |
-|---------|------|-------------|
-| PostgreSQL | 5432 | Relational database for user and auth data |
-| MongoDB | 27017 | Document database for chat and notification data |
-| Kafka | 9092 | Message broker for inter-service communication |
-| Redis Cluster | 6379-6381 | Caching and session management |
+### Backend Services ✅ **In Production**
 
-## Getting Started
+| Service | Port | Status | Description |
+|---------|------|--------|-------------|
+| **Apollo Federation Gateway** | 4000 | ✅ Production | GraphQL Federation for queries/mutations |
+| **WebSocket Gateway** | 4001 | ✅ Production | Real-time subscriptions via GraphQL Yoga |
+| **Auth Service** | 4002 | ✅ Production | JWT authentication & authorization |
+| **User Service** | 4003 | ✅ Production | User profiles & relationships |
+| **Chat Service** | 4004 | ✅ Production | Chat messages & conversations |
+| **Notification Service** | 4005 | ✅ Production | Push notifications & alerts |
+| **Logging Service** | 4006 | ✅ Production | Centralized logging with Loki integration |
+
+### Infrastructure ✅ **In Production**
+
+| Service | Port | Status | Description |
+|---------|------|--------|-------------|
+| **PostgreSQL** | 5432 | ✅ Production | Primary database with Drizzle ORM |
+| **MongoDB** | 27017 | ✅ Production | Chat messages & unstructured data |
+| **Redis Cluster** | 6379-6381 | ✅ Production | Session management & caching |
+| **Kafka** | 9092 | ✅ Production | Event-driven microservice communication |
+
+### Core Technologies ✅ **In Production**
+- **Framework**: NestJS with Fastify (HTTP engine)
+- **API**: GraphQL with Apollo Federation v2
+- **ORM**: Drizzle ORM for type-safe database access
+- **Authentication**: JWT with refresh token rotation
+- **Architecture**: Domain-Driven Design (DDD) + CQRS
+- **Package Manager**: pnpm for all dependency management
+- **Containerization**: Docker with optimized development workflow
+
+## 🚧 Technologies Under Active Development
+
+### Frontend Framework Evaluation 🚧 **Under Development**
+- **Next.js Implementation** (Primary): `client/web/nextjs/`
+  - ✅ Project structure established
+  - 🚧 GraphQL integration with Apollo Client
+  - 🚧 WebSocket real-time subscriptions
+  - 📋 Authentication flow implementation
+- **Framework Comparison**: Evaluating Remix, Nuxt.js, SvelteKit, SolidStart
+- **Independent Implementations**: Each framework in separate directories
+
+### Security Enhancements 🚧 **Under Development**
+- **@app/security Module**: Migration from @app/iam to centralized security
+  - ✅ Rate limiting guards implemented
+  - ✅ JWT authentication guards
+  - 🚧 OAuth integration (Google, GitHub)
+  - 📋 Two-factor authentication (2FA)
+- **Enhanced Security Logging**: Comprehensive audit trails
+
+### Advanced Features 📋 **Planned**
+- **Performance Monitoring**: PM2 integration for application metrics
+- **Advanced Caching**: Multi-layer caching strategies
+- **File Upload Service**: S3-compatible file handling
+- **Mobile Applications**: React Native and Flutter implementations
+
+## 🛠️ Shared Libraries (17+ Libraries) ✅ **In Production**
+
+Our microservices leverage a comprehensive set of shared libraries for consistency and code reuse:
+
+### Core Infrastructure
+- **@app/bootstrap** - Standardized service initialization
+- **@app/config** - Environment configuration management
+- **@app/logging** - Centralized logging with Kafka integration
+- **@app/security** - Authentication, authorization & rate limiting
+- **@app/validation** - Input validation and transformation
+
+### Data & Communication
+- **@app/database** - PostgreSQL with Drizzle ORM
+- **@app/mongodb** - MongoDB integration and utilities
+- **@app/redis** - Redis cluster management
+- **@app/kafka** - Event-driven communication patterns
+- **@app/graphql** - GraphQL utilities and federation support
+
+### Domain & Application
+- **@app/domain** - Shared domain models and value objects
+- **@app/dtos** - Data Transfer Objects and API contracts
+- **@app/events** - Domain events and event handlers
+- **@app/common** - Common utilities and helpers
+
+### Development & Testing
+- **@app/testing** - Testing utilities and patterns
+- **@app/metrics** - Performance monitoring utilities
+- **@app/iam** - Legacy IAM (migrating to @app/security)
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Docker and Docker Compose
-- Node.js 18+
-- pnpm
+- **Docker & Docker Compose** - Container orchestration
+- **Node.js 18+** - Runtime environment
+- **pnpm** - Package manager (required)
 
-### Setup
+### Quick Start
 
-1. Clone the repository
-2. Run the infrastructure services:
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd chat-application
+```
 
+2. **Start infrastructure services**
 ```bash
 docker compose up -d postgres mongo kafka redis-node-1 redis-node-2 redis-node-3 redis-cluster-init
 ```
 
-3. Start the microservices:
+3. **Install dependencies and start services**
+```bash
+cd server
+pnpm install
+pnpm run start:dev
+```
+
+### Individual Service Management
 
 ```bash
-# Start all microservices
-cd server && pnpm run start:dev
+cd server
 
-# Or start individual services
-cd server && pnpm run start:dev api-gateway
-cd server && pnpm run start:dev auth-service
-cd server && pnpm run start:dev user-service
-cd server && pnpm run start:dev chat-service
-cd server && pnpm run start:dev notification-service
+# Start specific services
+pnpm run start:dev api-gateway          # Apollo Federation Gateway (4000)
+pnpm run start:dev websocket-gateway    # WebSocket Gateway (4001)
+pnpm run start:dev auth-service         # Authentication Service (4002)
+pnpm run start:dev user-service         # User Service (4003)
+pnpm run start:dev chat-service         # Chat Service (4004)
+pnpm run start:dev notification-service # Notification Service (4005)
+pnpm run start:dev logging-service      # Logging Service (4006)
 ```
 
-### Health Checks
+### Health Monitoring
 
-Each microservice exposes health check endpoints:
+Each microservice provides comprehensive health endpoints:
 
-- `/health` - Full health status
-- `/health/liveness` - Simple liveness check
-- `/health/readiness` - Readiness check with component status
-
-Example:
-```bash
-curl http://localhost:4002/health
-```
-
-## Development
-
-### Development with Hot Module Replacement (HMR)
-
-This project uses NestJS's built-in Hot Module Replacement for a faster development experience. HMR allows code changes to be applied without restarting the entire application, preserving application state and significantly reducing reload times.
-
-#### Using the HMR Development Script
-
-We provide a specialized script for working with HMR:
+- **`/api/health`** - Complete health status with dependencies
+- **`/api/health/liveness`** - Simple liveness probe
+- **`/api/health/readiness`** - Readiness check with component status
 
 ```bash
-# Build a service with HMR support
-./docker/scripts/hmr-dev.sh build auth-service
-
-# Run a service with HMR support
-./docker/scripts/hmr-dev.sh run auth-service
-
-# View logs for a running service
-./docker/scripts/hmr-dev.sh logs auth-service
-
-# Stop a running service
-./docker/scripts/hmr-dev.sh stop auth-service
+# Check service health
+curl http://localhost:4000/api/health  # API Gateway
+curl http://localhost:4001/api/health  # WebSocket Gateway
+curl http://localhost:4002/api/health  # Auth Service
 ```
 
-#### Using Docker Compose with HMR
+## 🔧 Development Workflow
 
-Alternatively, you can use Docker Compose directly:
+### Hot Module Replacement (HMR) ✅ **Optimized**
+
+Our development environment features NestJS's built-in HMR for rapid development cycles:
+
+#### Development Scripts
+```bash
+# Optimized HMR development script
+./docker/scripts/hmr-dev.sh build auth-service    # Build with HMR
+./docker/scripts/hmr-dev.sh run auth-service      # Run with HMR
+./docker/scripts/hmr-dev.sh logs auth-service     # View logs
+./docker/scripts/hmr-dev.sh stop auth-service     # Stop service
+
+# Docker Compose alternative
+docker-compose up -d                              # All services with HMR
+docker-compose up -d auth-service                 # Specific service
+```
+
+#### HMR Benefits
+- **⚡ Sub-second reload times** - Changes applied almost instantly
+- **🔄 State preservation** - Application state maintained between updates
+- **🚀 Enhanced DX** - No manual service restarts required
+- **💾 Resource efficiency** - Only changed modules recompiled
+
+### GraphQL Development ✅ **Production Ready**
+
+#### Apollo Federation Gateway (Port 4000)
+- **GraphQL Playground**: http://localhost:4000/graphql
+- **Schema Introspection**: Real-time schema exploration
+- **Federation Testing**: Cross-service query validation
+- **Development Dashboard**: http://localhost:4000/graphql-dev
+
+#### WebSocket Gateway (Port 4001)
+- **Subscription Testing**: Real-time subscription debugging
+- **Connection Monitoring**: WebSocket connection health
+- **PubSub Testing**: Redis-based message broadcasting
+
+### Frontend Development 🚧 **Under Development**
+
+#### Next.js Primary Implementation
+```bash
+cd client/web/nextjs
+pnpm install                    # Install dependencies
+pnpm dev                       # Start development server (3000)
+pnpm build                     # Production build
+pnpm test                      # Run tests
+pnpm codegen                   # Generate GraphQL types
+```
+
+#### Framework Evaluation Structure
+- **Independent implementations** in `client/web/[framework]/`
+- **No shared dependencies** between frameworks
+- **Framework-specific optimizations** and patterns
+- **Parallel development** capabilities
+
+### Code Quality & Standards ✅ **Enforced**
 
 ```bash
-# Start all services with HMR support
-docker-compose up -d
-
-# Start a specific service with HMR support
-docker-compose up -d auth-service
+cd server
+pnpm run format                # Prettier formatting
+pnpm run lint                  # ESLint validation
+pnpm run test                  # Unit tests
+pnpm run test:e2e             # End-to-end tests
+pnpm run build:all           # Build all services
 ```
 
-#### Benefits of HMR
+## 🌐 Production Deployment
 
-- **Faster Development Cycle**: Changes are applied almost instantly (typically under 1 second)
-- **State Preservation**: Application state is maintained between updates
-- **Improved Developer Experience**: No need to manually restart services
-- **Efficient Resource Usage**: Only the changed modules are recompiled
+### AWS Infrastructure ✅ **Production Ready**
 
-For more detailed information about Docker performance enhancements, including HMR, see the [Docker Performance Guide](docs/docker/DOCKER_PERFORMANCE_GUIDE.md).
+The application is architected for AWS deployment with the following services:
 
-### Adding New Features
+| Component | AWS Service | Status | Description |
+|-----------|-------------|--------|-------------|
+| **Microservices** | ECS/EKS | ✅ Ready | Container orchestration |
+| **PostgreSQL** | RDS | ✅ Ready | Managed relational database |
+| **MongoDB** | DocumentDB | ✅ Ready | Managed document database |
+| **Kafka** | MSK | ✅ Ready | Managed streaming platform |
+| **Redis** | EC2 Cluster | ✅ Ready | Custom Redis cluster implementation |
+| **Load Balancer** | ALB | ✅ Ready | Application load balancing |
+| **File Storage** | S3 | 📋 Planned | Object storage for attachments |
 
-1. Create a feature branch
-2. Implement the feature
-3. Write tests
-4. Submit a pull request
+### Deployment Features
+- **Container-first architecture** with Docker optimization
+- **Health check integration** for all services
+- **Auto-scaling capabilities** based on metrics
+- **Zero-downtime deployments** with rolling updates
+- **Environment-specific configurations** (dev/staging/prod)
 
-### Project Structure
+## 📊 Project Status & Roadmap
 
-The project follows a monorepo structure with NestJS Workspaces:
+### ✅ Completed Milestones
 
-```
-server/
-├── apps/
-│   ├── api-gateway/
-│   ├── auth-service/
-│   ├── user-service/
-│   ├── chat-service/
-│   └── notification-service/
-└── libs/
-    └── common/
-```
+#### Service Standardization (100% Complete)
+We have successfully standardized architecture and patterns across all microservices, creating a consistent, maintainable, and scalable codebase.
 
-## Deployment
+**Achievements:**
+- ✅ **17+ Shared Libraries**: Comprehensive infrastructure modules
+- ✅ **100% Service Coverage**: All services follow standardized patterns
+- ✅ **DDD + CQRS Implementation**: Domain-driven design with event sourcing
+- ✅ **Performance Optimization**: Monitoring and optimization across all services
+- ✅ **Testing Standardization**: Unified testing patterns and utilities
+- ✅ **Security Integration**: Centralized @app/security module
+- ✅ **Documentation**: Complete technical documentation
 
-The application is designed to be deployed on AWS using:
+#### Backend Infrastructure (100% Complete)
+- ✅ **Microservice Architecture**: 7 production-ready services
+- ✅ **Apollo Federation**: Hybrid GraphQL architecture
+- ✅ **Event-Driven Communication**: Kafka-based messaging
+- ✅ **Database Integration**: PostgreSQL + MongoDB + Redis cluster
+- ✅ **Authentication & Authorization**: JWT with refresh token rotation
+- ✅ **Health Monitoring**: Comprehensive health checks and logging
 
-- ECS for microservices
-- RDS for PostgreSQL
-- DocumentDB for MongoDB
-- MSK for Kafka
-- EC2 instances for Redis Cluster
+### 🚧 Current Development Focus
 
-## Current Status
+#### Frontend Framework Evaluation (In Progress)
+- 🚧 **Next.js Implementation**: Primary web client development
+- 🚧 **GraphQL Integration**: Apollo Client with Federation Gateway
+- 🚧 **Real-time Features**: WebSocket subscriptions implementation
+- 📋 **Framework Comparison**: Remix, Nuxt.js, SvelteKit evaluation
 
-### Service Standardization ✅ COMPLETED
+#### Security Enhancements (In Progress)
+- 🚧 **OAuth Integration**: Google, GitHub authentication
+- 🚧 **Two-Factor Authentication**: TOTP and SMS-based 2FA
+- 🚧 **Advanced Security Logging**: Comprehensive audit trails
+- 📋 **Rate Limiting**: Advanced rate limiting strategies
 
-We have successfully completed the standardization of architecture and patterns across all microservices. This initiative has created a consistent, maintainable, and scalable codebase with shared infrastructure modules.
+### 📋 Upcoming Milestones
 
-**Completed Achievements:**
-- ✅ Phase 1: Extract common domain models (100% complete)
-- ✅ Phase 2: Standardize folder structure in auth-service (100% complete)
-- ✅ Phase 3: Implement Kafka modules in auth-service (100% complete)
-- ✅ Phase 4: Create repository modules (100% complete)
-- ✅ Phase 5: Refactor CQRS modules (100% complete)
-- ✅ Phase 6: Update event handlers for consistent communication (100% complete)
-- ✅ Phase 7: Implement user service improvements (100% complete)
-- ✅ Phase 8: Standardize main module organization (100% complete)
-- ✅ Phase 9: Create shared infrastructure modules (100% complete)
+#### Q1 2024: Frontend Completion
+- 📋 **Next.js Production**: Complete Next.js implementation
+- 📋 **Mobile Applications**: React Native and Flutter development
+- 📋 **Performance Optimization**: Bundle size and runtime optimization
 
-**Key Results:**
-- **12+ Shared Libraries**: Implemented comprehensive shared infrastructure
-- **100% Service Coverage**: All services use standardized patterns
-- **Performance Optimized**: Comprehensive performance monitoring and optimization
-- **Testing Standardized**: Unified testing patterns across all services
-- **Documentation Complete**: Comprehensive documentation and guides
+#### Q2 2024: Advanced Features
+- 📋 **File Upload Service**: S3-compatible file handling
+- 📋 **Advanced Caching**: Multi-layer caching strategies
+- 📋 **Monitoring Dashboard**: Real-time application monitoring
 
-For detailed information, see:
+For detailed progress tracking, see:
 - [Service Standardization Plan](docs/server/SERVICE_STANDARDIZATION_PLAN.md)
-- [Service Standardization Progress](docs/server/SERVICE_STANDARDIZATION_PROGRESS.md)
-- [Shared Infrastructure Modules](docs/server/SHARED_INFRASTRUCTURE_MODULES.md)
+- [Frontend Implementation Plans](docs/client/)
+- [Security Implementation Guide](docs/server/SECURITY_STANDARDS_GUIDE.md)
 
-## Documentation
+## 📚 Documentation
 
-All project documentation is organized in the `docs/` directory:
+Our comprehensive documentation is organized in the `docs/` directory and serves as the single source of truth for all technical decisions and implementation details.
 
-### Core Documentation
-- [Project Overview and Plans](docs/project/) - High-level project information
-- [Server Implementation](docs/server/) - Server-side implementation details
-- [Client Implementation](docs/client/) - Client-side implementation details
+### 🏗️ Architecture & Design
+- **[Project Overview](docs/project/)** - High-level architecture and technology decisions
+- **[Service Standardization](docs/server/SERVICE_STANDARDIZATION_PLAN.md)** - Microservice standardization approach
+- **[Shared Infrastructure Modules](docs/server/SHARED_INFRASTRUCTURE_MODULES.md)** - 17+ shared libraries documentation
+- **[DDD Implementation Guide](docs/server/DDD_IMPLEMENTATION_GUIDE.md)** - Domain-Driven Design patterns
+- **[CQRS Implementation Plan](docs/server/CQRS_IMPLEMENTATION_PLAN.md)** - Command Query Responsibility Segregation
 
-### Architecture and Standardization
-- [Service Standardization](docs/server/SERVICE_STANDARDIZATION_PLAN.md) - Standardization implementation
-- [Shared Infrastructure Modules](docs/server/SHARED_INFRASTRUCTURE_MODULES.md) - Shared modules documentation
-- [DDD Implementation Guide](docs/server/DDD_IMPLEMENTATION_GUIDE.md) - Domain-Driven Design patterns
-- [CQRS Implementation Plan](docs/server/CQRS_IMPLEMENTATION_PLAN.md) - CQRS patterns
+### 🔧 Development Standards
+- **[Testing Standards Guide](docs/server/TESTING_STANDARDS_GUIDE.md)** - Testing patterns and utilities
+- **[Validation Standards Guide](docs/server/VALIDATION_STANDARDS_GUIDE.md)** - Input validation patterns
+- **[Security Standards Guide](docs/server/SECURITY_STANDARDS_GUIDE.md)** - Security implementation guidelines
+- **[Performance Best Practices](docs/server/performance/PERFORMANCE_BEST_PRACTICES.md)** - Optimization techniques
 
-### Standards and Guidelines
-- [Testing Standards Guide](docs/server/TESTING_STANDARDS_GUIDE.md) - Testing patterns and utilities
-- [Validation Standards Guide](docs/server/VALIDATION_STANDARDS_GUIDE.md) - Validation patterns
-- [Security Standards Guide](docs/server/SECURITY_STANDARDS_GUIDE.md) - Security implementation
+### 🚀 Implementation Guides
+- **[Server Implementation](docs/server/)** - Backend microservice implementation details
+- **[Client Implementation](docs/client/)** - Frontend framework implementation plans
+- **[API Gateway Plan](docs/server/API_GATEWAY_PLAN.md)** - Apollo Federation & WebSocket Gateway
+- **[Database Design](docs/database/)** - PostgreSQL, MongoDB, and Redis schemas
 
-### Performance and Monitoring
-- [Performance Documentation](docs/server/performance/) - Performance monitoring and optimization
-- [Performance Best Practices](docs/server/performance/PERFORMANCE_BEST_PRACTICES.md) - Optimization techniques
-- [Performance Monitoring Procedures](docs/server/performance/PERFORMANCE_MONITORING_PROCEDURES.md) - Monitoring procedures
+### 🏭 Infrastructure & Deployment
+- **[Infrastructure Setup](docs/infrastructure/)** - AWS infrastructure configuration
+- **[Docker Configuration](docs/docker/)** - Container optimization and HMR setup
+- **[Kafka Setup](docs/kafka/)** - Event-driven communication patterns
+- **[Redis Implementation](docs/redis/)** - Cluster setup and caching strategies
+- **[Deployment Plans](docs/deployment/)** - Production deployment procedures
 
-### Infrastructure and Deployment
-- [Infrastructure Setup](docs/infrastructure/) - Infrastructure configuration
-- [Database Design](docs/database/) - Database schemas and ORM setup
-- [Docker Configuration](docs/docker/) - Docker setup and optimization
-- [Deployment Plans](docs/deployment/) - AWS deployment instructions
-- [Kafka Setup](docs/kafka/) - Kafka configuration and patterns
-- [Redis Implementation](docs/redis/) - Redis setup and patterns
+### 📊 Monitoring & Performance
+- **[Performance Documentation](docs/server/performance/)** - Monitoring and optimization
+- **[Logging System](docs/logging/)** - Centralized logging with Loki integration
+- **[Testing Strategy](docs/testing/)** - Comprehensive testing approach
 
-### Development and Testing
-- [Testing Strategy](docs/testing/) - Testing approach and reports
-- [Logging System](docs/logging/) - Centralized logging architecture
+### 📝 Documentation Standards
+- **[Documentation Standard](docs/DOCUMENTATION_STANDARD.md)** - Formatting guidelines
+- **[Document Templates](docs/TEMPLATE.md)** - Templates for new documentation
+- **[Documentation Index](docs/README.md)** - Complete documentation catalog
 
-### Documentation Standards
+## 🤝 Contributing
 
-To ensure consistency, all documentation follows a standardized format:
+### Development Workflow
+1. **Fork the repository** and create a feature branch
+2. **Follow coding standards** and use provided shared libraries
+3. **Write comprehensive tests** using our testing utilities
+4. **Update documentation** following our documentation standards
+5. **Submit a pull request** with detailed description
 
-- [Documentation Standard](docs/DOCUMENTATION_STANDARD.md) - Guidelines for document formatting
-- [Document Templates](docs/TEMPLATE.md) - Templates for creating new documentation
+### Code Quality Requirements
+- **Type Safety**: Full TypeScript implementation required
+- **Testing**: Unit, integration, and E2E tests for new features
+- **Documentation**: Update relevant documentation for changes
+- **Performance**: Consider performance implications of changes
+- **Security**: Follow security guidelines and use @app/security module
 
-When contributing to the project, please follow these documentation standards to maintain consistency and clarity.
+### Getting Help
+- **Documentation**: Check comprehensive docs in `docs/` directory
+- **Issues**: Create GitHub issues for bugs or feature requests
+- **Discussions**: Use GitHub Discussions for questions and ideas
 
-See the [Documentation Index](docs/README.md) for a complete list of available documentation.
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **NestJS Team** - For the excellent framework and ecosystem
+- **Apollo GraphQL** - For Federation and GraphQL tooling
+- **Drizzle Team** - For the type-safe ORM implementation
+- **Open Source Community** - For the amazing tools and libraries that make this project possible
