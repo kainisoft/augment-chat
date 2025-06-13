@@ -42,6 +42,20 @@ client/
 │   │   ├── pnpm-workspace.yaml  # pnpm workspace (Next.js only)
 │   │   ├── tsconfig.json        # TypeScript configuration
 │   │   └── package.json         # Next.js dependencies
+│   ├── angular/                 # Angular implementation
+│   │   ├── projects/
+│   │   │   └── chat/            # Angular chat application
+│   │   │       ├── src/
+│   │   │       │   ├── app/     # Angular components and modules
+│   │   │       │   ├── assets/  # Static assets
+│   │   │       │   └── environments/ # Environment configurations
+│   │   │       ├── types/       # Generated GraphQL types
+│   │   │       └── graphql/     # GraphQL operations
+│   │   ├── angular.json         # Angular workspace configuration
+│   │   ├── tailwind.config.js   # Tailwind configuration
+│   │   ├── codegen.yml          # GraphQL Code Generator
+│   │   ├── tsconfig.json        # TypeScript configuration
+│   │   └── package.json         # Angular dependencies
 │   ├── remix/                   # Future: Remix implementation
 │   │   ├── app/                 # Remix app directory
 │   │   ├── public/              # Static assets
@@ -118,9 +132,15 @@ The detailed Next.js implementation plan is located in [`client/web/nextjs/NEXTJ
 
 For detailed implementation steps, component checklists, configuration examples, and development workflow, see the [Next.js Implementation Plan](./web/nextjs/NEXTJS_IMPLEMENTATION_PLAN.md).
 
-### Phase 2: Alternative Framework Implementations (Future)
+### Phase 2: Alternative Framework Implementations
 Each alternative framework will be implemented independently with its own complete setup and documentation.
 
+- [ ] **Angular Implementation** (`client/web/angular/`)
+  - [x] Independent Angular workspace setup with own dependencies
+  - [ ] Angular-specific GraphQL and WebSocket integration
+  - [ ] Angular routing and lazy loading optimization
+  - [ ] Angular ecosystem integration (RxJS, Angular Material)
+  - [ ] Dedicated `ANGULAR_IMPLEMENTATION_PLAN.md`
 - [ ] **Remix Implementation** (`client/web/remix/`)
   - [ ] Independent project setup with own dependencies
   - [ ] Server-side rendering optimization
@@ -219,6 +239,7 @@ Each framework implementation will include the following component categories, i
 
 ### Framework-Specific Implementation Approaches
 - **Next.js**: React components with App Router patterns ([detailed plan](./web/nextjs/NEXTJS_IMPLEMENTATION_PLAN.md))
+- **Angular**: Angular components with standalone components and signals ([detailed plan](./web/angular/README.md))
 - **Remix**: Remix-specific patterns (forms, loaders, actions) with progressive enhancement
 - **Nuxt.js**: Vue.js components with Nuxt-specific features and composables
 - **SvelteKit**: Svelte components with SvelteKit routing and stores
@@ -308,6 +329,7 @@ pnpm test:coverage
 
 ### Framework-Specific Testing
 Each framework will have its own independent testing setup:
+- **Angular**: Jasmine/Karma for unit tests, Cypress/Playwright for E2E
 - **Remix**: Remix-specific testing patterns and utilities
 - **Nuxt.js**: Vue Test Utils and Nuxt testing framework
 - **SvelteKit**: Svelte Testing Library and SvelteKit testing patterns
@@ -355,6 +377,7 @@ Located in `client/web/nextjs/`:
 
 ### Framework-Specific Configurations
 Each framework maintains its own configuration files:
+- **Angular**: `angular.json`, `tsconfig.json`, `tailwind.config.js`, `codegen.yml`
 - **Remix**: `remix.config.js`, `tsconfig.json`, `tailwind.config.js`, `codegen.yml`
 - **Nuxt.js**: `nuxt.config.ts`, `tsconfig.json`, `tailwind.config.js`, `codegen.yml`
 - **SvelteKit**: `svelte.config.js`, `tsconfig.json`, `tailwind.config.js`, `codegen.yml`
@@ -382,6 +405,7 @@ Each framework maintains its own configuration files:
 
 ### Framework-Specific Integration Patterns
 Each framework implements backend integration using its own patterns:
+- **Angular**: Angular services for GraphQL, RxJS observables for WebSocket
 - **Remix**: Loader/action patterns for GraphQL, Remix-specific WebSocket handling
 - **Nuxt.js**: Nuxt plugins for GraphQL, Vue composables for WebSocket
 - **SvelteKit**: SvelteKit load functions for GraphQL, Svelte stores for WebSocket
@@ -396,6 +420,7 @@ Each framework implements backend integration using its own patterns:
 
 ### Framework-Specific Performance
 - **Next.js**: App Router optimizations, React Server Components
+- **Angular**: Standalone components, OnPush change detection, lazy loading
 - **Remix**: Nested routing optimizations, progressive enhancement
 - **Nuxt.js**: Vue.js optimizations, Nuxt-specific SSR strategies
 - **SvelteKit**: Svelte compilation optimizations, SvelteKit SSR
@@ -410,10 +435,11 @@ Each framework implements backend integration using its own patterns:
 
 ### Independent Framework Development
 1. **Phase 1**: Complete Next.js implementation as primary reference
-2. **Phase 2**: Implement Remix version independently
-3. **Phase 3**: Implement Nuxt.js version independently
-4. **Phase 4**: Implement SvelteKit version independently
-5. **Phase 5**: Compare and benchmark all implementations
+2. **Phase 2**: Implement Angular version independently
+3. **Phase 3**: Implement Remix version independently
+4. **Phase 4**: Implement Nuxt.js version independently
+5. **Phase 5**: Implement SvelteKit version independently
+6. **Phase 6**: Compare and benchmark all implementations
 
 ### Framework Isolation Benefits
 - **No dependency conflicts** between framework implementations
@@ -437,6 +463,7 @@ Each framework implements backend integration using its own patterns:
 
 ### Framework-Specific Maintenance
 - **Next.js**: React and Next.js ecosystem updates
+- **Angular**: Angular framework and ecosystem updates
 - **Remix**: Remix framework and React ecosystem updates
 - **Nuxt.js**: Vue.js and Nuxt ecosystem updates
 - **SvelteKit**: Svelte and SvelteKit ecosystem updates
