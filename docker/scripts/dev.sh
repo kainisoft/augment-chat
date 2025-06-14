@@ -52,7 +52,6 @@ show_help() {
   echo "  ./dev.sh auth       # Start auth service with dependencies"
   echo "  ./dev.sh chat       # Start chat service with dependencies"
   echo "  ./dev.sh nextjs-chat # Start Next.js chat frontend"
-  echo "  ./dev.sh angular-chat # Start Angular chat frontend"
   echo "  ./dev.sh logs auth  # Show logs for auth service"
   echo "  ./dev.sh restart auth-service # Restart the auth service"
 }

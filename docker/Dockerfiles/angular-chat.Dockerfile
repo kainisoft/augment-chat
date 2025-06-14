@@ -7,30 +7,22 @@ WORKDIR /app
 RUN --mount=type=cache,target=/root/.npm \
     npm install -g pnpm
 
-# Copy package configuration files
+# Copy package files for dependency installation
 COPY client/web/angular/package.json client/web/angular/pnpm-lock.yaml ./
 
 # Install dependencies with BuildKit cache mount (no frozen lockfile for development)
 RUN --mount=type=cache,target=/root/.pnpm-store \
     pnpm install --no-frozen-lockfile
 
-# Copy Angular workspace configuration
+# Copy Angular configuration files
 COPY client/web/angular/angular.json ./
 COPY client/web/angular/tsconfig.json ./
-COPY client/web/angular/tailwind.config.js ./
-COPY client/web/angular/codegen.yml ./
 
-# Copy projects directory (contains the actual Angular applications)
+# Copy source code
 COPY client/web/angular/projects ./projects
 
 # Expose port for Angular development server
-EXPOSE 4200
+EXPOSE 5200
 
-# Set working directory to the Angular workspace
-WORKDIR /app
-
-# Install Angular CLI globally for development
-RUN pnpm add -g @angular/cli
-
-# Start the Angular development server for the chat project
-CMD ["ng", "serve", "chat", "--host", "0.0.0.0", "--port", "4200"]
+# Start the Angular development server
+CMD ["pnpm", "ng", "serve", "chat", "--host", "0.0.0.0", "--port", "5200", "--poll", "2000"]
