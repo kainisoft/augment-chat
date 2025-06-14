@@ -1,7 +1,7 @@
 # Angular Implementation Plan
 
 ## Overview
-This document outlines the detailed implementation plan for the Angular web client. The implementation uses Angular 20+ with standalone components, providing a modern, performant, and type-safe chat application interface.
+This document outlines the detailed implementation plan for the Angular web client. The implementation uses Angular 20+ with standalone components, providing a modern, performant, and type-safe chat application interface that integrates seamlessly with the existing NestJS microservice architecture.
 
 ## Technology Stack
 
@@ -56,54 +56,6 @@ This document outlines the detailed implementation plan for the Angular web clie
 - ✅ **Theming System**: Comprehensive theming with CSS custom properties
 - ✅ **Active Maintenance**: Regular updates and long-term support
 
-**Alternatives Considered**:
-
-**Spartan UI** - A modern Angular UI library inspired by shadcn/ui
-- ✅ **Headless Components**: Unstyled primitives with full customization control
-- ✅ **Copy-Paste Approach**: Components copied into codebase for complete ownership
-- ✅ **Tailwind Integration**: Built specifically for Tailwind CSS styling
-- ✅ **Angular 20+ Support**: Full compatibility with standalone components and signals
-- ✅ **TypeScript Excellence**: Excellent TypeScript support with strict typing
-- ✅ **Small Bundle Size**: Only includes components you actually use (~2-5KB per component)
-- ✅ **Active Development**: Growing community with 2k+ GitHub stars and regular updates
-- ❌ **Limited Components**: Still developing (46/48 components complete, missing some enterprise features)
-- ❌ **Newer Library**: Less mature ecosystem compared to established libraries
-- ❌ **Documentation**: Still building comprehensive documentation and examples
-- **Chat Suitability**: Excellent for custom chat interfaces with full design control
-- **Bundle Impact**: Minimal - only adds components you use
-- **Community**: Growing rapidly with strong Angular community backing
-
-**Ng-Zorro (NG-ZORRO-ANTD)** - Enterprise Angular UI library based on Ant Design
-- ✅ **Comprehensive Components**: 70+ high-quality components out of the box
-- ✅ **Enterprise-Ready**: Battle-tested in production by Alibaba, Aliyun, ThoughtWorks
-- ✅ **Angular 19+ Support**: Full compatibility with latest Angular versions
-- ✅ **TypeScript First**: Written in TypeScript with complete type definitions
-- ✅ **Ant Design System**: Consistent design language with proven UX patterns
-- ✅ **Internationalization**: Built-in i18n support for dozens of languages
-- ✅ **Large Community**: 9k+ GitHub stars, active maintenance, extensive documentation
-- ✅ **OnPush Compatible**: Optimized for Angular's OnPush change detection strategy
-- ❌ **Bundle Size**: Larger bundle size (~200-400KB) due to comprehensive component set
-- ❌ **Design Constraints**: Ant Design aesthetic may not fit all design requirements
-- ❌ **Customization Complexity**: Theming requires understanding of Ant Design's design tokens
-- **Chat Suitability**: Excellent with rich components (lists, avatars, badges, modals, forms)
-- **Bundle Impact**: Moderate to large depending on components used
-- **Community**: Very mature with extensive enterprise adoption
-
-**PrimeNG** - Feature-rich Angular UI library
-- ✅ **Comprehensive**: 100+ components with advanced features
-- ❌ **Bundle Size**: Heavy bundle size impact
-- ❌ **Design System**: Less cohesive design compared to Material or Ant Design
-
-**Ng-Bootstrap** - Bootstrap-based Angular components
-- ✅ **Bootstrap Familiarity**: Leverages Bootstrap design system
-- ❌ **Limited Scope**: Fewer components than other enterprise libraries
-- ❌ **Bootstrap Dependency**: Tied to Bootstrap's design constraints
-
-**Clarity** - VMware's design system for Angular
-- ✅ **Enterprise Focus**: Designed for enterprise applications
-- ❌ **Specific Aesthetic**: VMware-specific design may not suit all applications
-- ❌ **Smaller Community**: Less community adoption compared to Material or Ant Design
-
 ### State Management Strategy
 **Chosen**: NgRx 18+ with ComponentStore
 **Rationale**:
@@ -121,82 +73,6 @@ This document outlines the detailed implementation plan for the Angular web clie
 - **ComponentStore**: Component-specific state, form state, local UI interactions
 - **Angular Signals**: Reactive data binding and computed values
 - **RxJS Observables**: WebSocket connections, HTTP requests, real-time updates
-
-**Alternative Considered**: Akita (simpler but less ecosystem), NGXS (Redux-like but smaller community), Services with BehaviorSubject (manual state management)
-
-## Project Structure
-```
-client/web/angular/
-├── projects/
-│   └── chat/                    # Angular chat application
-│       ├── src/
-│       │   ├── app/             # Application root
-│       │   │   ├── core/        # Core services and guards
-│       │   │   │   ├── auth/    # Authentication services
-│       │   │   │   ├── guards/  # Route guards
-│       │   │   │   ├── interceptors/ # HTTP interceptors
-│       │   │   │   └── services/ # Core services
-│       │   │   ├── shared/      # Shared components and utilities
-│       │   │   │   ├── components/ # Reusable components
-│       │   │   │   ├── directives/ # Custom directives
-│       │   │   │   ├── pipes/   # Custom pipes
-│       │   │   │   └── utils/   # Utility functions
-│       │   │   ├── features/    # Feature modules
-│       │   │   │   ├── auth/    # Authentication feature
-│       │   │   │   │   ├── components/ # Auth components
-│       │   │   │   │   ├── pages/   # Auth pages
-│       │   │   │   │   └── services/ # Auth services
-│       │   │   │   ├── chat/    # Chat feature
-│       │   │   │   │   ├── components/ # Chat components
-│       │   │   │   │   ├── pages/   # Chat pages
-│       │   │   │   │   ├── services/ # Chat services
-│       │   │   │   │   └── store/   # Chat state management
-│       │   │   │   ├── user/    # User management feature
-│       │   │   │   │   ├── components/ # User components
-│       │   │   │   │   ├── pages/   # User pages
-│       │   │   │   │   └── services/ # User services
-│       │   │   │   └── settings/ # Settings feature
-│       │   │   ├── layout/      # Layout components
-│       │   │   │   ├── header/  # Header component
-│       │   │   │   ├── sidebar/ # Sidebar component
-│       │   │   │   └── footer/  # Footer component
-│       │   │   ├── store/       # NgRx store configuration
-│       │   │   │   ├── auth/    # Auth state
-│       │   │   │   ├── chat/    # Chat state
-│       │   │   │   ├── user/    # User state
-│       │   │   │   └── app.state.ts # Root state
-│       │   │   ├── types/       # Generated GraphQL types
-│       │   │   ├── graphql/     # GraphQL operations
-│       │   │   │   ├── auth/    # Authentication operations
-│       │   │   │   ├── chat/    # Chat operations
-│       │   │   │   └── user/    # User operations
-│       │   │   ├── app.component.ts # Root component
-│       │   │   ├── app.config.ts    # App configuration
-│       │   │   └── app.routes.ts    # Route configuration
-│       │   ├── assets/          # Static assets
-│       │   │   ├── icons/       # Icon assets
-│       │   │   ├── images/      # Image assets
-│       │   │   └── styles/      # Global styles
-│       │   ├── environments/    # Environment configurations
-│       │   │   ├── environment.ts     # Development environment
-│       │   │   └── environment.prod.ts # Production environment
-│       │   ├── index.html       # Main HTML file
-│       │   ├── main.ts          # Application bootstrap
-│       │   └── styles.css       # Global styles
-│       ├── types/               # Generated GraphQL types (shared)
-│       ├── graphql/             # GraphQL operations (shared)
-│       ├── tsconfig.app.json    # TypeScript config for app
-│       └── tsconfig.spec.json   # TypeScript config for tests
-├── angular.json                 # Angular workspace configuration
-├── package.json                 # Dependencies and scripts
-├── tailwind.config.js           # Tailwind CSS configuration
-├── codegen.yml                  # GraphQL Code Generator
-├── tsconfig.json                # TypeScript configuration
-├── .eslintrc.js                 # ESLint configuration
-├── karma.conf.js                # Karma test configuration
-├── cypress.config.ts            # Cypress E2E configuration
-└── README.md                    # Setup and development guide
-```
 
 ## Backend Integration
 
@@ -227,41 +103,48 @@ client/web/angular/
   - [x] Configure TypeScript 5.8+ with strict mode
   - [ ] Set up ESLint and Prettier for Angular
   - [ ] Configure Angular CLI with esbuild
+  - [ ] Set up Git hooks and commit linting
 - [ ] **1.2 UI and Styling Setup**
   - [ ] Configure Tailwind CSS 3.4+ with Angular
   - [ ] Install and configure Angular Material 20+
   - [ ] Set up Material Icons and Lucide Angular
   - [ ] Create Angular Material theme with CSS custom properties
   - [ ] Configure dark/light theme support with Angular CDK
+  - [ ] Set up responsive breakpoints with Angular CDK Layout
 - [ ] **1.3 Package Management Setup**
   - [ ] Configure pnpm for Angular workspace
   - [ ] Install core Angular dependencies
   - [ ] Configure package.json scripts for Angular CLI
   - [ ] Set up Angular build optimization
+  - [ ] Configure development and production environments
 - [ ] **1.4 State Management Setup**
   - [ ] Install and configure NgRx 18+ with standalone APIs
   - [ ] Set up authentication store with NgRx
   - [ ] Configure user data store
   - [ ] Set up chat conversation store
   - [ ] Configure NgRx DevTools and effects
+  - [ ] Set up ComponentStore for local state management
 - [ ] **1.5 GraphQL Configuration**
   - [ ] Install Apollo Angular 8+ and related packages
   - [ ] Configure GraphQL Code Generator for Angular
   - [ ] Set up schema download from Federation Gateway
   - [ ] Create Apollo Angular configuration with RxJS
   - [ ] Configure Apollo Client cache policies for Angular
+  - [ ] Set up GraphQL error handling with Angular ErrorHandler
 - [ ] **1.6 WebSocket Configuration**
   - [ ] Install WebSocket client packages for Angular
   - [ ] Create RxJS-based WebSocket service
   - [ ] Set up subscription management with observables
   - [ ] Configure reconnection logic with RxJS operators
   - [ ] Integrate WebSocket with NgRx store
+  - [ ] Set up WebSocket error handling and recovery
 - [ ] **1.7 Authentication Setup**
   - [ ] Configure JWT token handling with Angular interceptors
   - [ ] Set up Angular Guards for route protection
   - [ ] Create NgRx authentication store
   - [ ] Configure secure HTTP-only cookies with Angular HTTP client
   - [ ] Set up token refresh mechanism with RxJS
+  - [ ] Implement logout and session cleanup
 
 ### Phase 2: Core Application Features
 - [ ] **2.1 Authentication Implementation**
@@ -270,12 +153,18 @@ client/web/angular/
   - [ ] Add password reset functionality with Angular validators
   - [ ] Set up protected route guards
   - [ ] Implement token refresh logic with RxJS
+  - [ ] Add OAuth integration (Google, GitHub)
+  - [ ] Create authentication error handling
+  - [ ] Implement remember me functionality
 - [ ] **2.2 User Profile Management**
   - [ ] Create user profile page with Angular Material
   - [ ] Implement profile editing with reactive forms
   - [ ] Add user settings page with Angular Material components
   - [ ] Create user search with Angular Material autocomplete
   - [ ] Implement contact/friend management with NgRx
+  - [ ] Add avatar upload functionality
+  - [ ] Create user status management
+  - [ ] Implement user preferences storage
 - [ ] **2.3 Chat Interface Implementation**
   - [ ] Design and implement chat layout with Angular Material
   - [ ] Create conversation list component with virtual scrolling
@@ -284,11 +173,16 @@ client/web/angular/
   - [ ] Create typing indicators with Angular animations
   - [ ] Implement read receipts with Angular Material badges
   - [ ] Add real-time updates with WebSocket observables
+  - [ ] Create message search and filtering
 - [ ] **2.4 Real-time Features**
   - [ ] WebSocket connection management with RxJS
   - [ ] Subscription handling for chat updates with NgRx effects
   - [ ] User presence and online status with Angular signals
   - [ ] Push notification integration with Angular service worker
+  - [ ] Implement typing indicators
+  - [ ] Add message delivery status
+  - [ ] Create real-time user list updates
+  - [ ] Implement connection status indicators
 
 ### Phase 3: Security & Performance Implementation
 - [ ] **3.1 Security Implementation**
@@ -297,18 +191,27 @@ client/web/angular/
   - [ ] Configure CSRF prevention with Angular HTTP interceptors
   - [ ] Set up Content Security Policy (CSP) for Angular
   - [ ] Implement secure cookie configuration with Angular HTTP client
+  - [ ] Add rate limiting for API calls
+  - [ ] Implement input validation and sanitization
+  - [ ] Set up security headers and HTTPS enforcement
 - [ ] **3.2 Performance Monitoring**
   - [ ] Set up Core Web Vitals tracking with Angular
   - [ ] Implement bundle size monitoring with Angular CLI
   - [ ] Add error tracking with Angular ErrorHandler
   - [ ] Configure chat-specific performance metrics
   - [ ] Set up real-time performance dashboard with Angular Material
+  - [ ] Implement lazy loading for feature modules
+  - [ ] Add performance budgets to Angular CLI
+  - [ ] Set up bundle analysis and optimization
 - [ ] **3.3 Accessibility Implementation**
   - [ ] Implement comprehensive ARIA support with Angular CDK a11y
   - [ ] Add keyboard navigation patterns with Angular Material
   - [ ] Configure screen reader support with Angular CDK
   - [ ] Set up focus management with Angular CDK focus trap
   - [ ] Add accessibility testing automation with Angular testing utilities
+  - [ ] Implement high contrast theme support
+  - [ ] Add keyboard shortcuts for chat actions
+  - [ ] Set up accessibility audit automation
 
 ### Phase 4: Advanced Features & Internationalization
 - [ ] **4.1 Internationalization (i18n)**
@@ -317,18 +220,36 @@ client/web/angular/
   - [ ] Add locale-aware date/time formatting with Angular DatePipe
   - [ ] Configure message content localization with Angular i18n
   - [ ] Set up translation management system with Angular CLI
+  - [ ] Implement dynamic language switching
+  - [ ] Add locale-specific number and currency formatting
+  - [ ] Set up translation extraction and build processes
 - [ ] **4.2 Progressive Web App (PWA)**
   - [ ] Implement Angular service worker with offline support
   - [ ] Add push notification system with Angular PWA
   - [ ] Configure offline message caching with Angular service worker
   - [ ] Set up app manifest and installation with Angular PWA
   - [ ] Implement background sync for messages with Angular service worker
+  - [ ] Add offline indicator and sync status
+  - [ ] Configure app update notifications
+  - [ ] Set up PWA analytics and monitoring
 - [ ] **4.3 Advanced Chat Features**
   - [ ] Group chat creation and management with Angular Material dialogs
   - [ ] File sharing with preview and security using Angular Material
   - [ ] Message search and filtering with Angular Material search
   - [ ] Chat history and pagination with Angular CDK virtual scrolling
   - [ ] Advanced emoji reactions and formatting with Angular Material
+  - [ ] Implement message threading and replies
+  - [ ] Add voice message recording and playback
+  - [ ] Create chat export and backup functionality
+- [ ] **4.4 Enhanced User Experience**
+  - [ ] Implement drag-and-drop file uploads with Angular CDK
+  - [ ] Add message formatting (bold, italic, code blocks)
+  - [ ] Create custom emoji and sticker support
+  - [ ] Implement chat themes and customization
+  - [ ] Add message scheduling and reminders
+  - [ ] Create chat templates and quick responses
+  - [ ] Implement user blocking and reporting
+  - [ ] Add chat moderation tools
 
 ### Phase 5: Testing, Documentation & Production
 - [ ] **5.1 Comprehensive Testing**
@@ -337,24 +258,37 @@ client/web/angular/
   - [ ] Add accessibility testing automation with Angular CDK a11y testing
   - [ ] Configure performance testing benchmarks with Angular CLI
   - [ ] Set up cross-browser testing with Cypress/Playwright
+  - [ ] Implement unit tests for all components and services
+  - [ ] Add integration tests for NgRx store and effects
+  - [ ] Create E2E tests for critical user journeys
 - [ ] **5.2 Error Handling & Recovery**
   - [ ] Implement global error handling with Angular ErrorHandler
   - [ ] Add WebSocket error recovery with RxJS error operators
   - [ ] Configure GraphQL error handling with Apollo Angular
   - [ ] Set up error reporting system with Angular
   - [ ] Add user-friendly error messages with Angular Material snackbar
+  - [ ] Implement retry mechanisms for failed operations
+  - [ ] Create error boundary components for graceful degradation
+  - [ ] Set up error analytics and monitoring
 - [ ] **5.3 Documentation & Developer Experience**
   - [ ] Set up Storybook for Angular component documentation
   - [ ] Create API documentation with Compodoc
   - [ ] Add deployment and troubleshooting guides
   - [ ] Implement developer onboarding documentation
   - [ ] Configure development tools and debugging with Angular DevTools
+  - [ ] Create component usage examples and guidelines
+  - [ ] Set up automated documentation generation
+  - [ ] Add code style guides and best practices
 - [ ] **5.4 Production Deployment**
   - [ ] Configure production build optimization with Angular CLI
   - [ ] Set up CDN and asset optimization
   - [ ] Implement scaling considerations for Angular
   - [ ] Add monitoring and analytics with Angular
   - [ ] Configure deployment automation with Angular CLI
+  - [ ] Set up environment-specific configurations
+  - [ ] Implement health checks and status monitoring
+  - [ ] Configure backup and disaster recovery procedures
+
 ## Component Implementation Checklist
 
 ### Angular Material Base Components Setup
@@ -371,6 +305,9 @@ client/web/angular/
   - [ ] MatSnackBar (notifications and alerts)
   - [ ] MatTooltip (helpful information on hover)
   - [ ] MatProgressSpinner (loading indicators)
+  - [ ] MatSidenav (navigation drawer)
+  - [ ] MatToolbar (header and navigation)
+  - [ ] MatList (conversation and contact lists)
 
 ### Authentication Components
 - [ ] **LoginComponent**
@@ -380,22 +317,30 @@ client/web/angular/
   - [ ] Error handling with MatSnackBar notifications
   - [ ] Loading states with MatProgressSpinner
   - [ ] Angular Router navigation
+  - [ ] Remember me functionality with MatCheckbox
+  - [ ] Password visibility toggle with MatIconButton
 - [ ] **RegistrationComponent**
   - [ ] Multi-step form using Angular Material stepper
   - [ ] Password strength indicator with custom Angular component
   - [ ] Terms acceptance with MatCheckbox
   - [ ] Email verification flow
   - [ ] Form validation with Angular validators and custom validators
+  - [ ] Profile picture upload with drag-and-drop
+  - [ ] Username availability checking
+  - [ ] Social registration options
 - [ ] **PasswordResetComponent**
   - [ ] Email input with Angular Material validation
   - [ ] Reset token validation
   - [ ] New password form with confirmation
   - [ ] Success/error messaging with MatSnackBar
+  - [ ] Password strength validation
+  - [ ] Resend email functionality
 - [ ] **OAuthButtonsComponent**
   - [ ] Google OAuth with custom MatButton styling
   - [ ] GitHub OAuth integration
   - [ ] Social login error handling
   - [ ] Loading states and feedback with Angular Material
+  - [ ] Account linking functionality
 
 ### Layout Components
 - [ ] **MainLayoutComponent**
@@ -404,30 +349,70 @@ client/web/angular/
   - [ ] Header with user menu using MatMenu
   - [ ] Main content area with proper Angular Material spacing
   - [ ] Mobile-first responsive navigation with Angular CDK breakpoints
+  - [ ] **Theme Color Management System**
+    - [ ] Create Angular Material theming service with dynamic color switching
+    - [ ] Implement primary, accent, and background color customization with CSS custom properties
+    - [ ] Set up custom color palette creation with Material Design color generation
+    - [ ] Add color palette persistence using NgRx store and localStorage
+    - [ ] Configure theme color validation and fallback mechanisms
+    - [ ] Implement real-time theme color preview with Angular Material components
+  - [ ] **Theme Schema Management System**
+    - [ ] Implement dark/light/auto theme mode switching with Angular CDK
+    - [ ] Add system preference detection using MediaWatcher service for auto mode
+    - [ ] Create theme persistence across browser sessions with NgRx effects
+    - [ ] Set up theme synchronization across multiple browser tabs
+    - [ ] Configure smooth theme transitions with Angular Animations
+    - [ ] Add theme preference inheritance from user profile settings
+  - [ ] **Layout Variant Management System**
+    - [ ] Create multiple layout options (empty, classic, compact, dense, futuristic, thin)
+    - [ ] Implement horizontal layouts (centered, enterprise, material, modern)
+    - [ ] Add layout switching functionality with user preference storage in NgRx
+    - [ ] Create responsive layout adjustments using Angular CDK BreakpointObserver
+    - [ ] Set up layout persistence and restoration across sessions
+    - [ ] Implement layout preview system with visual thumbnails
+  - [ ] **Theme and Layout Control Interface**
+    - [ ] Create settings drawer component with Angular Material drawer
+    - [ ] Add theme color picker with Material Design color swatches
+    - [ ] Implement scheme selector (auto/dark/light) with system preference indicators
+    - [ ] Create layout gallery with interactive preview thumbnails
+    - [ ] Add reset to defaults functionality with confirmation dialogs
+    - [ ] Implement import/export theme configurations with JSON validation
 - [ ] **SidebarComponent**
   - [ ] Navigation menu with MatList and MatListItem
   - [ ] Active route highlighting with Angular Router
   - [ ] Collapsible design using MatExpansionPanel
   - [ ] User status with MatAvatar and MatBadge
   - [ ] Conversation list with MatVirtualScrollViewport
+  - [ ] Search functionality with MatFormField
+  - [ ] Recent conversations section
+  - [ ] Favorites and pinned chats
 - [ ] **HeaderComponent**
   - [ ] User MatAvatar with MatMenu
   - [ ] Notification MatBadge indicators
   - [ ] Search MatFormField with MatAutocomplete
   - [ ] Theme toggle MatSlideToggle with Angular Material theming
   - [ ] Mobile menu trigger with MatIconButton
+  - [ ] Connection status indicator
+  - [ ] Settings and preferences access
+  - [ ] Help and support links
 - [ ] **Modal System**
   - [ ] MatDialog component for modals
   - [ ] MatBottomSheet for mobile slide-up panels
   - [ ] Backdrop click handling
   - [ ] Keyboard navigation (ESC key) with Angular CDK
   - [ ] Focus management and accessibility with Angular CDK a11y
+  - [ ] Modal stacking and z-index management
+  - [ ] Custom modal animations
+  - [ ] Modal data passing and result handling
 - [ ] **Notification System**
   - [ ] MatSnackBar component for notifications
   - [ ] Success/error/info variants with Angular Material theming
   - [ ] Auto-dismiss with configurable timing
   - [ ] Queue management for multiple notifications
   - [ ] Animation transitions with Angular Animations
+  - [ ] Action buttons in notifications
+  - [ ] Persistent notifications for important messages
+  - [ ] Notification history and management
 
 ### Chat Components
 - [ ] **ConversationListComponent**
@@ -436,6 +421,9 @@ client/web/angular/
   - [ ] Real-time updates via WebSocket + NgRx
   - [ ] MatBadge for unread message counts
   - [ ] MatFormField with MatAutocomplete for search functionality
+  - [ ] Infinite scrolling for large conversation lists
+  - [ ] Conversation sorting and filtering options
+  - [ ] Drag-and-drop for conversation organization
 - [ ] **ConversationItemComponent**
   - [ ] MatCard with hover effects using Angular Material elevation
   - [ ] MatAvatar with online status MatBadge
@@ -443,12 +431,17 @@ client/web/angular/
   - [ ] Timestamp formatting with Angular DatePipe
   - [ ] Unread MatBadge with count
   - [ ] Active conversation highlighting with Angular Material theming
+  - [ ] Context menu with MatMenu for conversation actions
+  - [ ] Typing indicator integration
 - [ ] **MessageThreadComponent**
   - [ ] MatVirtualScrollViewport with infinite scroll
   - [ ] Message grouping with MatDivider
   - [ ] Date separators using custom Angular components
   - [ ] Scroll to bottom MatFabButton with smooth animation
   - [ ] Loading states with MatProgressSpinner
+  - [ ] Message selection and bulk actions
+  - [ ] Jump to unread messages functionality
+  - [ ] Message search within conversation
 - [ ] **MessageBubbleComponent**
   - [ ] MatCard variants for sent/received messages with Angular Material theming
   - [ ] Rich text formatting support
@@ -456,6 +449,8 @@ client/web/angular/
   - [ ] Message status indicators with MatIcon
   - [ ] Emoji reactions using MatMenu
   - [ ] Context menu with MatMenu
+  - [ ] Message editing and deletion
+  - [ ] Reply and forward functionality
 - [ ] **MessageInputComponent**
   - [ ] MatFormField with auto-resize textarea
   - [ ] File upload with drag-and-drop zone using Angular CDK drag-drop
@@ -463,16 +458,22 @@ client/web/angular/
   - [ ] Send MatButton with loading state
   - [ ] Keyboard shortcuts (Ctrl+Enter) with Angular CDK
   - [ ] Mention suggestions with MatAutocomplete
+  - [ ] Message formatting toolbar
+  - [ ] Voice message recording interface
 - [ ] **TypingIndicatorComponent**
   - [ ] Animated dots indicator with Angular Animations
   - [ ] Multiple users typing display
   - [ ] Real-time WebSocket integration with RxJS
   - [ ] Smooth enter/exit animations with Angular Animations
+  - [ ] Customizable typing indicator styles
+  - [ ] Performance optimization for multiple indicators
 - [ ] **ReadReceiptComponent**
   - [ ] Message delivery status MatIcon
   - [ ] Read by MatAvatar stack
   - [ ] MatTooltip with timestamp details
   - [ ] Status MatBadge variants
+  - [ ] Bulk read status for multiple messages
+  - [ ] Privacy settings integration
 
 ### User Components
 - [ ] **UserProfileComponent**
@@ -480,26 +481,43 @@ client/web/angular/
   - [ ] Edit mode toggle with MatSlideToggle
   - [ ] Avatar upload functionality with Angular Material file input
   - [ ] Status message editing with MatFormField
+  - [ ] Social links and contact information
+  - [ ] Privacy settings management
+  - [ ] Profile completion progress indicator
+  - [ ] Activity status and last seen information
 - [ ] **UserAvatarComponent**
   - [ ] Image display with fallback using MatAvatar
   - [ ] Online status indicator with MatBadge
-  - [ ] Size variants
+  - [ ] Size variants for different contexts
   - [ ] Click handling for profile view
+  - [ ] Lazy loading for performance
+  - [ ] Custom avatar generation for users without photos
 - [ ] **UserSettingsComponent**
   - [ ] Notification preferences with MatSlideToggle
   - [ ] Privacy settings with MatRadioGroup
   - [ ] Theme preferences with MatButtonToggleGroup
   - [ ] Account management with Angular Material forms
+  - [ ] Language and localization settings
+  - [ ] Data export and account deletion options
+  - [ ] Security settings and two-factor authentication
+  - [ ] Chat backup and sync preferences
 - [ ] **UserSearchComponent**
   - [ ] Debounced search input with MatAutocomplete
   - [ ] Search results display with MatList
   - [ ] User selection handling
   - [ ] Recent searches with MatChipList
+  - [ ] Advanced search filters
+  - [ ] Search history management
 - [ ] **ContactListComponent**
   - [ ] Alphabetical sorting with Angular pipes
   - [ ] Online status filtering with MatSelectFilter
   - [ ] Contact actions (message, call) with MatMenu
   - [ ] Add/remove contact functionality with MatDialog
+  - [ ] Contact groups and categories
+  - [ ] Import/export contact functionality
+  - [ ] Contact synchronization with external services
+  - [ ] Bulk contact management actions
+
 ## Configuration Files
 
 ### Package Configuration
@@ -521,7 +539,9 @@ client/web/angular/
       "lint": "ng lint",
       "type-check": "tsc --noEmit",
       "codegen": "graphql-codegen --config codegen.yml",
-      "analyze": "ng build --stats-json && npx webpack-bundle-analyzer dist/chat/stats.json"
+      "analyze": "ng build --stats-json && npx webpack-bundle-analyzer dist/chat/stats.json",
+      "storybook": "ng run chat:storybook",
+      "build-storybook": "ng run chat:build-storybook"
     },
     "dependencies": {
       "@angular/animations": "^20.0.0",
@@ -577,7 +597,9 @@ client/web/angular/
       "@typescript-eslint/parser": "^7.0.0",
       "prettier": "^3.0.0",
       "autoprefixer": "^10.4.0",
-      "postcss": "^8.4.0"
+      "postcss": "^8.4.0",
+      "@storybook/angular": "^7.0.0",
+      "@storybook/addon-essentials": "^7.0.0"
     }
   }
   ```
@@ -639,6 +661,53 @@ client/web/angular/
                   "maximumError": "4kb"
                 }
               ]
+            },
+            "configurations": {
+              "production": {
+                "optimization": true,
+                "outputHashing": "all",
+                "sourceMap": false,
+                "namedChunks": false,
+                "aot": true,
+                "extractLicenses": true,
+                "vendorChunk": false,
+                "buildOptimizer": true
+              },
+              "development": {
+                "optimization": false,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "vendorChunk": true,
+                "namedChunks": true
+              }
+            }
+          },
+          "serve": {
+            "builder": "@angular/build:dev-server",
+            "configurations": {
+              "production": {
+                "buildTarget": "chat:build:production"
+              },
+              "development": {
+                "buildTarget": "chat:build:development"
+              }
+            },
+            "defaultConfiguration": "development"
+          },
+          "test": {
+            "builder": "@angular/build:karma",
+            "options": {
+              "polyfills": [],
+              "tsConfig": "projects/chat/tsconfig.spec.json",
+              "assets": [
+                "projects/chat/src/favicon.ico",
+                "projects/chat/src/assets"
+              ],
+              "styles": [
+                "@angular/material/prebuilt-themes/azure-blue.css",
+                "projects/chat/src/styles.css"
+              ],
+              "scripts": []
             }
           }
         }
@@ -668,9 +737,15 @@ client/web/angular/
         scalars:
           DateTime: string
           Upload: File
+        namingConvention:
+          typeNames: pascal-case#pascalCase
+          enumValues: upper-case#upperCase
     projects/chat/src/app/types/introspection.json:
       plugins:
         - introspection
+  hooks:
+    afterAllFileWrite:
+      - prettier --write
   ```
 
 ### Tailwind CSS Configuration
@@ -696,15 +771,40 @@ client/web/angular/
             800: 'rgb(var(--color-primary-800) / <alpha-value>)',
             900: 'rgb(var(--color-primary-900) / <alpha-value>)',
           },
+          accent: {
+            50: 'rgb(var(--color-accent-50) / <alpha-value>)',
+            500: 'rgb(var(--color-accent-500) / <alpha-value>)',
+            900: 'rgb(var(--color-accent-900) / <alpha-value>)',
+          }
         },
         fontFamily: {
           sans: ['Roboto', 'sans-serif'],
+          mono: ['Roboto Mono', 'monospace'],
+        },
+        animation: {
+          'fade-in': 'fadeIn 0.5s ease-in-out',
+          'slide-up': 'slideUp 0.3s ease-out',
+          'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        },
+        keyframes: {
+          fadeIn: {
+            '0%': { opacity: '0' },
+            '100%': { opacity: '1' },
+          },
+          slideUp: {
+            '0%': { transform: 'translateY(100%)' },
+            '100%': { transform: 'translateY(0)' },
+          },
         },
       },
     },
-    plugins: [],
+    plugins: [
+      require('@tailwindcss/typography'),
+      require('@tailwindcss/forms'),
+    ],
   }
   ```
+
 ## Development Workflow
 
 ### Angular Development Commands
@@ -752,6 +852,9 @@ tsc --noEmit
 
 # Analyze bundle size
 pnpm analyze
+
+# Run Storybook
+pnpm storybook
 ```
 
 ### Angular CLI Commands
@@ -779,6 +882,12 @@ ng add @angular/pwa
 
 # Add service worker
 ng add @angular/service-worker
+
+# Generate NgRx feature
+ng generate @ngrx/schematics:feature chat --module app.module.ts
+
+# Generate NgRx effects
+ng generate @ngrx/schematics:effect chat/Chat --module app.module.ts
 ```
 
 ## Integration Patterns
@@ -822,75 +931,6 @@ ng add @angular/service-worker
 - **NgRx Selectors**: Memoized selectors for state management
 - **Angular Signals**: Modern reactive programming for better performance
 - **Change Detection**: Optimized change detection with OnPush and signals
-
-## Docker Integration
-
-### Docker Development Setup
-Following the established pattern for NestJS backend services, the Angular frontend will be containerized for development:
-
-```dockerfile
-# Dockerfile.dev
-FROM node:20-alpine
-
-WORKDIR /app
-
-# Install pnpm
-RUN npm install -g pnpm
-
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
-
-# Install dependencies
-RUN pnpm install
-
-# Copy source code
-COPY . .
-
-# Expose Angular dev server port
-EXPOSE 4200
-
-# Start development server
-CMD ["pnpm", "start", "--host", "0.0.0.0"]
-```
-
-### Docker Compose Integration
-```yaml
-# docker-compose.dev.yml (addition)
-services:
-  angular-chat:
-    build:
-      context: ./client/web/angular
-      dockerfile: Dockerfile.dev
-    ports:
-      - "4200:4200"
-    volumes:
-      - ./client/web/angular:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - APOLLO_GATEWAY_URL=http://apollo-gateway:4000/graphql
-      - WEBSOCKET_GATEWAY_URL=ws://websocket-gateway:4001
-    depends_on:
-      - apollo-gateway
-      - websocket-gateway
-    networks:
-      - chat-network
-```
-
-### Development Script Integration
-```bash
-# ./docker/scripts/dev.sh (addition)
-case "$1" in
-  "angular-chat")
-    echo "Starting Angular chat frontend..."
-    docker-compose -f docker-compose.dev.yml up angular-chat
-    ;;
-  "frontend-angular")
-    echo "Starting Angular chat frontend..."
-    docker-compose -f docker-compose.dev.yml up angular-chat
-    ;;
-esac
-```
 
 ## Testing Strategy
 
@@ -938,50 +978,10 @@ ng test --code-coverage
 
 # Run specific test suite
 ng test --include="**/auth/**/*.spec.ts"
+
+# Run tests with specific configuration
+ng test --configuration=ci
 ```
-
-## Routing Architecture
-
-### Angular Router Structure
-```typescript
-// app.routes.ts
-export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: '/chat',
-    pathMatch: 'full'
-  },
-  {
-    path: 'auth',
-    loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes)
-  },
-  {
-    path: 'chat',
-    loadChildren: () => import('./features/chat/chat.routes').then(m => m.chatRoutes),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'profile',
-    loadChildren: () => import('./features/user/user.routes').then(m => m.userRoutes),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'settings',
-    loadChildren: () => import('./features/settings/settings.routes').then(m => m.settingsRoutes),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: '**',
-    loadComponent: () => import('./shared/components/not-found/not-found.component').then(m => m.NotFoundComponent)
-  }
-];
-```
-
-### Route Protection Strategy
-- **Public Routes**: Authentication pages, landing page
-- **Protected Routes**: All dashboard routes require authentication via Angular Guards
-- **Guards**: Angular Guards for route protection with JWT token validation
-- **Redirects**: Automatic redirects based on authentication state
 
 ## Implementation Strategy
 

@@ -24,10 +24,8 @@ show_help() {
   echo "  notification Start notification service with dependencies"
   echo "  api         Start API gateway with dependencies"
   echo "  websocket   Start WebSocket gateway with dependencies"
-  echo "  frontend    Start Next.js frontend with dependencies"
-  echo "  web         Start Next.js web frontend (alias for frontend)"
-  echo "  nextjs-chat Start Next.js chat frontend (alias for frontend)"
-  echo "  frontend-chat Start Next.js chat frontend (alias for frontend)"
+  echo "  nextjs-chat Start Next.js chat frontend"
+  echo "  angular-chat Start Angular chat frontend"
   echo "  all         Start all services"
   echo "  build       Rebuild all services"
   echo "  build:auth  Rebuild auth service"
@@ -36,10 +34,8 @@ show_help() {
   echo "  build:notification Rebuild notification service"
   echo "  build:api   Rebuild API gateway"
   echo "  build:websocket Rebuild WebSocket gateway"
-  echo "  build:frontend Rebuild Next.js frontend"
-  echo "  build:web   Rebuild Next.js web frontend (alias for build:frontend)"
-  echo "  build:nextjs-chat Rebuild Next.js chat frontend (alias for build:frontend)"
-  echo "  build:frontend-chat Rebuild Next.js chat frontend (alias for build:frontend)"
+  echo "  build:nextjs-chat Rebuild Next.js chat frontend"
+  echo "  build:angular-chat Rebuild Angular chat frontend"
   echo "  down        Stop all services (using all profiles)"
   echo "  down:all    Forcefully stop all project containers"
   echo "  clean       Stop all services and remove volumes"
@@ -55,8 +51,8 @@ show_help() {
   echo "  ./dev.sh infra      # Start all infrastructure services"
   echo "  ./dev.sh auth       # Start auth service with dependencies"
   echo "  ./dev.sh chat       # Start chat service with dependencies"
-  echo "  ./dev.sh frontend   # Start Next.js frontend with dependencies"
-  echo "  ./dev.sh nextjs-chat # Start Next.js chat frontend (same as frontend)"
+  echo "  ./dev.sh nextjs-chat # Start Next.js chat frontend"
+  echo "  ./dev.sh angular-chat # Start Angular chat frontend"
   echo "  ./dev.sh logs auth  # Show logs for auth service"
   echo "  ./dev.sh restart auth-service # Restart the auth service"
 }
@@ -142,9 +138,13 @@ case "$1" in
     echo "Starting WebSocket gateway with dependencies..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile websocket up -d --build --force-recreate
     ;;
-  frontend|web|nextjs-chat|frontend-chat)
+  nextjs-chat)
     echo "Starting Next.js frontend with dependencies..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile frontend up -d --build --force-recreate
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile nextjs-chat up -d --build --force-recreate
+    ;;
+  angular-chat)
+    echo "Starting Angular frontend with dependencies..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile angular-chat up -d --build --force-recreate
     ;;
   all)
     echo "Starting all services..."
@@ -178,14 +178,18 @@ case "$1" in
     echo "Rebuilding WebSocket gateway..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" build websocket-gateway
     ;;
-  build:frontend|build:web|build:nextjs-chat|build:frontend-chat)
+  build:nextjs-chat)
     echo "Rebuilding Next.js frontend..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" build nextjs-chat
+    ;;
+  build:angular-chat)
+    echo "Rebuilding Angular frontend..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" build angular-chat
     ;;
   down)
     echo "Stopping all services..."
     # Stop services with all profiles to ensure everything is stopped
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile websocket --profile frontend --profile web --profile infra down
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile websocket --profile nextjs-chat --profile angular-chat --profile infra down
     ;;
   down:all)
     echo "Forcefully stopping all project containers..."
@@ -202,7 +206,7 @@ case "$1" in
     ;;
   clean)
     echo "Stopping all services and removing volumes..."
-    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile websocket --profile frontend --profile web --profile infra down -v
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all --profile db --profile kafka --profile redis --profile logging --profile auth --profile user --profile chat --profile notification --profile api --profile websocket --profile nextjs-chat --profile angular-chat --profile infra down -v
     ;;
   logs)
     if [ -z "$2" ]; then

@@ -1,0 +1,27 @@
+schema: 'http://localhost:4000/graphql'
+documents: 'projects/chat/src/app/**/*.graphql'
+generates:
+  projects/chat/src/app/types/graphql.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-apollo-angular
+    config:
+      withHooks: false
+      withHOC: false
+      withComponent: false
+      apolloAngularVersion: 8
+      addExplicitOverride: true
+      strictScalars: true
+      scalars:
+        DateTime: string
+        Upload: File
+      namingConvention:
+        typeNames: pascal-case#pascalCase
+        enumValues: upper-case#upperCase
+  projects/chat/src/app/types/introspection.json:
+    plugins:
+      - introspection
+hooks:
+  afterAllFileWrite:
+    - prettier --write

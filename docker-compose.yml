@@ -438,9 +438,39 @@ services:
       - nextjs-chat-node-modules:/app/node_modules
     networks:
       - chat-network
-    profiles: [ "frontend", "web" ]
+    profiles: [ "nextjs-chat" ]
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:5000" ]
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:5100" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # Angular Chat Frontend
+  angular-chat:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfiles/angular-chat.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    ports:
+      - "5200:4200" # Angular chat app
+    env_file:
+      - ./docker/config/angular-chat/angular-chat.env
+    volumes:
+      - ./client/web/angular/projects:/app/projects:delegated
+      - ./client/web/angular/angular.json:/app/angular.json:delegated
+      - ./client/web/angular/tsconfig.json:/app/tsconfig.json:delegated
+      - ./client/web/angular/tailwind.config.js:/app/tailwind.config.js:delegated
+      - ./client/web/angular/codegen.yml:/app/codegen.yml:delegated
+      - ./client/web/angular/package.json:/app/package.json:delegated
+      - ./client/web/angular/pnpm-lock.yaml:/app/pnpm-lock.yaml:delegated
+      - angular-chat-node-modules:/app/node_modules
+    networks:
+      - chat-network
+    profiles: [ "angular-chat" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:4200" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -466,5 +496,6 @@ volumes:
   notification-service-node-modules:
   logging-service-node-modules:
   nextjs-chat-node-modules:
+  angular-chat-node-modules:
   loki-data:
   grafana-data:
