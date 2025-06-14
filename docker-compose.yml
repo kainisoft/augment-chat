@@ -461,6 +461,7 @@ services:
       - ./client/web/angular/projects:/app/projects:delegated
       - ./client/web/angular/angular.json:/app/angular.json:delegated
       - ./client/web/angular/tsconfig.json:/app/tsconfig.json:delegated
+      - ./client/web/angular/.postcssrc.json:/app/.postcssrc.json:delegated
       - ./client/web/angular/package.json:/app/package.json:delegated
       - angular-chat-node-modules:/app/node_modules
     networks:
