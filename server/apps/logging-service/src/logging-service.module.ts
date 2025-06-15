@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { SecurityModule } from '@app/security';
 import { LoggingModule, LogLevel } from '@app/logging';
 import { LoggingServiceController } from './logging-service.controller';
 import { LoggingServiceService } from './logging-service.service';
@@ -34,12 +33,6 @@ import { LogLevelService } from './api/log-level.service';
         console: true,
         redactFields: ['password', 'token', 'secret', 'authorization'],
       }),
-    }),
-    SecurityModule.registerRateGuard({
-      isGlobal: true,
-      maxAttempts: 10,
-      windowSeconds: 60,
-      blockSeconds: 60,
     }),
   ],
   controllers: [LoggingServiceController, LogApiController],

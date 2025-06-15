@@ -12,7 +12,7 @@ This document outlines the detailed implementation plan for the Angular web clie
 - **Runtime**: Modern ES2022+ with Zone.js
 
 ### Styling & UI
-- **CSS Framework**: Tailwind CSS 3.4+
+- **CSS Framework**: Tailwind CSS 4+
 - **UI Component Library**: Angular Material 20+ (CDK + Material Design)
 - **Icons**: Material Icons + Lucide Angular
 
@@ -105,7 +105,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Configure Angular CLI with esbuild
   - [ ] Set up Git hooks and commit linting
 - [ ] **1.2 UI and Styling Setup**
-  - [ ] Configure Tailwind CSS 3.4+ with Angular
+  - [ ] Configure Tailwind CSS 4+ with Angular
   - [ ] Install and configure Angular Material 20+
   - [ ] Set up Material Icons and Lucide Angular
   - [ ] Create Angular Material theme with CSS custom properties
@@ -153,7 +153,6 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Add password reset functionality with Angular validators
   - [ ] Set up protected route guards
   - [ ] Implement token refresh logic with RxJS
-  - [ ] Add OAuth integration (Google, GitHub)
   - [ ] Create authentication error handling
   - [ ] Implement remember me functionality
 - [ ] **2.2 User Profile Management**

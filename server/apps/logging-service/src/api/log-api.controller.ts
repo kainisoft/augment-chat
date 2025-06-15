@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Query,
-  Logger,
-  UseGuards,
-} from '@nestjs/common';
-import { RateLimit, RateLimitGuard } from '@app/security';
+import { Controller, Get, Post, Body, Query, Logger } from '@nestjs/common';
 import { LogQueryService } from './log-query.service';
 import { LogLevelService } from './log-level.service';
 import { LogQueryDto, LogQueryResponseDto } from './dto/log-query.dto';
@@ -32,8 +23,6 @@ export class LogApiController {
    * @returns The query results
    */
   @Get()
-  @UseGuards(RateLimitGuard)
-  @RateLimit('api-call')
   async queryLogs(
     @Query() queryDto: LogQueryDto,
   ): Promise<LogQueryResponseDto> {
