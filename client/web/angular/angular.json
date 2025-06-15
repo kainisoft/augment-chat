@@ -82,6 +82,15 @@
               "projects/chat/src/styles.css"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/chat/**/*.ts",
+              "projects/chat/**/*.html"
+            ]
+          }
         }
       }
     }
