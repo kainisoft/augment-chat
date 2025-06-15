@@ -1,2 +1,125 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Import Tailwind CSS */
 @import "tailwindcss";
+
+/* Import Angular Material core styles */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+/* Import Material Design Icons */
+@import "material-design-icons/iconfont/material-icons.css";
+
+/* Global styles for chat application */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Focus styles */
+.focus-visible {
+  @apply ring-2 ring-blue-500 ring-offset-2 outline-none;
+}
+
+.dark .focus-visible {
+  @apply ring-offset-gray-800;
+}
+
+/* Animation utilities */
+.animate-in {
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+
+.animate-out {
+  animation-duration: 0.15s;
+  animation-fill-mode: both;
+}
+
+/* Chat-specific utilities */
+.chat-container {
+  @apply flex h-full flex-col bg-gray-50;
+}
+
+.dark .chat-container {
+  @apply bg-gray-900;
+}
+
+.chat-message {
+  @apply max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl;
+  @apply mb-2 rounded-3xl p-3 break-words;
+}
+
+.chat-message-sent {
+  @apply ml-auto bg-blue-500 text-white;
+}
+
+.chat-message-received {
+  @apply mr-auto bg-gray-200 text-gray-900;
+}
+
+.dark .chat-message-received {
+  @apply text-gray-100;
+}
+
+/* Material Design Icon utilities */
+.material-icons {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Responsive utilities */
+@media (max-width: 767px) {
+  .chat-message {
+    @apply max-w-[85%];
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

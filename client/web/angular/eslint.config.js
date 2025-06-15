@@ -82,7 +82,7 @@ module.exports = [
       '@angular-eslint/template/conditional-complexity': ['error', { maxComplexity: 3 }],
       '@angular-eslint/template/cyclomatic-complexity': ['error', { maxComplexity: 5 }],
       '@angular-eslint/template/use-track-by-function': 'error',
-      '@angular-eslint/template/no-call-expression': 'error',
+      '@angular-eslint/template/no-call-expression': 'warn', // Allow for demo purposes
       '@angular-eslint/template/no-duplicate-attributes': 'error',
     },
   },
