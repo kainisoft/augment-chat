@@ -1,0 +1,40 @@
+<!-- Main Application Shell Layout -->
+<div class="app-shell h-screen flex flex-col overflow-hidden">
+  <!-- Header -->
+  <app-header 
+    class="app-header flex-shrink-0 z-10"
+    (menuToggle)="toggleSidenav()"
+    [sidenavOpened]="sidenavOpened()"
+  />
+
+  <!-- Main Content Area with Sidenav -->
+  <div class="app-content flex flex-1 overflow-hidden">
+    <mat-sidenav-container class="flex-1 h-full">
+      <!-- Sidebar Navigation -->
+      <mat-sidenav
+        #sidenav
+        [mode]="getSidenavMode()"
+        [opened]="sidenavOpened()"
+        [fixedInViewport]="true"
+        [fixedTopGap]="0"
+        [fixedBottomGap]="0"
+        (backdropClick)="onSidenavBackdropClick()"
+        [class]="getSidenavClass()"
+      >
+        <app-sidebar 
+          class="h-full"
+          (navigationClick)="isMobile() && sidenavOpened.set(false)"
+        />
+      </mat-sidenav>
+
+      <!-- Main Content -->
+      <mat-sidenav-content class="app-main-content flex flex-col h-full overflow-hidden">
+        <!-- Chat Area Container -->
+        <div class="chat-area flex-1 flex overflow-hidden">
+          <!-- Router Outlet for Chat Views -->
+          <router-outlet />
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</div>

@@ -108,6 +108,11 @@ export class BreakpointService {
     return state.isXSmall || state.isSmall || state.isHandset;
   });
 
+  readonly isTablet = computed(() => {
+    const state = this.breakpointState();
+    return state.isMedium || state.isTablet;
+  });
+
   readonly isTabletOrMobile = computed(() => {
     const state = this.breakpointState();
     return this.isMobile() || state.isMedium || state.isTablet;

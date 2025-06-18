@@ -1,0 +1,78 @@
+/* Chat Area Component Styles */
+
+.chat-area-container {
+  @apply h-full bg-background;
+}
+
+.chat-welcome {
+  @apply flex-1 flex items-center justify-center p-8 bg-muted/20;
+}
+
+.welcome-content {
+  @apply text-center max-w-md;
+}
+
+.welcome-icon {
+  @apply mb-6;
+}
+
+.welcome-title {
+  @apply text-2xl font-semibold text-foreground mb-4;
+}
+
+.welcome-description {
+  @apply text-muted-foreground mb-6 leading-relaxed;
+}
+
+.welcome-actions {
+  @apply space-y-3;
+}
+
+.features-list {
+  @apply mt-8 text-left;
+}
+
+.features-list h3 {
+  @apply text-sm font-medium text-muted-foreground mb-3;
+}
+
+.features-list ul {
+  @apply space-y-2 text-sm text-muted-foreground;
+}
+
+.features-list li {
+  @apply flex items-center gap-2;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .chat-welcome {
+    @apply p-6;
+  }
+  
+  .welcome-content {
+    @apply max-w-sm;
+  }
+  
+  .welcome-title {
+    @apply text-xl;
+  }
+  
+  .welcome-description {
+    @apply text-sm;
+  }
+}
+
+@media (max-width: 640px) {
+  .chat-welcome {
+    @apply p-4;
+  }
+  
+  .welcome-content {
+    @apply max-w-xs;
+  }
+  
+  .welcome-title {
+    @apply text-lg;
+  }
+}

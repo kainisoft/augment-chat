@@ -1,0 +1,143 @@
+<!-- Application Header -->
+<mat-toolbar class="app-header-toolbar">
+  <!-- Left Section: Menu Toggle & Logo -->
+  <div class="header-left flex items-center gap-3">
+    <!-- Menu Toggle Button -->
+    <button
+      mat-icon-button
+      class="menu-toggle-btn"
+      [matTooltip]="sidenavOpened ? 'Close menu' : 'Open menu'"
+      (click)="onMenuToggle()"
+    >
+      <mat-icon>{{ getMenuIcon() }}</mat-icon>
+    </button>
+
+    <!-- App Logo & Title -->
+    <div class="app-logo flex items-center gap-2">
+      <mat-icon class="app-icon text-primary">chat</mat-icon>
+      <span class="app-title font-semibold text-lg hidden sm:block">Chat</span>
+    </div>
+  </div>
+
+  <!-- Center Section: Search (Desktop) -->
+  <div class="header-center flex-1 max-w-md mx-4 hidden md:block">
+    <mat-form-field class="search-field w-full" appearance="outline">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        placeholder="Search conversations..."
+        (keyup.enter)="onSearch($event)"
+        class="search-input"
+      />
+    </mat-form-field>
+  </div>
+
+  <!-- Right Section: Actions & User Menu -->
+  <div class="header-right flex items-center gap-2">
+    <!-- Search Button (Mobile) -->
+    <button
+      mat-icon-button
+      class="search-btn md:hidden"
+      matTooltip="Search"
+    >
+      <mat-icon>search</mat-icon>
+    </button>
+
+    <!-- Theme Toggle -->
+    <button
+      mat-icon-button
+      class="theme-toggle-btn"
+      [matTooltip]="'Current: ' + theme() + ' mode'"
+      (click)="toggleTheme()"
+    >
+      <mat-icon>{{ getThemeIcon() }}</mat-icon>
+    </button>
+
+    <!-- Notifications -->
+    <button
+      mat-icon-button
+      class="notifications-btn"
+      matTooltip="Notifications"
+    >
+      <mat-icon matBadge="3" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
+    </button>
+
+    <!-- User Menu -->
+    <button
+      mat-icon-button
+      class="user-menu-btn"
+      [matMenuTriggerFor]="userMenu"
+      matTooltip="User menu"
+    >
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <!-- User Menu Dropdown -->
+    <mat-menu #userMenu="matMenu" class="user-menu">
+      <!-- User Info -->
+      <div class="user-info px-4 py-3 border-b border-border">
+        <div class="user-name font-medium">John Doe</div>
+        <div class="user-email text-sm text-muted-foreground">john.doe&#64;example.com</div>
+      </div>
+
+      <!-- Menu Items -->
+      <button mat-menu-item (click)="onUserMenuAction('profile')">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+
+      <button mat-menu-item (click)="onUserMenuAction('settings')">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+
+      <mat-divider></mat-divider>
+
+      <!-- Theme Options -->
+      <div class="theme-options px-4 py-2">
+        <div class="text-sm font-medium mb-2">Theme</div>
+        <div class="flex gap-1">
+          <button
+            mat-icon-button
+            [class.active]="theme() === 'light'"
+            (click)="setTheme('light')"
+            matTooltip="Light mode"
+            class="theme-btn"
+          >
+            <mat-icon>light_mode</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            [class.active]="theme() === 'dark'"
+            (click)="setTheme('dark')"
+            matTooltip="Dark mode"
+            class="theme-btn"
+          >
+            <mat-icon>dark_mode</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            [class.active]="theme() === 'auto'"
+            (click)="setTheme('auto')"
+            matTooltip="Auto mode"
+            class="theme-btn"
+          >
+            <mat-icon>brightness_auto</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <button mat-menu-item (click)="onUserMenuAction('logout')" class="logout-btn">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+
+    <!-- Responsive Info (Development) -->
+    <span class="responsive-info text-xs opacity-75 hidden lg:block ml-2">
+      {{ currentBreakpoint() }} | {{ isMobile() ? 'Mobile' : isTablet() ? 'Tablet' : 'Desktop' }}
+    </span>
+  </div>
+</mat-toolbar>

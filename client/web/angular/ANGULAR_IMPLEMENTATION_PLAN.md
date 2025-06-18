@@ -3,6 +3,29 @@
 ## Overview
 This document outlines the detailed implementation plan for the Angular web client. The implementation uses Angular 20+ with standalone components, providing a modern, performant, and type-safe chat application interface that integrates seamlessly with the existing NestJS microservice architecture.
 
+## 🎯 Implementation Strategy Overview
+
+The implementation phases have been optimized for logical development flow and minimal rework:
+
+**Phase 1: Foundation & Layout** - Establishes the core infrastructure and layout architecture
+**Phase 2: Integration & Authentication** - Adds GraphQL, WebSocket, and authentication capabilities
+**Phase 3: Chat Features** - Implements core chat functionality on the established foundation
+**Phase 4: Security & Performance** - Enhances security, performance, and accessibility
+**Phase 5: Advanced Features** - Adds i18n, PWA, and advanced chat capabilities
+**Phase 6: Production** - Testing, documentation, and deployment preparation
+
+### 🔄 Key Dependencies Flow:
+```
+UI/Styling → Layout Components → Package Management → State Management →
+Routing → Authentication → GraphQL/WebSocket → Chat Features → Advanced Features
+```
+
+This sequence ensures that:
+- Layout components are built early to provide structure for all features
+- Authentication and routing are established before real-time features
+- GraphQL/WebSocket setup occurs just before features that need them
+- Each phase builds upon the previous foundation without requiring rework
+
 ## Technology Stack
 
 ### Core Framework
@@ -111,51 +134,78 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [x] Create Angular Material theme with CSS custom properties
   - [x] Configure dark/light theme support with Angular CDK
   - [x] Set up responsive breakpoints with Angular CDK Layout
-- [ ] **1.3 Package Management Setup**
-  - [ ] Configure pnpm for Angular workspace
-  - [ ] Install core Angular dependencies
-  - [ ] Configure package.json scripts for Angular CLI
-  - [ ] Set up Angular build optimization
-  - [ ] Configure development and production environments
-- [ ] **1.4 State Management Setup**
+- [x] **1.3 Layout Components**
+  - [x] Create main application shell component with responsive design
+  - [x] Implement responsive sidebar with Material sidenav and breakpoint integration
+  - [x] Build chat area layout components (header, message list, input area)
+  - [x] Create mobile-optimized layout variants with CDK breakpoints
+  - [x] Integrate with existing theme and breakpoint services
+  - [x] Implement virtual scrolling for message lists with CDK
+- [ ] **1.4 Package Management Setup**
+  - [ ] Configure GraphQL Code Generator for Angular
+  - [ ] Install and configure Apollo Angular 8+ client
+  - [ ] Set up WebSocket client packages for real-time features
+  - [ ] Configure environment management for different deployments
+  - [ ] Set up build optimization and bundle analysis
+- [ ] **1.5 State Management Setup**
   - [ ] Install and configure NgRx 18+ with standalone APIs
   - [ ] Set up authentication store with NgRx
-  - [ ] Configure user data store
-  - [ ] Set up chat conversation store
-  - [ ] Configure NgRx DevTools and effects
-  - [ ] Set up ComponentStore for local state management
-- [ ] **1.5 GraphQL Configuration**
+  - [ ] Configure user data store and chat conversation store
+  - [ ] Set up NgRx DevTools and effects for debugging
+  - [ ] Configure ComponentStore for local component state
+  - [ ] Integrate state management with layout components
+- [ ] **1.6 Routing and Navigation Setup**
+  - [ ] Configure Angular Router with lazy loading
+  - [ ] Set up route guards for authentication
+  - [ ] Create navigation structure for chat application
+  - [ ] Implement deep linking for chat conversations
+  - [ ] Configure route preloading strategies
+  - [ ] Set up navigation integration with layout components
+- [ ] **1.7 Authentication Foundation**
+  - [ ] Configure JWT token handling with Angular interceptors
+  - [ ] Set up Angular Guards for route protection
+  - [ ] Create authentication service with NgRx integration
+  - [ ] Configure secure HTTP-only cookies with Angular HTTP client
+  - [ ] Set up token refresh mechanism with RxJS
+  - [ ] Implement logout and session cleanup
+
+### Phase 2: GraphQL and Real-time Integration
+- [ ] **2.1 GraphQL Configuration**
   - [ ] Install Apollo Angular 8+ and related packages
   - [ ] Configure GraphQL Code Generator for Angular
   - [ ] Set up schema download from Federation Gateway
   - [ ] Create Apollo Angular configuration with RxJS
   - [ ] Configure Apollo Client cache policies for Angular
   - [ ] Set up GraphQL error handling with Angular ErrorHandler
-- [ ] **1.6 WebSocket Configuration**
+  - [ ] Integrate GraphQL with existing layout components
+- [ ] **2.2 WebSocket Configuration**
   - [ ] Install WebSocket client packages for Angular
   - [ ] Create RxJS-based WebSocket service
   - [ ] Set up subscription management with observables
   - [ ] Configure reconnection logic with RxJS operators
   - [ ] Integrate WebSocket with NgRx store
   - [ ] Set up WebSocket error handling and recovery
-- [ ] **1.7 Authentication Setup**
-  - [ ] Configure JWT token handling with Angular interceptors
-  - [ ] Set up Angular Guards for route protection
-  - [ ] Create NgRx authentication store
-  - [ ] Configure secure HTTP-only cookies with Angular HTTP client
-  - [ ] Set up token refresh mechanism with RxJS
-  - [ ] Implement logout and session cleanup
-
-### Phase 2: Core Application Features
-- [ ] **2.1 Authentication Implementation**
+  - [ ] Connect real-time updates to layout components
+- [ ] **2.3 Authentication Implementation**
   - [ ] Create login page with Angular Material forms
   - [ ] Implement registration page with reactive forms
   - [ ] Add password reset functionality with Angular validators
-  - [ ] Set up protected route guards
+  - [ ] Set up protected route guards with layout integration
   - [ ] Implement token refresh logic with RxJS
   - [ ] Create authentication error handling
   - [ ] Implement remember me functionality
-- [ ] **2.2 User Profile Management**
+  - [ ] Integrate authentication with layout components
+### Phase 3: Core Chat Features Implementation
+- [ ] **3.1 Chat Interface Implementation**
+  - [ ] Implement conversation list component with virtual scrolling
+  - [ ] Create message thread component with CDK virtual scroll
+  - [ ] Add message input with Angular Material and file upload
+  - [ ] Create typing indicators with Angular animations
+  - [ ] Implement read receipts with Angular Material badges
+  - [ ] Add real-time updates with WebSocket observables
+  - [ ] Create message search and filtering
+  - [ ] Integrate chat components with existing layout shell
+- [ ] **3.2 User Profile Management**
   - [ ] Create user profile page with Angular Material
   - [ ] Implement profile editing with reactive forms
   - [ ] Add user settings page with Angular Material components
@@ -164,16 +214,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Add avatar upload functionality
   - [ ] Create user status management
   - [ ] Implement user preferences storage
-- [ ] **2.3 Chat Interface Implementation**
-  - [ ] Design and implement chat layout with Angular Material
-  - [ ] Create conversation list component with virtual scrolling
-  - [ ] Implement message thread component with CDK virtual scroll
-  - [ ] Add message input with Angular Material and file upload
-  - [ ] Create typing indicators with Angular animations
-  - [ ] Implement read receipts with Angular Material badges
-  - [ ] Add real-time updates with WebSocket observables
-  - [ ] Create message search and filtering
-- [ ] **2.4 Real-time Features**
+- [ ] **3.3 Real-time Features**
   - [ ] WebSocket connection management with RxJS
   - [ ] Subscription handling for chat updates with NgRx effects
   - [ ] User presence and online status with Angular signals
@@ -183,8 +224,8 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Create real-time user list updates
   - [ ] Implement connection status indicators
 
-### Phase 3: Security & Performance Implementation
-- [ ] **3.1 Security Implementation**
+### Phase 4: Security & Performance Implementation
+- [ ] **4.1 Security Implementation**
   - [ ] Implement comprehensive authentication security with Angular guards
   - [ ] Add XSS protection and input sanitization with Angular DomSanitizer
   - [ ] Configure CSRF prevention with Angular HTTP interceptors
@@ -193,7 +234,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Add rate limiting for API calls
   - [ ] Implement input validation and sanitization
   - [ ] Set up security headers and HTTPS enforcement
-- [ ] **3.2 Performance Monitoring**
+- [ ] **4.2 Performance Monitoring**
   - [ ] Set up Core Web Vitals tracking with Angular
   - [ ] Implement bundle size monitoring with Angular CLI
   - [ ] Add error tracking with Angular ErrorHandler
@@ -202,7 +243,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Implement lazy loading for feature modules
   - [ ] Add performance budgets to Angular CLI
   - [ ] Set up bundle analysis and optimization
-- [ ] **3.3 Accessibility Implementation**
+- [ ] **4.3 Accessibility Implementation**
   - [ ] Implement comprehensive ARIA support with Angular CDK a11y
   - [ ] Add keyboard navigation patterns with Angular Material
   - [ ] Configure screen reader support with Angular CDK
@@ -212,8 +253,8 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Add keyboard shortcuts for chat actions
   - [ ] Set up accessibility audit automation
 
-### Phase 4: Advanced Features & Internationalization
-- [ ] **4.1 Internationalization (i18n)**
+### Phase 5: Advanced Features & Internationalization
+- [ ] **5.1 Internationalization (i18n)**
   - [ ] Set up Angular i18n with multiple language support
   - [ ] Implement RTL language support with Angular CDK bidi
   - [ ] Add locale-aware date/time formatting with Angular DatePipe
@@ -222,7 +263,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Implement dynamic language switching
   - [ ] Add locale-specific number and currency formatting
   - [ ] Set up translation extraction and build processes
-- [ ] **4.2 Progressive Web App (PWA)**
+- [ ] **5.2 Progressive Web App (PWA)**
   - [ ] Implement Angular service worker with offline support
   - [ ] Add push notification system with Angular PWA
   - [ ] Configure offline message caching with Angular service worker
@@ -231,7 +272,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Add offline indicator and sync status
   - [ ] Configure app update notifications
   - [ ] Set up PWA analytics and monitoring
-- [ ] **4.3 Advanced Chat Features**
+- [ ] **5.3 Advanced Chat Features**
   - [ ] Group chat creation and management with Angular Material dialogs
   - [ ] File sharing with preview and security using Angular Material
   - [ ] Message search and filtering with Angular Material search
@@ -240,7 +281,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Implement message threading and replies
   - [ ] Add voice message recording and playback
   - [ ] Create chat export and backup functionality
-- [ ] **4.4 Enhanced User Experience**
+- [ ] **5.4 Enhanced User Experience**
   - [ ] Implement drag-and-drop file uploads with Angular CDK
   - [ ] Add message formatting (bold, italic, code blocks)
   - [ ] Create custom emoji and sticker support
@@ -250,8 +291,8 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Implement user blocking and reporting
   - [ ] Add chat moderation tools
 
-### Phase 5: Testing, Documentation & Production
-- [ ] **5.1 Comprehensive Testing**
+### Phase 6: Testing, Documentation & Production
+- [ ] **6.1 Comprehensive Testing**
   - [ ] Set up visual regression testing with Angular testing utilities
   - [ ] Implement WebSocket testing strategies with RxJS testing
   - [ ] Add accessibility testing automation with Angular CDK a11y testing
@@ -260,7 +301,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Implement unit tests for all components and services
   - [ ] Add integration tests for NgRx store and effects
   - [ ] Create E2E tests for critical user journeys
-- [ ] **5.2 Error Handling & Recovery**
+- [ ] **6.2 Error Handling & Recovery**
   - [ ] Implement global error handling with Angular ErrorHandler
   - [ ] Add WebSocket error recovery with RxJS error operators
   - [ ] Configure GraphQL error handling with Apollo Angular
@@ -269,7 +310,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Implement retry mechanisms for failed operations
   - [ ] Create error boundary components for graceful degradation
   - [ ] Set up error analytics and monitoring
-- [ ] **5.3 Documentation & Developer Experience**
+- [ ] **6.3 Documentation & Developer Experience**
   - [ ] Set up Storybook for Angular component documentation
   - [ ] Create API documentation with Compodoc
   - [ ] Add deployment and troubleshooting guides
@@ -278,7 +319,7 @@ This document outlines the detailed implementation plan for the Angular web clie
   - [ ] Create component usage examples and guidelines
   - [ ] Set up automated documentation generation
   - [ ] Add code style guides and best practices
-- [ ] **5.4 Production Deployment**
+- [ ] **6.4 Production Deployment**
   - [ ] Configure production build optimization with Angular CLI
   - [ ] Set up CDN and asset optimization
   - [ ] Implement scaling considerations for Angular

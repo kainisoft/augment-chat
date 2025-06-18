@@ -1,0 +1,57 @@
+<!-- Chat Area Layout -->
+<div class="chat-area-container h-full flex flex-col">
+  <!-- Welcome/Empty State -->
+  <div class="chat-welcome flex-1 flex items-center justify-center p-8">
+    <div class="welcome-content text-center max-w-md">
+      <!-- Welcome Icon -->
+      <div class="welcome-icon mb-6">
+        <mat-icon class="text-6xl text-primary opacity-50">chat_bubble_outline</mat-icon>
+      </div>
+
+      <!-- Welcome Message -->
+      <h2 class="welcome-title text-2xl font-semibold text-foreground mb-4">
+        Welcome to Chat
+      </h2>
+      
+      <p class="welcome-description text-muted-foreground mb-6">
+        Select a conversation from the sidebar to start chatting, or create a new conversation to get started.
+      </p>
+
+      <!-- Quick Actions -->
+      <div class="welcome-actions space-y-3">
+        <button mat-raised-button color="primary" class="w-full">
+          <mat-icon>add</mat-icon>
+          Start New Chat
+        </button>
+        
+        <button mat-button class="w-full">
+          <mat-icon>contacts</mat-icon>
+          Browse Contacts
+        </button>
+      </div>
+
+      <!-- Features List -->
+      <div class="features-list mt-8 text-left">
+        <h3 class="text-sm font-medium text-muted-foreground mb-3">Features:</h3>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+          <li class="flex items-center gap-2">
+            <mat-icon class="text-green-500 text-base">check_circle</mat-icon>
+            Real-time messaging
+          </li>
+          <li class="flex items-center gap-2">
+            <mat-icon class="text-green-500 text-base">check_circle</mat-icon>
+            File sharing
+          </li>
+          <li class="flex items-center gap-2">
+            <mat-icon class="text-green-500 text-base">check_circle</mat-icon>
+            Group conversations
+          </li>
+          <li class="flex items-center gap-2">
+            <mat-icon class="text-green-500 text-base">check_circle</mat-icon>
+            Dark/Light themes
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
