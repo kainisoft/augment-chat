@@ -36,16 +36,31 @@ importers:
         specifier: 20.0.0
         version: 20.0.0(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@angular/platform-browser@20.0.0(@angular/animations@20.0.3(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0)))(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0)))(rxjs@7.8.0)
       '@apollo/client':
-        specifier: ^3.13.8
+        specifier: 3.13.8
         version: 3.13.8(graphql-ws@6.0.5(graphql@16.11.0)(ws@8.17.1))(graphql@16.11.0)
+      '@ngrx/component-store':
+        specifier: ^19.2.1
+        version: 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)
+      '@ngrx/effects':
+        specifier: ^19.2.1
+        version: 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(rxjs@7.8.0)
+      '@ngrx/entity':
+        specifier: ^19.2.1
+        version: 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(rxjs@7.8.0)
+      '@ngrx/store':
+        specifier: ^19.2.1
+        version: 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)
+      '@ngrx/store-devtools':
+        specifier: ^19.2.1
+        version: 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(rxjs@7.8.0)
       apollo-angular:
-        specifier: ^11.0.0
+        specifier: 11.0.0
         version: 11.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@apollo/client@3.13.8(graphql-ws@6.0.5(graphql@16.11.0)(ws@8.17.1))(graphql@16.11.0))(graphql@16.11.0)(rxjs@7.8.0)
       graphql:
-        specifier: ^16.11.0
+        specifier: 16.11.0
         version: 16.11.0
       graphql-ws:
-        specifier: ^6.0.5
+        specifier: 6.0.5
         version: 6.0.5(graphql@16.11.0)(ws@8.17.1)
       lucide-angular:
         specifier: 0.515.0
@@ -53,6 +68,9 @@ importers:
       material-design-icons:
         specifier: 3.0.1
         version: 3.0.1
+      ngrx-store-localstorage:
+        specifier: ^19.0.1
+        version: 19.0.1(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))
       rxjs:
         specifier: 7.8.0
         version: 7.8.0
@@ -1609,6 +1627,39 @@ packages:
     resolution: {integrity: sha512-zM0mVWSXE0a0h9aKACLwKmD6nHcRiKrPpCfvaKqG1CqDEyjEawId0ocXxVzPMCAm6kkWr2P025msfxXEnt8UGQ==}
     engines: {node: '>= 10'}
 
+  '@ngrx/component-store@19.2.1':
+    resolution: {integrity: sha512-a1ghKdR1O2YNQSQfbwC472u+SFK41PDJZuvRIJ8k6B0MKoUWD6LyD4owyrPCUMxtMz9PLoAkch7FUD5qxgY23Q==}
+    peerDependencies:
+      '@angular/core': ^19.0.0
+      rxjs: ^6.5.3 || ^7.5.0
+
+  '@ngrx/effects@19.2.1':
+    resolution: {integrity: sha512-RZmTPOIC/h4JtySxh4Oa0ReQomxv4/+2er9vJ2IiuPDgUo7oE83iKZvB8uZUW/8y9dcu+MB6u0VjWM6rcbpCcA==}
+    peerDependencies:
+      '@angular/core': ^19.0.0
+      '@ngrx/store': 19.2.1
+      rxjs: ^6.5.3 || ^7.5.0
+
+  '@ngrx/entity@19.2.1':
+    resolution: {integrity: sha512-AnIe+EUy2WYP4qTgEtGpD/W0+nzHlhzjcCVHolIjodD2iyR1s6UwywziZXORVTV9TEdjHPADggyGXtsJd/1FCg==}
+    peerDependencies:
+      '@angular/core': ^19.0.0
+      '@ngrx/store': 19.2.1
+      rxjs: ^6.5.3 || ^7.5.0
+
+  '@ngrx/store-devtools@19.2.1':
+    resolution: {integrity: sha512-gj1YO+4yl6D0l9vzLWdw07TQSu5UPKgsSLsNJfDLXraaLCUcB8voAp4J7zohN8qR5ixDuHeMoiSSVuklQ75u2w==}
+    peerDependencies:
+      '@angular/core': ^19.0.0
+      '@ngrx/store': 19.2.1
+      rxjs: ^6.5.3 || ^7.5.0
+
+  '@ngrx/store@19.2.1':
+    resolution: {integrity: sha512-c5vQId7YoAhM0y4HASrz9mtLju+28vJspd6OBlhPbBlSae8GN8m9S/oav+8LaSY19yh95cZ5B/nMcLNNWgL/jA==}
+    peerDependencies:
+      '@angular/core': ^19.0.0
+      rxjs: ^6.5.3 || ^7.5.0
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -2613,6 +2664,10 @@ packages:
 
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
+
+  deepmerge@4.3.1:
+    resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
+    engines: {node: '>=0.10.0'}
 
   defaults@1.0.4:
     resolution: {integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==}
@@ -3849,6 +3904,14 @@ packages:
   negotiator@1.0.0:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
     engines: {node: '>= 0.6'}
+
+  ngrx-store-localstorage@19.0.1:
+    resolution: {integrity: sha512-DXltn2IahkUK7kYNd3V58xUBrF/j2KHrviqOWAhjgeejWwTQ3Hirao7AEFaJRSEmZia5uWu51HauW55e5nlncQ==}
+    deprecated: Date parsing logic incorrectly treats some numbers as dates. See https://github.com/btroncone/ngrx-store-localstorage/issues/275
+    peerDependencies:
+      '@angular/common': ^19.0.5
+      '@angular/core': ^19.0.5
+      '@ngrx/store': ^19.0.0
 
   no-case@3.0.4:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
@@ -6790,6 +6853,39 @@ snapshots:
       '@napi-rs/nice-win32-x64-msvc': 1.0.1
     optional: true
 
+  '@ngrx/component-store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)':
+    dependencies:
+      '@angular/core': 20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0)
+      rxjs: 7.8.0
+      tslib: 2.3.0
+
+  '@ngrx/effects@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(rxjs@7.8.0)':
+    dependencies:
+      '@angular/core': 20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0)
+      '@ngrx/store': 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)
+      rxjs: 7.8.0
+      tslib: 2.3.0
+
+  '@ngrx/entity@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(rxjs@7.8.0)':
+    dependencies:
+      '@angular/core': 20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0)
+      '@ngrx/store': 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)
+      rxjs: 7.8.0
+      tslib: 2.3.0
+
+  '@ngrx/store-devtools@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(rxjs@7.8.0)':
+    dependencies:
+      '@angular/core': 20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0)
+      '@ngrx/store': 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)
+      rxjs: 7.8.0
+      tslib: 2.3.0
+
+  '@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)':
+    dependencies:
+      '@angular/core': 20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0)
+      rxjs: 7.8.0
+      tslib: 2.3.0
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -7837,6 +7933,8 @@ snapshots:
   decamelize@1.2.0: {}
 
   deep-is@0.1.4: {}
+
+  deepmerge@4.3.1: {}
 
   defaults@1.0.4:
     dependencies:
@@ -9134,6 +9232,14 @@ snapshots:
   negotiator@0.6.3: {}
 
   negotiator@1.0.0: {}
+
+  ngrx-store-localstorage@19.0.1(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(@ngrx/store@19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)):
+    dependencies:
+      '@angular/common': 20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)
+      '@angular/core': 20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0)
+      '@ngrx/store': 19.2.1(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.0))(rxjs@7.8.0)
+      deepmerge: 4.3.1
+      tslib: 2.3.0
 
   no-case@3.0.4:
     dependencies:

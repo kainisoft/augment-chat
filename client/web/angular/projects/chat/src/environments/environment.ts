@@ -8,6 +8,9 @@ export const environment = {
     websocketUrl: 'ws://localhost:4001/graphql',
     restApiUrl: 'http://localhost:4000/api',
   },
+
+  // Service URLs
+  authServiceUrl: 'http://localhost:4002/api',
   
   // WebSocket Configuration
   websocket: {

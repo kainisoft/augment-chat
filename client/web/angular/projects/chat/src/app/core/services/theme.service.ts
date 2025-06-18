@@ -1,6 +1,10 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { isPlatformBrowser } from '@angular/common';
 import { effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../store/app.state';
+import * as UiActions from '../../store/ui/ui.actions';
+import { selectThemeConfig, selectIsDarkMode } from '../../store/ui/ui.selectors';
 
 export type Theme = 'light' | 'dark' | 'auto';
 
@@ -10,21 +14,39 @@ export type Theme = 'light' | 'dark' | 'auto';
 export class ThemeService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly overlayContainer = inject(OverlayContainer);
+  private readonly store = inject(Store<AppState>);
 
   // Theme signals
   private readonly _theme = signal<Theme>('auto');
   private readonly _isDark = signal<boolean>(false);
+  private readonly _primaryColor = signal<string>('#1976d2');
+  private readonly _accentColor = signal<string>('#ff4081');
 
   // Public readonly signals
   readonly theme = this._theme.asReadonly();
   readonly isDark = this._isDark.asReadonly();
+  readonly primaryColor = this._primaryColor.asReadonly();
+  readonly accentColor = this._accentColor.asReadonly();
 
-  // Storage key for theme preference
+  // Storage key for theme preference (kept for backward compatibility)
   private readonly THEME_STORAGE_KEY = 'chat-theme-preference';
 
   constructor() {
     // Initialize theme from storage or system preference
     this.initializeTheme();
+
+    // Subscribe to store theme changes
+    this.store.select(selectThemeConfig).subscribe(themeConfig => {
+      this._theme.set(themeConfig.mode);
+      this._primaryColor.set(themeConfig.primaryColor);
+      this._accentColor.set(themeConfig.accentColor);
+      this.updateEffectiveTheme();
+    });
+
+    // Subscribe to computed dark mode from store
+    this.store.select(selectIsDarkMode).subscribe(isDark => {
+      this._isDark.set(isDark);
+    });
 
     // Effect to update DOM classes when theme changes
     effect(() => {
@@ -41,9 +63,36 @@ export class ThemeService {
    * Set the theme preference
    */
   setTheme(theme: Theme): void {
-    this._theme.set(theme);
+    // Dispatch action to store
+    this.store.dispatch(UiActions.setThemeMode({ mode: theme }));
     this.saveThemePreference(theme);
-    this.updateEffectiveTheme();
+  }
+
+  /**
+   * Set primary color
+   */
+  setPrimaryColor(color: string): void {
+    this.store.dispatch(UiActions.setThemeColors({
+      primaryColor: color,
+      accentColor: this._accentColor()
+    }));
+  }
+
+  /**
+   * Set accent color
+   */
+  setAccentColor(color: string): void {
+    this.store.dispatch(UiActions.setThemeColors({
+      primaryColor: this._primaryColor(),
+      accentColor: color
+    }));
+  }
+
+  /**
+   * Set both primary and accent colors
+   */
+  setColors(primaryColor: string, accentColor: string): void {
+    this.store.dispatch(UiActions.setThemeColors({ primaryColor, accentColor }));
   }
 
   /**

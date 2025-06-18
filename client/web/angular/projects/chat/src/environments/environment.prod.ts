@@ -8,6 +8,9 @@ export const environment = {
     websocketUrl: 'wss://api.chat.example.com/graphql',
     restApiUrl: 'https://api.chat.example.com/api',
   },
+
+  // Service URLs
+  authServiceUrl: 'https://auth.chat.example.com/api',
   
   // WebSocket Configuration
   websocket: {
