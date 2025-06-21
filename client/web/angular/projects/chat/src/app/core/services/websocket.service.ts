@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, fromEvent, NEVER } from 'rxjs';
 import { map, filter, catchError, retry, delay, takeUntil } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 
 export interface WebSocketConfig {
   url: string;

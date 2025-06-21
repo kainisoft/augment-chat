@@ -15,9 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonModule } from '@angular/common';
 
-import * as AuthActions from '../../../../store/auth/auth.actions';
-import { selectAuthLoading, selectAuthError } from '../../../../store/auth/auth.selectors';
-import { RegisterRequest } from '../../../../store/auth/auth.state';
+import { AuthActions, selectAuthLoading, selectAuthError, RegisterRequest } from '@store/auth';
 
 /**
  * Register Component

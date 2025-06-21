@@ -9,10 +9,9 @@ import {
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, filter, take, switchMap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { TokenStorageService } from '../services/token-storage.service';
-import { AuthService } from '../services/auth.service';
-import { environment } from '../../../environments/environment';
-import * as AuthActions from '../../store/auth/auth.actions';
+import { TokenStorageService, AuthService } from '@core/services';
+import { environment } from '@environments/environment';
+import { AuthActions } from '@store/auth';
 
 /**
  * JWT Authentication Interceptor

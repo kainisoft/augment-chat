@@ -9,9 +9,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 
-import * as AuthActions from '../../../../store/auth/auth.actions';
-import { selectAuthLoading, selectIsAuthenticated } from '../../../../store/auth/auth.selectors';
-import { TokenStorageService } from '../../../../core/services/token-storage.service';
+import { AuthActions, selectAuthLoading, selectIsAuthenticated } from '@store/auth';
+import { TokenStorageService } from '@core/services/token-storage.service';
 
 /**
  * Logout Component

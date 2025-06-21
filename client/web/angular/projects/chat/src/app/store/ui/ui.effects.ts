@@ -6,7 +6,7 @@ import { debounceTime, map, switchMap, tap, withLatestFrom } from 'rxjs/operator
 
 import * as UiActions from './ui.actions';
 import { selectThemeConfig, selectLayoutConfig } from './ui.selectors';
-import { ThemeService } from '../../core/services/theme.service';
+import { ThemeService } from '@core/services';
 
 /**
  * UI Effects

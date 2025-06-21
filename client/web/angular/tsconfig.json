@@ -13,7 +13,17 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": ["projects/chat/src/app/*"],
+      "@core/*": ["projects/chat/src/app/core/*"],
+      "@store/*": ["projects/chat/src/app/store/*"],
+      "@shared/*": ["projects/chat/src/app/shared/*"],
+      "@features/*": ["projects/chat/src/app/features/*"],
+      "@layout/*": ["projects/chat/src/app/layout/*"],
+      "@environments/*": ["projects/chat/src/environments/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

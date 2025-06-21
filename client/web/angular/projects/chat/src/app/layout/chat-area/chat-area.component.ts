@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { BreakpointService } from '../../core/services/breakpoint.service';
+import { BreakpointService } from '@core/services';
 
 @Component({
   selector: 'app-chat-area',

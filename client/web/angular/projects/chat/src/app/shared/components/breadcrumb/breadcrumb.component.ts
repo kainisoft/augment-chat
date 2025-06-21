@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { NavigationService } from '../../../core/services/navigation.service';
+import { NavigationService } from '@core/services';
 
 /**
  * Breadcrumb Component

@@ -4,8 +4,7 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import * as ChatActions from './chat.actions';
-import { ChatService } from '../../core/services/chat.service';
-import { WebSocketService } from '../../core/services/websocket.service';
+import { ChatService, WebSocketService } from '@core/services';
 
 /**
  * Chat Effects

@@ -5,8 +5,7 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import * as AuthActions from './auth.actions';
-import { AuthService } from '../../core/services/auth.service';
-import { TokenStorageService } from '../../core/services/token-storage.service';
+import { AuthService, TokenStorageService } from '@core/services';
 
 /**
  * Authentication Effects

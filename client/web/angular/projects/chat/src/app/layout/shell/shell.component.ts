@@ -4,9 +4,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterOutlet } from '@angular/router';
-import { BreakpointService } from '../../core/services/breakpoint.service';
-import { HeaderComponent } from '../header/header.component';
-import { SidebarComponent } from '../sidebar/sidebar.component';
+import { BreakpointService } from '@core/services';
+import { HeaderComponent } from '@layout/header/header.component';
+import { SidebarComponent } from '@layout/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-shell',

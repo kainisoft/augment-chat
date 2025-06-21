@@ -2,9 +2,8 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { isPlatformBrowser } from '@angular/common';
 import { effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../store/app.state';
-import * as UiActions from '../../store/ui/ui.actions';
-import { selectThemeConfig, selectIsDarkMode } from '../../store/ui/ui.selectors';
+import { AppState } from '@store/app.state';
+import { UiActions, selectThemeConfig, selectIsDarkMode } from '@store/ui';
 
 export type Theme = 'light' | 'dark' | 'auto';
 

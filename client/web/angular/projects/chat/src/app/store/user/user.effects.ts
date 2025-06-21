@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import * as UserActions from './user.actions';
-import { UserService } from '../../core/services/user.service';
+import { UserService } from '@core/services';
 
 /**
  * User Effects

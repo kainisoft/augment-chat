@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { NoAuthGuard } from '../../core/guards/auth.guard';
+import { NoAuthGuard } from '@core/guards';
 
 /**
  * Authentication Routes

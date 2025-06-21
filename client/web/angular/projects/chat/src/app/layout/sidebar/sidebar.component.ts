@@ -9,8 +9,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { BreakpointService } from '../../core/services/breakpoint.service';
-import { NavigationService, NavigationItem } from '../../core/services/navigation.service';
+import { BreakpointService, NavigationService, NavigationItem } from '@core/services';
 
 interface ConversationItem {
   id: string;

@@ -14,9 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 
-import * as AuthActions from '../../../../store/auth/auth.actions';
-import { selectAuthLoading, selectAuthError } from '../../../../store/auth/auth.selectors';
-import { LoginRequest } from '../../../../store/auth/auth.state';
+import { AuthActions, selectAuthLoading, selectAuthError, LoginRequest } from '@store/auth';
 
 /**
  * Login Component

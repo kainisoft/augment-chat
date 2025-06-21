@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 import {
   LoginRequest,
   RegisterRequest,
@@ -13,7 +13,7 @@ import {
   ResetPasswordRequest,
   LogoutResponse,
   User
-} from '../../store/auth/auth.state';
+} from '@store/auth';
 
 /**
  * Authentication Service

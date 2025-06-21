@@ -2,9 +2,8 @@ import { inject } from '@angular/core';
 import { CanActivateFn, CanActivateChildFn, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { map, take } from 'rxjs/operators';
-import { selectIsAuthenticatedWithToken } from '../../store/auth/auth.selectors';
-import { TokenStorageService } from '../services/token-storage.service';
-import * as AuthActions from '../../store/auth/auth.actions';
+import { selectIsAuthenticatedWithToken, AuthActions } from '@store/auth';
+import { TokenStorageService } from '@core/services';
 
 /**
  * Authentication Guard

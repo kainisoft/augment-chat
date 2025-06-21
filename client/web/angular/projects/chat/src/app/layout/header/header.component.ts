@@ -7,9 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BreakpointService } from '../../core/services/breakpoint.service';
-import { IconService } from '../../core/services/icon.service';
-import { ThemeService } from '../../core/services/theme.service';
+import { BreakpointService, IconService, ThemeService } from '@core/services';
 
 @Component({
   selector: 'app-header',
