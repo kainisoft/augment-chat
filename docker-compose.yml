@@ -474,6 +474,30 @@ services:
       retries: 3
       start_period: 15s
 
+  # Angular Example Frontend
+  angular-example:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfiles/angular-example.Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    ports:
+      - "5201:5201" # Angular development server
+    env_file:
+      - ./docker/config/angular-example/angular-example.env
+    volumes:
+      - ./client/web/angular/projects/example:/app:delegated
+      - angular-example-node-modules:/app/node_modules
+    networks:
+      - chat-network
+    profiles: [ "angular-example" ]
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://127.0.0.1:5201" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
 networks:
   chat-network:
     driver: bridge
@@ -495,5 +519,6 @@ volumes:
   logging-service-node-modules:
   nextjs-chat-node-modules:
   angular-chat-node-modules:
+  angular-example-node-modules:
   loki-data:
   grafana-data:
