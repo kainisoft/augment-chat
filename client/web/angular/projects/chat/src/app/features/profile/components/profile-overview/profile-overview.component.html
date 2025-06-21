@@ -1,0 +1,50 @@
+<div class="profile-overview p-6">
+    <h1 class="text-2xl font-bold mb-6">Profile</h1>
+
+    <mat-card class="mb-6">
+        <mat-card-content class="text-center p-6">
+            <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <span class="text-primary font-medium text-2xl">JD</span>
+            </div>
+            <h2 class="text-xl font-semibold mb-2">John Doe</h2>
+            <p class="text-muted-foreground mb-4">john.doe&#64;example.com</p>
+            <button mat-raised-button color="primary" (click)="editProfile()">
+                <mat-icon>edit</mat-icon>
+                Edit Profile
+            </button>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Profile Settings</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goToSecurity()">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>security</mat-icon>
+                        <span>Security Settings</span>
+                        <mat-icon class="ml-auto">chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goToPrivacy()">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>privacy_tip</mat-icon>
+                        <span>Privacy Settings</span>
+                        <mat-icon class="ml-auto">chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goToNotifications()">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>notifications</mat-icon>
+                        <span>Notification Settings</span>
+                        <mat-icon class="ml-auto">chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+</div>

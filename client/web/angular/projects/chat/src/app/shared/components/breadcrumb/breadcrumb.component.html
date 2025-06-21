@@ -1,0 +1,24 @@
+<nav class="breadcrumb-nav" aria-label="Breadcrumb">
+    <ol class="breadcrumb-list flex items-center space-x-2 text-sm">
+        @for (breadcrumb of breadcrumbs(); track breadcrumb.route || breadcrumb.label; let isLast = $last) {
+        <li class="breadcrumb-item flex items-center">
+            @if (!isLast && breadcrumb.route) {
+            <button mat-button class="breadcrumb-link text-muted-foreground hover:text-foreground transition-colors"
+                (click)="navigateTo(breadcrumb.route!)">
+                {{ breadcrumb.label }}
+            </button>
+            } @else {
+            <span class="breadcrumb-current text-foreground font-medium">
+                {{ breadcrumb.label }}
+            </span>
+            }
+
+            @if (!isLast) {
+            <mat-icon class="breadcrumb-separator text-muted-foreground mx-2">
+                chevron_right
+            </mat-icon>
+            }
+        </li>
+        }
+    </ol>
+</nav>

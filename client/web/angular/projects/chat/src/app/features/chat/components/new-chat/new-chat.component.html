@@ -1,0 +1,113 @@
+<div class="new-chat-container h-full flex flex-col">
+  <!-- Header -->
+  <div class="new-chat-header p-4 border-b border-border">
+    <div class="flex items-center gap-3">
+      <button 
+        mat-icon-button 
+        (click)="goBack()"
+        matTooltip="Go back"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="text-xl font-semibold">New Chat</h1>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-section p-4 border-b border-border">
+    <mat-form-field class="w-full" appearance="outline">
+      <mat-icon matPrefix>search</mat-icon>
+      <input 
+        matInput 
+        placeholder="Search contacts..."
+        #searchInput
+        (input)="onSearch(searchInput.value)"
+      />
+    </mat-form-field>
+  </div>
+
+  <!-- Content -->
+  <div class="new-chat-content flex-1 overflow-hidden">
+    <!-- Quick Actions -->
+    <div class="quick-actions p-4">
+      <h3 class="text-sm font-medium text-muted-foreground mb-3">Quick Actions</h3>
+      <div class="actions-grid grid grid-cols-2 gap-3">
+        <button 
+          mat-stroked-button 
+          class="action-btn h-16 flex flex-col items-center justify-center"
+          (click)="createGroup()"
+        >
+          <mat-icon>group_add</mat-icon>
+          <span class="text-xs mt-1">New Group</span>
+        </button>
+        <button 
+          mat-stroked-button 
+          class="action-btn h-16 flex flex-col items-center justify-center"
+          (click)="addContact()"
+        >
+          <mat-icon>person_add</mat-icon>
+          <span class="text-xs mt-1">Add Contact</span>
+        </button>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Contacts List -->
+    <div class="contacts-section flex-1 overflow-y-auto">
+      <div class="contacts-header p-4 pb-2">
+        <h3 class="text-sm font-medium text-muted-foreground">Contacts</h3>
+      </div>
+
+      <mat-list class="contacts-list">
+        <!-- TODO: Replace with real contacts data -->
+        <mat-list-item 
+          class="contact-item cursor-pointer hover:bg-muted/50"
+          (click)="startChat('1')"
+        >
+          <div class="contact-content w-full flex items-center gap-3 py-2">
+            <div class="contact-avatar w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="text-primary font-medium">AJ</span>
+            </div>
+            <div class="contact-info flex-1">
+              <h4 class="contact-name font-medium text-sm">Alice Johnson</h4>
+              <p class="contact-status text-xs text-muted-foreground">Online</p>
+            </div>
+            <div class="contact-actions">
+              <mat-icon class="text-muted-foreground">chat</mat-icon>
+            </div>
+          </div>
+        </mat-list-item>
+
+        <mat-list-item 
+          class="contact-item cursor-pointer hover:bg-muted/50"
+          (click)="startChat('2')"
+        >
+          <div class="contact-content w-full flex items-center gap-3 py-2">
+            <div class="contact-avatar w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="text-primary font-medium">BS</span>
+            </div>
+            <div class="contact-info flex-1">
+              <h4 class="contact-name font-medium text-sm">Bob Smith</h4>
+              <p class="contact-status text-xs text-muted-foreground">Last seen 2h ago</p>
+            </div>
+            <div class="contact-actions">
+              <mat-icon class="text-muted-foreground">chat</mat-icon>
+            </div>
+          </div>
+        </mat-list-item>
+      </mat-list>
+
+      <!-- Empty State -->
+      @if (false) {
+        <div class="empty-state p-6 text-center">
+          <mat-icon class="text-4xl text-muted-foreground mb-2">person_search</mat-icon>
+          <p class="text-muted-foreground">No contacts found</p>
+          <button mat-button color="primary" class="mt-2" (click)="addContact()">
+            Add Contact
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

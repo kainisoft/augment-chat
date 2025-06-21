@@ -1,0 +1,33 @@
+.chat-conversation-container {
+  background: var(--mdc-theme-background);
+}
+
+.messages-area {
+  background: var(--mdc-theme-background);
+}
+
+.message {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.message.sent {
+  justify-content: flex-end;
+}
+
+.message.received {
+  justify-content: flex-start;
+}
+
+.message-content {
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.message-input {
+  border-radius: 20px;
+}
+
+.message-input-area {
+  background: var(--mdc-theme-surface);
+}

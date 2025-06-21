@@ -10,6 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { BreakpointService } from '../../core/services/breakpoint.service';
+import { NavigationService, NavigationItem } from '../../core/services/navigation.service';
 
 interface ConversationItem {
   id: string;
@@ -19,14 +20,6 @@ interface ConversationItem {
   unreadCount: number;
   isOnline: boolean;
   avatar?: string;
-}
-
-interface NavigationItem {
-  id: string;
-  label: string;
-  icon: string;
-  route: string;
-  badge?: number;
 }
 
 @Component({
@@ -52,20 +45,15 @@ export class SidebarComponent {
   // Inject services
   private readonly router = inject(Router);
   private readonly breakpointService = inject(BreakpointService);
+  private readonly navigationService = inject(NavigationService);
 
   // Component state
   protected readonly searchQuery = signal('');
-  protected readonly activeSection = signal<'chats' | 'contacts' | 'settings'>('chats');
 
   // Expose services to template
   protected readonly isMobile = this.breakpointService.isMobile;
-
-  // Mock data - TODO: Replace with real data from services
-  protected readonly navigationItems: NavigationItem[] = [
-    { id: 'chats', label: 'Chats', icon: 'chat', route: '/chats', badge: 5 },
-    { id: 'contacts', label: 'Contacts', icon: 'contacts', route: '/contacts' },
-    { id: 'settings', label: 'Settings', icon: 'settings', route: '/settings' },
-  ];
+  protected readonly activeSection = this.navigationService.activeSection;
+  protected readonly navigationItems = this.navigationService.navigationItems;
 
   protected readonly recentConversations: ConversationItem[] = [
     {
@@ -103,8 +91,7 @@ export class SidebarComponent {
   ];
 
   protected onNavigationItemClick(item: NavigationItem): void {
-    this.activeSection.set(item.id as any);
-    this.router.navigate([item.route]);
+    this.navigationService.navigateTo(item.route);
     this.navigationClick.emit();
   }
 

@@ -1,0 +1,40 @@
+<div class="contacts-list p-6">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">Contacts</h1>
+        <button mat-fab color="primary" (click)="addContact()">
+            <mat-icon>person_add</mat-icon>
+        </button>
+    </div>
+
+    <mat-card>
+        <mat-card-content>
+            <mat-list>
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="viewContact('1')">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span class="text-primary font-medium">AJ</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium">Alice Johnson</h3>
+                            <p class="text-sm text-muted-foreground">Online</p>
+                        </div>
+                        <mat-icon class="text-muted-foreground">chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="viewContact('2')">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span class="text-primary font-medium">BS</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium">Bob Smith</h3>
+                            <p class="text-sm text-muted-foreground">Last seen 2h ago</p>
+                        </div>
+                        <mat-icon class="text-muted-foreground">chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+</div>

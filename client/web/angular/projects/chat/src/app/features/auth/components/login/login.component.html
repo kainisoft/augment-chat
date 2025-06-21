@@ -1,0 +1,58 @@
+<div class="login-container min-h-screen flex items-center justify-center bg-gray-50 p-4">
+  <mat-card class="login-card w-full max-w-md">
+    <mat-card-header class="text-center mb-6">
+      <mat-card-title class="text-2xl font-bold">Sign In</mat-card-title>
+      <mat-card-subtitle>Welcome back to Chat App</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form class="login-form space-y-4">
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" placeholder="Enter your email" />
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" placeholder="Enter your password" />
+          <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+
+        <div class="form-actions space-y-3">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            class="w-full"
+            (click)="onLogin()"
+          >
+            Sign In
+          </button>
+
+          <div class="text-center">
+            <button 
+              mat-button 
+              color="accent"
+              (click)="goToForgotPassword()"
+            >
+              Forgot Password?
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions class="text-center">
+      <p class="text-sm text-muted-foreground">
+        Don't have an account?
+        <button 
+          mat-button 
+          color="primary"
+          (click)="goToRegister()"
+        >
+          Sign Up
+        </button>
+      </p>
+    </mat-card-actions>
+  </mat-card>
+</div>

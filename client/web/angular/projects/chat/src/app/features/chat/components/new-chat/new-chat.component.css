@@ -1,0 +1,23 @@
+.new-chat-container {
+  background: var(--mdc-theme-background);
+}
+
+.action-btn {
+  border-style: dashed;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background: var(--mdc-theme-primary-container);
+  border-color: var(--mdc-theme-primary);
+}
+
+.contact-item {
+  border-radius: 8px;
+  margin: 0 16px 4px 16px;
+  transition: background-color 0.2s ease;
+}
+
+.contact-item:hover {
+  background: var(--mdc-theme-surface-variant);
+}

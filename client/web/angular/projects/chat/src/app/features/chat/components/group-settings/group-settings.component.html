@@ -1,0 +1,42 @@
+<div class="group-settings p-6">
+  <div class="flex items-center gap-3 mb-6">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1 class="text-2xl font-bold">Group Settings</h1>
+  </div>
+  
+  <mat-card>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <div class="flex items-center gap-3 w-full py-2">
+            <mat-icon>edit</mat-icon>
+            <span>Edit Group Info</span>
+          </div>
+        </mat-list-item>
+        
+        <mat-list-item>
+          <div class="flex items-center gap-3 w-full py-2">
+            <mat-icon>people</mat-icon>
+            <span>Manage Members</span>
+          </div>
+        </mat-list-item>
+        
+        <mat-list-item>
+          <div class="flex items-center gap-3 w-full py-2">
+            <mat-icon>notifications</mat-icon>
+            <span>Notification Settings</span>
+          </div>
+        </mat-list-item>
+        
+        <mat-list-item class="text-destructive">
+          <div class="flex items-center gap-3 w-full py-2">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Leave Group</span>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>

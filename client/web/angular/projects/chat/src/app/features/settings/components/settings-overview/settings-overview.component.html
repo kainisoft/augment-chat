@@ -1,0 +1,75 @@
+<div class="settings-overview p-6">
+    <h1 class="text-2xl font-bold mb-6">Settings</h1>
+
+    <mat-card>
+        <mat-card-content>
+            <mat-list>
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goTo('appearance')">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>palette</mat-icon>
+                        <div class="flex-1">
+                            <h3 class="font-medium">Appearance</h3>
+                            <p class="text-sm text-muted-foreground">Theme and display settings</p>
+                        </div>
+                        <mat-icon>chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goTo('chat')">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>chat_bubble</mat-icon>
+                        <div class="flex-1">
+                            <h3 class="font-medium">Chat Settings</h3>
+                            <p class="text-sm text-muted-foreground">Message and conversation preferences</p>
+                        </div>
+                        <mat-icon>chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goTo('notifications')">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>notifications</mat-icon>
+                        <div class="flex-1">
+                            <h3 class="font-medium">Notifications</h3>
+                            <p class="text-sm text-muted-foreground">Alert and notification settings</p>
+                        </div>
+                        <mat-icon>chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goTo('privacy')">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>privacy_tip</mat-icon>
+                        <div class="flex-1">
+                            <h3 class="font-medium">Privacy & Security</h3>
+                            <p class="text-sm text-muted-foreground">Privacy and security settings</p>
+                        </div>
+                        <mat-icon>chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goTo('data')">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>storage</mat-icon>
+                        <div class="flex-1">
+                            <h3 class="font-medium">Data Management</h3>
+                            <p class="text-sm text-muted-foreground">Storage and data settings</p>
+                        </div>
+                        <mat-icon>chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+
+                <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="goTo('about')">
+                    <div class="flex items-center gap-3 w-full py-2">
+                        <mat-icon>info</mat-icon>
+                        <div class="flex-1">
+                            <h3 class="font-medium">About</h3>
+                            <p class="text-sm text-muted-foreground">App information and support</p>
+                        </div>
+                        <mat-icon>chevron_right</mat-icon>
+                    </div>
+                </mat-list-item>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+</div>

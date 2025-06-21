@@ -1,0 +1,38 @@
+<div class="chat-groups p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Group Chats</h1>
+    <button mat-fab color="primary" (click)="createGroup()">
+      <mat-icon>group_add</mat-icon>
+    </button>
+  </div>
+  
+  <mat-card>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="openGroup('1')">
+          <div class="flex items-center gap-3 w-full py-2">
+            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <mat-icon class="text-primary">group</mat-icon>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-medium">Project Team</h3>
+              <p class="text-sm text-muted-foreground">5 members • Last message 1h ago</p>
+            </div>
+          </div>
+        </mat-list-item>
+        
+        <mat-list-item class="cursor-pointer hover:bg-muted/50" (click)="openGroup('2')">
+          <div class="flex items-center gap-3 w-full py-2">
+            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <mat-icon class="text-primary">group</mat-icon>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-medium">Family Chat</h3>
+              <p class="text-sm text-muted-foreground">8 members • Last message 3h ago</p>
+            </div>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>

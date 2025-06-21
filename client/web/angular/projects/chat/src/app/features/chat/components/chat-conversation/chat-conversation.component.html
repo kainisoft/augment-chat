@@ -1,0 +1,138 @@
+<div class="chat-conversation-container h-full flex flex-col">
+  <!-- Header -->
+  <div class="chat-header p-4 border-b border-border bg-surface">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button 
+          mat-icon-button 
+          (click)="goBack()"
+          matTooltip="Go back"
+          class="md:hidden"
+        >
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        
+        <div class="contact-info flex items-center gap-3">
+          <div class="contact-avatar w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="text-primary font-medium">{{ getContactInitials() }}</span>
+          </div>
+          <div>
+            <h2 class="contact-name font-semibold text-sm">{{ getContactName() }}</h2>
+            <p class="contact-status text-xs text-muted-foreground">{{ getContactStatus() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-actions flex items-center gap-1">
+        <button 
+          mat-icon-button 
+          matTooltip="Voice call"
+          (click)="startVoiceCall()"
+        >
+          <mat-icon>call</mat-icon>
+        </button>
+        <button 
+          mat-icon-button 
+          matTooltip="Video call"
+          (click)="startVideoCall()"
+        >
+          <mat-icon>videocam</mat-icon>
+        </button>
+        <button 
+          mat-icon-button 
+          [matMenuTriggerFor]="chatMenu"
+          matTooltip="More options"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="messages-area flex-1 overflow-y-auto p-4 space-y-4">
+    <!-- TODO: Replace with real messages -->
+    <div class="message-group">
+      <div class="message received">
+        <div class="message-content bg-surface border border-border rounded-lg p-3 max-w-xs">
+          <p class="text-sm">Hey! How are you doing?</p>
+          <span class="message-time text-xs text-muted-foreground mt-1 block">10:30 AM</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="message-group">
+      <div class="message sent ml-auto">
+        <div class="message-content bg-primary text-primary-foreground rounded-lg p-3 max-w-xs">
+          <p class="text-sm">I'm doing great! Thanks for asking. How about you?</p>
+          <span class="message-time text-xs opacity-70 mt-1 block">10:32 AM</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="message-group">
+      <div class="message received">
+        <div class="message-content bg-surface border border-border rounded-lg p-3 max-w-xs">
+          <p class="text-sm">I'm good too! Want to grab lunch later?</p>
+          <span class="message-time text-xs text-muted-foreground mt-1 block">10:35 AM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Input -->
+  <div class="message-input-area p-4 border-t border-border bg-surface">
+    <div class="flex items-end gap-2">
+      <button 
+        mat-icon-button 
+        matTooltip="Attach file"
+        (click)="attachFile()"
+      >
+        <mat-icon>attach_file</mat-icon>
+      </button>
+
+      <mat-form-field class="flex-1" appearance="outline">
+        <input 
+          matInput 
+          placeholder="Type a message..."
+          #messageInput
+          (keydown.enter)="sendMessage(messageInput.value); messageInput.value = ''"
+          class="message-input"
+        />
+      </mat-form-field>
+
+      <button 
+        mat-icon-button 
+        color="primary"
+        matTooltip="Send message"
+        (click)="sendMessage(messageInput.value); messageInput.value = ''"
+      >
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Chat Menu -->
+  <mat-menu #chatMenu="matMenu">
+    <button mat-menu-item (click)="viewProfile()">
+      <mat-icon>person</mat-icon>
+      <span>View Profile</span>
+    </button>
+    <button mat-menu-item (click)="muteConversation()">
+      <mat-icon>notifications_off</mat-icon>
+      <span>Mute Notifications</span>
+    </button>
+    <button mat-menu-item (click)="archiveConversation()">
+      <mat-icon>archive</mat-icon>
+      <span>Archive Chat</span>
+    </button>
+    <button mat-menu-item (click)="blockContact()">
+      <mat-icon>block</mat-icon>
+      <span>Block Contact</span>
+    </button>
+    <button mat-menu-item class="text-destructive" (click)="deleteConversation()">
+      <mat-icon>delete</mat-icon>
+      <span>Delete Chat</span>
+    </button>
+  </mat-menu>
+</div>

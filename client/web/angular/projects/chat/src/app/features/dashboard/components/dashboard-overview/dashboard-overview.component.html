@@ -1,0 +1,128 @@
+<div class="dashboard-overview p-6">
+  <!-- Header -->
+  <div class="dashboard-header mb-6">
+    <h1 class="text-2xl font-bold text-foreground mb-2">Dashboard</h1>
+    <p class="text-muted-foreground">Welcome back! Here's what's happening with your chats.</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <mat-card class="stat-card">
+      <mat-card-content class="p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-muted-foreground">Total Chats</p>
+            <p class="text-2xl font-bold text-foreground">24</p>
+          </div>
+          <mat-icon class="text-primary text-3xl">chat</mat-icon>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content class="p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-muted-foreground">Unread Messages</p>
+            <p class="text-2xl font-bold text-foreground">5</p>
+          </div>
+          <mat-icon class="text-orange-500 text-3xl">mark_chat_unread</mat-icon>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content class="p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-muted-foreground">Contacts</p>
+            <p class="text-2xl font-bold text-foreground">42</p>
+          </div>
+          <mat-icon class="text-green-500 text-3xl">contacts</mat-icon>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content class="p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-muted-foreground">Groups</p>
+            <p class="text-2xl font-bold text-foreground">8</p>
+          </div>
+          <mat-icon class="text-blue-500 text-3xl">group</mat-icon>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-section mb-6">
+    <h2 class="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
+    <div class="actions-grid grid grid-cols-1 md:grid-cols-3 gap-4">
+      <mat-card class="action-card cursor-pointer hover:shadow-md transition-shadow" (click)="startNewChat()">
+        <mat-card-content class="p-4 text-center">
+          <mat-icon class="text-primary text-4xl mb-2">add_comment</mat-icon>
+          <h3 class="font-medium text-foreground mb-1">Start New Chat</h3>
+          <p class="text-sm text-muted-foreground">Begin a conversation with a contact</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="action-card cursor-pointer hover:shadow-md transition-shadow" (click)="createGroup()">
+        <mat-card-content class="p-4 text-center">
+          <mat-icon class="text-green-500 text-4xl mb-2">group_add</mat-icon>
+          <h3 class="font-medium text-foreground mb-1">Create Group</h3>
+          <p class="text-sm text-muted-foreground">Start a group conversation</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="action-card cursor-pointer hover:shadow-md transition-shadow" (click)="addContact()">
+        <mat-card-content class="p-4 text-center">
+          <mat-icon class="text-blue-500 text-4xl mb-2">person_add</mat-icon>
+          <h3 class="font-medium text-foreground mb-1">Add Contact</h3>
+          <p class="text-sm text-muted-foreground">Connect with new people</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="recent-activity-section">
+    <h2 class="text-lg font-semibold text-foreground mb-4">Recent Activity</h2>
+    <mat-card>
+      <mat-card-content class="p-4">
+        <div class="activity-list space-y-4">
+          <div class="activity-item flex items-center gap-3 p-3 rounded-lg bg-surface">
+            <mat-icon class="text-primary">chat</mat-icon>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-foreground">New message from Alice Johnson</p>
+              <p class="text-xs text-muted-foreground">2 minutes ago</p>
+            </div>
+          </div>
+
+          <div class="activity-item flex items-center gap-3 p-3 rounded-lg bg-surface">
+            <mat-icon class="text-green-500">person_add</mat-icon>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-foreground">Bob Smith accepted your contact request</p>
+              <p class="text-xs text-muted-foreground">1 hour ago</p>
+            </div>
+          </div>
+
+          <div class="activity-item flex items-center gap-3 p-3 rounded-lg bg-surface">
+            <mat-icon class="text-blue-500">group</mat-icon>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-foreground">You were added to "Project Team" group</p>
+              <p class="text-xs text-muted-foreground">3 hours ago</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <button mat-button color="primary" (click)="viewAllActivity()">
+            View All Activity
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

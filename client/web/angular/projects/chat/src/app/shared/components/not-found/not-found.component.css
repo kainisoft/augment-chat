@@ -1,0 +1,24 @@
+.not-found-container {
+    background: linear-gradient(135deg, var(--mdc-theme-surface) 0%, var(--mdc-theme-background) 100%);
+}
+
+.error-icon mat-icon {
+    width: 96px;
+    height: 96px;
+    font-size: 96px;
+}
+
+.error-code {
+    background: linear-gradient(135deg, var(--mdc-theme-primary) 0%, var(--mdc-theme-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.error-actions button {
+    min-height: 48px;
+}
+
+.help-section {
+    opacity: 0.8;
+}

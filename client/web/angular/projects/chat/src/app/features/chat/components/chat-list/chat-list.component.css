@@ -1,0 +1,51 @@
+.chat-list-container {
+    background: var(--mdc-theme-background);
+}
+
+.new-chat-fab {
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+}
+
+.chat-tabs {
+    margin-top: 1rem;
+}
+
+.chat-item {
+    border-radius: 8px;
+    margin: 0 8px 4px 8px;
+    transition: background-color 0.2s ease;
+}
+
+.chat-item:hover {
+    background: var(--mdc-theme-surface-variant);
+}
+
+.online-indicator {
+    box-shadow: 0 0 0 2px var(--mdc-theme-background);
+}
+
+.inline-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.unread-badge {
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.empty-icon {
+    width: 96px;
+    height: 96px;
+    font-size: 96px;
+}

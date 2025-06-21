@@ -1,0 +1,29 @@
+<div class="contact-profile p-6">
+    <div class="flex items-center gap-3 mb-6">
+        <button mat-icon-button (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1 class="text-2xl font-bold">Contact Profile</h1>
+    </div>
+
+    <mat-card class="max-w-md">
+        <mat-card-content class="text-center p-6">
+            <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <span class="text-primary font-medium text-2xl">{{ getContactInitials() }}</span>
+            </div>
+            <h2 class="text-xl font-semibold mb-2">{{ getContactName() }}</h2>
+            <p class="text-muted-foreground mb-6">{{ getContactStatus() }}</p>
+
+            <div class="space-y-3">
+                <button mat-raised-button color="primary" class="w-full" (click)="startChat()">
+                    <mat-icon>chat</mat-icon>
+                    Start Chat
+                </button>
+                <button mat-button class="w-full" (click)="blockContact()">
+                    <mat-icon>block</mat-icon>
+                    Block Contact
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

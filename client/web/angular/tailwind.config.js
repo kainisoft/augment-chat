@@ -8,55 +8,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Angular Material Design Color Palette
-        primary: {
-          50: 'rgb(var(--color-primary-50) / <alpha-value>)',
-          100: 'rgb(var(--color-primary-100) / <alpha-value>)',
-          200: 'rgb(var(--color-primary-200) / <alpha-value>)',
-          300: 'rgb(var(--color-primary-300) / <alpha-value>)',
-          400: 'rgb(var(--color-primary-400) / <alpha-value>)',
-          500: 'rgb(var(--color-primary-500) / <alpha-value>)',
-          600: 'rgb(var(--color-primary-600) / <alpha-value>)',
-          700: 'rgb(var(--color-primary-700) / <alpha-value>)',
-          800: 'rgb(var(--color-primary-800) / <alpha-value>)',
-          900: 'rgb(var(--color-primary-900) / <alpha-value>)',
-          950: 'rgb(var(--color-primary-950) / <alpha-value>)',
-        },
-        accent: {
-          50: 'rgb(var(--color-accent-50) / <alpha-value>)',
-          100: 'rgb(var(--color-accent-100) / <alpha-value>)',
-          200: 'rgb(var(--color-accent-200) / <alpha-value>)',
-          300: 'rgb(var(--color-accent-300) / <alpha-value>)',
-          400: 'rgb(var(--color-accent-400) / <alpha-value>)',
-          500: 'rgb(var(--color-accent-500) / <alpha-value>)',
-          600: 'rgb(var(--color-accent-600) / <alpha-value>)',
-          700: 'rgb(var(--color-accent-700) / <alpha-value>)',
-          800: 'rgb(var(--color-accent-800) / <alpha-value>)',
-          900: 'rgb(var(--color-accent-900) / <alpha-value>)',
-          950: 'rgb(var(--color-accent-950) / <alpha-value>)',
-        },
-        warn: {
-          50: 'rgb(var(--color-warn-50) / <alpha-value>)',
-          100: 'rgb(var(--color-warn-100) / <alpha-value>)',
-          200: 'rgb(var(--color-warn-200) / <alpha-value>)',
-          300: 'rgb(var(--color-warn-300) / <alpha-value>)',
-          400: 'rgb(var(--color-warn-400) / <alpha-value>)',
-          500: 'rgb(var(--color-warn-500) / <alpha-value>)',
-          600: 'rgb(var(--color-warn-600) / <alpha-value>)',
-          700: 'rgb(var(--color-warn-700) / <alpha-value>)',
-          800: 'rgb(var(--color-warn-800) / <alpha-value>)',
-          900: 'rgb(var(--color-warn-900) / <alpha-value>)',
-          950: 'rgb(var(--color-warn-950) / <alpha-value>)',
-        },
         // shadcn/ui color scheme
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        surface: 'hsl(var(--surface))',
+        'surface-variant': 'hsl(var(--surface-variant))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+          container: 'hsl(var(--primary-container))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -82,13 +45,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Chat-specific colors
-        'chat-bubble': {
-          sent: 'rgb(var(--color-chat-bubble-sent) / <alpha-value>)',
-          received: 'rgb(var(--color-chat-bubble-received) / <alpha-value>)',
+        warn: {
+          DEFAULT: 'hsl(var(--warn))',
+          foreground: 'hsl(var(--warn-foreground))',
         },
-        'chat-background': 'rgb(var(--color-chat-background) / <alpha-value>)',
-        'chat-input': 'rgb(var(--color-chat-input) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['Inter', 'Roboto', 'system-ui', 'sans-serif'],
