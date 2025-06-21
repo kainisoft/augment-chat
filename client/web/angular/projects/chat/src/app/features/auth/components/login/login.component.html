@@ -6,34 +6,72 @@
     </mat-card-header>
 
     <mat-card-content>
-      <form class="login-form space-y-4">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form space-y-4">
+        <!-- Email Field -->
         <mat-form-field class="w-full" appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput type="email" placeholder="Enter your email" />
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            [class.mat-form-field-invalid]="hasFieldError('email')"
+          />
           <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="hasFieldError('email')">
+            {{ getFieldError('email') }}
+          </mat-error>
         </mat-form-field>
 
+        <!-- Password Field -->
         <mat-form-field class="w-full" appearance="outline">
           <mat-label>Password</mat-label>
-          <input matInput type="password" placeholder="Enter your password" />
-          <mat-icon matSuffix>lock</mat-icon>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter your password"
+            [class.mat-form-field-invalid]="hasFieldError('password')"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="hasFieldError('password')">
+            {{ getFieldError('password') }}
+          </mat-error>
         </mat-form-field>
 
+        <!-- Submit Button -->
         <div class="form-actions space-y-3">
-          <button 
-            mat-raised-button 
-            color="primary" 
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
             class="w-full"
-            (click)="onLogin()"
+            [disabled]="loginForm.invalid || (loading$ | async)"
           >
-            Sign In
+            <mat-spinner
+              *ngIf="loading$ | async"
+              diameter="20"
+              class="mr-2"
+            ></mat-spinner>
+            {{ (loading$ | async) ? 'Signing In...' : 'Sign In' }}
           </button>
 
           <div class="text-center">
-            <button 
-              mat-button 
+            <button
+              mat-button
               color="accent"
+              type="button"
               (click)="goToForgotPassword()"
+              [disabled]="loading$ | async"
             >
               Forgot Password?
             </button>
@@ -45,10 +83,12 @@
     <mat-card-actions class="text-center">
       <p class="text-sm text-muted-foreground">
         Don't have an account?
-        <button 
-          mat-button 
+        <button
+          mat-button
           color="primary"
+          type="button"
           (click)="goToRegister()"
+          [disabled]="loading$ | async"
         >
           Sign Up
         </button>

@@ -20,14 +20,34 @@ export const selectCurrentUser = createSelector(
   (state) => state.user
 );
 
-export const selectAuthToken = createSelector(
+export const selectAccessToken = createSelector(
   selectAuthState,
-  (state) => state.token
+  (state) => state.accessToken
 );
 
 export const selectRefreshToken = createSelector(
   selectAuthState,
   (state) => state.refreshToken
+);
+
+export const selectSessionId = createSelector(
+  selectAuthState,
+  (state) => state.sessionId
+);
+
+export const selectTokenExpiry = createSelector(
+  selectAuthState,
+  (state) => state.expiresIn
+);
+
+export const selectTokenType = createSelector(
+  selectAuthState,
+  (state) => state.tokenType
+);
+
+export const selectLastActivity = createSelector(
+  selectAuthState,
+  (state) => state.lastActivity
 );
 
 export const selectAuthLoading = createSelector(
@@ -62,16 +82,20 @@ export const selectUserInitials = createSelector(
   selectCurrentUser,
   (user) => {
     if (!user) return '';
-    
+
     if (user.firstName && user.lastName) {
       return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
     }
-    
+
     if (user.firstName) {
       return user.firstName.charAt(0).toUpperCase();
     }
-    
-    return user.username.charAt(0).toUpperCase();
+
+    if (user.username) {
+      return user.username.charAt(0).toUpperCase();
+    }
+
+    return user.email.charAt(0).toUpperCase();
   }
 );
 
@@ -102,7 +126,7 @@ export const selectUserUsername = createSelector(
 
 // Authentication status selectors
 export const selectHasValidToken = createSelector(
-  selectAuthToken,
+  selectAccessToken,
   selectRefreshToken,
   (token, refreshToken) => !!(token && refreshToken)
 );

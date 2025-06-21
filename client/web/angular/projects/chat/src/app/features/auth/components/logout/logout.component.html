@@ -1,10 +1,19 @@
-<div class="logout-container min-h-screen flex items-center justify-center bg-background p-4">
+<div class="logout-container min-h-screen flex items-center justify-center bg-gray-50 p-4">
   <mat-card class="w-full max-w-md text-center">
     <mat-card-content class="p-8">
       <mat-icon class="text-6xl text-primary mb-4">logout</mat-icon>
       <h2 class="text-xl font-semibold mb-4">Signing Out</h2>
-      <mat-spinner class="mx-auto mb-4"></mat-spinner>
-      <p class="text-muted-foreground">Please wait while we sign you out...</p>
+
+      <div *ngIf="loading$ | async; else loggedOut">
+        <mat-spinner class="mx-auto mb-4" diameter="40"></mat-spinner>
+        <p class="text-muted-foreground">Please wait while we sign you out...</p>
+      </div>
+
+      <ng-template #loggedOut>
+        <mat-icon class="text-6xl text-green-500 mb-4">check_circle</mat-icon>
+        <p class="text-muted-foreground">You have been signed out successfully.</p>
+        <p class="text-sm text-muted-foreground mt-2">Redirecting to login...</p>
+      </ng-template>
     </mat-card-content>
   </mat-card>
 </div>

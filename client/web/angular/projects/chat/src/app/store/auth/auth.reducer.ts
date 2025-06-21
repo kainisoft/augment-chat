@@ -19,19 +19,28 @@ export const authReducer = createReducer(
   on(AuthActions.loginSuccess, (state, { response }) => ({
     ...state,
     isAuthenticated: true,
-    user: response.user,
-    token: response.token,
+    user: {
+      id: response.userId,
+      email: response.email,
+    },
+    accessToken: response.accessToken,
     refreshToken: response.refreshToken,
+    sessionId: response.sessionId,
+    expiresIn: response.expiresIn,
+    tokenType: response.tokenType,
     loading: false,
     error: null,
+    lastActivity: Date.now(),
   })),
 
   on(AuthActions.loginFailure, (state, { error }) => ({
     ...state,
     isAuthenticated: false,
     user: null,
-    token: null,
+    accessToken: null,
     refreshToken: null,
+    sessionId: null,
+    expiresIn: null,
     loading: false,
     error,
   })),
@@ -46,19 +55,28 @@ export const authReducer = createReducer(
   on(AuthActions.registerSuccess, (state, { response }) => ({
     ...state,
     isAuthenticated: true,
-    user: response.user,
-    token: response.token,
+    user: {
+      id: response.userId,
+      email: response.email,
+    },
+    accessToken: response.accessToken,
     refreshToken: response.refreshToken,
+    sessionId: response.sessionId,
+    expiresIn: response.expiresIn,
+    tokenType: response.tokenType,
     loading: false,
     error: null,
+    lastActivity: Date.now(),
   })),
 
   on(AuthActions.registerFailure, (state, { error }) => ({
     ...state,
     isAuthenticated: false,
     user: null,
-    token: null,
+    accessToken: null,
     refreshToken: null,
+    sessionId: null,
+    expiresIn: null,
     loading: false,
     error,
   })),
@@ -87,20 +105,25 @@ export const authReducer = createReducer(
     error: null,
   })),
 
-  on(AuthActions.refreshTokenSuccess, (state, { response }) => ({
+  on(AuthActions.refreshTokenSuccess, (state, { accessToken, refreshToken, expiresIn, tokenType }) => ({
     ...state,
-    token: response.token,
-    refreshToken: response.refreshToken,
+    accessToken,
+    refreshToken,
+    expiresIn,
+    tokenType,
     loading: false,
     error: null,
+    lastActivity: Date.now(),
   })),
 
   on(AuthActions.refreshTokenFailure, (state, { error }) => ({
     ...state,
     isAuthenticated: false,
     user: null,
-    token: null,
+    accessToken: null,
     refreshToken: null,
+    sessionId: null,
+    expiresIn: null,
     loading: false,
     error,
   })),
@@ -126,14 +149,29 @@ export const authReducer = createReducer(
   })),
 
   // Session Management Actions
-  on(AuthActions.setAuthenticatedUser, (state, { user, token, refreshToken }) => ({
+  on(AuthActions.setAuthenticatedUser, (state, { user, accessToken, refreshToken, sessionId, expiresIn, tokenType }) => ({
     ...state,
     isAuthenticated: true,
     user,
-    token,
+    accessToken,
     refreshToken,
+    sessionId,
+    expiresIn,
+    tokenType,
     loading: false,
     error: null,
+    lastActivity: Date.now(),
+  })),
+
+  on(AuthActions.initializeAuth, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
+  on(AuthActions.updateLastActivity, (state) => ({
+    ...state,
+    lastActivity: Date.now(),
   })),
 
   on(AuthActions.clearAuthError, (state) => ({

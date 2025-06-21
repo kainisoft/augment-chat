@@ -39,8 +39,11 @@ export function localStorageSyncReducer(reducer: ActionReducer<AppState>): Actio
       try {
         // Persist auth state (tokens and authentication status)
         const authToPersist = {
-          token: nextState.auth.token,
+          accessToken: nextState.auth.accessToken,
           refreshToken: nextState.auth.refreshToken,
+          sessionId: nextState.auth.sessionId,
+          expiresIn: nextState.auth.expiresIn,
+          tokenType: nextState.auth.tokenType,
           isAuthenticated: nextState.auth.isAuthenticated,
         };
         localStorage.setItem('chat_auth_state', JSON.stringify(authToPersist));

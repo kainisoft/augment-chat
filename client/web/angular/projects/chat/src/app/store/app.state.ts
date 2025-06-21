@@ -1,4 +1,4 @@
-import { AuthState } from './auth/auth.state';
+import { AuthState, initialAuthState } from './auth/auth.state';
 import { ChatState } from './chat/chat.state';
 import { UiState } from './ui/ui.state';
 import { UserState } from './user/user.state';
@@ -19,14 +19,7 @@ export interface AppState {
  * Provides default values for all feature states
  */
 export const initialAppState: AppState = {
-  auth: {
-    isAuthenticated: false,
-    user: null,
-    token: null,
-    refreshToken: null,
-    loading: false,
-    error: null,
-  },
+  auth: initialAuthState,
   user: {
     profile: null,
     preferences: {

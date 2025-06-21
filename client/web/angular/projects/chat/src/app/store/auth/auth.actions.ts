@@ -1,5 +1,12 @@
 import { createAction, props } from '@ngrx/store';
-import { LoginRequest, LoginResponse, RegisterRequest, TokenRefreshResponse, User } from './auth.state';
+import {
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+  User
+} from './auth.state';
 
 /**
  * Authentication Actions
@@ -14,7 +21,7 @@ export const login = createAction(
 
 export const loginSuccess = createAction(
   '[Auth] Login Success',
-  props<{ response: LoginResponse }>()
+  props<{ response: AuthResponse }>()
 );
 
 export const loginFailure = createAction(
@@ -30,7 +37,7 @@ export const register = createAction(
 
 export const registerSuccess = createAction(
   '[Auth] Register Success',
-  props<{ response: LoginResponse }>()
+  props<{ response: AuthResponse }>()
 );
 
 export const registerFailure = createAction(
@@ -53,7 +60,12 @@ export const refreshToken = createAction('[Auth] Refresh Token');
 
 export const refreshTokenSuccess = createAction(
   '[Auth] Refresh Token Success',
-  props<{ response: TokenRefreshResponse }>()
+  props<{
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+    tokenType: string;
+  }>()
 );
 
 export const refreshTokenFailure = createAction(
@@ -80,9 +92,18 @@ export const updateUserProfileFailure = createAction(
 // Session Management Actions
 export const checkAuthStatus = createAction('[Auth] Check Auth Status');
 
+export const initializeAuth = createAction('[Auth] Initialize Auth');
+
 export const setAuthenticatedUser = createAction(
   '[Auth] Set Authenticated User',
-  props<{ user: User; token: string; refreshToken: string }>()
+  props<{
+    user: User;
+    accessToken: string;
+    refreshToken: string;
+    sessionId: string;
+    expiresIn: number;
+    tokenType: string;
+  }>()
 );
 
 export const clearAuthError = createAction('[Auth] Clear Auth Error');
@@ -92,10 +113,12 @@ export const setLoading = createAction(
   props<{ loading: boolean }>()
 );
 
+export const updateLastActivity = createAction('[Auth] Update Last Activity');
+
 // Password Reset Actions
 export const requestPasswordReset = createAction(
   '[Auth] Request Password Reset',
-  props<{ email: string }>()
+  props<{ request: ForgotPasswordRequest }>()
 );
 
 export const requestPasswordResetSuccess = createAction(
@@ -109,7 +132,7 @@ export const requestPasswordResetFailure = createAction(
 
 export const resetPassword = createAction(
   '[Auth] Reset Password',
-  props<{ token: string; newPassword: string }>()
+  props<{ request: ResetPasswordRequest }>()
 );
 
 export const resetPasswordSuccess = createAction('[Auth] Reset Password Success');

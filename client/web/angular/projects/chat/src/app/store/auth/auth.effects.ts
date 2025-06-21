@@ -6,6 +6,7 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import * as AuthActions from './auth.actions';
 import { AuthService } from '../../core/services/auth.service';
+import { TokenStorageService } from '../../core/services/token-storage.service';
 
 /**
  * Authentication Effects
@@ -15,6 +16,7 @@ import { AuthService } from '../../core/services/auth.service';
 export class AuthEffects {
   private actions$ = inject(Actions);
   private authService = inject(AuthService);
+  private tokenStorage = inject(TokenStorageService);
   private router = inject(Router);
 
   /**
@@ -37,13 +39,25 @@ export class AuthEffects {
 
   /**
    * Login success effect
-   * Navigates to dashboard after successful login
+   * Stores tokens and navigates to dashboard after successful login
    */
   loginSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        tap(() => {
+        tap(({ response }) => {
+          // Store authentication data
+          this.tokenStorage.setAuthData({
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+            sessionId: response.sessionId,
+            expiresIn: response.expiresIn,
+            userData: {
+              id: response.userId,
+              email: response.email,
+            },
+          });
+
           this.router.navigate(['/chat']);
         })
       ),
@@ -70,13 +84,25 @@ export class AuthEffects {
 
   /**
    * Registration success effect
-   * Navigates to dashboard after successful registration
+   * Stores tokens and navigates to dashboard after successful registration
    */
   registerSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AuthActions.registerSuccess),
-        tap(() => {
+        tap(({ response }) => {
+          // Store authentication data
+          this.tokenStorage.setAuthData({
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+            sessionId: response.sessionId,
+            expiresIn: response.expiresIn,
+            userData: {
+              id: response.userId,
+              email: response.email,
+            },
+          });
+
           this.router.navigate(['/chat']);
         })
       ),
@@ -103,14 +129,14 @@ export class AuthEffects {
 
   /**
    * Logout success effect
-   * Navigates to login page and clears local storage
+   * Clears tokens and navigates to login page
    */
   logoutSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AuthActions.logoutSuccess),
         tap(() => {
-          localStorage.removeItem('auth');
+          this.tokenStorage.clearAuthData();
           this.router.navigate(['/auth/login']);
         })
       ),
@@ -124,27 +150,37 @@ export class AuthEffects {
   refreshToken$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.refreshToken),
-      switchMap(() =>
-        this.authService.refreshToken().pipe(
-          map((response) => AuthActions.refreshTokenSuccess({ response })),
+      switchMap(() => {
+        const refreshToken = this.tokenStorage.getRefreshToken();
+        if (!refreshToken) {
+          return of(AuthActions.refreshTokenFailure({ error: 'No refresh token available' }));
+        }
+
+        return this.authService.refreshToken({ refreshToken }).pipe(
+          map((response) => AuthActions.refreshTokenSuccess({
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+            expiresIn: response.expiresIn,
+            tokenType: response.tokenType,
+          })),
           catchError((error) =>
             of(AuthActions.refreshTokenFailure({ error: error.message || 'Token refresh failed' }))
           )
-        )
-      )
+        );
+      })
     )
   );
 
   /**
    * Token refresh failure effect
-   * Redirects to login on token refresh failure
+   * Clears tokens and redirects to login on token refresh failure
    */
   refreshTokenFailure$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AuthActions.refreshTokenFailure),
         tap(() => {
-          localStorage.removeItem('auth');
+          this.tokenStorage.clearAuthData();
           this.router.navigate(['/auth/login']);
         })
       ),
@@ -159,7 +195,7 @@ export class AuthEffects {
     this.actions$.pipe(
       ofType(AuthActions.updateUserProfile),
       switchMap(({ user }) =>
-        this.authService.updateProfile(user).pipe(
+        this.authService.getCurrentUser().pipe(
           map((updatedUser) => AuthActions.updateUserProfileSuccess({ user: updatedUser })),
           catchError((error) =>
             of(AuthActions.updateUserProfileFailure({ error: error.message || 'Profile update failed' }))
@@ -176,8 +212,8 @@ export class AuthEffects {
   requestPasswordReset$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.requestPasswordReset),
-      switchMap(({ email }) =>
-        this.authService.requestPasswordReset(email).pipe(
+      switchMap(({ request }) =>
+        this.authService.requestPasswordReset(request).pipe(
           map(() => AuthActions.requestPasswordResetSuccess()),
           catchError((error) =>
             of(AuthActions.requestPasswordResetFailure({ error: error.message || 'Password reset request failed' }))
@@ -194,14 +230,45 @@ export class AuthEffects {
   resetPassword$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.resetPassword),
-      switchMap(({ token, newPassword }) =>
-        this.authService.resetPassword(token, newPassword).pipe(
+      switchMap(({ request }) =>
+        this.authService.resetPassword(request).pipe(
           map(() => AuthActions.resetPasswordSuccess()),
           catchError((error) =>
             of(AuthActions.resetPasswordFailure({ error: error.message || 'Password reset failed' }))
           )
         )
       )
+    )
+  );
+
+  /**
+   * Initialize auth effect
+   * Checks for existing tokens on app startup
+   */
+  initializeAuth$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.initializeAuth),
+      switchMap(() => {
+        const authData = this.tokenStorage.getAuthData();
+
+        if (authData.accessToken && !authData.isExpired) {
+          // Valid token exists, set authenticated user
+          return of(AuthActions.setAuthenticatedUser({
+            user: authData.userData || { id: '', email: '' },
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken || '',
+            sessionId: authData.sessionId || '',
+            expiresIn: 900, // Default expiry
+            tokenType: 'Bearer',
+          }));
+        } else if (authData.refreshToken) {
+          // Try to refresh token
+          return of(AuthActions.refreshToken());
+        } else {
+          // No valid auth data
+          return of(AuthActions.logoutSuccess());
+        }
+      })
     )
   );
 
