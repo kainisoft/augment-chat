@@ -38,7 +38,7 @@ import { AuthActions, selectAuthLoading, selectAuthError, RegisterRequest } from
     MatProgressBarModule
   ],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   registerForm: FormGroup;

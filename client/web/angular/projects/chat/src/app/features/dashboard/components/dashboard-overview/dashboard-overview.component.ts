@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
     MatIconModule
   ],
   templateUrl: './dashboard-overview.component.html',
-  styleUrls: ['./dashboard-overview.component.css']
+  styleUrls: ['./dashboard-overview.component.scss']
 })
 export class DashboardOverviewComponent {
   constructor(private router: Router) {}

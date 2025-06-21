@@ -147,6 +147,10 @@ case "$1" in
     echo "Starting Angular frontend with dependencies..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile angular-chat up -d --build --force-recreate
     ;;
+  angular-example)
+    echo "Starting Angular example frontend with dependencies..."
+    $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile angular-example up -d --build --force-recreate
+    ;;
   all)
     echo "Starting all services..."
     $DOCKER_COMPOSE -f "$COMPOSE_PATH" --profile all up -d --build --force-recreate

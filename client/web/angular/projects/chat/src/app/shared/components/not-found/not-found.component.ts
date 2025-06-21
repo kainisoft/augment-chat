@@ -16,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule
   ],
   templateUrl: './not-found.component.html',
-  styleUrls: ['./not-found.component.css']
+  styleUrls: ['./not-found.component.scss']
 })
 export class NotFoundComponent {
   constructor(private router: Router) {}

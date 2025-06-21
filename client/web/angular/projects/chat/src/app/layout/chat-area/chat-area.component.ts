@@ -7,7 +7,7 @@ import { BreakpointService } from '@core/services';
   selector: 'app-chat-area',
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './chat-area.component.html',
-  styleUrl: './chat-area.component.css',
+  styleUrl: './chat-area.component.scss',
 })
 export class ChatAreaComponent {
   // Inject services

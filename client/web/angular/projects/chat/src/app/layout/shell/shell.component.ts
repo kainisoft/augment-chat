@@ -20,7 +20,7 @@ import { SidebarComponent } from '@layout/sidebar/sidebar.component';
     SidebarComponent,
   ],
   templateUrl: './shell.component.html',
-  styleUrl: './shell.component.css',
+  styleUrl: './shell.component.scss',
 })
 export class ShellComponent implements OnInit {
   // Inject services

@@ -24,7 +24,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatDividerModule
   ],
   templateUrl: './new-chat.component.html',
-  styleUrls: ['./new-chat.component.css']
+  styleUrls: ['./new-chat.component.scss']
 })
 export class NewChatComponent {
   constructor(private router: Router) {}

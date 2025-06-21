@@ -7,7 +7,7 @@ import * as AuthActions from './store/auth/auth.actions';
   selector: 'app-root',
   imports: [RouterOutlet],
   template: '<router-outlet />',
-  styleUrl: './app.css',
+  styleUrl: './app.scss',
 })
 export class AppComponent implements OnInit {
   constructor(private store: Store) {}

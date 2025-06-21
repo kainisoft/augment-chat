@@ -24,7 +24,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule
   ],
   templateUrl: './chat-conversation.component.html',
-  styleUrls: ['./chat-conversation.component.css']
+  styleUrls: ['./chat-conversation.component.scss']
 })
 export class ChatConversationComponent implements OnInit {
   private conversationId: string | null = null;

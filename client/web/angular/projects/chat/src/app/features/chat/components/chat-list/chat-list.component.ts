@@ -22,7 +22,7 @@ import { MatBadgeModule } from '@angular/material/badge';
     MatBadgeModule
   ],
   templateUrl: './chat-list.component.html',
-  styleUrls: ['./chat-list.component.css']
+  styleUrls: ['./chat-list.component.scss']
 })
 export class ChatListComponent {
   constructor(private router: Router) {}

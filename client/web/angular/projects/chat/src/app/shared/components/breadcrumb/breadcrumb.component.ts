@@ -17,7 +17,7 @@ import { NavigationService } from '@core/services';
     MatIconModule
   ],
   templateUrl: './breadcrumb.component.html',
-  styleUrls: ['./breadcrumb.component.css']
+  styleUrls: ['./breadcrumb.component.scss']
 })
 export class BreadcrumbComponent {
   private readonly router = inject(Router);

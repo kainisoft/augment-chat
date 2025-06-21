@@ -36,7 +36,7 @@ import { AuthActions, selectAuthLoading, selectAuthError, LoginRequest } from '@
     MatSnackBarModule
   ],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
