@@ -3,25 +3,17 @@
   "version": 1,
   "cli": {
     "packageManager": "pnpm",
-    "analytics": false,
-    "schematicCollections": ["@angular/material"]
-  },
-  "schematics": {
-    "@angular/material:ng-add": {
-      "theme": "indigo-pink"
-    },
-    "@schematics/angular:component": {
-      "style": "scss"
-    },
-    "@schematics/angular:application": {
-      "style": "scss"
-    }
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
     "chat": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "projects/chat",
       "sourceRoot": "projects/chat/src",
       "prefix": "app",
@@ -30,7 +22,11 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "projects/chat/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "projects/chat/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
@@ -93,7 +89,12 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "projects/chat/tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",

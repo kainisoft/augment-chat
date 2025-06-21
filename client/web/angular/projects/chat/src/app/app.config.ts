@@ -1,7 +1,6 @@
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
-  provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter, withPreloading, withRouterConfig, NoPreloading } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -15,7 +14,6 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideZonelessChangeDetection(),
     provideRouter(
       routes,
       withPreloading(NoPreloading),
