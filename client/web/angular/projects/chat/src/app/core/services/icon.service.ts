@@ -69,7 +69,7 @@ export class IconService {
 
   constructor() {
     this.registerChatIcons();
-    this.registerCustomSvgIcons();
+    this.registerMaterialIconsFont();
   }
 
   /**
@@ -87,35 +87,14 @@ export class IconService {
   }
 
   /**
-   * Register custom SVG icons
+   * Register Material Icons font set
    */
-  private registerCustomSvgIcons(): void {
-    // Register Lucide icons as SVG
-    const lucideIcons = [
-      'message-circle',
-      'send',
-      'paperclip',
-      'smile',
-      'mic',
-      'image',
-      'phone',
-      'video',
-      'user',
-      'users',
-      'settings',
-      'moon',
-      'sun',
-      'monitor',
-    ];
+  private registerMaterialIconsFont(): void {
+    // Set the default font set to Material Icons
+    this.iconRegistry.setDefaultFontSetClass('material-icons');
 
-    lucideIcons.forEach(iconName => {
-      // Note: In a real implementation, you would load these from Lucide Angular
-      // For now, we'll use Material Icons as fallback
-      this.iconRegistry.addSvgIcon(
-        `lucide-${iconName}`,
-        this.sanitizer.bypassSecurityTrustResourceUrl(`assets/icons/lucide/${iconName}.svg`)
-      );
-    });
+    // Register Material Icons as the default font set
+    this.iconRegistry.registerFontClassAlias('material-icons', 'material-icons');
   }
 
   /**
