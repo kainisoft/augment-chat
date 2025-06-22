@@ -1,35 +1,12 @@
 import { createAction, props } from '@ngrx/store';
-import { 
-  ThemeConfig, 
-  LayoutConfig, 
-  UINotification, 
-  ModalState, 
-  DrawerState, 
-  SearchState 
+import {
+  SidebarConfig,
+  UINotification,
+  SearchState
 } from './ui.state';
 
 /**
- * Theme Actions
- */
-export const setThemeMode = createAction(
-  '[UI] Set Theme Mode',
-  props<{ mode: 'light' | 'dark' | 'auto' }>()
-);
-
-export const setThemeColors = createAction(
-  '[UI] Set Theme Colors',
-  props<{ primaryColor: string; accentColor: string }>()
-);
-
-export const updateThemeConfig = createAction(
-  '[UI] Update Theme Config',
-  props<{ theme: Partial<ThemeConfig> }>()
-);
-
-export const resetTheme = createAction('[UI] Reset Theme');
-
-/**
- * Layout Actions
+ * Sidebar Actions (UI-only state)
  */
 export const toggleSidebar = createAction('[UI] Toggle Sidebar');
 
@@ -43,17 +20,10 @@ export const setSidebarMode = createAction(
   props<{ mode: 'side' | 'over' | 'push' }>()
 );
 
-export const setLayoutVariant = createAction(
-  '[UI] Set Layout Variant',
-  props<{ variant: 'default' | 'compact' | 'dense' | 'comfortable' }>()
+export const updateSidebarConfig = createAction(
+  '[UI] Update Sidebar Config',
+  props<{ sidebar: Partial<SidebarConfig> }>()
 );
-
-export const updateLayoutConfig = createAction(
-  '[UI] Update Layout Config',
-  props<{ layout: Partial<LayoutConfig> }>()
-);
-
-export const toggleCompactMode = createAction('[UI] Toggle Compact Mode');
 
 /**
  * Notification Actions

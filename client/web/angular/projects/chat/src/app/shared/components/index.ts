@@ -10,3 +10,7 @@ export { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 
 // Error & State Components
 export { NotFoundComponent } from './not-found/not-found.component';
+
+// UI Components
+export { DrawerComponent } from './drawer/drawer.component';
+export { SettingsComponent } from './settings/settings.component';

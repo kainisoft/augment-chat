@@ -1,24 +1,10 @@
 /**
- * Theme configuration interface
+ * Sidebar configuration interface (UI-only state)
  */
-export interface ThemeConfig {
-  mode: 'light' | 'dark' | 'auto';
-  primaryColor: string;
-  accentColor: string;
-  customColors?: Record<string, string>;
-}
-
-/**
- * Layout configuration interface
- */
-export interface LayoutConfig {
-  sidebarOpen: boolean;
-  sidebarMode: 'side' | 'over' | 'push';
-  sidebarWidth: number;
-  layoutVariant: 'default' | 'compact' | 'dense' | 'comfortable';
-  showHeader: boolean;
-  showFooter: boolean;
-  compactMode: boolean;
+export interface SidebarConfig {
+  isOpen: boolean;
+  mode: 'side' | 'over' | 'push';
+  width: number;
 }
 
 /**
@@ -100,8 +86,7 @@ export interface SearchState {
  * UI state interface
  */
 export interface UiState {
-  theme: ThemeConfig;
-  layout: LayoutConfig;
+  sidebar: SidebarConfig;
   notifications: UINotification[];
   loading: LoadingStates;
   modal: ModalState;
@@ -116,19 +101,10 @@ export interface UiState {
  * Initial UI state
  */
 export const initialUiState: UiState = {
-  theme: {
-    mode: 'auto',
-    primaryColor: '#1976d2',
-    accentColor: '#ff4081',
-  },
-  layout: {
-    sidebarOpen: true,
-    sidebarMode: 'side',
-    sidebarWidth: 280,
-    layoutVariant: 'default',
-    showHeader: true,
-    showFooter: false,
-    compactMode: false,
+  sidebar: {
+    isOpen: true,
+    mode: 'side',
+    width: 280,
   },
   notifications: [],
   loading: {

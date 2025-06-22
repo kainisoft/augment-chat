@@ -9,66 +9,25 @@ import { UiState } from './ui.state';
 // Feature selector for UI state
 export const selectUiState = createFeatureSelector<UiState>('ui');
 
-// Theme selectors
-export const selectThemeConfig = createSelector(
+// Sidebar selectors
+export const selectSidebarConfig = createSelector(
   selectUiState,
-  (state) => state.theme
-);
-
-export const selectThemeMode = createSelector(
-  selectThemeConfig,
-  (theme) => theme.mode
-);
-
-export const selectPrimaryColor = createSelector(
-  selectThemeConfig,
-  (theme) => theme.primaryColor
-);
-
-export const selectAccentColor = createSelector(
-  selectThemeConfig,
-  (theme) => theme.accentColor
-);
-
-export const selectIsDarkMode = createSelector(
-  selectThemeMode,
-  (mode) => {
-    if (mode === 'auto') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return mode === 'dark';
-  }
-);
-
-// Layout selectors
-export const selectLayoutConfig = createSelector(
-  selectUiState,
-  (state) => state.layout
+  (state) => state.sidebar
 );
 
 export const selectSidebarOpen = createSelector(
-  selectLayoutConfig,
-  (layout) => layout.sidebarOpen
+  selectSidebarConfig,
+  (sidebar) => sidebar.isOpen
 );
 
 export const selectSidebarMode = createSelector(
-  selectLayoutConfig,
-  (layout) => layout.sidebarMode
-);
-
-export const selectLayoutVariant = createSelector(
-  selectLayoutConfig,
-  (layout) => layout.layoutVariant
-);
-
-export const selectCompactMode = createSelector(
-  selectLayoutConfig,
-  (layout) => layout.compactMode
+  selectSidebarConfig,
+  (sidebar) => sidebar.mode
 );
 
 export const selectSidebarWidth = createSelector(
-  selectLayoutConfig,
-  (layout) => layout.sidebarWidth
+  selectSidebarConfig,
+  (sidebar) => sidebar.width
 );
 
 // Notification selectors
@@ -219,23 +178,14 @@ export const selectHasUIError = createSelector(
 );
 
 // Combined selectors for UI components
-export const selectThemeUIState = createSelector(
-  selectThemeConfig,
-  selectIsDarkMode,
-  (theme, isDark) => ({
-    theme,
-    isDark,
-  })
-);
-
-export const selectLayoutUIState = createSelector(
-  selectLayoutConfig,
+export const selectSidebarUIState = createSelector(
+  selectSidebarConfig,
   selectSidebarOpen,
-  selectCompactMode,
-  (layout, sidebarOpen, compactMode) => ({
-    layout,
-    sidebarOpen,
-    compactMode,
+  selectSidebarMode,
+  (sidebar, isOpen, mode) => ({
+    sidebar,
+    isOpen,
+    mode,
   })
 );
 

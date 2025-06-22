@@ -1,0 +1,31 @@
+.app-drawer {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+    z-index: 1000;
+    box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2), 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.app-drawer--end {
+    border-left: 1px solid var(--mat-divider-color, rgba(0, 0, 0, 0.12));
+}
+
+.app-drawer--start {
+    border-right: 1px solid var(--mat-divider-color, rgba(0, 0, 0, 0.12));
+}
+
+@media (max-width: 768px) {
+    .app-drawer {
+        width: 100vw;
+        min-width: 100vw;
+        max-width: 100vw;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .app-drawer {
+        width: 400px;
+        min-width: 400px;
+        max-width: 400px;
+    }
+}

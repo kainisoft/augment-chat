@@ -2,11 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fromEvent, timer } from 'rxjs';
-import { debounceTime, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { debounceTime, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import * as UiActions from './ui.actions';
-import { selectThemeConfig, selectLayoutConfig } from './ui.selectors';
-import { ThemeService } from '@core/services';
+import { selectSidebarConfig } from './ui.selectors';
 
 /**
  * UI Effects
@@ -16,41 +15,6 @@ import { ThemeService } from '@core/services';
 export class UiEffects {
   private actions$ = inject(Actions);
   private store = inject(Store);
-  private themeService = inject(ThemeService);
-
-  /**
-   * Theme mode change effect
-   * Updates the theme service when theme mode changes
-   */
-  themeChange$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(UiActions.setThemeMode, UiActions.updateThemeConfig),
-        withLatestFrom(this.store.select(selectThemeConfig)),
-        tap(([action, themeConfig]) => {
-          this.themeService.setTheme(themeConfig.mode);
-          this.themeService.setPrimaryColor(themeConfig.primaryColor);
-          this.themeService.setAccentColor(themeConfig.accentColor);
-        })
-      ),
-    { dispatch: false }
-  );
-
-  /**
-   * Theme colors change effect
-   * Updates the theme service when colors change
-   */
-  themeColorsChange$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(UiActions.setThemeColors),
-        tap(({ primaryColor, accentColor }) => {
-          this.themeService.setPrimaryColor(primaryColor);
-          this.themeService.setAccentColor(accentColor);
-        })
-      ),
-    { dispatch: false }
-  );
 
   /**
    * Auto-hide notifications effect
@@ -164,9 +128,9 @@ export class UiEffects {
   sidebarAutoClose$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UiActions.setIsMobile),
-      withLatestFrom(this.store.select(selectLayoutConfig)),
-      switchMap(([{ isMobile }, layoutConfig]) => {
-        if (isMobile && layoutConfig.sidebarOpen && layoutConfig.sidebarMode === 'side') {
+      withLatestFrom(this.store.select(selectSidebarConfig)),
+      switchMap(([{ isMobile }, sidebarConfig]) => {
+        if (isMobile && sidebarConfig.isOpen && sidebarConfig.mode === 'side') {
           return [
             UiActions.setSidebarMode({ mode: 'over' }),
             UiActions.setSidebarOpen({ open: false })
@@ -211,22 +175,5 @@ export class UiEffects {
     )
   );
 
-  /**
-   * Accessibility preferences monitoring effect
-   * Monitors system accessibility preferences
-   */
-  accessibilityMonitoring$ = createEffect(() =>
-    fromEvent(window, 'load').pipe(
-      map(() => {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
-        
-        return [
-          UiActions.setReducedMotion({ enabled: prefersReducedMotion }),
-          UiActions.setHighContrast({ enabled: prefersHighContrast })
-        ];
-      }),
-      switchMap(actions => actions)
-    )
-  );
+
 }

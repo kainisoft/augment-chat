@@ -1,0 +1,6 @@
+// Import Angular Material theme first (must be before @tailwind)
+@use '../app/core/themes/material-theme.scss';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

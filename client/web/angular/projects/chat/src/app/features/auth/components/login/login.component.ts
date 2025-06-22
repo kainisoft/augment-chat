@@ -15,6 +15,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 
 import { AuthActions, selectAuthLoading, selectAuthError, LoginRequest } from '@store/auth';
+import { SettingsComponent } from "../../../../shared/components/settings/settings.component";
 
 /**
  * Login Component
@@ -33,8 +34,9 @@ import { AuthActions, selectAuthLoading, selectAuthError, LoginRequest } from '@
     MatInputModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
-  ],
+    MatSnackBarModule,
+    SettingsComponent
+],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

@@ -53,10 +53,9 @@ export function localStorageSyncReducer(reducer: ActionReducer<AppState>): Actio
           localStorage.setItem('chat_user_preferences', JSON.stringify(nextState.user.preferences));
         }
 
-        // Persist UI theme and layout
+        // Persist UI sidebar state
         const uiToPersist = {
-          theme: nextState.ui.theme,
-          layout: nextState.ui.layout,
+          sidebar: nextState.ui.sidebar,
         };
         localStorage.setItem('chat_ui_state', JSON.stringify(uiToPersist));
       } catch (error) {

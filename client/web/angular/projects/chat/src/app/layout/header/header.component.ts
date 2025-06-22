@@ -7,7 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BreakpointService, IconService, ThemeService } from '@core/services';
+import { BreakpointService, IconService } from '@core/services';
+import { ThemeConfigService } from '@core/services/theme-config.service';
 
 @Component({
   selector: 'app-header',
@@ -32,13 +33,14 @@ export class HeaderComponent {
   @Output() menuToggle = new EventEmitter<void>();
 
   // Inject services
-  private readonly themeService = inject(ThemeService);
+  private readonly themeConfigService = inject(ThemeConfigService);
   private readonly breakpointService = inject(BreakpointService);
   private readonly iconService = inject(IconService);
 
   // Expose services to template
-  protected readonly theme = this.themeService.theme;
-  protected readonly isDark = this.themeService.isDark;
+  protected readonly colorMode = this.themeConfigService.colorMode;
+  protected readonly colorTheme = this.themeConfigService.colorTheme;
+  protected readonly isDark = this.themeConfigService.isDark;
   protected readonly isMobile = this.breakpointService.isMobile;
   protected readonly isTablet = this.breakpointService.isTablet;
   protected readonly currentBreakpoint = this.breakpointService.currentBreakpoint;
@@ -48,15 +50,15 @@ export class HeaderComponent {
   }
 
   protected toggleTheme(): void {
-    this.themeService.toggleTheme();
+    this.themeConfigService.toggleColorMode();
   }
 
   protected setTheme(theme: 'light' | 'dark' | 'auto'): void {
-    this.themeService.setTheme(theme);
+    this.themeConfigService.setColorMode(theme);
   }
 
   protected getThemeIcon(): string {
-    return this.iconService.getThemeIcon(this.themeService.getEffectiveTheme());
+    return this.iconService.getThemeIcon(this.themeConfigService.effectiveTheme());
   }
 
   protected getMenuIcon(): string {

@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.pnpm-store \
 # Copy Angular configuration files
 COPY client/web/angular/angular.json ./
 COPY client/web/angular/tsconfig.json ./
-COPY client/web/angular/.postcssrc.json ./
+COPY client/web/angular/tailwind.config.js ./
 
 # Copy source code
 COPY client/web/angular/projects ./projects

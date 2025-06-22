@@ -34,7 +34,8 @@
               }
             ],
             "styles": [
-              "projects/chat/src/styles.scss"
+              "projects/chat/src/styles/styles.scss",
+              "projects/chat/src/styles/splash-screen.scss"
             ]
           },
           "configurations": {
@@ -102,7 +103,7 @@
               }
             ],
             "styles": [
-              "projects/chat/src/styles.scss"
+              "projects/chat/src/styles/styles.scss"
             ]
           }
         },

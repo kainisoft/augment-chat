@@ -4,9 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterOutlet } from '@angular/router';
+
 import { BreakpointService } from '@core/services';
+import { ThemeConfigService } from '@core/services/theme-config.service';
 import { HeaderComponent } from '@layout/header/header.component';
 import { SidebarComponent } from '@layout/sidebar/sidebar.component';
+import { SettingsComponent } from '@shared/components';
 
 @Component({
   selector: 'app-shell',
@@ -18,6 +21,7 @@ import { SidebarComponent } from '@layout/sidebar/sidebar.component';
     MatIconModule,
     HeaderComponent,
     SidebarComponent,
+    SettingsComponent,
   ],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
@@ -25,6 +29,7 @@ import { SidebarComponent } from '@layout/sidebar/sidebar.component';
 export class ShellComponent implements OnInit {
   // Inject services
   private readonly breakpointService = inject(BreakpointService);
+  private readonly themeConfigService = inject(ThemeConfigService);
 
   // Component state
   protected readonly sidenavOpened = signal(true);
@@ -34,6 +39,9 @@ export class ShellComponent implements OnInit {
   protected readonly isTablet = this.breakpointService.isTablet;
 
   ngOnInit(): void {
+    // Initialize configuration service
+    this.themeConfigService.init();
+
     // Auto-close sidebar on mobile by default
     if (this.isMobile()) {
       this.sidenavOpened.set(false);

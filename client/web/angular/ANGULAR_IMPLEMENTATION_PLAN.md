@@ -35,7 +35,7 @@ This sequence ensures that:
 - **Runtime**: Modern ES2022+ with Zone.js
 
 ### Styling & UI
-- **CSS Framework**: Tailwind CSS 4+
+- **CSS Framework**: Tailwind CSS 3+
 - **UI Component Library**: Angular Material 20+ (CDK + Material Design)
 - **Icons**: Material Icons + Lucide Angular
 
@@ -128,7 +128,7 @@ This sequence ensures that:
   - [x] Configure Angular CLI with esbuild
   - [x] Set up Git hooks and commit linting
 - [x] **1.2 UI and Styling Setup**
-  - [x] Configure Tailwind CSS 4+ with Angular
+  - [x] Configure Tailwind CSS 3+ with Angular
   - [x] Install and configure Angular Material 20+
   - [x] Set up Material Icons and Lucide Angular
   - [x] Create Angular Material theme with CSS custom properties

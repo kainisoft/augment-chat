@@ -70,19 +70,10 @@ export const initialAppState: AppState = {
     error: null,
   },
   ui: {
-    theme: {
-      mode: 'auto',
-      primaryColor: '#1976d2',
-      accentColor: '#ff4081',
-    },
-    layout: {
-      sidebarOpen: true,
-      sidebarMode: 'side',
-      sidebarWidth: 280,
-      layoutVariant: 'default',
-      showHeader: true,
-      showFooter: false,
-      compactMode: false,
+    sidebar: {
+      isOpen: true,
+      mode: 'side',
+      width: 280,
     },
     notifications: [],
     loading: {

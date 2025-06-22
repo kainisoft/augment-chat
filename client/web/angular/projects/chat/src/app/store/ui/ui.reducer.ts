@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { UiState, initialUiState } from './ui.state';
+import { initialUiState } from './ui.state';
 import * as UiActions from './ui.actions';
 
 /**
@@ -9,83 +9,36 @@ import * as UiActions from './ui.actions';
 export const uiReducer = createReducer(
   initialUiState,
 
-  // Theme Actions
-  on(UiActions.setThemeMode, (state, { mode }) => ({
-    ...state,
-    theme: {
-      ...state.theme,
-      mode,
-    },
-  })),
-
-  on(UiActions.setThemeColors, (state, { primaryColor, accentColor }) => ({
-    ...state,
-    theme: {
-      ...state.theme,
-      primaryColor,
-      accentColor,
-    },
-  })),
-
-  on(UiActions.updateThemeConfig, (state, { theme }) => ({
-    ...state,
-    theme: {
-      ...state.theme,
-      ...theme,
-    },
-  })),
-
-  on(UiActions.resetTheme, (state) => ({
-    ...state,
-    theme: initialUiState.theme,
-  })),
-
-  // Layout Actions
+  // Sidebar Actions
   on(UiActions.toggleSidebar, (state) => ({
     ...state,
-    layout: {
-      ...state.layout,
-      sidebarOpen: !state.layout.sidebarOpen,
+    sidebar: {
+      ...state.sidebar,
+      isOpen: !state.sidebar.isOpen,
     },
   })),
 
   on(UiActions.setSidebarOpen, (state, { open }) => ({
     ...state,
-    layout: {
-      ...state.layout,
-      sidebarOpen: open,
+    sidebar: {
+      ...state.sidebar,
+      isOpen: open,
     },
   })),
 
   on(UiActions.setSidebarMode, (state, { mode }) => ({
     ...state,
-    layout: {
-      ...state.layout,
-      sidebarMode: mode,
+    sidebar: {
+      ...state.sidebar,
+      mode,
     },
   })),
 
-  on(UiActions.setLayoutVariant, (state, { variant }) => ({
+  on(UiActions.updateSidebarConfig, (state, { sidebar }) => ({
     ...state,
-    layout: {
-      ...state.layout,
-      layoutVariant: variant,
-    },
-  })),
-
-  on(UiActions.updateLayoutConfig, (state, { layout }) => ({
-    ...state,
-    layout: {
-      ...state.layout,
-      ...layout,
-    },
-  })),
-
-  on(UiActions.toggleCompactMode, (state) => ({
-    ...state,
-    layout: {
-      ...state.layout,
-      compactMode: !state.layout.compactMode,
+    sidebar: {
+      ...state.sidebar,
+      ...sidebar,
     },
   })),
 

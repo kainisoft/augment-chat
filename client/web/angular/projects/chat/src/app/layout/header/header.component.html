@@ -47,7 +47,7 @@
     <button
       mat-icon-button
       class="theme-toggle-btn"
-      [matTooltip]="'Current: ' + theme() + ' mode'"
+      [matTooltip]="'Current: ' + colorMode() + ' mode'"
       (click)="toggleTheme()"
     >
       <mat-icon>{{ getThemeIcon() }}</mat-icon>
@@ -99,7 +99,7 @@
         <div class="flex gap-1">
           <button
             mat-icon-button
-            [class.active]="theme() === 'light'"
+            [class.active]="colorMode() === 'light'"
             (click)="setTheme('light')"
             matTooltip="Light mode"
             class="theme-btn"
@@ -108,7 +108,7 @@
           </button>
           <button
             mat-icon-button
-            [class.active]="theme() === 'dark'"
+            [class.active]="colorMode() === 'dark'"
             (click)="setTheme('dark')"
             matTooltip="Dark mode"
             class="theme-btn"
@@ -117,7 +117,7 @@
           </button>
           <button
             mat-icon-button
-            [class.active]="theme() === 'auto'"
+            [class.active]="colorMode() === 'auto'"
             (click)="setTheme('auto')"
             matTooltip="Auto mode"
             class="theme-btn"

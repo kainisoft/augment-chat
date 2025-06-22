@@ -1,0 +1,414 @@
+<!-- Settings Trigger Button -->
+<div
+  class="settings-trigger fixed right-0 z-50 flex h-12 w-12 cursor-pointer items-center justify-center rounded-l-lg bg-primary shadow-lg print:hidden hover:bg-primary/90 transition-colors"
+  style="top: 50%; transform: translateY(-50%)"
+  (click)="toggle()"
+  matTooltip="Settings"
+  matTooltipPosition="left"
+>
+  <mat-icon class="text-white animate-spin">settings</mat-icon>
+</div>
+
+<!-- Settings Drawer -->
+<mat-sidenav-container class="settings-container" [hasBackdrop]="true">
+  <mat-sidenav
+    #settingsDrawer
+    [opened]="opened"
+    [mode]="'over'"
+    [position]="'end'"
+    [fixedInViewport]="true"
+    [fixedTopGap]="0"
+    [fixedBottomGap]="0"
+    (openedChange)="opened = $event"
+    (backdropClick)="close()"
+    class="settings-sidenav"
+  >
+    <div class="settings-drawer flex w-full flex-col overflow-auto bg-background">
+      <!-- Header -->
+      <div class="flex h-16 min-h-16 flex-row items-center bg-primary px-6 text-primary-contrast">
+        <mat-icon class="text-current mr-3">settings</mat-icon>
+        <div class="text-xl font-semibold tracking-tight">Settings</div>
+        <button
+          class="ml-auto"
+          mat-icon-button
+          (click)="close()"
+          matTooltip="Close"
+        >
+          <mat-icon class="text-current">close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="flex flex-col p-6 space-y-8">
+        
+        <!-- Color Theme Section -->
+        <div class="settings-section">
+          <div class="text-sm font-semibold text-secondary mb-4 uppercase tracking-wide">Color Theme</div>
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            @for (theme of config().themes; track theme.id) {
+              <div
+                class="flex cursor-pointer items-center justify-center rounded-lg px-4 py-3 border-2 transition-all hover:bg-surface"
+                [class]="{
+                  'border-primary': config().colorTheme === theme.id,
+                  'border-outline': config().colorTheme !== theme.id,
+                  'bg-primary/10': config().colorTheme === theme.id
+                }"
+                (click)="setTheme(theme.id)"
+              >
+                <div
+                  class="h-3 w-3 flex-shrink-0 rounded-full mr-2"
+                  [style.background-color]="theme.primaryColor"
+                ></div>
+                <div
+                  class="truncate font-medium text-sm"
+                  [class]="{
+                    'text-primary': config().colorTheme === theme.id,
+                    'text-on-surface': config().colorTheme !== theme.id
+                  }"
+                >
+                  {{ theme.name }}
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <hr class="border-outline" />
+
+        <!-- Color Scheme Section -->
+        <div class="settings-section">
+          <div class="text-sm font-semibold text-secondary mb-4 uppercase tracking-wide">Color Scheme</div>
+          <div class="grid grid-cols-3 gap-3">
+            <!-- Auto -->
+            <div
+              class="flex cursor-pointer items-center rounded-lg py-3 px-4 border-2 transition-all hover:bg-surface"
+              [class]="{
+                'border-primary': config().colorMode === 'auto',
+                'border-outline': config().colorMode !== 'auto',
+                'bg-primary/10': config().colorMode === 'auto'
+              }"
+              matTooltip="Automatically sets the scheme based on system preference"
+              (click)="setScheme('auto')"
+            >
+              <mat-icon class="mr-2 text-lg">brightness_auto</mat-icon>
+              <div
+                class="font-medium text-sm"
+                [class]="{
+                  'text-primary': config().colorMode === 'auto',
+                  'text-on-surface': config().colorMode !== 'auto'
+                }"
+              >
+                Auto
+              </div>
+            </div>
+
+            <!-- Light -->
+            <div
+              class="flex cursor-pointer items-center rounded-lg py-3 px-4 border-2 transition-all hover:bg-surface"
+              [class]="{
+                'border-primary': config().colorMode === 'light',
+                'border-outline': config().colorMode !== 'light',
+                'bg-primary/10': config().colorMode === 'light'
+              }"
+              (click)="setScheme('light')"
+            >
+              <mat-icon class="mr-2 text-lg">light_mode</mat-icon>
+              <div
+                class="font-medium text-sm"
+                [class]="{
+                  'text-primary': config().colorMode === 'light',
+                  'text-on-surface': config().colorMode !== 'light'
+                }"
+              >
+                Light
+              </div>
+            </div>
+
+            <!-- Dark -->
+            <div
+              class="flex cursor-pointer items-center rounded-lg py-3 px-4 border-2 transition-all hover:bg-surface"
+              [class]="{
+                'border-primary': config().colorMode === 'dark',
+                'border-outline': config().colorMode !== 'dark',
+                'bg-primary/10': config().colorMode === 'dark'
+              }"
+              (click)="setScheme('dark')"
+            >
+              <mat-icon class="mr-2 text-lg">dark_mode</mat-icon>
+              <div
+                class="font-medium text-sm"
+                [class]="{
+                  'text-primary': config().colorMode === 'dark',
+                  'text-on-surface': config().colorMode !== 'dark'
+                }"
+              >
+                Dark
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-outline" />
+
+        <!-- Layout Section -->
+        <div class="settings-section">
+          <div class="text-sm font-semibold text-secondary mb-4 uppercase tracking-wide">Layout</div>
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Default -->
+            <div
+              class="flex cursor-pointer flex-col items-center"
+              (click)="setLayout('default')"
+            >
+              <div
+                class="flex h-16 w-full overflow-hidden rounded-md border-2 hover:opacity-80 transition-opacity"
+                [class]="{
+                  'border-primary': config().layout === 'default',
+                  'border-outline': config().layout !== 'default'
+                }"
+              >
+                <div class="w-6 bg-surface-variant">
+                  <div class="mx-1 mt-2 space-y-1">
+                    <div class="h-1 rounded-sm bg-on-surface-variant"></div>
+                    <div class="h-1 rounded-sm bg-on-surface-variant"></div>
+                    <div class="h-1 rounded-sm bg-on-surface-variant"></div>
+                  </div>
+                </div>
+                <div class="flex flex-auto flex-col border-l border-outline">
+                  <div class="h-3 bg-surface-variant border-b border-outline"></div>
+                  <div class="flex flex-auto bg-surface"></div>
+                </div>
+              </div>
+              <div
+                class="mt-2 text-center text-sm font-medium"
+                [class]="{
+                  'text-primary': config().layout === 'default',
+                  'text-on-surface': config().layout !== 'default'
+                }"
+              >
+                Default
+              </div>
+            </div>
+
+            <!-- Compact -->
+            <div
+              class="flex cursor-pointer flex-col items-center"
+              (click)="setLayout('compact')"
+            >
+              <div
+                class="flex h-16 w-full overflow-hidden rounded-md border-2 hover:opacity-80 transition-opacity"
+                [class]="{
+                  'border-primary': config().layout === 'compact',
+                  'border-outline': config().layout !== 'compact'
+                }"
+              >
+                <div class="w-4 bg-surface-variant">
+                  <div class="mx-0.5 mt-1 space-y-0.5">
+                    <div class="h-0.5 rounded-sm bg-on-surface-variant"></div>
+                    <div class="h-0.5 rounded-sm bg-on-surface-variant"></div>
+                    <div class="h-0.5 rounded-sm bg-on-surface-variant"></div>
+                  </div>
+                </div>
+                <div class="flex flex-auto flex-col border-l border-outline">
+                  <div class="h-2 bg-surface-variant border-b border-outline"></div>
+                  <div class="flex flex-auto bg-surface"></div>
+                </div>
+              </div>
+              <div
+                class="mt-2 text-center text-sm font-medium"
+                [class]="{
+                  'text-primary': config().layout === 'compact',
+                  'text-on-surface': config().layout !== 'compact'
+                }"
+              >
+                Compact
+              </div>
+            </div>
+
+            <!-- Dense -->
+            <div
+              class="flex cursor-pointer flex-col items-center"
+              (click)="setLayout('dense')"
+            >
+              <div
+                class="flex h-16 w-full overflow-hidden rounded-md border-2 hover:opacity-80 transition-opacity"
+                [class.border-primary]="config().layout === 'dense'"
+                [class.border-outline]="config().layout !== 'dense'"
+              >
+                <div class="w-3 bg-surface-variant">
+                  <div class="mx-0.5 mt-1 space-y-0.5">
+                    <div class="h-0.5 rounded-sm bg-on-surface-variant"></div>
+                    <div class="h-0.5 rounded-sm bg-on-surface-variant"></div>
+                  </div>
+                </div>
+                <div class="flex flex-auto flex-col border-l border-outline">
+                  <div class="h-1.5 bg-surface-variant border-b border-outline"></div>
+                  <div class="flex flex-auto bg-surface"></div>
+                </div>
+              </div>
+              <div
+                class="mt-2 text-center text-sm font-medium"
+                [class.text-primary]="config().layout === 'dense'"
+                [class.text-on-surface]="config().layout !== 'dense'"
+              >
+                Dense
+              </div>
+            </div>
+
+            <!-- Comfortable -->
+            <div
+              class="flex cursor-pointer flex-col items-center"
+              (click)="setLayout('comfortable')"
+            >
+              <div
+                class="flex h-16 w-full overflow-hidden rounded-md border-2 hover:opacity-80 transition-opacity"
+                [class.border-primary]="config().layout === 'comfortable'"
+                [class.border-outline]="config().layout !== 'comfortable'"
+              >
+                <div class="w-8 bg-surface-variant">
+                  <div class="mx-1.5 mt-3 space-y-1.5">
+                    <div class="h-1 rounded-sm bg-on-surface-variant"></div>
+                    <div class="h-1 rounded-sm bg-on-surface-variant"></div>
+                  </div>
+                </div>
+                <div class="flex flex-auto flex-col border-l border-outline">
+                  <div class="h-4 bg-surface-variant border-b border-outline"></div>
+                  <div class="flex flex-auto bg-surface"></div>
+                </div>
+              </div>
+              <div
+                class="mt-2 text-center text-sm font-medium"
+                [class.text-primary]="config().layout === 'comfortable'"
+                [class.text-on-surface]="config().layout !== 'comfortable'"
+              >
+                Comfortable
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-outline" />
+
+        <!-- Options Section -->
+        <div class="settings-section">
+          <div class="text-sm font-semibold text-secondary mb-4 uppercase tracking-wide">Options</div>
+          <div class="space-y-4">
+            <!-- Compact Mode -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-medium text-on-surface">Compact Mode</div>
+                <div class="text-sm text-secondary">Reduce spacing and padding</div>
+              </div>
+              <mat-slide-toggle
+                [checked]="config().compactMode"
+                (change)="toggleCompact()"
+                color="primary"
+              ></mat-slide-toggle>
+            </div>
+
+            <!-- Animations -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-medium text-on-surface">Animations</div>
+                <div class="text-sm text-secondary">Enable smooth transitions</div>
+              </div>
+              <mat-slide-toggle
+                [checked]="config().animations"
+                (change)="toggleAnimations()"
+                color="primary"
+              ></mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-outline" />
+
+        <!-- Accessibility Section -->
+        <div class="settings-section">
+          <div class="text-sm font-semibold text-secondary mb-4 uppercase tracking-wide">Accessibility</div>
+          <div class="space-y-4">
+            <!-- High Contrast -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-medium text-on-surface">High Contrast</div>
+                <div class="text-sm text-secondary">Increase color contrast</div>
+              </div>
+              <mat-slide-toggle
+                [checked]="config().accessibility.highContrast"
+                (change)="toggleHighContrast()"
+                color="primary"
+              ></mat-slide-toggle>
+            </div>
+
+            <!-- Reduced Motion -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-medium text-on-surface">Reduced Motion</div>
+                <div class="text-sm text-secondary">Minimize animations</div>
+              </div>
+              <mat-slide-toggle
+                [checked]="config().accessibility.reducedMotion"
+                (change)="toggleReducedMotion()"
+                color="primary"
+              ></mat-slide-toggle>
+            </div>
+
+            <!-- Font Size -->
+            <div>
+              <div class="font-medium text-on-surface mb-2">Font Size</div>
+              <div class="grid grid-cols-4 gap-2">
+                <button
+                  mat-stroked-button
+                  [color]="config().accessibility.fontSize === 'small' ? 'primary' : ''"
+                  (click)="setFontSize('small')"
+                  class="text-xs"
+                >
+                  Small
+                </button>
+                <button
+                  mat-stroked-button
+                  [color]="config().accessibility.fontSize === 'medium' ? 'primary' : ''"
+                  (click)="setFontSize('medium')"
+                  class="text-xs"
+                >
+                  Medium
+                </button>
+                <button
+                  mat-stroked-button
+                  [color]="config().accessibility.fontSize === 'large' ? 'primary' : ''"
+                  (click)="setFontSize('large')"
+                  class="text-xs"
+                >
+                  Large
+                </button>
+                <button
+                  mat-stroked-button
+                  [color]="config().accessibility.fontSize === 'extra-large' ? 'primary' : ''"
+                  (click)="setFontSize('extra-large')"
+                  class="text-xs"
+                >
+                  XL
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-outline" />
+
+        <!-- Reset Section -->
+        <div class="settings-section">
+          <div class="text-sm font-semibold text-secondary mb-4 uppercase tracking-wide">Reset</div>
+          <button
+            mat-stroked-button
+            color="warn"
+            (click)="resetSettings()"
+            class="w-full"
+          >
+            <mat-icon class="mr-2">restore</mat-icon>
+            Reset to Defaults
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

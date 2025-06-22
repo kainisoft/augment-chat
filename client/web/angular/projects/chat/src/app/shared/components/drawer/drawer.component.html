@@ -1,0 +1,5 @@
+<mat-sidenav [mode]="mode" [position]="position" [opened]="opened" [fixedInViewport]="fixed" [fixedTopGap]="0"
+    [fixedBottomGap]="0" (openedChange)="openedChange.emit($event)" (backdropClick)="close()"
+    [class]="'app-drawer app-drawer--' + position + ' ' + (opened ? 'app-drawer--opened' : '')">
+    <ng-content></ng-content>
+</mat-sidenav>

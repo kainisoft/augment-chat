@@ -3,13 +3,14 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { provideRouter, withPreloading, withRouterConfig, NoPreloading } from '@angular/router';
-import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
 import { provideApollo } from './core/graphql/apollo.provider';
 import { storeProviders } from './store/store.config';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { provideApp } from './core/providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +20,7 @@ export const appConfig: ApplicationConfig = {
       withPreloading(NoPreloading),
       withRouterConfig({
         onSameUrlNavigation: 'reload',
-        paramsInheritanceStrategy: 'always'
+        paramsInheritanceStrategy: 'always',
       })
     ),
     provideHttpClient(withInterceptorsFromDi()),
@@ -32,8 +33,11 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
 
+    // App Providers
+    provideApp(),
+
     // Apollo GraphQL
-    ...provideApollo(),
+    provideApollo(),
 
     // NgRx Store
     ...storeProviders,

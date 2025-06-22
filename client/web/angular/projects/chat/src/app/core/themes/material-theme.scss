@@ -1,0 +1,66 @@
+// Basic Angular Material theme setup
+// For now, we'll use a simple approach that works with Tailwind CSS
+
+// Import Angular Material core styles
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+// Custom CSS variables for theme integration with Tailwind
+:root {
+  --primary-color: #3f51b5;
+  --accent-color: #ff4081;
+  --warn-color: #f44336;
+  --background-color: #fafafa;
+  --surface-color: #ffffff;
+  --surface-variant-color: #f5f5f5;
+  --outline-color: #e0e0e0;
+  --text-color: rgba(0, 0, 0, 0.87);
+  --text-secondary-color: rgba(0, 0, 0, 0.6);
+  --on-surface-color: rgba(0, 0, 0, 0.87);
+  --on-surface-variant-color: rgba(0, 0, 0, 0.6);
+  --primary-contrast-color: #ffffff;
+}
+
+.dark-theme {
+  --primary-color: #7986cb;
+  --accent-color: #ff80ab;
+  --warn-color: #ef5350;
+  --background-color: #303030;
+  --surface-color: #424242;
+  --surface-variant-color: #383838;
+  --outline-color: #616161;
+  --text-color: rgba(255, 255, 255, 0.87);
+  --text-secondary-color: rgba(255, 255, 255, 0.6);
+  --on-surface-color: rgba(255, 255, 255, 0.87);
+  --on-surface-variant-color: rgba(255, 255, 255, 0.6);
+  --primary-contrast-color: #000000;
+}
+
+.light-theme {
+  --primary-color: #3f51b5;
+  --accent-color: #ff4081;
+  --warn-color: #f44336;
+  --background-color: #fafafa;
+  --surface-color: #ffffff;
+  --surface-variant-color: #f5f5f5;
+  --outline-color: #e0e0e0;
+  --text-color: rgba(0, 0, 0, 0.87);
+  --text-secondary-color: rgba(0, 0, 0, 0.6);
+  --on-surface-color: rgba(0, 0, 0, 0.87);
+  --on-surface-variant-color: rgba(0, 0, 0, 0.6);
+  --primary-contrast-color: #ffffff;
+}
+
+// Override some Material styles to work better with Tailwind
+.mat-toolbar {
+  background: var(--primary-color) !important;
+  color: white !important;
+}
+
+.mat-sidenav {
+  background: var(--surface-color) !important;
+  color: var(--text-color) !important;
+}
+
+.mat-sidenav-content {
+  background: var(--background-color) !important;
+}
