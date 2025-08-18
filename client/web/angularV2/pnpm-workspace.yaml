@@ -1,0 +1,15 @@
+packages:
+  - 'projects/*'
+  - '.'
+
+# Shared dependencies configuration
+shared:
+  '@angular/*': true
+  'rxjs': true
+  'typescript': true
+  'zone.js': true
+
+# Workspace settings
+prefer-workspace-packages: true
+link-workspace-packages: true
+shared-workspace-lockfile: true
