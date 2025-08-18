@@ -5,9 +5,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS variables for theming */
+/* Fuse Theme System CSS Variables */
 :root {
-  /* Default theme colors */
+  /* Default theme colors - will be overridden by ThemeService */
   --fuse-primary-50: 239 246 255;
   --fuse-primary-100: 219 234 254;
   --fuse-primary-200: 191 219 254;
@@ -40,6 +40,29 @@
   --fuse-warn-700: 185 28 28;
   --fuse-warn-800: 153 27 27;
   --fuse-warn-900: 127 29 29;
+
+  /* Background colors */
+  --fuse-bg-app-bar: 255 255 255;
+  --fuse-bg-card: 255 255 255;
+  --fuse-bg-default: 248 250 252;
+  --fuse-bg-dialog: 255 255 255;
+  --fuse-bg-hover: 241 245 249;
+  --fuse-bg-status-bar: 226 232 240;
+
+  /* Foreground colors */
+  --fuse-text-default: 30 41 59;
+  --fuse-text-secondary: 100 116 139;
+  --fuse-text-hint: 148 163 184;
+  --fuse-text-disabled: 203 213 225;
+  --fuse-border: 226 232 240;
+  --fuse-divider: 241 245 249;
+  --fuse-icon: 100 116 139;
+  --fuse-mat-icon: 100 116 139;
+
+  /* Theme transition properties */
+  --fuse-theme-transition-duration: 300ms;
+  --fuse-theme-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  --fuse-theme-transition-property: background-color, border-color, color, fill, stroke;
 }
 
 /* Base styles */
@@ -49,8 +72,102 @@ html, body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Fuse Theme System Styles */
+/* Theme transition classes */
+.fuse-theme-transitions * {
+  transition: var(--fuse-theme-transition-property) var(--fuse-theme-transition-duration) var(--fuse-theme-transition-timing);
+}
+
+.fuse-theme-transitions *:before,
+.fuse-theme-transitions *:after {
+  transition: var(--fuse-theme-transition-property) var(--fuse-theme-transition-duration) var(--fuse-theme-transition-timing);
+}
+
+/* Disable transitions during theme switching to prevent flicker */
+.fuse-theme-switching * {
+  transition: none !important;
+}
+
+/* Theme-aware scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--fuse-bg-default));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--fuse-primary-300));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--fuse-primary-400));
+}
+
+/* Theme-aware selection */
+::selection {
+  background: rgb(var(--fuse-primary-200));
+  color: rgb(var(--fuse-primary-contrast-200));
+}
+
+::-moz-selection {
+  background: rgb(var(--fuse-primary-200));
+  color: rgb(var(--fuse-primary-contrast-200));
+}
+
+/* Dark mode specific adjustments */
+.dark {
+  color-scheme: dark;
+}
+
+.light {
+  color-scheme: light;
+}
+
 /* Custom component styles */
 @layer components {
+  .fuse-card {
+    @apply bg-bg-card text-text-default border border-border rounded-lg p-6 shadow-sm;
+  }
+
+  .fuse-card-header {
+    @apply border-b border-divider pb-4 mb-4;
+  }
+
+  .fuse-button-primary {
+    @apply bg-primary text-white border border-primary rounded-md px-4 py-2 font-medium transition-colors;
+    @apply hover:bg-primary-600 hover:border-primary-600;
+    @apply active:bg-primary-700 active:border-primary-700;
+    @apply focus:ring-2 focus:ring-primary-200 focus:ring-opacity-50;
+    @apply disabled:bg-text-disabled disabled:text-text-hint disabled:border-text-disabled disabled:cursor-not-allowed;
+  }
+
+  .fuse-button-accent {
+    @apply bg-accent text-white border border-accent rounded-md px-4 py-2 font-medium transition-colors;
+    @apply hover:bg-accent-600 hover:border-accent-600;
+    @apply active:bg-accent-700 active:border-accent-700;
+    @apply focus:ring-2 focus:ring-accent-200 focus:ring-opacity-50;
+  }
+
+  .fuse-input {
+    @apply bg-bg-card text-text-default border border-border rounded-md px-3 py-2 transition-colors;
+    @apply focus:border-primary focus:ring-1 focus:ring-primary focus:ring-opacity-50;
+    @apply placeholder:text-text-hint;
+  }
+
+  .fuse-nav-item {
+    @apply text-text-secondary transition-colors duration-150;
+    @apply hover:bg-bg-hover hover:text-text-default;
+  }
+
+  .fuse-nav-item.active {
+    @apply bg-primary-50 text-primary-600 border-r-2 border-primary;
+  }
+
+  /* Legacy button styles for backward compatibility */
   .btn-primary {
     @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
   }
@@ -62,4 +179,20 @@ html, body {
   .card {
     @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
   }
+}
+
+/* Accessibility utilities */
+.high-contrast {
+  filter: contrast(1.5);
+}
+
+.reduce-motion {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+.focus-visible:focus-visible {
+  outline: 2px solid rgb(var(--fuse-primary-500));
+  outline-offset: 2px;
 }

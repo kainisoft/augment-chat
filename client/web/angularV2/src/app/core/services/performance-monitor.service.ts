@@ -48,7 +48,7 @@ export class PerformanceMonitorService {
       // Observe first input delay
       const fidObserver = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          this.metrics.firstInputDelay = entry.processingStart - entry.startTime;
+          this.metrics.firstInputDelay = (entry as any).processingStart - entry.startTime;
         }
       });
       fidObserver.observe({ entryTypes: ['first-input'] });
@@ -57,8 +57,8 @@ export class PerformanceMonitorService {
       const clsObserver = new PerformanceObserver((list) => {
         let clsValue = 0;
         for (const entry of list.getEntries()) {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value;
+          if (!(entry as any).hadRecentInput) {
+            clsValue += (entry as any).value;
           }
         }
         this.metrics.cumulativeLayoutShift = clsValue;

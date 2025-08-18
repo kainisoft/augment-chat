@@ -4,6 +4,7 @@ export * from './message.model';
 export * from './conversation.model';
 export * from './websocket-event.model';
 export * from './validation.model';
+export * from './theme.model';
 
 // Re-export specific types from state.model to avoid conflicts and enable selective imports
 export type {

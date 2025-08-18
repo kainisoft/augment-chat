@@ -54,17 +54,13 @@ export {
 
 // Color utilities
 export {
-    hexToRgb,
     rgbToHex,
     hexToRgbString,
     hslToRgb,
     rgbToHsl,
     lightenColor,
     darkenColor,
-    getContrastRatio,
-    meetsWCAGStandards,
     getBestContrastColor,
-    generatePalette,
     mixColors,
     isDarkColor,
     isLightColor,
@@ -103,3 +99,34 @@ export {
     createFormSignal,
     createPaginationSignal
 } from './signal.utils';
+
+// Palette generation utilities
+export {
+    generatePalette,
+    getContrastColor,
+    getContrastRatio,
+    meetsWCAGStandards,
+    hexToRgb,
+    generateColorVariations,
+    adjustForColorBlindness,
+    generateColorScheme
+} from './palette-generation.utils';
+
+// CSS properties utilities
+export {
+    generateCSSProperties,
+    applyCSSProperties,
+    removeCSSProperties,
+    getCSSProperty,
+    setCSSProperty,
+    generateCSSVariablesString,
+    injectCSSVariables,
+    createThemeTransitionProperties,
+    applyThemeTransitions,
+    removeThemeTransitions,
+    generateThemeAwareCSS,
+    validateCSSProperties,
+    getAllFuseThemeProperties,
+    createPropertyName,
+    parseRGBFromProperty
+} from './css-properties.utils';

@@ -32,6 +32,9 @@ importers:
       '@angular/ssr':
         specifier: ^20.1.6
         version: 20.1.6(16301097f99f012fc8abc9ebb6c8ad41)
+      chroma-js:
+        specifier: ^3.1.2
+        version: 3.1.2
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -72,6 +75,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@3.4.17)
+      '@types/chroma-js':
+        specifier: ^3.1.1
+        version: 3.1.1
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.3
@@ -1375,6 +1381,9 @@ packages:
   '@types/body-parser@1.19.6':
     resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
 
+  '@types/chroma-js@3.1.1':
+    resolution: {integrity: sha512-SFCr4edNkZ1bGaLzGz7rgR1bRzVX4MmMxwsIa3/Bh6ose8v+hRpneoizHv0KChdjxaXyjRtaMq7sCuZSzPomQA==}
+
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
@@ -1722,6 +1731,9 @@ packages:
   chownr@3.0.0:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
+
+  chroma-js@3.1.2:
+    resolution: {integrity: sha512-IJnETTalXbsLx1eKEgx19d5L6SRM7cH4vINw/99p/M11HCuXGRWL+6YmCm7FWFGIo6dtWuQoQi1dc5yQ7ESIHg==}
 
   cli-cursor@5.0.0:
     resolution: {integrity: sha512-aCj4O5wKyszjMmDT4tZj93kxyydN/K5zPWSCe6/0AV/AA1pqe5ZBIw0a2ZfPQV7lL5/yb5HsUreJ6UFAF1tEQw==}
@@ -4965,6 +4977,8 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/node': 20.19.11
 
+  '@types/chroma-js@3.1.1': {}
+
   '@types/connect@3.4.38':
     dependencies:
       '@types/node': 20.19.11
@@ -5407,6 +5421,8 @@ snapshots:
   chownr@2.0.0: {}
 
   chownr@3.0.0: {}
+
+  chroma-js@3.1.2: {}
 
   cli-cursor@5.0.0:
     dependencies:

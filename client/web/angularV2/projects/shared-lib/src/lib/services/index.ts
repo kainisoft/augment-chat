@@ -11,3 +11,6 @@ export { ValidationService } from './validation.service';
 // Performance and monitoring
 export { PerformanceMonitoringService } from './performance-monitoring.service';
 export { MemoryOptimizationService } from './memory-optimization.service';
+
+// Theming system
+export { ThemeService } from './theme.service';

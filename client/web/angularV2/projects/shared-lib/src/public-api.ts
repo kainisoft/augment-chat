@@ -13,3 +13,7 @@ export * from './lib/components';
 export * from './lib/services';
 export * from './lib/models';
 export * from './lib/utils';
+export * from './lib/configs';
+
+// Export plugins
+export { fuseThemePlugin } from './lib/plugins/tailwind-theme.plugin';
