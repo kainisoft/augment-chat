@@ -1,0 +1,105 @@
+// Utils barrel file - using named exports for optimal tree-shaking
+// This approach allows consumers to import only the utility functions they need,
+// significantly improving bundle size through better dead code elimination
+
+// Date utilities
+export {
+    formatDistanceToNow,
+    formatDate,
+    formatTime,
+    formatDateTime,
+    isToday,
+    isYesterday,
+    isThisWeek,
+    getStartOfDay,
+    getEndOfDay,
+    addDays,
+    addHours,
+    addMinutes,
+    getTimezoneOffset,
+    utcToLocal,
+    localToUtc,
+    parseISODate,
+    toISOString
+} from './date.utils';
+
+// Validation utilities
+export {
+    isEmpty,
+    isValidEmail,
+    isValidUrl,
+    isValidPhoneNumber,
+    isAlphanumeric,
+    isAlpha,
+    isNumeric,
+    isInteger,
+    isInRange,
+    isLengthInRange,
+    isStrongPassword,
+    isValidUsername,
+    matchesPattern,
+    sanitizeHtml,
+    escapeRegex,
+    isValidCreditCard,
+    isValidDate,
+    isFutureDate,
+    isPastDate,
+    isValidFileType,
+    isValidFileSize,
+    containsProfanity,
+    isValidJson,
+    isValidHexColor,
+    isValidRgbColor
+} from './validation.utils';
+
+// Color utilities
+export {
+    hexToRgb,
+    rgbToHex,
+    hexToRgbString,
+    hslToRgb,
+    rgbToHsl,
+    lightenColor,
+    darkenColor,
+    getContrastRatio,
+    meetsWCAGStandards,
+    getBestContrastColor,
+    generatePalette,
+    mixColors,
+    isDarkColor,
+    isLightColor,
+    getComplementaryColor,
+    getAnalogousColors,
+    getTriadicColors
+} from './color.utils';
+
+// Performance utilities
+export {
+    debounce,
+    throttle,
+    measureTime,
+    measureAsyncTime,
+    createTimer,
+    batchCalls,
+    memoize,
+    createLRUCache,
+    lazy,
+    singleton,
+    retry,
+    createQueue,
+    isDevelopment,
+    isProduction,
+    getBrowserPerformance
+} from './performance.utils';
+
+// Signal utilities
+export {
+    createPersistedSignal,
+    createDebouncedComputed,
+    createAutoResetSignal,
+    createLoadingSignal,
+    createAsyncSignal,
+    createListSignal,
+    createFormSignal,
+    createPaginationSignal
+} from './signal.utils';

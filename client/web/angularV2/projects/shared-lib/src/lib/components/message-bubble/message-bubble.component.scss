@@ -1,0 +1,71 @@
+.message-bubble {
+  @apply max-w-xs md:max-w-md lg:max-w-lg mb-2;
+  
+  &--sent {
+    @apply ml-auto;
+    
+    .message-bubble__content {
+      @apply bg-blue-500 text-white rounded-l-lg rounded-tr-lg;
+    }
+  }
+  
+  &--received {
+    @apply mr-auto;
+    
+    .message-bubble__content {
+      @apply bg-gray-200 text-gray-900 rounded-r-lg rounded-tl-lg;
+      
+      .dark & {
+        @apply bg-gray-700 text-gray-100;
+      }
+    }
+  }
+  
+  &__content {
+    @apply p-3 shadow-sm;
+  }
+  
+  &__text {
+    @apply text-sm leading-relaxed mb-1;
+  }
+  
+  &__timestamp {
+    @apply text-xs opacity-70 block;
+  }
+  
+  &__status {
+    @apply text-xs opacity-60 ml-2;
+    
+    &[data-status="sending"] {
+      @apply text-yellow-500;
+    }
+    
+    &[data-status="sent"] {
+      @apply text-green-500;
+    }
+    
+    &[data-status="delivered"] {
+      @apply text-blue-500;
+    }
+    
+    &[data-status="read"] {
+      @apply text-purple-500;
+    }
+    
+    &[data-status="failed"] {
+      @apply text-red-500;
+    }
+  }
+  
+  &__reactions {
+    @apply flex flex-wrap gap-1 mt-2;
+  }
+  
+  &__reaction {
+    @apply bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs;
+    
+    .dark & {
+      @apply bg-gray-600 text-gray-300;
+    }
+  }
+}

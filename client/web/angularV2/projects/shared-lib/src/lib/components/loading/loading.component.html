@@ -1,0 +1,39 @@
+<div class="loading" [attr.data-type]="type()" [attr.data-size]="size()">
+  
+  @switch (type()) {
+    @case ('spinner') {
+      <div class="loading__spinner">
+        <div class="loading__spinner-circle"></div>
+      </div>
+    }
+    
+    @case ('skeleton') {
+      <div class="loading__skeleton">
+        @if (showAvatar()) {
+          <div class="loading__skeleton-avatar"></div>
+        }
+        <div class="loading__skeleton-content">
+          @for (line of getLines(); track $index) {
+            <div class="loading__skeleton-line" [style.width.%]="$index === lines() - 1 ? 60 : 100"></div>
+          }
+        </div>
+      </div>
+    }
+    
+    @case ('dots') {
+      <div class="loading__dots">
+        <div class="loading__dot"></div>
+        <div class="loading__dot"></div>
+        <div class="loading__dot"></div>
+      </div>
+    }
+    
+    @case ('pulse') {
+      <div class="loading__pulse"></div>
+    }
+  }
+  
+  @if (message()) {
+    <p class="loading__message">{{ message() }}</p>
+  }
+</div>

@@ -1,0 +1,75 @@
+.user-avatar {
+  @apply relative inline-block rounded-full overflow-hidden bg-gray-300;
+  
+  &--sm {
+    @apply w-6 h-6;
+  }
+  
+  &--md {
+    @apply w-8 h-8;
+  }
+  
+  &--lg {
+    @apply w-12 h-12;
+  }
+  
+  &--xl {
+    @apply w-16 h-16;
+  }
+  
+  &__image {
+    @apply w-full h-full object-cover;
+  }
+  
+  &__initials {
+    @apply w-full h-full flex items-center justify-center text-white font-medium bg-blue-500;
+    
+    .user-avatar--sm & {
+      @apply text-xs;
+    }
+    
+    .user-avatar--md & {
+      @apply text-sm;
+    }
+    
+    .user-avatar--lg & {
+      @apply text-base;
+    }
+    
+    .user-avatar--xl & {
+      @apply text-lg;
+    }
+  }
+  
+  &__status {
+    @apply absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white;
+    
+    .user-avatar--sm & {
+      @apply w-2 h-2 border;
+    }
+    
+    .user-avatar--lg & {
+      @apply w-4 h-4;
+    }
+    
+    .user-avatar--xl & {
+      @apply w-5 h-5;
+    }
+    
+    &--online {
+      @apply bg-green-500;
+    }
+    
+    &--away {
+      @apply bg-yellow-500;
+    }
+    
+    &--busy {
+      @apply bg-red-500;
+    }
+    
+    &--offline {
+      @apply bg-gray-400;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+<div 
+  [ngClass]="avatarClasses()" 
+  [title]="showTooltip() ? tooltipText() : null">
+  
+  @if (user().avatar) {
+    <img 
+      loading="lazy"
+      [src]="user().avatar" 
+      [alt]="user().username || user().email"
+      class="user-avatar__image"
+      (error)="setError('Failed to load avatar')"
+      (load)="clearError()" />
+  } @else {
+    <div class="user-avatar__initials">
+      {{ initials() }}
+    </div>
+  }
+  
+  @if (showStatus()) {
+    <div [ngClass]="statusClasses()"></div>
+  }
+</div>

@@ -1,0 +1,27 @@
+<div [ngClass]="messageClasses()">
+  <div class="message-bubble__content">
+    <p class="message-bubble__text">{{ message().content }}</p>
+    
+    @if (showTimestamp()) {
+      <span class="message-bubble__timestamp">
+        {{ formattedTime() }}
+      </span>
+    }
+    
+    @if (message().status) {
+      <span class="message-bubble__status" [attr.data-status]="message().status">
+        {{ message().status }}
+      </span>
+    }
+  </div>
+  
+  @if (message().reactions && message().reactions!.length > 0) {
+    <div class="message-bubble__reactions">
+      @for (reaction of message().reactions!; track reaction.id) {
+        <span class="message-bubble__reaction">
+          {{ reaction.emoji }} {{ reaction.count }}
+        </span>
+      }
+    </div>
+  }
+</div>

@@ -1,23 +1,44 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { SharedLib } from './shared-lib';
+import { TestBed } from '@angular/core/testing';
+import { SignalStoreService } from './services/signal-store.service';
+import { ValidationService } from './services/validation.service';
 
 describe('SharedLib', () => {
-  let component: SharedLib;
-  let fixture: ComponentFixture<SharedLib>;
+  describe('SignalStoreService', () => {
+    let service: SignalStoreService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [SharedLib]
-    })
-    .compileComponents();
+    beforeEach(() => {
+      TestBed.configureTestingModule({});
+      service = TestBed.inject(SignalStoreService);
+    });
 
-    fixture = TestBed.createComponent(SharedLib);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    it('should be created', () => {
+      expect(service).toBeTruthy();
+    });
+
+    it('should initialize with null user', () => {
+      expect(service.user()).toBeNull();
+      expect(service.isAuthenticated()).toBeFalse();
+    });
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  describe('ValidationService', () => {
+    let service: ValidationService;
+
+    beforeEach(() => {
+      TestBed.configureTestingModule({});
+      service = TestBed.inject(ValidationService);
+    });
+
+    it('should be created', () => {
+      expect(service).toBeTruthy();
+    });
+
+    it('should validate email correctly', () => {
+      const validResult = service.validateEmail('test@example.com');
+      expect(validResult.isValid).toBeTruthy();
+
+      const invalidResult = service.validateEmail('invalid-email');
+      expect(invalidResult.isValid).toBeFalsy();
+    });
   });
 });

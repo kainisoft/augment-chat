@@ -84,6 +84,189 @@ client/web/angularV2/
 
 ## Components and Interfaces
 
+### Export Strategy for Tree-Shaking Optimization
+
+The Angular V2 workspace will exclusively use **named exports** instead of default exports to maximize tree-shaking effectiveness and improve bundle optimization. This strategy ensures that bundlers can accurately identify and eliminate unused code, resulting in smaller production bundles.
+
+#### Named Export Benefits
+
+1. **Better Tree-Shaking**: Bundlers can precisely track which exports are used
+2. **Explicit Dependencies**: Clear visibility of what's being imported from each module
+3. **IDE Support**: Better autocomplete and refactoring capabilities
+4. **Consistent Patterns**: Uniform import/export syntax across the codebase
+5. **Bundle Analysis**: Easier to identify unused code in bundle analyzers
+
+#### Export Patterns
+
+**Services and Utilities:**
+```typescript
+// ✅ Named exports (preferred)
+export class ValidationService { }
+export class ThemeService { }
+export const errorInterceptor: HttpInterceptorFn = () => { };
+export const globalStore = signalStore({ });
+
+// ❌ Default exports (avoid)
+export default class ValidationService { }
+```
+
+**Components:**
+```typescript
+// ✅ Named exports with explicit imports
+@Component({
+  selector: 'lib-message-bubble',
+  imports: [CommonModule, MatIconModule], // Named imports
+  templateUrl: './message-bubble.component.html',
+  styleUrl: './message-bubble.component.scss',
+})
+export class MessageBubbleComponent { }
+
+// Import usage
+import { MessageBubbleComponent } from './message-bubble/message-bubble.component';
+```
+
+**Models and Interfaces:**
+```typescript
+// ✅ Named exports for all types
+export interface User { }
+export interface Message { }
+export interface ThemeConfig { }
+export type EventType = 'message:new' | 'user:typing';
+export const THEME_CONFIGURATIONS: Record<string, ThemeConfig> = { };
+```
+
+**Index Files (Barrel Exports):**
+```typescript
+// shared-lib/src/lib/components/index.ts
+export { MessageBubbleComponent } from './message-bubble/message-bubble.component';
+export { UserAvatarComponent } from './user-avatar/user-avatar.component';
+export { BaseComponent } from './base/base.component';
+
+// shared-lib/src/lib/services/index.ts
+export { ValidationService } from './validation.service';
+export { ThemeService } from './theme.service';
+export { GraphQLService } from './graphql.service';
+
+// shared-lib/src/lib/utils/index.ts
+export { formatDate, parseDate } from './date.utils';
+export { validateEmail, validateUsername } from './validation.utils';
+export { generatePalette, hexToRgb } from './color.utils';
+```
+
+**Lazy Loading with Named Exports:**
+```typescript
+// Route configuration with named exports
+const routes: Routes = [
+  {
+    path: 'chat',
+    loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent),
+  },
+  {
+    path: 'settings',
+    loadChildren: () => import('./features/settings/settings.routes').then(m => m.SETTINGS_ROUTES),
+  },
+];
+
+// Dynamic imports
+async loadChatFeature() {
+  const { ChatComponent } = await import('./features/chat/chat.component');
+  return ChatComponent;
+}
+```
+
+**Bundle Optimization Configuration:**
+```typescript
+// webpack.config.js optimization for named exports
+module.exports = {
+  optimization: {
+    usedExports: true, // Enable tree-shaking
+    sideEffects: false, // Mark as side-effect free
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+        common: {
+          name: 'common',
+          minChunks: 2,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+  },
+};
+```
+
+**Tree-Shaking Verification:**
+```typescript
+// bundle-analyzer.service.ts
+@Injectable({ providedIn: 'root' })
+export class BundleAnalyzerService {
+  /**
+   * Analyze bundle composition and unused exports
+   */
+  analyzeBundleComposition(): BundleAnalysis {
+    return {
+      totalSize: this.getTotalBundleSize(),
+      unusedExports: this.findUnusedExports(),
+      treeShakenModules: this.getTreeShakenModules(),
+      optimizationSuggestions: this.generateOptimizationSuggestions(),
+    };
+  }
+  
+  /**
+   * Verify tree-shaking effectiveness
+   */
+  verifyTreeShaking(): TreeShakingReport {
+    const analysis = this.analyzeBundleComposition();
+    return {
+      effectiveness: this.calculateTreeShakingEffectiveness(analysis),
+      potentialSavings: this.calculatePotentialSavings(analysis),
+      recommendations: this.generateTreeShakingRecommendations(analysis),
+    };
+  }
+}
+
+// Build script integration
+export const buildWithAnalysis = async () => {
+  await runBuild();
+  const analyzer = new BundleAnalyzerService();
+  const report = analyzer.verifyTreeShaking();
+  console.log('Tree-shaking effectiveness:', report.effectiveness);
+  console.log('Potential bundle size savings:', report.potentialSavings);
+};
+```
+
+**Package.json Side Effects Configuration:**
+```json
+{
+  "name": "@angular-v2/shared-lib",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./src/public-api.ts",
+      "types": "./src/public-api.d.ts"
+    },
+    "./components": {
+      "import": "./src/lib/components/index.ts",
+      "types": "./src/lib/components/index.d.ts"
+    },
+    "./services": {
+      "import": "./src/lib/services/index.ts",
+      "types": "./src/lib/services/index.d.ts"
+    },
+    "./utils": {
+      "import": "./src/lib/utils/index.ts",
+      "types": "./src/lib/utils/index.d.ts"
+    }
+  }
+}
+```
+
 ### Core Application Architecture
 
 #### 1. Main Chat Application (`projects/chat-app`)
@@ -155,7 +338,6 @@ export class ChatSignalService {
 // Base component with signals
 @Component({
   selector: 'lib-base-component',
-  standalone: true,
   templateUrl: './base.component.html',
   styleUrl: './base.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -181,7 +363,6 @@ export abstract class BaseComponent {
 // Reusable message component
 @Component({
   selector: 'lib-message-bubble',
-  standalone: true,
   imports: [CommonModule, MatIconModule],
   templateUrl: './message-bubble.component.html',
   styleUrl: './message-bubble.component.scss',
@@ -1179,7 +1360,6 @@ export class ThemeService {
 // theme-selector.component.ts
 @Component({
   selector: 'app-theme-selector',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatMenuModule, MatIconModule, MatTooltipModule],
   template: `
     <button mat-icon-button 

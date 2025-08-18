@@ -1,0 +1,75 @@
+.form-field {
+  @apply mb-4;
+  
+  &__label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+    
+    .dark & {
+      @apply text-gray-300;
+    }
+    
+    &--required::after {
+      @apply text-red-500 ml-1;
+      content: '*';
+    }
+  }
+  
+  &__input-wrapper {
+    @apply relative;
+  }
+  
+  &__character-count {
+    @apply absolute bottom-2 right-2 text-xs text-gray-500 pointer-events-none;
+    
+    .dark & {
+      @apply text-gray-400;
+    }
+  }
+  
+  &__error {
+    @apply mt-1 text-sm text-red-600;
+    
+    .dark & {
+      @apply text-red-400;
+    }
+  }
+}
+
+.form-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  @apply transition-colors duration-200;
+  
+  .dark & {
+    @apply bg-gray-800 border-gray-600 text-gray-100;
+    @apply focus:border-blue-400 focus:ring-blue-400;
+  }
+  
+  &--error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+  }
+  
+  &--focused {
+    @apply ring-2 ring-blue-500 border-blue-500;
+    
+    .dark & {
+      @apply ring-blue-400 border-blue-400;
+    }
+  }
+  
+  &--disabled {
+    @apply bg-gray-100 cursor-not-allowed opacity-60;
+    
+    .dark & {
+      @apply bg-gray-700;
+    }
+  }
+  
+  &::placeholder {
+    @apply text-gray-400;
+    
+    .dark & {
+      @apply text-gray-500;
+    }
+  }
+}
