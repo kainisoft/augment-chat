@@ -1,0 +1,28 @@
+{
+  "sourceMapConfig": {
+    "development": {
+      "scripts": true,
+      "styles": true,
+      "vendor": true,
+      "hidden": false
+    },
+    "debug": {
+      "scripts": true,
+      "styles": true,
+      "vendor": true,
+      "hidden": false
+    },
+    "production": {
+      "scripts": false,
+      "styles": false,
+      "vendor": false,
+      "hidden": true
+    }
+  },
+  "debuggingTools": {
+    "enableDevTools": true,
+    "enableProfiling": true,
+    "enableTracing": true,
+    "verboseLogging": true
+  }
+}

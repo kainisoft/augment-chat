@@ -1,1 +1,65 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Tailwind CSS imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS variables for theming */
+:root {
+  /* Default theme colors */
+  --fuse-primary-50: 239 246 255;
+  --fuse-primary-100: 219 234 254;
+  --fuse-primary-200: 191 219 254;
+  --fuse-primary-300: 147 197 253;
+  --fuse-primary-400: 96 165 250;
+  --fuse-primary-500: 59 130 246;
+  --fuse-primary-600: 37 99 235;
+  --fuse-primary-700: 29 78 216;
+  --fuse-primary-800: 30 64 175;
+  --fuse-primary-900: 30 58 138;
+
+  --fuse-accent-50: 248 250 252;
+  --fuse-accent-100: 241 245 249;
+  --fuse-accent-200: 226 232 240;
+  --fuse-accent-300: 203 213 225;
+  --fuse-accent-400: 148 163 184;
+  --fuse-accent-500: 100 116 139;
+  --fuse-accent-600: 71 85 105;
+  --fuse-accent-700: 51 65 85;
+  --fuse-accent-800: 30 41 59;
+  --fuse-accent-900: 15 23 42;
+
+  --fuse-warn-50: 254 242 242;
+  --fuse-warn-100: 254 226 226;
+  --fuse-warn-200: 254 202 202;
+  --fuse-warn-300: 252 165 165;
+  --fuse-warn-400: 248 113 113;
+  --fuse-warn-500: 239 68 68;
+  --fuse-warn-600: 220 38 38;
+  --fuse-warn-700: 185 28 28;
+  --fuse-warn-800: 153 27 27;
+  --fuse-warn-900: 127 29 29;
+}
+
+/* Base styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Custom component styles */
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-accent-100 hover:bg-accent-200 text-accent-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+  }
+}
