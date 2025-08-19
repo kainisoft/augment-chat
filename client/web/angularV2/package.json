@@ -36,7 +36,9 @@
     "config:dev": "node scripts/build-config.js dev",
     "config:prod": "node scripts/build-config.js prod",
     "config:sourcemaps": "node scripts/build-config.js sourcemaps",
-    "config:hmr": "node scripts/build-config.js hmr"
+    "config:hmr": "node scripts/build-config.js hmr",
+    "build:lib": "ng build shared-lib",
+    "build:lib:validate": "ng build shared-lib && node scripts/validate-library-build.js"
   },
   "private": true,
   "dependencies": {
