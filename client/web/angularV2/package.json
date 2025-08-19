@@ -56,7 +56,11 @@
     "validate:lib": "npm run build:lib:validate && npm run test:lib:complete",
     "build:lib:config": "node scripts/build-lib-config.js",
     "dev:lib:styles": "node scripts/simple-dev-lib.js",
-    "validate:all": "node scripts/validate-all-builds.js"
+    "validate:all": "node scripts/validate-all-builds.js",
+    "test:build-validation": "node scripts/test-build-validation.js",
+    "test:unit": "ng test shared-lib --watch=false --browsers=ChromeHeadless",
+    "test:integration": "npm run test:build-validation && npm run test:fallbacks",
+    "test:complete": "npm run test:unit && npm run test:integration"
   },
   "private": true,
   "dependencies": {
