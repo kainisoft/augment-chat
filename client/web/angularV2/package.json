@@ -38,7 +38,10 @@
     "config:sourcemaps": "node scripts/build-config.js sourcemaps",
     "config:hmr": "node scripts/build-config.js hmr",
     "build:lib": "ng build shared-lib",
-    "build:lib:validate": "ng build shared-lib && node scripts/validate-library-build.js"
+    "build:lib:prod": "NODE_ENV=production ng build shared-lib --configuration production",
+    "build:lib:purge": "TAILWIND_MODE=purge ng build shared-lib",
+    "build:lib:validate": "ng build shared-lib && node scripts/validate-library-build.js",
+    "build:lib:analyze": "ng build shared-lib --stats-json && npx webpack-bundle-analyzer dist/shared-lib/stats.json"
   },
   "private": true,
   "dependencies": {
