@@ -38,10 +38,25 @@
     "config:sourcemaps": "node scripts/build-config.js sourcemaps",
     "config:hmr": "node scripts/build-config.js hmr",
     "build:lib": "ng build shared-lib",
+    "build:lib:dev": "ng build shared-lib --configuration development",
     "build:lib:prod": "NODE_ENV=production ng build shared-lib --configuration production",
-    "build:lib:purge": "TAILWIND_MODE=purge ng build shared-lib",
+    "build:lib:purge": "TAILWIND_MODE=purge ng build shared-lib --configuration production",
+    "build:lib:watch": "ng build shared-lib --configuration development --watch",
     "build:lib:validate": "ng build shared-lib && node scripts/validate-library-build.js",
-    "build:lib:analyze": "ng build shared-lib --stats-json && npx webpack-bundle-analyzer dist/shared-lib/stats.json"
+    "build:lib:analyze": "ng build shared-lib --stats-json && npx webpack-bundle-analyzer dist/shared-lib/stats.json",
+    "build:lib:size": "ng build shared-lib --configuration production && node scripts/simple-bundle-check.js",
+    "build:lib:styles": "npm run build:lib:tailwind && npm run build:lib:validate",
+    "build:lib:tailwind": "TAILWIND_CONFIG=projects/shared-lib/tailwind.lib.config.js ng build shared-lib",
+    "build:lib:tailwind-purge": "TAILWIND_CONFIG=projects/shared-lib/tailwind.purge.config.js TAILWIND_MODE=purge ng build shared-lib --configuration production",
+    "test:fallbacks": "node scripts/test-style-fallbacks.js",
+    "test:lib:complete": "npm run build:lib:validate && npm run test:fallbacks",
+    "test:lib:styles": "npm run build:lib:styles && npm run test:fallbacks",
+    "dev:lib": "npm run build:lib:watch",
+    "dev:lib:test": "concurrently \"npm run build:lib:watch\" \"npm run test:lib:complete -- --watch\"",
+    "validate:lib": "npm run build:lib:validate && npm run test:lib:complete",
+    "build:lib:config": "node scripts/build-lib-config.js",
+    "dev:lib:styles": "node scripts/simple-dev-lib.js",
+    "validate:all": "node scripts/validate-all-builds.js"
   },
   "private": true,
   "dependencies": {
@@ -89,6 +104,8 @@
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.8.2",
-    "typescript-eslint": "8.34.1"
+    "typescript-eslint": "8.34.1",
+    "chokidar": "^4.0.1",
+    "concurrently": "^9.1.0"
   }
 }

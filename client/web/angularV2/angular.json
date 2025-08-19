@@ -150,19 +150,26 @@
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/shared-lib/ng-package.json"
+          },
           "configurations": {
             "production": {
               "tsConfig": "projects/shared-lib/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/shared-lib/tsconfig.lib.json",
-              "sourceMap": true
+              "tsConfig": "projects/shared-lib/tsconfig.lib.json"
             },
             "debug": {
-              "tsConfig": "projects/shared-lib/tsconfig.lib.json",
-              "sourceMap": true
+              "tsConfig": "projects/shared-lib/tsconfig.lib.json"
             },
             "analyze": {
+              "tsConfig": "projects/shared-lib/tsconfig.lib.prod.json"
+            },
+            "tailwind": {
+              "tsConfig": "projects/shared-lib/tsconfig.lib.json"
+            },
+            "tailwind-purge": {
               "tsConfig": "projects/shared-lib/tsconfig.lib.prod.json"
             }
           },
