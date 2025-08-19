@@ -17,3 +17,6 @@ export * from './lib/configs';
 
 // Export plugins
 export { fuseThemePlugin } from './lib/plugins/tailwind-theme.plugin';
+
+// Export directives
+export * from './lib/directives';

@@ -130,3 +130,18 @@ export {
     createPropertyName,
     parseRGBFromProperty
 } from './css-properties.utils';
+
+// Style detection utilities
+export {
+    detectTailwindLoading,
+    detectAnimationSupport,
+    detectCustomPropertiesSupport,
+    detectStyleCapabilities,
+    createFallbackStyles,
+    applyFallbackStyles,
+    removeFallbackStyles,
+    DEFAULT_FALLBACK_STYLES,
+    FALLBACK_KEYFRAMES,
+    type StyleDetectionResult,
+    type StyleFallbackConfig
+} from './style-detection.utils';

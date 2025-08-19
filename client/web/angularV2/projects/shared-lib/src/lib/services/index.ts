@@ -14,3 +14,6 @@ export { MemoryOptimizationService } from './memory-optimization.service';
 
 // Theming system
 export { ThemeService } from './theme.service';
+
+// Style fallback system
+export { StyleFallbackService } from './style-fallback.service';
